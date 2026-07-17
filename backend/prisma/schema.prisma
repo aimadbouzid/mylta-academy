@@ -1,0 +1,170 @@
+// ============================================================
+// SCHÉMA PRISMA — Mylta Academy Platform
+// Base de données: SQLite (dev) → PostgreSQL (production)
+// Pour passer en PostgreSQL:
+//   1. Changer provider = "postgresql" 
+//   2. Mettre à jour DATABASE_URL dans .env
+//   3. npx prisma migrate dev --name pg_migration
+// ============================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ─────────────────────────────────────────────
+// UTILISATEUR
+// role: "STUDENT" | "INSTRUCTOR" | "ADMIN"
+// ─────────────────────────────────────────────
+model User {
+  id                  Int       @id @default(autoincrement())
+  email               String    @unique
+  password            String
+  name                String?
+  role                String    @default("STUDENT")
+  locale              String    @default("fr")
+  emailVerified       Boolean   @default(false)
+  verifyToken         String?
+  verifyExpires       DateTime?
+  resetToken          String?
+  resetExpires        DateTime?
+  sessionVersion      Int       @default(1)
+  failedLoginAttempts Int       @default(0)
+  lockedUntil         DateTime?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  // Referral System Fields
+  referralCode        String?   @unique
+  referredById        Int?
+  referredBy          User?     @relation("Referrals", fields: [referredById], references: [id])
+  referrals           User[]    @relation("Referrals")
+  referralCount       Int       @default(0) // Count of paid referrals since last free course
+  freeCoursesEarned   Int       @default(0) // Number of free courses earned
+
+  receipts       Receipt[]
+  notifications  Notification[]
+  reviews        CourseReview[]
+  lessonProgress LessonProgress[]
+}
+
+// ─────────────────────────────────────────────
+// FORMATION
+// ─────────────────────────────────────────────
+model Course {
+  id            Int       @id @default(autoincrement())
+  title         String
+  description   String
+  price         Float
+  discountPrice Float?
+  discountEndsAt DateTime?
+  showSyllabus  Boolean   @default(true)
+  thumbnail     String?
+  category      String    @default("Général")
+  duration      String?
+  level         String    @default("Débutant")
+  isPublished   Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  lessons  Lesson[]
+  receipts Receipt[]
+  reviews  CourseReview[]
+}
+
+// ─────────────────────────────────────────────
+// LEÇON
+// externalVideoUrl: jamais exposé au client via l'API publique
+// ─────────────────────────────────────────────
+model Lesson {
+  id               Int      @id @default(autoincrement())
+  title            String
+  description      String?
+  externalVideoUrl String
+  order            Int      @default(0)
+  duration         String?
+  courseId          Int
+  course           Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  lessonProgress   LessonProgress[]
+}
+
+// ─────────────────────────────────────────────
+// REÇU DE PAIEMENT
+// status: "PENDING" | "APPROVED" | "REJECTED"
+// paymentType: "CCP" | "BARIDIMOB" | "EDAHABIA" | "CIB"
+// ─────────────────────────────────────────────
+model Receipt {
+  id             Int      @id @default(autoincrement())
+  userId         Int
+  courseId        Int
+  amount         Float
+  status         String   @default("PENDING")
+  paymentType    String   @default("CCP")
+  receiptImage   String?
+  transactionId  String?
+  idempotencyKey String?  @unique
+  notes          String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id])
+  course Course @relation(fields: [courseId], references: [id])
+}
+
+// ─────────────────────────────────────────────
+// NOTIFICATIONS ETUDIANT
+// type: "SUCCESS" | "WARNING" | "INFO"
+// ─────────────────────────────────────────────
+model Notification {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  title     String
+  message   String
+  type      String   @default("INFO")
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ─────────────────────────────────────────────
+// EVALUATION (ÉTOILES)
+// ─────────────────────────────────────────────
+model CourseReview {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  courseId   Int
+  rating    Int
+  comment   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, courseId])
+}
+
+// ─────────────────────────────────────────────
+// PROGRESSION DES LEÇONS
+// ─────────────────────────────────────────────
+model LessonProgress {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  lessonId    Int
+  isCompleted Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lesson    Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, lessonId])
+}

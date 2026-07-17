@@ -1,0 +1,16 @@
+node_modules/
+dist/
+build/
+.env
+.env.*
+*.db
+*.db-journal
+dev.db
+dev.db-journal
+uploads/
+*.log
+.DS_Store
+cookies.txt
+test.html
+*.pem
+*.key
