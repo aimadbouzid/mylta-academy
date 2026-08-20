@@ -79,5 +79,32 @@ export const seoKeywords = [
   "réussite étudiants", "taux de placement", "garantie de résultat", "satisfaction client", "support en ligne",
   "communauté discord", "groupe privé facebook", "forum d'entraide", "ressources gratuites", "télécharger pdf",
   "livre blanc business", "ebook gratuit", "guide de l'entrepreneur", "podcast business algérie", "vidéos youtube business",
-  "articles de blog seo", "actualités tech", "tendances marketing", "analyse de marché", "stratégie d'investissement"
+  "articles de blog seo", "actualités tech", "tendances marketing", "analyse de marché", "stratégie d'investissement",
+
+  // Formations phares (titres réels du catalogue)
+  "marketing digital avancé", "développement web full-stack", "design ux ui masterclass", "e-commerce dropshipping dz",
+  "business entrepreneuriat dz", "finance gestion d'entreprise", "formation full-stack algérie", "cours ux ui algérie",
+  "formation dropshipping dz", "cours finance algérie", "apprendre le développement full-stack", "masterclass ux ui dz",
+
+  // Wilayas — couverture élargie (la formation étant 100% à distance, la
+  // portée n'est pas locale : chaque wilaya reste un point d'entrée de
+  // recherche distinct dans les résultats Google).
+  "béjaïa", "tlemcen", "mostaganem", "skikda", "sidi bel abbès", "biskra", "el oued", "ouargla", "béchar",
+  "tiaret", "djelfa", "ghardaïa", "laghouat", "médéa", "boumerdès", "bouira", "jijel", "guelma", "mascara",
+  "relizane", "saïda", "m'sila", "tébessa", "aïn defla", "khenchela", "souk ahras", "el bayadh", "naâma",
+  "tindouf", "adrar", "tamanrasset", "illizi", "el tarf", "mila", "aïn témouchent", "tissemsilt", "bordj bou arreridj",
+
+  // Recherches transactionnelles et comparatives — l'intention la plus
+  // proche d'une inscription, donc la plus rentable à capter.
+  "meilleure plateforme de formation en ligne algérie 2026", "meilleure formation en ligne pas cher algérie",
+  "mylta academy avis", "avis sur mylta academy", "mylta academy prix", "prix formation mylta academy",
+  "comment s'inscrire sur mylta academy", "mylta academy inscription", "mylta academy paiement",
+  "acheter une formation en ligne dz", "formation en ligne fiable algérie", "plateforme de formation sérieuse dz",
+  "où apprendre le marketing digital en algérie", "où apprendre le développement web en algérie",
+
+  // Longue traîne, formulée en questions (proche du langage tapé dans Google)
+  "comment gagner de l'argent en algérie en ligne", "comment apprendre le marketing digital rapidement",
+  "quelle formation choisir pour réussir en algérie", "comment devenir développeur web en algérie",
+  "comment créer un business en ligne en algérie", "comment monétiser son smartphone en algérie",
+  "quelle formation rapporte le plus en algérie", "comment apprendre un métier du digital en algérie"
 ]

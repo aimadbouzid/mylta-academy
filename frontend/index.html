@@ -49,8 +49,22 @@
       name="description"
       content="Mylta Academy — La plateforme e-learning 100% accessible sur smartphone en Algérie. Formations pratiques, outils IA et business depuis votre téléphone."
     />
+    <!-- Vérification de propriété — Google Search Console & Bing Webmaster.
+         Étape indispensable pour que le site soit exploré puis indexé par
+         Google : sans elle, impossible de soumettre le sitemap généré par
+         backend/routes/seo.js (SITE_URL/sitemap.xml).
+         Marche à suivre :
+           1. https://search.google.com/search-console → Ajouter une propriété
+              → méthode "Balise HTML" → copier le code fourni (content="...")
+           2. Le coller ci-dessous, décommenter la balise, redéployer
+           3. Une fois le site vérifié : menu Sitemaps → soumettre
+              "sitemap.xml" → Google explore alors les pages une à une
+         Même procédure sur https://www.bing.com/webmasters. -->
+    <!-- <meta name="google-site-verification" content="VOTRE_CODE_ICI" /> -->
+    <!-- <meta name="msvalidate.01" content="VOTRE_CODE_BING_ICI" /> -->
+
     <!-- Google Analytics (TODO: Remplacer G-XXXXXXXXXX par votre ID) -->
-    <!-- 
+    <!--
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
     <script>
       window.dataLayer = window.dataLayer || [];

@@ -145,7 +145,10 @@ const defaultSettings = {
   modules: {
     instructorEnabled: true,
     resourcesEnabled: true,
-    blogEnabled: true
+    blogEnabled: true,
+    // Redirige les visiteurs venus d'Instagram/TikTok/Facebook (navigateur
+    // intégré) vers Chrome/Safari — voir InAppBrowserGuard côté frontend.
+    inAppBrowserGuardEnabled: true
   }
 }
 

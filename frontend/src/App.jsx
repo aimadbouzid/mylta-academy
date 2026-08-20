@@ -56,6 +56,11 @@ const ModuleRoute = ({ moduleName, children }) => {
 export default function App() {
   const { socket } = useSocket()
   const { success } = useToast()
+  const { settings } = useSiteSettings()
+  // Actif par défaut, y compris pendant le chargement des réglages : on ne
+  // veut jamais laisser passer un visiteur Instagram/TikTok dans le
+  // navigateur intégré le temps que /config/site réponde.
+  const inAppGuardEnabled = settings?.modules?.inAppBrowserGuardEnabled !== false
 
   useEffect(() => {
     if (!socket) return
@@ -93,7 +98,7 @@ export default function App() {
 
   return (
     <ErrorBoundary>
-      <InAppBrowserGuard>
+      <InAppBrowserGuard enabled={inAppGuardEnabled}>
         <ClickTracker />
         <FacebookPixel />
         <div className="min-h-screen bg-academy-surface text-academy-textMain relative overflow-hidden">

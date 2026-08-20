@@ -383,7 +383,7 @@ function SettingsTab() {
   const { t } = useLanguage()
   const { success: toastSuccess, error: toastError } = useToast()
   const [videoUrl, setVideoUrl] = useState('')
-  const [modules, setModules] = useState({ instructorEnabled: true, resourcesEnabled: true, blogEnabled: true })
+  const [modules, setModules] = useState({ instructorEnabled: true, resourcesEnabled: true, blogEnabled: true, inAppBrowserGuardEnabled: true })
   const [loading, setLoading] = useState(false)
   const [uploading, setUploading] = useState(false)
 
@@ -552,7 +552,23 @@ function SettingsTab() {
                 <div className="w-11 h-6 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
               </label>
             </div>
-            
+
+            <div className="flex items-center justify-between p-4 bg-black/20 rounded-xl border border-white/5">
+              <div>
+                <p className="text-white font-medium">Redirection navigateur externe</p>
+                <p className="text-neutral-400 text-xs">Depuis Instagram, TikTok, Facebook… rouvrir automatiquement le site dans Chrome/Safari plutôt que le navigateur intégré de l'app.</p>
+              </div>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  className="sr-only peer"
+                  checked={modules.inAppBrowserGuardEnabled !== false}
+                  onChange={(e) => setModules({...modules, inAppBrowserGuardEnabled: e.target.checked})}
+                />
+                <div className="w-11 h-6 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
+              </label>
+            </div>
+
             <div className="flex justify-end pt-2">
               <button type="submit" disabled={loading} className="bg-blue-600 hover:bg-blue-500 text-white shadow-lg text-sm px-6 py-2.5 rounded-lg font-bold transition-colors">
                 {loading ? 'Enregistrement...' : 'Enregistrer les modifications'}

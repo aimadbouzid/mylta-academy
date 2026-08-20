@@ -88,14 +88,15 @@ function tryOpenExternalBrowser() {
   return false
 }
 
-export default function InAppBrowserGuard({ children }) {
+export default function InAppBrowserGuard({ children, enabled = true }) {
   const [inAppBrowser, setInAppBrowser] = useState(null)
   const [showFallback, setShowFallback] = useState(false)
   const [attempted, setAttempted] = useState(false)
 
   useEffect(() => {
+    if (!enabled) return
     const detected = detectInAppBrowser()
-    
+
     if (detected) {
       setInAppBrowser(detected)
       
@@ -110,7 +111,7 @@ export default function InAppBrowserGuard({ children }) {
 
       return () => clearTimeout(timer)
     }
-  }, [])
+  }, [enabled])
 
   // Not in an in-app browser — render normally
   if (!inAppBrowser) {
