@@ -4,14 +4,19 @@
   "description": "API Backend pour la plateforme Mylta Academy – formation premium Algérie",
   "type": "commonjs",
   "main": "server.js",
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "scripts": {
     "dev": "nodemon server.js",
     "start": "node server.js",
     "db:migrate": "npx prisma migrate dev --name init",
+    "db:migrate:deploy": "npx prisma migrate deploy",
     "db:generate": "npx prisma generate",
     "db:studio": "npx prisma studio",
     "db:seed": "node prisma/seed.js",
-    "db:reset": "npx prisma migrate reset --force && node prisma/seed.js"
+    "db:reset": "npx prisma migrate reset --force && node prisma/seed.js",
+    "db:create-admin": "node scripts/create-admin.js"
   },
   "dependencies": {
     "@prisma/client": "^5.15.0",
@@ -25,12 +30,13 @@
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "express-rate-limit": "^7.3.1",
+    "google-auth-library": "^10.9.0",
     "helmet": "^8.2.0",
     "hpp": "^0.2.3",
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
-    "multer": "^1.4.5-lts.1",
-    "node-nlp": "^5.0.0-alpha.5",
+    "multer": "^2.2.0",
+    "nodemailer": "^9.0.3",
     "socket.io": "^4.8.3",
     "uuid": "^14.0.1",
     "xss": "^1.0.15",
@@ -45,5 +51,8 @@
     "@prisma/engines@5.22.0": true,
     "prisma@5.22.0": true,
     "fsevents@2.3.3": true
+  },
+  "overrides": {
+    "brace-expansion": "^5.0.9"
   }
 }

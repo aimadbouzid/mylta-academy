@@ -1,0 +1,55 @@
+# ==============================================================================
+# SÉCURITÉ APACHE & PERFORMANCES (myAcademy)
+# ==============================================================================
+
+# 1. Masquer la version d'Apache et l'OS (Visibilité de la version du serveur)
+ServerSignature Off
+
+<IfModule mod_headers.c>
+    # Supprimer l'en-tête Server
+    Header unset Server
+    Header unset X-Powered-By
+    
+    # Sécurisation des cookies (Ajout systématique de Secure, HttpOnly et SameSite)
+    Header edit Set-Cookie ^(.*)$ "$1; HttpOnly; Secure; SameSite=Strict"
+    
+    # 2. Chiffrement SSL (Forcer le HSTS pour que le navigateur n'utilise que HTTPS)
+    Header set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+    
+    # Protection contre le Clickjacking
+    Header set X-Frame-Options "SAMEORIGIN"
+    
+    # Protection contre le MIME Sniffing
+    Header set X-Content-Type-Options "nosniff"
+    
+    # Filtre XSS
+    Header set X-XSS-Protection "1; mode=block"
+</IfModule>
+
+# 3. Forcer la redirection HTTP vers HTTPS (Chiffrement SSL)
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{HTTPS} off
+    RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+    
+    # Redirection des requêtes API et Frontend (SPA)
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} !^/api/
+    RewriteRule ^ index.html [QSA,L]
+</IfModule>
+
+# 4. Bloquer l'accès au Statut Apache (Statut Apache)
+<IfModule mod_status.c>
+    <Location /server-status>
+        Require all denied
+    </Location>
+</IfModule>
+
+# 5. Bloquer l'accès aux fichiers sensibles
+<FilesMatch "^\.">
+    Require all denied
+</FilesMatch>
+<FilesMatch "(?i)(^#.*#|\.(bak|config|dist|fla|inc|ini|log|psd|sh|sql|swp)|~)$">
+    Require all denied
+</FilesMatch>

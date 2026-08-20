@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import api from '../api/axios'
+import { useSiteSettings } from '../context/SiteSettingsContext'
 import { Timer, Sparkles, Flame, Gift, Megaphone, ArrowRight, X } from 'lucide-react'
 
 export default function TopBanner() {
@@ -18,26 +18,23 @@ export default function TopBanner() {
   const [isLoaded, setIsLoaded] = useState(true) // Start true if we have initial state
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0)
 
-  // Messages array combining config text and a 2nd default message
+  // Messages array combining config text and a 2nd text message
   const messages = config ? [
     config.text,
-    "🔥 Places limitées ! Sécurisez votre place et commencez à apprendre dès aujourd'hui."
+    config.text2 || "🔥 Places limitées ! Sécurisez votre place et commencez à apprendre dès aujourd'hui."
   ] : []
 
-  // Fetch settings in background to update cache
+  // Les réglages viennent du contexte partagé : ce composant refaisait un appel
+  // /config/site que SiteSettingsProvider avait déjà effectué — même donnée,
+  // requête en double sur chaque page.
+  const { settings } = useSiteSettings()
+
   useEffect(() => {
-    let mounted = true
-    api.get('/config/site')
-      .then(res => {
-        if (mounted && res.data?.settings?.topBanner) {
-          const newConfig = res.data.settings.topBanner;
-          setConfig(newConfig)
-          localStorage.setItem('mylta_topBanner_cache', JSON.stringify(newConfig))
-        }
-      })
-      .catch(() => {})
-    return () => { mounted = false }
-  }, [])
+    const banner = settings?.topBanner
+    if (!banner) return
+    setConfig(banner)
+    localStorage.setItem('mylta_topBanner_cache', JSON.stringify(banner))
+  }, [settings])
 
   if (!isLoaded || !config || !config.isActive) return null
 
@@ -53,7 +50,7 @@ export default function TopBanner() {
   }
 
   return (
-    <div className="w-full px-2 sm:px-4 flex justify-center pt-2 sm:pt-3 pb-1 bg-transparent z-50 pointer-events-none overflow-hidden">
+    <div className="w-full px-2 sm:px-4 flex justify-center pt-1.5 sm:pt-2 pb-0 bg-transparent z-50 pointer-events-none overflow-hidden">
       <div className="w-full max-w-4xl h-[32px] sm:h-[36px] bg-black/90 backdrop-blur-[32px] saturate-[1.2] text-white rounded-full flex items-center shadow-[0_8px_20px_-4px_rgba(0,0,0,0.3)] border border-white/10 relative pointer-events-auto hover:bg-black transition-colors duration-500 group overflow-hidden">
         
         {/* Subtle inner highlight */}
@@ -99,7 +96,7 @@ export default function TopBanner() {
           {config.linkUrl && config.linkText && (
             <Link 
               to={config.linkUrl}
-              className="pointer-events-auto inline-flex items-center gap-1.5 bg-white text-black px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[9px] font-black uppercase tracking-widest hover:scale-105 hover:bg-gray-100 transition-all duration-300 whitespace-nowrap shadow-sm"
+              className="pointer-events-auto inline-flex items-center gap-1.5 bg-white dark:bg-academy-surfaceDark text-black px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[9px] font-black uppercase tracking-widest hover:scale-105 hover:bg-gray-100 transition-all duration-300 whitespace-nowrap shadow-sm"
             >
               <span className="hidden sm:inline">{config.linkText}</span>
               <span className="inline sm:hidden">Go</span>

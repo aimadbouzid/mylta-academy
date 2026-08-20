@@ -2,11 +2,12 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import {
   Play, CheckCircle, Clock, Star, ArrowLeft, Shield, Video,
-  Award, BookOpen, Sparkles, Check, HelpCircle, GraduationCap
+  Award, BookOpen, Sparkles, Check, HelpCircle, GraduationCap, ShieldCheck
 } from 'lucide-react'
 import Navbar from '../components/Navbar'
 import SEOHead from '../components/SEOHead'
 import PaymentModal from '../components/PaymentModal'
+import { useSiteSettings } from '../context/SiteSettingsContext'
 import api from '../api/axios'
 import { useLanguage } from '../context/LanguageContext'
 import { useAuth } from '../context/AuthContext'
@@ -58,6 +59,8 @@ export default function CourseDetails() {
   const { user, checkAuth } = useAuth()
   const [course, setCourse] = useState(null)
   const [loading, setLoading] = useState(true)
+  // Repli si la miniature ne se charge pas (fichier absent, chemin obsolète)
+  const [thumbFailed, setThumbFailed] = useState(false)
   const [showPayment, setShowPayment] = useState(false)
   const [unlocking, setUnlocking] = useState(false)
 
@@ -82,13 +85,11 @@ export default function CourseDetails() {
     "Accès à l'attestation de réussite nominative Mylta Academy."
   ])
 
+  // Réglages issus du contexte partagé plutôt qu'un second appel /config/site
+  const { settings: sharedSettings } = useSiteSettings()
   useEffect(() => {
-    api.get('/config/site')
-      .then(res => {
-        if (res.data?.settings?.learningPoints) setLearningPoints(res.data.settings.learningPoints)
-      })
-      .catch(() => {})
-  }, [])
+    if (sharedSettings?.learningPoints) setLearningPoints(sharedSettings.learningPoints)
+  }, [sharedSettings])
 
   useEffect(() => {
     const fetchCourse = async () => {
@@ -138,6 +139,24 @@ export default function CourseDetails() {
         title={`${course.title} — Mylta Academy`}
         description={course.description}
         canonicalPath={`/courses/${id}`}
+        ogType="product"
+        // Sans miniature, on retombe sur l'image sociale par défaut plutôt que
+        // de fabriquer une URL se terminant par "undefined".
+        ogImage={
+          course.thumbnail
+            ? (course.thumbnail.startsWith('http')
+                ? course.thumbnail
+                : `${import.meta.env.VITE_API_URL || 'https://api.myltaacademy.com'}${course.thumbnail}`)
+            : undefined
+        }
+        // Données réelles → JSON-LD `Course` avec prix et note (rich snippets)
+        course={{
+          title: course.title,
+          description: course.description,
+          price: isDiscountActive ? course.discountPrice : course.price,
+          rating: course.rating,
+          reviewsCount: course.reviews?.length || 0,
+        }}
       />
 
       <div className="min-h-screen bg-academy-surface text-academy-textMain flex flex-col">
@@ -158,7 +177,7 @@ export default function CourseDetails() {
                      </span>
                      <div className="flex flex-col items-start -mt-0.5">
                        <span className="text-[10px] text-academy-textMain/40 line-through font-bold leading-none">{course.price.toLocaleString('fr-DZ')} DA</span>
-                       <span className="text-[9px] font-black text-red-500 uppercase mt-0.5 bg-red-50 px-1 rounded-sm">{t('course_details.promo')}</span>
+                       <span className="text-[9px] font-black text-red-500 uppercase mt-0.5 bg-red-50 dark:bg-red-500/10 px-1 rounded-sm">{t('course_details.promo')}</span>
                      </div>
                    </div>
                  ) : (
@@ -188,8 +207,10 @@ export default function CourseDetails() {
 
             {/* Mobile Header Image */}
             <div className="lg:hidden w-full h-56 sm:h-72 rounded-2xl overflow-hidden mb-6 relative border border-academy-border shadow-soft">
-              {course.thumbnail ? (
-                <img src={course.thumbnail} alt={course.title} className="w-full h-full object-cover" />
+              {course.thumbnail && !thumbFailed ? (
+                <img src={course.thumbnail} alt={course.title}
+                     onError={() => setThumbFailed(true)}
+                     className="w-full h-full object-cover" />
               ) : (
                 <div className="w-full h-full bg-academy-surfaceDark flex items-center justify-center">
                   <GraduationCap size={56} className="text-academy-primary/20" />
@@ -205,7 +226,7 @@ export default function CourseDetails() {
                     <span className="px-3 py-1 bg-academy-primary/10 border border-academy-primary/20 text-academy-primary text-xs font-bold rounded-full uppercase tracking-wider">
                       {course.category}
                     </span>
-                    <span className="px-3 py-1 bg-blue-50 border border-blue-200 text-blue-600 text-xs font-bold rounded-full uppercase tracking-wider">
+                    <span className="px-3 py-1 bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/25 text-blue-600 dark:text-blue-400 text-xs font-bold rounded-full uppercase tracking-wider">
                       {t('course_details.level')} {course.level}
                     </span>
                   </div>
@@ -227,6 +248,11 @@ export default function CourseDetails() {
                   <div className="flex items-center gap-2 text-academy-textMain/70 text-sm font-bold">
                     <Clock size={18} className="text-academy-primary" />
                     <span>{course.duration || t('course_details.at_your_pace')}</span>
+                  </div>
+                  <div className="w-px h-8 bg-academy-border hidden sm:block" />
+                  <div className="flex items-center gap-2 text-academy-textMain/70 text-sm font-bold">
+                    <Star size={18} className="text-yellow-500 fill-yellow-500" />
+                    <span>{course.ratingAvg ? course.ratingAvg.toFixed(1) : '5.0'} / 5</span>
                   </div>
                 </div>
 
@@ -298,12 +324,23 @@ export default function CourseDetails() {
                   <div className="p-6 space-y-6">
                     {course.hasAccess ? (
                       <div className="space-y-4">
-                        <div className="bg-green-50 border border-green-200 p-4 rounded-2xl text-center space-y-1">
-                          <p className="text-green-600 font-bold text-sm flex items-center justify-center gap-1.5">
-                            <CheckCircle size={16} /> {t('course_details.access_granted')}
-                          </p>
-                          <p className="text-green-600/70 font-medium text-xs">{t('course_details.already_owned')}</p>
-                        </div>
+                        {/* Un admin voit tout : le dire clairement plutôt que de
+                            prétendre qu'il a acheté la formation. */}
+                        {course.accessReason === 'ADMIN' ? (
+                          <div className="bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/25 p-4 rounded-2xl text-center space-y-1">
+                            <p className="text-blue-700 dark:text-blue-300 font-bold text-sm flex items-center justify-center gap-1.5">
+                              <ShieldCheck size={16} /> {t('course_details.admin_access')}
+                            </p>
+                            <p className="text-blue-700/70 font-medium text-xs">{t('course_details.admin_access_hint')}</p>
+                          </div>
+                        ) : (
+                          <div className="bg-green-50 dark:bg-green-500/10 border border-green-200 dark:border-green-500/25 p-4 rounded-2xl text-center space-y-1">
+                            <p className="text-green-600 dark:text-green-400 font-bold text-sm flex items-center justify-center gap-1.5">
+                              <CheckCircle size={16} /> {t('course_details.access_granted')}
+                            </p>
+                            <p className="text-green-600/70 font-medium text-xs">{t('course_details.already_owned')}</p>
+                          </div>
+                        )}
                         <button
                           onClick={() => navigate(`/watch/${course.id}`)}
                           className="w-full btn-primary py-4 text-base justify-center font-bold flex items-center gap-2"
@@ -313,7 +350,7 @@ export default function CourseDetails() {
                       </div>
                     ) : (
                       <>
-                        <div className="mb-6 bg-white border border-academy-border/60 rounded-3xl p-6 sm:p-8 text-center shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative overflow-hidden group">
+                        <div className="mb-6 bg-white dark:bg-academy-surfaceDark border border-academy-border/60 rounded-3xl p-6 sm:p-8 text-center shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative overflow-hidden group">
                            {/* Effet lumineux d'arrière-plan */}
                            <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-bl from-red-500/10 to-transparent rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none transition-transform duration-700 group-hover:scale-110"></div>
                            <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-red-500/5 to-transparent rounded-full blur-3xl -ml-16 -mb-16 pointer-events-none transition-transform duration-700 group-hover:scale-110"></div>

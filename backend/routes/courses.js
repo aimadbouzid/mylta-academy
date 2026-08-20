@@ -10,8 +10,22 @@ const { authenticate } = require('../middleware/auth')
 const { t } = require('../i18n')
 const { validateId } = require('../middleware/security')
 const { getIO } = require('../socket')
+const { logSecurityEvent } = require('../utils/securityLogger')
+const rateLimit = require('express-rate-limit')
 
 const router = express.Router()
+
+const progressLimiter = rateLimit({
+  windowMs: 5 * 60 * 1000,
+  max: 30,
+  message: { error: 'Trop de requêtes de progression', code: 'PROGRESS_RATE_LIMITED' }
+})
+
+const refundLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 5,
+  message: { error: 'Trop de requêtes de choix de remboursement', code: 'REFUND_RATE_LIMITED' }
+})
 
 // ─── GET /api/courses — Liste paginée des formations (public) ─
 router.get('/', async (req, res, next) => {
@@ -34,6 +48,8 @@ router.get('/', async (req, res, next) => {
           id: true, title: true, description: true, price: true,
           discountPrice: true, discountEndsAt: true,
           thumbnail: true, category: true, duration: true, level: true, createdAt: true,
+          instructorId: true,
+          instructor: { select: { id: true, name: true, instructorBio: true } },
           _count: { select: { lessons: true, receipts: true } },
           reviews: { select: { rating: true } },
         },
@@ -79,11 +95,16 @@ router.get('/', async (req, res, next) => {
         rating: ratingAvg || 0,
         reviewsCount: c.reviews.length,
         hasAccess: purchasedCourseIds.has(c.id),
+        instructorId: c.instructorId,
+        instructor: c.instructor || null,
       }
     })
 
-    // Cache headers pour les routes publiques (60 secondes)
-    res.setHeader('Cache-Control', 'public, max-age=60, stale-while-revalidate=30')
+    // JAMAIS de cache partagé : la réponse contient hasAccess, propre à chaque
+    // compte. Avec "public", un cache (navigateur, proxy, CDN) resservait la
+    // réponse d'un acheteur à un visiteur anonyme.
+    res.setHeader('Cache-Control', 'private, no-store')
+    res.setHeader('Vary', 'Cookie, Authorization')
 
     res.json({
       courses: enriched,
@@ -109,11 +130,13 @@ router.get('/:id', async (req, res, next) => {
         id: true, title: true, description: true, price: true,
         discountPrice: true, discountEndsAt: true, showSyllabus: true,
         thumbnail: true, category: true, duration: true, level: true, createdAt: true,
+        instructorId: true,
+        instructor: { select: { id: true, name: true, instructorBio: true } },
         _count: { select: { lessons: true, receipts: true } },
         reviews: { select: { rating: true, comment: true, user: { select: { name: true } } } },
         lessons: {
           select: {
-            id: true, title: true, description: true, order: true, duration: true,
+            id: true, title: true, description: true, order: true, duration: true, externalVideoUrl: true,
           },
           orderBy: { order: 'asc' },
         },
@@ -125,11 +148,18 @@ router.get('/:id', async (req, res, next) => {
     // Vérifier si l'utilisateur authentifié a accès
     let hasAccess = false
     let userProgress = []
+    // Pourquoi l'accès est accordé : "PURCHASE" (achat) ou "ADMIN" (privilège
+    // d'administration). L'interface doit distinguer les deux, sinon un admin
+    // lit « Vous possédez déjà cette formation » pour un cours que personne
+    // n'a acheté — ce qui donne l'impression que tout est déverrouillé.
+    let accessReason = null
+
     const token = req.cookies?.token || (req.headers.authorization?.startsWith('Bearer ') ? req.headers.authorization.split(' ')[1] : null)
     if (token) {
       try {
         const { userId } = jwt.verify(token, process.env.JWT_SECRET)
-        const [receipt, progress] = await Promise.all([
+        const [user, receipt, progress] = await Promise.all([
+          prisma.user.findUnique({ where: { id: userId }, select: { role: true } }),
           prisma.receipt.findFirst({
             where: { userId, courseId, status: 'APPROVED' },
           }),
@@ -137,8 +167,10 @@ router.get('/:id', async (req, res, next) => {
             where: { userId, lesson: { courseId } },
           }),
         ])
-        hasAccess = !!receipt
-        if (hasAccess) {
+        if (receipt || user?.role === 'ADMIN') {
+          hasAccess = true
+          // L'achat prime : un admin qui a réellement acheté reste un acheteur.
+          accessReason = receipt ? 'PURCHASE' : 'ADMIN'
           userProgress = progress.map(p => p.lessonId)
         }
       } catch (_) { /* Token invalide */ }
@@ -147,19 +179,36 @@ router.get('/:id', async (req, res, next) => {
     // Masquer le syllabus si restreint
     if (!course.showSyllabus && !hasAccess) {
       course.lessons = []
+    } else {
+      // Nettoyer l'URL vidéo externe pour éviter de l'exposer (sauf si c'est YouTube/Vimeo/Loom et qu'on a accès)
+      course.lessons = course.lessons.map(lesson => {
+        let keepUrl = false;
+        if (hasAccess && lesson.externalVideoUrl) {
+          const url = lesson.externalVideoUrl.toLowerCase();
+          if (url.includes('youtube.com') || url.includes('youtu.be') || url.includes('vimeo.com') || url.includes('loom.com')) {
+            keepUrl = true;
+          }
+        }
+        const { externalVideoUrl, ...rest } = lesson;
+        return keepUrl ? { ...rest, externalVideoUrl } : rest;
+      });
     }
 
     const ratingAvg = course.reviews.length > 0
       ? course.reviews.reduce((acc, r) => acc + r.rating, 0) / course.reviews.length
       : 0
 
-    // Cache 60 secondes
-    res.setHeader('Cache-Control', 'public, max-age=60, stale-while-revalidate=30')
+    // JAMAIS de cache partagé : la réponse contient hasAccess, userProgress et
+    // surtout les URLs vidéo des leçons pour les acheteurs. Mise en cache
+    // "public", elle fuitait ces URLs vers les visiteurs non connectés.
+    res.setHeader('Cache-Control', 'private, no-store')
+    res.setHeader('Vary', 'Cookie, Authorization')
 
     res.json({
       ...course,
       rating: ratingAvg || 0,
       hasAccess,
+      accessReason,
       userProgress,
       lessonsCount: course._count.lessons,
       studentsCount: course._count.receipts,
@@ -168,7 +217,7 @@ router.get('/:id', async (req, res, next) => {
 })
 
 // ─── POST /api/courses/:id/progress ──────────────────────────
-router.post('/:id/progress', authenticate, async (req, res, next) => {
+router.post('/:id/progress', authenticate, progressLimiter, async (req, res, next) => {
   try {
     const courseId = validateId(req.params.id)
     if (!courseId) return res.status(400).json({ error: t('courses.id_invalid', req.lang) })
@@ -182,17 +231,36 @@ router.post('/:id/progress', authenticate, async (req, res, next) => {
     // Vérifier que la leçon appartient au cours
     const lesson = await prisma.lesson.findUnique({
       where: { id: parsedLessonId },
-      select: { courseId: true },
+      select: { courseId: true, order: true },
     })
     if (!lesson || lesson.courseId !== courseId) {
       return res.status(400).json({ error: t('courses.lesson_not_in_course', req.lang) })
     }
 
-    // Vérifier l'accès
+    // Vérifier l'accès et suspension
     const receipt = await prisma.receipt.findFirst({
       where: { userId, courseId, status: 'APPROVED' },
     })
     if (!receipt) return res.status(403).json({ error: t('courses.access_denied', req.lang) })
+
+    // Verrou séquentiel : Impossible de terminer une vidéo si la précédente n'est pas terminée
+    if (isCompleted) {
+      const previousLesson = await prisma.lesson.findFirst({
+        where: { courseId, order: { lt: lesson.order } },
+        orderBy: { order: 'desc' },
+      })
+      if (previousLesson) {
+        const prevProgress = await prisma.lessonProgress.findUnique({
+          where: { userId_lessonId: { userId, lessonId: previousLesson.id } }
+        })
+        if (!prevProgress || !prevProgress.isCompleted) {
+          logSecurityEvent({ userId, action: 'PROGRESS_BYPASS_ATTEMPT', details: `Tentative de valider leçon ${parsedLessonId} sans valider la précédente (${previousLesson.id})`, ip: req.ip })
+          // t() renvoie la clé elle-même si la traduction manque : le repli
+          // `|| "…"` ne se déclenchait donc jamais et affichait la clé brute.
+          return res.status(403).json({ error: t('courses.complete_previous_first', req.lang) })
+        }
+      }
+    }
 
     if (isCompleted) {
       await prisma.lessonProgress.upsert({
@@ -221,6 +289,8 @@ router.post('/:id/progress', authenticate, async (req, res, next) => {
   } catch (err) { next(err) }
 })
 
+
+
 // ─── POST /api/courses/:id/rate ──────────────────────────────
 router.post('/:id/rate', authenticate, async (req, res, next) => {
   try {
@@ -246,6 +316,49 @@ router.post('/:id/rate', authenticate, async (req, res, next) => {
     })
 
     res.json({ message: t('courses.review_saved', req.lang), review })
+  } catch (err) { next(err) }
+})
+
+// ─── POST /api/courses/:id/reviews ──────────────────────────────
+router.post('/:id/reviews', authenticate, async (req, res, next) => {
+  try {
+    const courseId = validateId(req.params.id)
+    if (!courseId) return res.status(400).json({ error: 'ID de formation invalide.' })
+
+    const { rating, comment } = req.body
+    if (!rating || rating < 1 || rating > 5) {
+      return res.status(400).json({ error: 'La note doit être comprise entre 1 et 5.' })
+    }
+
+    const userId = req.user.id
+
+    // Vérifier si l'utilisateur a acheté la formation (et l'a potentiellement terminée)
+    const receipt = await prisma.receipt.findFirst({
+      where: { userId, courseId, status: 'APPROVED' },
+    })
+    if (!receipt) {
+      return res.status(403).json({ error: 'Vous devez acheter cette formation pour la noter.' })
+    }
+
+    // Créer ou mettre à jour l'avis (Upsert)
+    const existingReview = await prisma.courseReview.findFirst({
+      where: { userId, courseId }
+    })
+
+    let review;
+    if (existingReview) {
+      review = await prisma.courseReview.update({
+        where: { id: existingReview.id },
+        data: { rating, comment }
+      })
+    } else {
+      review = await prisma.courseReview.create({
+        data: { userId, courseId, rating, comment }
+      })
+    }
+
+
+    res.json({ message: 'Avis enregistré avec succès !', review })
   } catch (err) { next(err) }
 })
 

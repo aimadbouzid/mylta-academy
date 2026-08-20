@@ -5,13 +5,16 @@
 
 const crypto = require('crypto')
 
-const CSRF_COOKIE_NAME = '_csrf'
+const CSRF_COOKIE_NAME = process.env.NODE_ENV === 'production' ? '__Host-csrf' : '_csrf'
 const CSRF_HEADER_NAME = 'x-csrf-token'
 const CSRF_TOKEN_LENGTH = 32
 
 // Paths exempted from CSRF (webhooks use HMAC, health is GET-only)
 const EXEMPT_PATHS = [
   '/api/payments/edahabia/webhook',
+  '/api/payments/chargily/webhook',
+  '/api/payments/stripe/webhook',
+  '/api/payments/paypal/webhook',
   '/api/health',
 ]
 

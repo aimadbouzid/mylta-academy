@@ -44,11 +44,25 @@ const authenticate = async (req, res, next) => {
       })
     }
 
-    if (decoded.sessionVersion && user.sessionVersion !== decoded.sessionVersion) {
+    // sessionVersion est EXIGÉ : un jeton dépourvu de ce champ échappait sinon
+    // à la révocation de session (déconnexion globale, changement de mot de
+    // passe). Les jetons émis avant son introduction sont donc rejetés.
+    if (user.sessionVersion !== decoded.sessionVersion) {
       return res.status(401).json({
         error: t('auth.session_invalidated', req.lang),
         code: 'SESSION_INVALIDATED',
       })
+    }
+
+    if (decoded.sessionId) {
+      const activeSession = await prisma.userSession.findUnique({ where: { id: decoded.sessionId } })
+      if (!activeSession) {
+        return res.status(401).json({
+          error: 'Session expirée ou révoquée.',
+          code: 'SESSION_REVOKED',
+        })
+      }
+      req.sessionId = decoded.sessionId
     }
 
     // Utiliser la locale de l'utilisateur si pas de préférence dans la requête
@@ -147,8 +161,9 @@ async function recordFailedLogin(email) {
   const data = { failedLoginAttempts: newCount }
 
   if (newCount >= MAX_FAILED_ATTEMPTS) {
-    data.lockedUntil = new Date(Date.now() + LOCKOUT_DURATION_MS)
-    console.warn(`🔒 [SECURITY] Compte ${email} verrouillé après ${newCount} tentatives échouées`)
+    // Faille corrigée : On ne verrouille plus le compte via l'email pour éviter le DoS (Account Lockout)
+    // On se repose sur le Rate Limiting (par IP) et le délai progressif
+    console.warn(`🔒 [SECURITY] Compte ${email} : ${newCount} tentatives échouées. Verrouillage ignoré pour contrer le DoS.`)
   }
 
   await prisma.user.update({ where: { id: user.id }, data })

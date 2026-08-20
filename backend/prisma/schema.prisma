@@ -12,7 +12,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -23,7 +23,10 @@ datasource db {
 model User {
   id                  Int       @id @default(autoincrement())
   email               String    @unique
-  password            String
+  password            String?
+  googleId            String?   @unique
+  facebookId          String?   @unique
+  authProvider        String    @default("LOCAL") // "LOCAL" | "GOOGLE" | "FACEBOOK"
   name                String?
   role                String    @default("STUDENT")
   locale              String    @default("fr")
@@ -39,41 +42,71 @@ model User {
   updatedAt           DateTime  @updatedAt
 
   // Referral System Fields
-  referralCode        String?   @unique
-  referredById        Int?
-  referredBy          User?     @relation("Referrals", fields: [referredById], references: [id])
-  referrals           User[]    @relation("Referrals")
-  referralCount       Int       @default(0) // Count of paid referrals since last free course
-  freeCoursesEarned   Int       @default(0) // Number of free courses earned
+  referralCode      String? @unique
+  referredById      Int?
+  referredBy        User?   @relation("Referrals", fields: [referredById], references: [id])
+  referrals         User[]  @relation("Referrals")
+  referralCount     Int     @default(0) // Count of paid referrals since last free course
+  freeCoursesEarned Int     @default(0) // Number of free courses earned
 
-  receipts       Receipt[]
-  notifications  Notification[]
-  reviews        CourseReview[]
-  lessonProgress LessonProgress[]
+  // ── Instructor / Marketplace Fields ──
+  instructorBio        String?
+  instructorApproved   Boolean   @default(false)
+  instructorAppliedAt  DateTime?
+  commissionRate       Float?    // Override du taux global (null = utiliser le taux par défaut)
+  instructorBalance    Float     @default(0) // Solde accumulé (revenus non retirés)
+  instructorPlan       String?   // Ex: Starter, Pro, Elite
+  instructorPlanExpiresAt DateTime?
+
+  // ── Vérification d'identité (obligatoire avant tout retrait) ──
+  identityStatus       String    @default("NONE") // NONE | PENDING | VERIFIED | REJECTED
+  identityDocPath      String?   // Chemin du document d'identité fourni
+  identityFullName     String?   // Nom légal figurant sur le document
+  identitySubmittedAt  DateTime?
+  identityVerifiedAt   DateTime?
+  identityVerifiedBy   String?   // Email de l'admin ayant validé (audit)
+  identityNotes        String?   // Motif de rejet / notes admin
+
+  receipts               Receipt[]
+  notifications          Notification[]
+  reviews                CourseReview[]
+  lessonProgress         LessonProgress[]
+  coursesCreated         Course[]                @relation("InstructorCourses")
+  instructorApplications InstructorApplication[]
+  payouts                InstructorPayout[]
+  userSessions           UserSession[]
+  blogPosts              BlogPost[]
+  couponsCreated         Coupon[]                @relation("CouponsCreated")
 }
 
 // ─────────────────────────────────────────────
 // FORMATION
 // ─────────────────────────────────────────────
 model Course {
-  id            Int       @id @default(autoincrement())
-  title         String
-  description   String
-  price         Float
-  discountPrice Float?
+  id             Int       @id @default(autoincrement())
+  title          String
+  description    String
+  price          Float
+  discountPrice  Float?
   discountEndsAt DateTime?
-  showSyllabus  Boolean   @default(true)
-  thumbnail     String?
-  category      String    @default("Général")
-  duration      String?
-  level         String    @default("Débutant")
-  isPublished   Boolean   @default(false)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  showSyllabus   Boolean   @default(true)
+  thumbnail      String?
+  category       String    @default("Général")
+  duration       String?
+  level          String    @default("Débutant")
+  isPublished    Boolean   @default(false)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  // ── Marketplace Fields ──
+  instructorId    Int?
+  approvedByAdmin Boolean  @default(true) // Admin courses are auto-approved
+  instructor      User?    @relation("InstructorCourses", fields: [instructorId], references: [id])
 
   lessons  Lesson[]
   receipts Receipt[]
   reviews  CourseReview[]
+  coupons  Coupon[]
 }
 
 // ─────────────────────────────────────────────
@@ -92,13 +125,14 @@ model Lesson {
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
-  lessonProgress   LessonProgress[]
+  lessonProgress LessonProgress[]
+  resources      CourseResource[]
 }
 
 // ─────────────────────────────────────────────
 // REÇU DE PAIEMENT
 // status: "PENDING" | "APPROVED" | "REJECTED"
-// paymentType: "CCP" | "BARIDIMOB" | "EDAHABIA" | "CIB"
+// paymentType: "CCP" | "BARIDIMOB" | "EDAHABIA" | "CIB" | "CHARGILY" | "STRIPE" | "PAYPAL" | "REFERRAL_REWARD"
 // ─────────────────────────────────────────────
 model Receipt {
   id             Int      @id @default(autoincrement())
@@ -109,10 +143,25 @@ model Receipt {
   paymentType    String   @default("CCP")
   receiptImage   String?
   transactionId  String?
+  chargilyCheckoutId String? @unique
+  stripeCheckoutId   String? @unique
+  paypalOrderId      String? @unique
   idempotencyKey String?  @unique
   notes          String?
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
+
+  // ── Marketplace Commission Tracking ──
+  instructorEarnings  Float?  // Montant que le formateur gagne
+  platformCommission  Float?  // Montant que la plateforme gagne
+
+  // ── Refund System Fields ──
+  approvedAt          DateTime?
+  refundStatus        String    @default("NONE") // NONE, REQUESTED, REJECTED_BY_USER
+  refundAccount       String?   // Ex: Numéro BaridiMob
+
+  couponId            Int?
+  coupon              Coupon?   @relation(fields: [couponId], references: [id])
 
   user   User   @relation(fields: [userId], references: [id])
   course Course @relation(fields: [courseId], references: [id])
@@ -131,7 +180,7 @@ model Notification {
   isRead    Boolean  @default(false)
   createdAt DateTime @default(now())
 
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 // ─────────────────────────────────────────────
@@ -146,8 +195,8 @@ model CourseReview {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
 
   @@unique([userId, courseId])
 }
@@ -163,8 +212,165 @@ model LessonProgress {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  lesson    Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
 
   @@unique([userId, lessonId])
+}
+
+// ─────────────────────────────────────────────
+// CANDIDATURE FORMATEUR (Marketplace)
+// status: "PENDING" | "APPROVED" | "REJECTED"
+// ─────────────────────────────────────────────
+model InstructorApplication {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  status      String   @default("PENDING") // PENDING | APPROVED | REJECTED
+  message     String?  // Message/motivation du formateur
+  specialty   String?  // Spécialité du formateur
+  adminNotes  String?  // Notes de l'admin
+  receiptId   Int?     // Lien vers le paiement de la place (optionnel)
+  receiptImage String? // Chemin de l'image du reçu de paiement
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ─────────────────────────────────────────────
+// RETRAIT FORMATEUR (Marketplace)
+// status: "PENDING" | "COMPLETED" | "REJECTED"
+// ─────────────────────────────────────────────
+model InstructorPayout {
+  id              Int      @id @default(autoincrement())
+  reference       String   @unique // Réf. de demande communicable (ex: RET-2026-000123)
+  instructorId    Int
+  amount          Float    // Montant du retrait
+  method          String   @default("CCP") // CCP | BARIDIMOB | EDAHABIA
+  accountInfo     String?  // Info compte (numéro CCP, etc.)
+  status          String   @default("PENDING") // PENDING | COMPLETED | REJECTED
+  notes           String?
+
+  // ── Traçabilité / audit du traitement ──
+  identityFullName String? // Nom légal vérifié au moment de la demande (figé)
+  processedAt      DateTime?
+  processedBy      String? // Email de l'admin ayant traité la demande
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  instructor User @relation(fields: [instructorId], references: [id], onDelete: Cascade)
+
+  @@index([instructorId, status])
+}
+
+// ─────────────────────────────────────────────
+// ABONNÉS NEWSLETTER
+// ─────────────────────────────────────────────
+model NewsletterSubscriber {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  source    String   @default("resources_page")
+  createdAt DateTime @default(now())
+}
+
+// ─────────────────────────────────────────────
+// LOGS DE CLIC ET VISITES (Analytics & Présence)
+// ─────────────────────────────────────────────
+model ClickLog {
+  id          Int      @id @default(autoincrement())
+  userId      Int?
+  userName    String?
+  userEmail   String?
+  isGuest     Boolean  @default(true)
+  pageUrl     String
+  elementText String?
+  elementTag  String?
+  elementId   String?
+  ip          String?
+  createdAt   DateTime @default(now())
+}
+
+// ─────────────────────────────────────────────
+// SESSIONS UTILISATEUR (Limitation d'appareils)
+// ─────────────────────────────────────────────
+model UserSession {
+  id        String   @id @default(uuid())
+  userId    Int
+  ip        String?
+  userAgent String?
+  createdAt DateTime @default(now())
+  lastSeen  DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ─────────────────────────────────────────────
+// LOGS DE SÉCURITÉ (Audit & Tentatives de fraude)
+// ─────────────────────────────────────────────
+model SecurityLog {
+  id        Int      @id @default(autoincrement())
+  userId    Int?
+  action    String
+  details   String?
+  ip        String?
+  createdAt DateTime @default(now())
+}
+
+// ─────────────────────────────────────────────
+// COUPONS DE REDUCTION
+// ─────────────────────────────────────────────
+model Coupon {
+  id              Int       @id @default(autoincrement())
+  code            String    @unique
+  discountPercent Int
+  maxUses         Int       @default(100)
+  currentUses     Int       @default(0)
+  expiresAt       DateTime?
+  isActive        Boolean   @default(true)
+  createdAt       DateTime  @default(now())
+
+  // ── Portée du coupon ──
+  // courseId null = coupon global (admin). Sinon, valable uniquement sur cette formation.
+  courseId        Int?
+  course          Course?   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  // Formateur propriétaire du coupon (null = créé par l'admin)
+  createdById     Int?
+  createdBy       User?     @relation("CouponsCreated", fields: [createdById], references: [id])
+
+  receipts        Receipt[]
+
+  @@index([courseId])
+  @@index([createdById])
+}
+
+
+// ─────────────────────────────────────────────
+// RESSOURCES TELECHARGEABLES (COURS)
+// ─────────────────────────────────────────────
+model CourseResource {
+  id        Int      @id @default(autoincrement())
+  lessonId  Int
+  title     String
+  url       String
+  createdAt DateTime @default(now())
+
+  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+}
+
+// ─────────────────────────────────────────────
+// BLOG & SEO
+// ─────────────────────────────────────────────
+model BlogPost {
+  id          Int      @id @default(autoincrement())
+  slug        String   @unique
+  title       String
+  summary     String?
+  content     String
+  thumbnail   String?
+  isPublished Boolean  @default(false)
+  authorId    Int
+  author      User     @relation(fields: [authorId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

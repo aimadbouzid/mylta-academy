@@ -291,7 +291,7 @@ export const promptsCategories = [
     prompts: [
       {
         title: "صورة شخصية واقعية جداً (سينمائية)",
-        prompt: "Cinematic portrait photography of a [وصف الهدف، مثلاً: cyberpunk hacker], neon lighting, 85mm lens, depth of field, dramatic shadows, highly detailed, photorealistic, 8k resolution, shot on Arri Alexa --ar 16:9 --style raw --v 6.0"
+        prompt: "Cinematic portrait photography of a [وصف الهدف، مثلاً: cyberpunk hacker], neon lighting, 85mm lens, depth of field, dramatic shadows, highly detailed, photorealistic, 8k resolution, shot on Arri Alexa --ar 16: 9 --style raw --v 6.0"
       },
       {
         title: "إنشاء شعار مبسط (Minimalist)",
@@ -299,19 +299,19 @@ export const promptsCategories = [
       },
       {
         title: "تصميم واجهة الويب (UI/UX)",
-        prompt: "Beautiful UI UX design of a modern dashboard web application for [الموضوع، مثلاً: crypto trading], dark mode, glassmorphism, clean layout, dashboard layout, vibrant neon accents, highly detailed, dribbble top shot --ar 16:9"
+        prompt: "Beautiful UI UX design of a modern dashboard web application for [الموضوع، مثلاً: crypto trading], dark mode, glassmorphism, clean layout, dashboard layout, vibrant neon accents, highly detailed, dribbble top shot --ar 16: 9"
       },
       {
         title: "العمارة الداخلية",
-        prompt: "Interior design photography of a luxury modern living room, wabi-sabi style, large windows overlooking a forest, warm sunlight, beige and wood tones, high end furniture, architectural digest, photorealistic --ar 16:9 --v 6.0"
+        prompt: "Interior design photography of a luxury modern living room, wabi-sabi style, large windows overlooking a forest, warm sunlight, beige and wood tones, high end furniture, architectural digest, photorealistic --ar 16: 9 --v 6.0"
       },
       {
         title: "شخصية ثلاثية الأبعاد (بأسلوب بيكسار)",
-        prompt: "3D render of a cute little [شخصية/حيوان], Pixar style, Disney animation style, big expressive eyes, octane render, unreal engine 5, soft lighting, vibrant colors, detailed textures, 8k --ar 4:5 --v 6.0"
+        prompt: "3D render of a cute little [شخصية/حيوان], Pixar style, Disney animation style, big expressive eyes, octane render, unreal engine 5, soft lighting, vibrant colors, detailed textures, 8k --ar 4: 5 --v 6.0"
       },
       {
         title: "مناظر طبيعية خيالية وملحمية",
-        prompt: "Epic fantasy landscape, giant ancient ruins in a lush jungle, glowing magical crystals, cinematic lighting, concept art, trending on artstation, masterpiece, highly detailed, greg rutkowski style --ar 21:9"
+        prompt: "Epic fantasy landscape, giant ancient ruins in a lush jungle, glowing magical crystals, cinematic lighting, concept art, trending on artstation, masterpiece, highly detailed, greg rutkowski style --ar 21: 9"
       },
       {
         title: "إنشاء الأنماط / القوام (Patterns)",
@@ -319,11 +319,11 @@ export const promptsCategories = [
       },
       {
         title: "أسلوب التوضيح الكلاسيكي (Vintage)",
-        prompt: "Vintage 1950s comic book illustration of [الموضوع], pop art style, halftone dots, vibrant retro colors, bold black outlines, retro aesthetic --ar 3:4"
+        prompt: "Vintage 1950s comic book illustration of [الموضوع], pop art style, halftone dots, vibrant retro colors, bold black outlines, retro aesthetic --ar 3: 4"
       },
       {
         title: "تصوير الطعام",
-        prompt: "Professional food photography of a delicious [طبق، مثلاً: gourmet burger with melted cheese], dark moody background, studio lighting, smoke, macro photography, extremely detailed, mouthwatering, 8k --ar 4:5"
+        prompt: "Professional food photography of a delicious [طبق، مثلاً: gourmet burger with melted cheese], dark moody background, studio lighting, smoke, macro photography, extremely detailed, mouthwatering, 8k --ar 4: 5"
       },
       {
         title: "تصميم 3D متساوي القياس (Isometric)",

@@ -11,8 +11,10 @@
     "start":          "cd backend && NODE_ENV=production node server.js",
     "start:prod":     "cd backend && NODE_ENV=production node server.js",
     "db:migrate":     "cd backend && npx prisma migrate dev --name init",
+    "db:migrate:deploy": "cd backend && npx prisma migrate deploy",
     "db:generate":    "cd backend && npx prisma generate",
     "db:seed":        "cd backend && npm run db:seed",
+    "db:create-admin": "cd backend && npm run db:create-admin",
     "db:studio":      "cd backend && npx prisma studio",
     "db:reset":       "cd backend && npm run db:reset"
   }

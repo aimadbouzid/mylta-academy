@@ -14,7 +14,7 @@ function ToastItem({ toast, onRemove }) {
   return (
     <div
       className={`flex items-start gap-3 p-4 rounded-xl border backdrop-blur-md
-                  bg-white/95 ${cfg.border} shadow-soft animate-slide-in
+                  bg-white/95 dark:bg-academy-surfaceDark/95 ${cfg.border} shadow-soft animate-slide-in
                   min-w-[300px] max-w-[420px]`}
     >
       <Icon className={`w-5 h-5 mt-0.5 flex-shrink-0 ${cfg.text}`} />

@@ -1,21 +1,74 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /* ═══════════════════════════════════════════════════════════
    Design Tokens (CSS Variables)
+
+   Les canaux sont écrits en RGB SÉPARÉS PAR DES ESPACES (« 241 245 247 »)
+   et non en hexadécimal : c'est ce qui permet à Tailwind de composer
+   `rgb(var(--token) / <alpha-value>)`. Sans cela, les 258 modificateurs
+   d'opacité du projet (text-academy-textMain/50, bg-academy-primary/10…)
+   cesseraient de fonctionner.
+
+   Conséquence : basculer .dark suffit à faire changer les 683 usages des
+   tokens `academy` dans l'application — aucun composant à modifier.
    ═══════════════════════════════════════════════════════════ */
 :root {
-  --clr-primary: #a93232;
-  --clr-primary-light: #d25b5b;
-  --clr-primary-dark: #7d1f1f;
-  --clr-surface: #f1f5f7;
-  --clr-surface-dark: #e7eef2;
-  --clr-text: #171717;
-  --clr-border: #e1e1e1;
-  --clr-white: #ffffff;
+  --academy-primary: 169 50 50;      /* #a93232 */
+  --academy-light: 210 91 91;        /* #d25b5b */
+  --academy-dark: 125 31 31;         /* #7d1f1f */
+  --academy-surface: 241 245 247;    /* #f1f5f7 */
+  --academy-surface-dark: 231 238 242; /* #e7eef2 */
+  --academy-text: 23 23 23;          /* #171717 */
+  --academy-border: 225 225 225;     /* #e1e1e1 */
+  --academy-card: 255 255 255;       /* #ffffff */
+  --academy-on-primary: 255 255 255; /* texte posé SUR la couleur de marque */
+
+  color-scheme: light;
+}
+
+/* Thème sombre — appliqué via la classe .dark sur <html> (ThemeContext).
+   Noir véritable : le fond est à #000000, ce qui éteint réellement les pixels
+   sur écran OLED (la majorité des smartphones) et donne un rendu très net.
+
+   Les surfaces ne peuvent pas être noires elles aussi, sinon cartes et
+   barres de navigation disparaîtraient dans le fond : elles sont posées
+   quelques points au-dessus, procédé standard des thèmes noirs. Elles
+   restent volontairement très proches du noir (écart de 4 à 5 points) :
+   assez pour délimiter une carte, trop peu pour lire « gris ».
+
+   La couleur d'accent n'est PAS rouge en sombre : elle passe au blanc. Le rouge
+   de marque reste intact en thème clair — seule cette section change. Les
+   surfaces pleines (boutons « S'inscrire », « Détails »…) deviennent donc des
+   pastilles blanches ; c'est `--academy-on-primary` qui bascule leur texte en
+   noir pour qu'il reste lisible. Sans ce second token, on obtiendrait du blanc
+   sur blanc partout où le code écrit `text-white` sur un fond de marque. */
+.dark {
+  --academy-primary: 255 255 255;    /* accent : blanc pur */
+  --academy-light: 235 235 235;      /* variante « claire » → légèrement grisée */
+  --academy-dark: 212 212 212;       /* variante « foncée » : états de survol */
+  --academy-on-primary: 0 0 0;       /* texte noir sur les pastilles blanches */
+  --academy-surface: 0 0 0;          /* fond général : noir pur */
+  --academy-surface-dark: 13 13 13;  /* surfaces surélevées (#0d0d0d) */
+  --academy-text: 240 240 240;       /* texte principal, gris neutre */
+  --academy-border: 28 28 28;        /* séparateurs discrets (#1c1c1c) */
+  --academy-card: 10 10 10;          /* cartes : à peine détachées du noir (#0a0a0a) */
+
+  color-scheme: dark;
+}
+
+/* Alias conservés : du CSS existant référence encore ces noms. */
+:root, .dark {
+  --clr-primary: rgb(var(--academy-primary));
+  --clr-primary-light: rgb(var(--academy-light));
+  --clr-primary-dark: rgb(var(--academy-dark));
+  --clr-surface: rgb(var(--academy-surface));
+  --clr-surface-dark: rgb(var(--academy-surface-dark));
+  --clr-text: rgb(var(--academy-text));
+  --clr-border: rgb(var(--academy-border));
+  --clr-white: rgb(var(--academy-card));
+  --clr-on-primary: rgb(var(--academy-on-primary));
 }
 
 @layer base {
@@ -28,13 +81,13 @@
   body {
     background-color: var(--clr-surface);
     color: var(--clr-text);
-    font-family: 'DM Sans', system-ui, sans-serif;
+    font-family: 'Inter', system-ui, sans-serif;
     min-height: 100vh;
     overflow-x: hidden;
   }
 
-  [dir="rtl"] body, [dir="rtl"] .font-display, [dir="rtl"] .font-sans {
-    font-family: 'Cairo', 'DM Sans', system-ui, sans-serif !important;
+  [dir="rtl"] body {
+    font-family: 'Inter', system-ui, sans-serif;
   }
 
   /* Scrollbar */
@@ -46,7 +99,7 @@
   .hide-scrollbar::-webkit-scrollbar { display: none; }
   .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-  ::selection { background: rgba(169, 50, 50, 0.2); color: var(--clr-text); }
+  ::selection { background: rgb(var(--academy-primary) / 0.2); color: var(--clr-text); }
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -61,7 +114,7 @@
   gap: 0.5rem;
   padding: 0.75rem 1.5rem;
   background-color: var(--clr-primary);
-  color: #ffffff;
+  color: var(--clr-on-primary);
   font-weight: 700;
   border-radius: 9999px;
   border: none;
@@ -98,10 +151,40 @@
 }
 .btn-outline:hover {
   background-color: var(--clr-primary);
-  color: #ffffff;
+  color: var(--clr-on-primary);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
 .btn-outline:active {
+  transform: scale(0.95);
+}
+
+/* Action secondaire (« Continuer sans accepter »…).
+   Cette classe était UTILISÉE dans le code sans jamais être définie : les
+   boutons concernés retombaient donc sur le style par défaut du navigateur,
+   soit un fond clair avec du texte noir. Invisible en thème clair, criant en
+   thème sombre — d'où l'impression de boutons « redevenus blancs ». */
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background-color: rgb(var(--academy-text) / 0.06);
+  color: var(--clr-text);
+  font-weight: 700;
+  border-radius: 9999px;
+  border: 1px solid var(--clr-border);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  font-size: inherit;
+  line-height: 1.5;
+}
+.btn-secondary:hover {
+  background-color: rgb(var(--academy-text) / 0.12);
+  border-color: rgb(var(--academy-primary) / 0.4);
+}
+.btn-secondary:active {
   transform: scale(0.95);
 }
 
@@ -110,7 +193,7 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 1rem;
-  color: rgba(23, 23, 23, 0.7);
+  color: rgb(var(--academy-text) / 0.7);
   border-radius: 9999px;
   transition: all 0.3s ease;
   cursor: pointer;
@@ -121,15 +204,15 @@
 }
 .btn-ghost:hover {
   color: var(--clr-text);
-  background-color: rgba(23, 23, 23, 0.05);
+  background-color: rgb(var(--academy-text) / 0.05);
 }
 
 /* ── Cards ── */
 .card-academy {
-  background-color: rgba(255, 255, 255, 0.65);
+  background-color: rgb(var(--academy-card) / 0.65);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(169, 50, 50, 0.15);
+  border: 1px solid rgb(var(--academy-primary) / 0.15);
   border-radius: 20px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
   transition: all 0.5s ease;
@@ -140,18 +223,18 @@
   }
 }
 .card-academy:hover {
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: rgb(var(--academy-card) / 0.8);
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
-  border-color: rgba(169, 50, 50, 0.3);
+  border-color: rgb(var(--academy-primary) / 0.3);
 }
 
 /* ── Inputs ── */
 .input-academy {
   width: 100%;
-  background-color: rgba(255, 255, 255, 0.6);
+  background-color: rgb(var(--academy-card) / 0.6);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(169, 50, 50, 0.15);
+  border: 1px solid rgb(var(--academy-primary) / 0.15);
   border-radius: 0.75rem;
   padding: 0.75rem 1rem;
   color: var(--clr-text);
@@ -160,13 +243,19 @@
   font-size: inherit;
 }
 .input-academy::placeholder {
-  color: rgba(23, 23, 23, 0.4);
+  color: rgb(var(--academy-text) / 0.4);
 }
 .input-academy:focus {
   outline: none;
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: rgb(var(--academy-card) / 0.9);
   border-color: var(--clr-primary);
-  box-shadow: 0 0 0 2px rgba(169, 50, 50, 0.15);
+  box-shadow: 0 0 0 2px rgb(var(--academy-primary) / 0.15);
+}
+
+/* Force l'affichage de "petites boules" pour tous les champs de mot de passe */
+input[type="password"] {
+  font-family: caption, Verdana, sans-serif !important;
+  letter-spacing: 0.15em;
 }
 
 /* ── Section container ── */
@@ -187,14 +276,18 @@
 /* ── Grid pattern background (Light) ── */
 .grid-pattern {
   background-image:
-    linear-gradient(rgba(169, 50, 50,0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(169, 50, 50,0.05) 1px, transparent 1px);
+    linear-gradient(rgb(var(--academy-primary) / 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(var(--academy-primary) / 0.05) 1px, transparent 1px);
   background-size: 60px 60px;
 }
 
 /* ── Skeleton shimmer (Light) ── */
 .skeleton {
-  background: linear-gradient(90deg, #f1f5f7 0%, #ffffff 40%, #e7eef2 60%, #f1f5f7 100%);
+  background: linear-gradient(90deg,
+    rgb(var(--academy-surface)) 0%,
+    rgb(var(--academy-card)) 40%,
+    rgb(var(--academy-surface-dark)) 60%,
+    rgb(var(--academy-surface)) 100%);
   background-size: 400% 100%;
   animation: shimmer 1.8s ease-in-out infinite;
 }
@@ -245,4 +338,26 @@
 @keyframes fadeIn {
   0% { opacity: 0; }
   100% { opacity: 1; }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Performance Utilities
+   ═══════════════════════════════════════════════════════════ */
+
+/* Lazy-render sections that are off-screen — saves paint & layout cost */
+section {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 500px;
+}
+
+/* Reduce motion for users who prefer it + saves GPU on low-end devices */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .animate-marquee-track {
+    animation: none !important;
+  }
 }

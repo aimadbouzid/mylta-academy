@@ -1,70 +1,149 @@
 // LoginModal.jsx — Formulaire de connexion / inscription (Sécurisé)
 
-import { useState, useEffect } from 'react'
-import { X, Mail, Lock, User, Eye, EyeOff, ShieldCheck } from 'lucide-react'
+import { useState, useEffect, useRef } from 'react'
+import { X, Mail, Lock, User, Eye, EyeOff, ShieldCheck, ArrowLeft, ArrowRight, Loader2, Check } from 'lucide-react'
+import { GoogleLogin } from '@react-oauth/google'
+import api from '../api/axios'
 import { useAuth } from '../context/AuthContext'
 import { useLanguage } from '../context/LanguageContext'
+import { useTheme } from '../context/ThemeContext'
 import { useToast } from '../hooks/useToast.jsx'
+import HumanVerification from './HumanVerification'
+import { facebookLogin } from '../utils/facebookAuth'
+
+// Champ de saisie : même gabarit pour tous les champs du formulaire.
+// L'icône est posée en `start` (et non `left`) pour suivre l'arabe en RTL.
+const FIELD_CLASS =
+  'w-full h-[52px] rounded-2xl bg-academy-surface dark:bg-white/[0.04] ' +
+  'border border-academy-border text-academy-textMain text-[15px] ' +
+  'ps-11 pe-4 placeholder:text-academy-textMain/35 ' +
+  'focus:outline-none focus:border-academy-primary/60 focus:ring-4 focus:ring-academy-primary/10 ' +
+  'transition-all duration-200'
 
 export default function LoginModal({ onClose, onSuccess }) {
   const { t, currentLang } = useLanguage()
-  const { login, register, checkAuth } = useAuth()
+  const { theme } = useTheme()
+  const { login, loginWithGoogle, loginWithFacebook, register, checkAuth } = useAuth()
   const { success, error: toastError } = useToast()
-  const [mode, setMode]         = useState('login') // 'login' | 'register'
+  const [mode, setMode]         = useState('login') // 'login' | 'register' | 'forgot-password'
   const [showPwd, setShowPwd]   = useState(false)
   const [loading, setLoading]   = useState(false)
   const [form, setForm]         = useState({ email: '', password: '', name: '' })
-  
-  // Math CAPTCHA
-  const [mathCaptcha, setMathCaptcha] = useState({ num1: 0, num2: 0, answer: '', result: 'pending' })
+
+  // Human verification state
+  const [isHumanVerified, setIsHumanVerified] = useState(false)
+  // Compte existant mais email jamais activé → on propose de renvoyer le lien
+  const [needsVerification, setNeedsVerification] = useState(false)
+  const [resending, setResending] = useState(false)
+
+  // Le bouton Google est rendu par Google dans une iframe : sa largeur ne peut
+  // être qu'un nombre de pixels (200–400). On mesure donc le conteneur pour
+  // qu'il s'aligne exactement sur le bouton Facebook, à toutes les tailles.
+  const googleWrapRef = useRef(null)
+  const [googleWidth, setGoogleWidth] = useState(320)
+
+  useEffect(() => {
+    const el = googleWrapRef.current
+    if (!el) return
+    const measure = () =>
+      setGoogleWidth(Math.min(400, Math.max(200, Math.round(el.offsetWidth))))
+    measure()
+    const ro = new ResizeObserver(measure)
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [mode])
 
   const set = (key) => (e) => {
     setForm(p => ({ ...p, [key]: e.target.value }))
   }
 
-  // Vérification de la force du mot de passe
+  // Vérification de la force du mot de passe (simplifiée)
   const calculateStrength = (pwd) => {
     let score = 0
-    if (pwd.length >= 12) score += 20
-    if (/[A-Z]/.test(pwd)) score += 20
-    if (/[a-z]/.test(pwd)) score += 20
-    if (/\d/.test(pwd)) score += 20
-    if (/[@$!%*?&]/.test(pwd)) score += 20
+    if (pwd.length >= 8) score += 50
+    if (/[a-zA-Z]/.test(pwd) && /\d/.test(pwd)) score += 50
     return score
   }
 
   const passwordStrength = calculateStrength(form.password)
 
-  const generateMathCaptcha = () => {
-    const num1 = Math.floor(Math.random() * 10) + 1
-    const num2 = Math.floor(Math.random() * 10) + 1
-    setMathCaptcha({ num1, num2, answer: '', result: 'pending' })
+  // Reset captcha when switching modes
+  useEffect(() => {
+    setIsHumanVerified(false)
+    setNeedsVerification(false)
+  }, [mode])
+
+  const handleResendVerification = async () => {
+    setResending(true)
+    try {
+      const res = await api.post('/auth/resend-verification', { email: form.email })
+      success(res.data?.message || 'Lien d\'activation renvoyé.')
+      if (res.data?.autoVerified) setNeedsVerification(false)
+    } catch (err) {
+      toastError(err.response?.data?.error || 'Impossible de renvoyer le lien pour le moment.')
+    } finally {
+      setResending(false)
+    }
   }
 
-  useEffect(() => {
-    if (mode === 'register') {
-      generateMathCaptcha()
+  const handleGoogleSuccess = async (credentialResponse) => {
+    setLoading(true)
+    try {
+      await loginWithGoogle(credentialResponse.credential)
+      await checkAuth()
+      success(t('login.welcome_back'))
+      onSuccess?.()
+      onClose?.()
+    } catch (err) {
+      toastError(err.response?.data?.error || 'Erreur Google Auth')
+    } finally {
+      setLoading(false)
     }
-  }, [mode])
+  }
+
+  const handleFacebookLogin = async () => {
+    setLoading(true)
+    try {
+      const accessToken = await facebookLogin()
+      await loginWithFacebook(accessToken)
+      await checkAuth()
+      success(t('login.welcome_back'))
+      onSuccess?.()
+      onClose?.()
+    } catch (err) {
+      toastError(err.response?.data?.error || 'Échec de la connexion Facebook')
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)
     try {
+      if (mode === 'forgot-password') {
+        const res = await api.post('/auth/forgot-password', { email: form.email })
+        success(res.data?.message || 'Email de réinitialisation envoyé.')
+        setMode('login')
+        return
+      }
+
+      setNeedsVerification(false)
+
       if (mode === 'register') {
         if (passwordStrength < 100) {
           toastError(t('login.password_hint'))
           setLoading(false)
           return
         }
-        if (mathCaptcha.result !== 'success') {
-          toastError("Veuillez résoudre le calcul pour vérifier que vous êtes humain.")
+        if (!isHumanVerified) {
+          toastError("Veuillez compléter la vérification humaine.")
           setLoading(false)
           return
         }
-        
-        const res = await register(form.email, form.password, form.name, 'math-captcha-verified')
-        success(res.message || t('login.verification_wait')) // Assuming message corresponds to verify email
+
+        const res = await register(form.email, form.password, form.name, 'human-verification-passed')
+        success(res.message || t('login.verification_wait'))
         // Ne pas fermer immédiatement, l'utilisateur doit vérifier son email
         setMode('login') // Switch to login mode but they still need to verify
       } else {
@@ -75,159 +154,312 @@ export default function LoginModal({ onClose, onSuccess }) {
         onClose?.()
       }
     } catch (err) {
+      if (err.response?.data?.code === 'EMAIL_NOT_VERIFIED') setNeedsVerification(true)
       toastError(err.response?.data?.error || t('login.generic_error'))
     } finally {
       setLoading(false)
     }
   }
 
+  const isForgot = mode === 'forgot-password'
+
+  const title = isForgot
+    ? 'Mot de passe oublié'
+    : mode === 'login' ? t('login.welcome') : t('login.join_us')
+
+  const subtitle = isForgot
+    ? 'Récupérez l\'accès à votre compte'
+    : mode === 'login'
+      ? 'Reprenez vos formations là où vous les avez laissées'
+      : 'Créez votre compte en moins d\'une minute'
+
   return (
     <div className="fixed inset-0 z-[110] flex items-center justify-center p-4"
          onClick={onClose}>
-      <div className="absolute inset-0 bg-black/50 backdrop-blur-md animate-fade-in" />
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-xl animate-fade-in" />
 
-      <div className="relative w-full max-w-md bg-white border border-academy-border/50
-                      rounded-3xl shadow-2xl animate-fade-up overflow-hidden"
+      <div className="relative w-full max-w-[420px] animate-fade-up"
            onClick={e => e.stopPropagation()}>
 
-        {/* Header */}
-        <div className="p-6 border-b border-gray-100 flex items-center gap-4 bg-gray-50/50">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center text-white shadow-md shadow-red-500/20">
-            <User size={20} />
-          </div>
-          <div className="flex-1">
-            <h2 className="font-display font-black text-academy-textMain text-xl">
-              {mode === 'login' ? t('login.welcome') : t('login.join_us')}
-            </h2>
-            <p className="text-academy-textMain/50 text-xs font-medium mt-0.5">{t('login.secure_access')}</p>
-          </div>
-          <button onClick={onClose} className="p-2 rounded-full text-academy-textMain/30 hover:text-academy-textMain hover:bg-black/5 transition-all">
-            <X size={20} />
-          </button>
-        </div>
+        {/* Halo de marque : remplace l'ancien bandeau gris du header */}
+        <div aria-hidden
+             className="pointer-events-none absolute -inset-8 bg-[radial-gradient(closest-side,rgb(var(--academy-primary)/0.18),transparent)] blur-2xl" />
 
-        {/* Formulaire */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          {mode === 'register' && (
-            <div className="relative">
-              <User size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-academy-textMain/40" />
-              <input
-                type="text" placeholder={t('login.full_name')} value={form.name}
-                onChange={set('name')} required
-                className="w-full bg-gray-50 border border-gray-200 text-academy-textMain text-sm rounded-xl px-4 py-3 pl-10 focus:outline-none focus:bg-white focus:border-academy-primary focus:ring-4 focus:ring-academy-primary/10 transition-all placeholder:text-academy-textMain/30"
+        <div className="relative bg-academy-white border border-academy-border rounded-[28px]
+                        shadow-[0_40px_90px_-25px_rgba(0,0,0,0.55)]
+                        overflow-hidden max-h-[90vh] overflow-y-auto hide-scrollbar">
+
+          {/* Liseré lumineux en haut de la carte */}
+          <div aria-hidden
+               className="pointer-events-none absolute inset-x-0 top-0 h-px
+                          bg-gradient-to-r from-transparent via-academy-primary/50 to-transparent" />
+          <div aria-hidden
+               className="pointer-events-none absolute inset-x-0 top-0 h-40
+                          bg-[radial-gradient(closest-side,rgb(var(--academy-primary)/0.10),transparent)]" />
+
+          <button onClick={onClose}
+                  aria-label="Fermer"
+                  className="absolute top-4 end-4 z-10 w-9 h-9 grid place-items-center rounded-full
+                             text-academy-textMain/40 hover:text-academy-textMain
+                             hover:bg-academy-textMain/5 transition-colors">
+            <X size={18} />
+          </button>
+
+          {/* ── En-tête ── */}
+          <div className="relative px-6 pt-9 pb-6 text-center">
+            <div className="mx-auto w-16 h-16 rounded-2xl p-2 bg-academy-surface dark:bg-white/[0.04]
+                            border border-academy-border shadow-soft
+                            ring-4 ring-academy-primary/5 overflow-hidden">
+              <img
+                src="/logo-128.png"
+                alt="Logo Mylta Academy"
+                className="w-full h-full object-cover rounded-xl"
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = '/logo-256.png';
+                }}
               />
             </div>
-          )}
 
-          <div className="relative">
-            <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-academy-textMain/40" />
-            <input
-              type="email" placeholder={t('login.email')} value={form.email}
-              onChange={set('email')} required
-              className="w-full bg-gray-50 border border-gray-200 text-academy-textMain text-sm rounded-xl px-4 py-3 pl-10 focus:outline-none focus:bg-white focus:border-academy-primary focus:ring-4 focus:ring-academy-primary/10 transition-all placeholder:text-academy-textMain/30"
-            />
+            <h2 className="mt-4 font-display font-black text-academy-textMain text-[26px] leading-tight tracking-tight">
+              {title}
+            </h2>
+            <p className="mt-1.5 text-academy-textMain/50 text-[13px] font-medium max-w-[280px] mx-auto">
+              {subtitle}
+            </p>
           </div>
 
-          <div className="relative">
-            <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-academy-textMain/40" />
-            <input
-              type={showPwd ? 'text' : 'password'}
-              placeholder={t('login.password')}
-              value={form.password} onChange={set('password')} required minLength={mode === 'register' ? 12 : 8}
-              className="w-full bg-gray-50 border border-gray-200 text-academy-textMain text-sm rounded-xl px-4 py-3 pl-10 pr-10 focus:outline-none focus:bg-white focus:border-academy-primary focus:ring-4 focus:ring-academy-primary/10 transition-all placeholder:text-academy-textMain/30"
-            />
-            <button type="button" onClick={() => setShowPwd(p => !p)}
-                    aria-label={showPwd ? t('login.hide_password') : t('login.show_password')}
-                    className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1.5 rounded-md text-academy-textMain/40 hover:text-academy-textMain hover:bg-black/5 transition-all">
-              {showPwd ? <EyeOff size={16} /> : <Eye size={16} />}
-            </button>
-          </div>
-
-          {mode === 'register' && form.password.length > 0 && (
-            <div className="space-y-2 mt-2 bg-gray-50 p-3 rounded-xl border border-gray-100">
-              <div className="flex justify-between text-xs text-gray-500 font-semibold">
-                <span>{t('login.password_strength')}</span>
-                <span className={passwordStrength < 40 ? 'text-red-500' : passwordStrength < 80 ? 'text-yellow-600' : 'text-green-600'}>{passwordStrength}%</span>
-              </div>
-              <div className="h-1.5 w-full bg-gray-200 rounded-full overflow-hidden">
-                <div 
-                  style={{ width: `${passwordStrength}%` }}
-                  className={`h-full transition-all duration-300 ${passwordStrength < 40 ? 'bg-red-500' : passwordStrength < 80 ? 'bg-yellow-500' : 'bg-green-500'}`}
-                />
-              </div>
-              
-              <div className="text-[11px] space-y-1 mt-2">
+          {/* ── Sélecteur Connexion / Inscription ── */}
+          {!isForgot && (
+            <div className="px-6">
+              <div className="grid grid-cols-2 gap-1 p-1 rounded-full bg-academy-surface dark:bg-white/[0.04]
+                              border border-academy-border">
                 {[
-                  { label: currentLang === 'ar' ? '12 حرف كحد أدنى' : currentLang === 'en' ? 'At least 12 characters' : '12 caractères minimum', met: form.password.length >= 12 },
-                  { label: currentLang === 'ar' ? 'حرف كبير واحد على الأقل' : currentLang === 'en' ? 'At least one uppercase letter' : 'Une lettre majuscule', met: /[A-Z]/.test(form.password) },
-                  { label: currentLang === 'ar' ? 'حرف صغير واحد على الأقل' : currentLang === 'en' ? 'At least one lowercase letter' : 'Une lettre minuscule', met: /[a-z]/.test(form.password) },
-                  { label: currentLang === 'ar' ? 'رقم واحد على الأقل' : currentLang === 'en' ? 'At least one number' : 'Un chiffre', met: /\d/.test(form.password) },
-                  { label: currentLang === 'ar' ? 'رمز خاص واحد على الأقل (@$!%*?&)' : currentLang === 'en' ? 'At least one special character (@$!%*?&)' : 'Un caractère spécial (@$!%*?&)', met: /[@$!%*?&]/.test(form.password) }
-                ].map((crit, idx) => (
-                  <div key={idx} className="flex items-center gap-1.5">
-                    <span className={crit.met ? "text-green-500 font-bold" : "text-red-500 font-bold"}>
-                      {crit.met ? "✓" : "✗"}
-                    </span>
-                    <span className={crit.met ? "text-green-700 font-medium" : "text-gray-400"}>
-                      {crit.label}
-                    </span>
-                  </div>
+                  { key: 'login',    label: t('login.sign_in') },
+                  { key: 'register', label: t('login.register') },
+                ].map(tab => (
+                  <button
+                    key={tab.key}
+                    type="button"
+                    onClick={() => setMode(tab.key)}
+                    aria-pressed={mode === tab.key}
+                    className={`h-10 rounded-full text-sm font-bold transition-all duration-200 ${
+                      mode === tab.key
+                        ? 'bg-academy-primary text-academy-onPrimary shadow-soft'
+                        : 'text-academy-textMain/50 hover:text-academy-textMain'
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
                 ))}
               </div>
             </div>
           )}
 
-          {mode === 'register' && (
-            <div className="mt-4 p-3 border border-gray-200 bg-gray-50 rounded-xl flex items-center justify-between shadow-sm">
-              <div className="flex items-center gap-3">
-                <span className="text-sm text-gray-700 font-medium whitespace-nowrap">
-                  {mathCaptcha.num1} + {mathCaptcha.num2} = 
-                </span>
-                <input
-                  type="number"
-                  value={mathCaptcha.answer}
-                  placeholder="?"
-                  onChange={(e) => {
-                    const val = e.target.value
-                    setMathCaptcha(prev => {
-                      const isCorrect = parseInt(val) === prev.num1 + prev.num2
-                      return { ...prev, answer: val, result: val === '' ? 'pending' : (isCorrect ? 'success' : 'error') }
-                    })
-                  }}
-                  className={`w-16 bg-white border text-center text-sm rounded-lg px-2 py-1.5 focus:outline-none transition-all ${mathCaptcha.result === 'error' ? 'border-red-500 focus:border-red-500' : 'border-gray-300 focus:border-academy-primary'}`}
+          {/* ── Connexion sociale ── */}
+          {!isForgot && (
+            <div className="px-6 pt-5">
+              {/* Le bouton officiel Google est imposé par le SDK : on l'aligne
+                  sur la largeur du bouton Facebook et on suit le thème actif. */}
+              <div ref={googleWrapRef} className="w-full flex justify-center">
+                <GoogleLogin
+                  onSuccess={handleGoogleSuccess}
+                  onError={() => toastError('Échec de la connexion Google')}
+                  useOneTap
+                  theme={theme === 'dark' ? 'filled_black' : 'outline'}
+                  shape="pill"
+                  size="large"
+                  text="continue_with"
+                  width={String(googleWidth)}
                 />
-                {mathCaptcha.result === 'success' && <ShieldCheck className="w-5 h-5 text-green-500" />}
               </div>
-              <div className="text-[10px] text-gray-400 font-bold uppercase tracking-wider text-right">
-                Vérification<br/>Humaine
+
+              <button
+                type="button"
+                onClick={handleFacebookLogin}
+                disabled={loading}
+                className="mt-2.5 w-full h-10 flex items-center justify-center gap-2.5 rounded-full
+                           bg-academy-surface dark:bg-white/[0.04] border border-academy-border
+                           text-academy-textMain text-sm font-semibold
+                           hover:border-academy-textMain/25 hover:bg-academy-textMain/[0.04]
+                           active:scale-[0.99] transition-all
+                           disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="#1877F2" aria-hidden="true">
+                  <path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/>
+                </svg>
+                Continuer avec Facebook
+              </button>
+
+              <div className="my-5 flex items-center gap-3">
+                <span className="h-px flex-1 bg-academy-border" />
+                <span className="text-[11px] uppercase tracking-[0.14em] text-academy-textMain/35 font-bold">
+                  {t('login.or') || 'ou'}
+                </span>
+                <span className="h-px flex-1 bg-academy-border" />
               </div>
             </div>
           )}
 
-          <button
-            type="submit" disabled={loading || (mode === 'register' && (passwordStrength < 100 || mathCaptcha.result !== 'success'))}
-            className="w-full btn-primary justify-center py-3.5 text-base shadow-soft disabled:opacity-50 disabled:cursor-not-allowed mt-2"
-          >
-            {loading
-              ? t('login.loading')
-              : mode === 'login' ? t('login.sign_in') : t('login.create_account')
-            }
-          </button>
+          <form onSubmit={handleSubmit} className={`px-6 pb-7 space-y-3 ${isForgot ? 'pt-1' : ''}`}>
+            {mode === 'register' && (
+              <div className="relative">
+                <User size={17} className="absolute start-4 top-1/2 -translate-y-1/2 text-academy-textMain/35" />
+                <input
+                  type="text" placeholder={t('login.full_name')} value={form.name}
+                  onChange={set('name')} required
+                  className={FIELD_CLASS}
+                />
+              </div>
+            )}
 
-          <p className="text-center text-academy-textMain/50 text-sm font-medium pt-2">
-            {mode === 'login' ? t('login.no_account') + ' ' : t('login.have_account') + ' '}
+            <div className="relative">
+              <Mail size={17} className="absolute start-4 top-1/2 -translate-y-1/2 text-academy-textMain/35" />
+              <input
+                type="email" placeholder={t('login.email')} value={form.email}
+                onChange={set('email')} required
+                className={FIELD_CLASS}
+              />
+            </div>
+
+            {!isForgot && (
+              <div className="relative">
+                <Lock size={17} className="absolute start-4 top-1/2 -translate-y-1/2 text-academy-textMain/35" />
+                <input
+                  type={showPwd ? 'text' : 'password'}
+                  placeholder={t('login.password')}
+                  value={form.password} onChange={set('password')} required minLength={6}
+                  className={`${FIELD_CLASS} pe-12`}
+                />
+                <button type="button" onClick={() => setShowPwd(p => !p)}
+                        aria-label={showPwd ? t('login.hide_password') : t('login.show_password')}
+                        className="absolute end-3 top-1/2 -translate-y-1/2 p-2 rounded-lg
+                                   text-academy-textMain/35 hover:text-academy-textMain
+                                   hover:bg-academy-textMain/5 transition-all">
+                  {showPwd ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
+            )}
+
+            {mode === 'login' && (
+              <div className="flex justify-end pt-0.5">
+                <button
+                  type="button"
+                  onClick={() => setMode('forgot-password')}
+                  className="text-xs font-bold text-academy-textMain/45 hover:text-academy-primary transition-colors"
+                >
+                  Mot de passe oublié ?
+                </button>
+              </div>
+            )}
+
+            {mode === 'register' && form.password.length > 0 && (
+              <div className="space-y-2.5 rounded-2xl bg-academy-surface dark:bg-white/[0.04]
+                              border border-academy-border p-3.5">
+                <div className="flex justify-between items-center text-[11px] font-bold uppercase tracking-wider">
+                  <span className="text-academy-textMain/45">{t('login.password_strength')}</span>
+                  <span className={passwordStrength < 50 ? 'text-red-500' : passwordStrength < 100 ? 'text-amber-500' : 'text-emerald-500'}>
+                    {passwordStrength < 50 ? 'Faible' : passwordStrength < 100 ? 'Moyen' : 'Solide'}
+                  </span>
+                </div>
+
+                {/* Deux segments = les deux critères vérifiés ci-dessous */}
+                <div className="flex gap-1.5">
+                  {[50, 100].map(step => (
+                    <span key={step}
+                          className={`h-1.5 flex-1 rounded-full transition-colors duration-300 ${
+                            passwordStrength >= step
+                              ? (passwordStrength < 100 ? 'bg-amber-500' : 'bg-emerald-500')
+                              : 'bg-academy-textMain/10'
+                          }`} />
+                  ))}
+                </div>
+
+                <div className="space-y-1.5 pt-0.5">
+                  {[
+                    { label: currentLang === 'ar' ? '8 أحرف كحد أدنى' : currentLang === 'en' ? 'At least 8 characters' : '8 caractères minimum', met: form.password.length >= 8 },
+                    { label: currentLang === 'ar' ? 'حرف واحد ورقم واحد على الأقل' : currentLang === 'en' ? 'At least 1 letter and 1 number' : 'Au moins 1 lettre et 1 chiffre', met: /[a-zA-Z]/.test(form.password) && /\d/.test(form.password) }
+                  ].map((crit, idx) => (
+                    <div key={idx} className="flex items-center gap-2 text-[11.5px]">
+                      <span className={`w-4 h-4 shrink-0 grid place-items-center rounded-full ${
+                        crit.met ? 'bg-emerald-500/15 text-emerald-500' : 'bg-academy-textMain/[0.07] text-academy-textMain/30'
+                      }`}>
+                        {crit.met ? <Check size={11} strokeWidth={3} /> : <X size={11} strokeWidth={3} />}
+                      </span>
+                      <span className={crit.met ? 'text-academy-textMain/70 font-medium' : 'text-academy-textMain/35'}>
+                        {crit.label}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Vérification Humaine Premium (inscription uniquement) */}
+            {mode === 'register' && (
+              <div className="pt-0.5">
+                <HumanVerification
+                  variant={theme === 'dark' ? 'dark' : 'light'}
+                  onVerified={(verified) => setIsHumanVerified(verified)}
+                />
+              </div>
+            )}
+
+            {needsVerification && mode === 'login' && (
+              <div className="rounded-2xl border border-amber-200 dark:border-amber-500/25 bg-amber-50 dark:bg-amber-500/10 p-3.5 text-sm">
+                <p className="text-amber-800 dark:text-amber-300 font-medium leading-relaxed">
+                  Votre compte n'est pas encore activé. Vérifiez votre boîte de réception (et les spams).
+                </p>
+                <button
+                  type="button"
+                  onClick={handleResendVerification}
+                  disabled={resending}
+                  className="mt-2 font-bold text-amber-900 dark:text-amber-200 underline underline-offset-2 disabled:opacity-50"
+                >
+                  {resending ? 'Envoi en cours…' : 'Renvoyer le lien d\'activation'}
+                </button>
+              </div>
+            )}
+
             <button
-              type="button"
-              onClick={() => {
-                setMode(m => m === 'login' ? 'register' : 'login')
-                generateMathCaptcha()
-              }}
-              className="text-academy-primary font-bold hover:underline"
+              type="submit" disabled={loading || (mode === 'register' && (passwordStrength < 100 || !isHumanVerified))}
+              className="group w-full h-[52px] mt-1 inline-flex items-center justify-center gap-2 rounded-full
+                         bg-academy-primary text-academy-onPrimary text-[15px] font-bold
+                         shadow-[0_10px_30px_-10px_rgb(var(--academy-primary)/0.6)]
+                         hover:brightness-110 active:scale-[0.98] transition-all duration-200
+                         disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none"
             >
-              {mode === 'login' ? t('login.register') : t('login.sign_in')}
+              {loading ? (
+                <>
+                  <Loader2 size={17} className="animate-spin" />
+                  {t('login.loading')}
+                </>
+              ) : (
+                <>
+                  {isForgot ? 'Envoyer le lien' : mode === 'login' ? t('login.sign_in') : t('login.create_account')}
+                  <ArrowRight size={17} className="transition-transform group-hover:translate-x-0.5 rtl:rotate-180" />
+                </>
+              )}
             </button>
-          </p>
-        </form>
+
+            {isForgot ? (
+              <button
+                type="button"
+                onClick={() => setMode('login')}
+                className="w-full inline-flex items-center justify-center gap-1.5 pt-1
+                           text-sm font-bold text-academy-textMain/50 hover:text-academy-textMain transition-colors"
+              >
+                <ArrowLeft size={15} className="rtl:rotate-180" />
+                Retour à la connexion
+              </button>
+            ) : (
+              <p className="flex items-center justify-center gap-1.5 pt-1 text-[11.5px] font-medium text-academy-textMain/35">
+                <ShieldCheck size={13} className="text-emerald-500" />
+                {t('login.secure_access')} — connexion chiffrée
+              </p>
+            )}
+          </form>
+        </div>
       </div>
     </div>
   )

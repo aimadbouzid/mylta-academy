@@ -22,7 +22,9 @@
     "notifications_read": "تم تعليم الإشعارات كمقروءة.",
     "forbidden_admin": "الوصول مقيد للمسؤولين فقط.",
     "unauthenticated": "غير مصادق عليه.",
-    "refresh_success": "تم تحديث الرمز بنجاح."
+    "refresh_success": "تم تحديث الرمز بنجاح.",
+    "invalid_input": "المعلومات المُدخلة غير صالحة. يرجى التحقق من الحقول والمحاولة مرة أخرى.",
+    "session_invalidated": "انتهت صلاحية جلستك أو تم إلغاؤها. يرجى تسجيل الدخول مجددًا."
   },
   "courses": {
     "id_invalid": "معرف غير صالح.",
@@ -33,7 +35,8 @@
     "progress_updated": "تم تحديث التقدم.",
     "rating_invalid": "التقييم يجب أن يكون رقماً بين 1 و 5.",
     "must_buy_to_rate": "يجب شراء هذه الدورة لتقييمها.",
-    "review_saved": "تم حفظ التقييم."
+    "review_saved": "تم حفظ التقييم.",
+    "complete_previous_first": "أكمل الدرس السابق لفتح هذا الدرس."
   },
   "payments": {
     "course_id_required": "معرف الدورة مطلوب.",
@@ -80,9 +83,10 @@
     "no_video": "لم يتم استلام أي ملف فيديو.",
     "config_updated": "تم تحديث إعدادات الموقع بنجاح.",
     "intro_uploaded": "تم رفع فيديو المقدمة بنجاح!",
-    "notification_course_unlocked": "🎉 تم فتح الدورة!",
+    "notification_course_unlocked": "تم فتح الدورة",
     "notification_course_unlocked_msg": "تهانينا! تمت الموافقة على دفعتك لدورة \"{{course}}\". لديك الآن وصول كامل.",
-    "notification_receipt_rejected": "⚠️ لم يتم التحقق من الإيصال",
+    "notification_receipt_accepted": "تم استلام الإيصال",
+    "notification_receipt_rejected": "لم يتم التحقق من الإيصال",
     "notification_receipt_rejected_msg": "لم يتم التحقق من إيصالك لدورة \"{{course}}\". السبب: {{reason}}"
   },
   "errors": {

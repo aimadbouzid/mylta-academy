@@ -281,7 +281,7 @@ export const promptsCategories = [
       },
       {
         title: "Extreme Delegation",
-        prompt: "Here is everything I do in a workday: [YOUR DAY]. Identify low-value tasks (less than $20/hour) that I should delegate, and tell me exactly on which platforms (Fiverr, Upwork) to hire someone."
+        prompt: "Here is everything I do in a workday: [YOUR DAY]. Identify low-value tasks (less than 4 000 DZD/hour) that I should delegate, and tell me exactly on which platforms (Fiverr, Upwork) to hire someone."
       }
     ]
   },
@@ -291,7 +291,7 @@ export const promptsCategories = [
     prompts: [
       {
         title: "Ultra-Realistic Portrait (Cinematic)",
-        prompt: "Cinematic portrait photography of a [SUBJECT DESCRIPTION, e.g., cyberpunk hacker], neon lighting, 85mm lens, depth of field, dramatic shadows, highly detailed, photorealistic, 8k resolution, shot on Arri Alexa --ar 16:9 --style raw --v 6.0"
+        prompt: "Cinematic portrait photography of a [SUBJECT DESCRIPTION, e.g., cyberpunk hacker], neon lighting, 85mm lens, depth of field, dramatic shadows, highly detailed, photorealistic, 8k resolution, shot on Arri Alexa --ar 16: 9 --style raw --v 6.0"
       },
       {
         title: "Minimalist Logo Creation",
@@ -299,19 +299,19 @@ export const promptsCategories = [
       },
       {
         title: "Web Interface Design (UI/UX)",
-        prompt: "Beautiful UI UX design of a modern dashboard web application for [SUBJECT, e.g., crypto trading], dark mode, glassmorphism, clean layout, dashboard layout, vibrant neon accents, highly detailed, dribbble top shot --ar 16:9"
+        prompt: "Beautiful UI UX design of a modern dashboard web application for [SUBJECT, e.g., crypto trading], dark mode, glassmorphism, clean layout, dashboard layout, vibrant neon accents, highly detailed, dribbble top shot --ar 16: 9"
       },
       {
         title: "Interior Architecture",
-        prompt: "Interior design photography of a luxury modern living room, wabi-sabi style, large windows overlooking a forest, warm sunlight, beige and wood tones, high end furniture, architectural digest, photorealistic --ar 16:9 --v 6.0"
+        prompt: "Interior design photography of a luxury modern living room, wabi-sabi style, large windows overlooking a forest, warm sunlight, beige and wood tones, high end furniture, architectural digest, photorealistic --ar 16: 9 --v 6.0"
       },
       {
         title: "3D Character (Pixar Style)",
-        prompt: "3D render of a cute little [CHARACTER/ANIMAL], Pixar style, Disney animation style, big expressive eyes, octane render, unreal engine 5, soft lighting, vibrant colors, detailed textures, 8k --ar 4:5 --v 6.0"
+        prompt: "3D render of a cute little [CHARACTER/ANIMAL], Pixar style, Disney animation style, big expressive eyes, octane render, unreal engine 5, soft lighting, vibrant colors, detailed textures, 8k --ar 4: 5 --v 6.0"
       },
       {
         title: "Epic Fantasy Landscape",
-        prompt: "Epic fantasy landscape, giant ancient ruins in a lush jungle, glowing magical crystals, cinematic lighting, concept art, trending on artstation, masterpiece, highly detailed, greg rutkowski style --ar 21:9"
+        prompt: "Epic fantasy landscape, giant ancient ruins in a lush jungle, glowing magical crystals, cinematic lighting, concept art, trending on artstation, masterpiece, highly detailed, greg rutkowski style --ar 21: 9"
       },
       {
         title: "Pattern / Texture Generation",
@@ -319,11 +319,11 @@ export const promptsCategories = [
       },
       {
         title: "Vintage Illustration Style",
-        prompt: "Vintage 1950s comic book illustration of [SUBJECT], pop art style, halftone dots, vibrant retro colors, bold black outlines, retro aesthetic --ar 3:4"
+        prompt: "Vintage 1950s comic book illustration of [SUBJECT], pop art style, halftone dots, vibrant retro colors, bold black outlines, retro aesthetic --ar 3: 4"
       },
       {
         title: "Culinary Photography (Food)",
-        prompt: "Professional food photography of a delicious [DISH, e.g., gourmet burger with melted cheese], dark moody background, studio lighting, smoke, macro photography, extremely detailed, mouthwatering, 8k --ar 4:5"
+        prompt: "Professional food photography of a delicious [DISH, e.g., gourmet burger with melted cheese], dark moody background, studio lighting, smoke, macro photography, extremely detailed, mouthwatering, 8k --ar 4: 5"
       },
       {
         title: "3D Isometric",

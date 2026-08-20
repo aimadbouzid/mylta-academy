@@ -23,6 +23,43 @@ export default function SettingsPage() {
   })
   const [profileLoading, setProfileLoading] = useState(false)
 
+  // GDPR Features
+  const [exportLoading, setExportLoading] = useState(false)
+  const [deleteLoading, setDeleteLoading] = useState(false)
+
+  const handleExportData = async () => {
+    try {
+      setExportLoading(true)
+      const res = await api.get('/auth/export-data')
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(res.data, null, 2))
+      const downloadAnchorNode = document.createElement('a')
+      downloadAnchorNode.setAttribute("href", dataStr)
+      downloadAnchorNode.setAttribute("download", "mes_donnees_myacademy.json")
+      document.body.appendChild(downloadAnchorNode)
+      downloadAnchorNode.click()
+      downloadAnchorNode.remove()
+      success('Données exportées avec succès')
+    } catch (err) {
+      toastError('Erreur lors de l\'exportation des données')
+    } finally {
+      setExportLoading(false)
+    }
+  }
+  
+  const handleDeleteAccount = async () => {
+    if (!window.confirm('Êtes-vous sûr de vouloir supprimer définitivement votre compte ? Cette action est irréversible.')) return
+    try {
+      setDeleteLoading(true)
+      await api.delete('/auth/delete-account')
+      success('Compte supprimé avec succès')
+      window.location.href = '/'
+    } catch (err) {
+      toastError('Erreur lors de la suppression du compte')
+    } finally {
+      setDeleteLoading(false)
+    }
+  }
+
   // Formulaire Mot de passe
   const [passwordForm, setPasswordForm] = useState({
     currentPassword: '',
@@ -82,15 +119,15 @@ export default function SettingsPage() {
 
   return (
     <>
-      <SEOHead title={t('settings.title')} description={t('settings.subtitle')} canonicalPath="/settings" />
+      <SEOHead title={t('settings.title')} description={t('settings.subtitle')} canonicalPath="/settings" noindex />
 
-      <div className="min-h-screen bg-academy-surface text-academy-textMain">
+      <div className="min-h-screen bg-academy-surface text-neutral-900 dark:text-academy-textMain">
         <Navbar />
 
-        <div className="pt-24 pb-12 section-container max-w-5xl">
+        <div className="pt-36 sm:pt-40 lg:pt-44 pb-16 section-container max-w-5xl">
           <div className="mb-8">
-            <h1 className="font-display font-bold text-3xl text-academy-textMain mb-2">{t('settings.title')}</h1>
-            <p className="text-academy-textMain/50 text-sm">{t('settings.subtitle')}</p>
+            <h1 className="font-display font-bold text-3xl text-neutral-900 dark:text-academy-textMain mb-2">{t('settings.title')}</h1>
+            <p className="text-neutral-500 dark:text-academy-textMain/50 text-sm font-medium">{t('settings.subtitle')}</p>
           </div>
 
           <div className="flex flex-col md:flex-row gap-8">
@@ -107,10 +144,10 @@ export default function SettingsPage() {
                   <button
                     key={tObj.id}
                     onClick={() => setActiveTab(tObj.id)}
-                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-left
+                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all text-left font-semibold
                               ${isActive
-                                ? 'bg-academy-primary text-academy-textMain shadow-soft-sm'
-                                : 'bg-red-950/5 border-red-900/10 backdrop-blur-md border border-academy-border text-academy-textMain/60 hover:text-academy-textMain hover:border-academy-primary/30'
+                                ? 'bg-academy-primary text-academy-onPrimary shadow-md'
+                                : 'bg-white dark:bg-academy-surfaceDark border border-neutral-200 dark:border-academy-border text-neutral-700 dark:text-academy-textMain/75 hover:text-neutral-900 hover:bg-neutral-50 hover:border-neutral-300'
                               }`}
                   >
                     <Icon size={18} />
@@ -121,47 +158,53 @@ export default function SettingsPage() {
             </div>
 
             {/* Content Area */}
-            <div className="flex-1 bg-red-950/5 border-red-900/10 backdrop-blur-md border border-academy-border rounded-2xl p-6 md:p-8 shadow-soft">
+            <div className="flex-1 bg-white dark:bg-academy-surfaceDark border border-neutral-200/80 rounded-2xl p-6 md:p-8 shadow-sm">
               {/* TAB 1: PROFIL */}
               {activeTab === 'profile' && (
                 <div className="space-y-6 animate-fade-in">
-                  <div className="border-b border-academy-border/60 pb-4">
-                    <h2 className="font-display font-bold text-xl text-academy-textMain">{t('settings.profile_title')}</h2>
-                    <p className="text-academy-textMain/40 text-xs mt-1">{t('settings.profile_desc')}</p>
+                  <div className="border-b border-neutral-200 dark:border-academy-border pb-4">
+                    <h2 className="font-display font-bold text-xl text-neutral-900 dark:text-academy-textMain">{t('settings.profile_title')}</h2>
+                    <p className="text-neutral-500 dark:text-academy-textMain/50 text-xs mt-1">{t('settings.profile_desc')}</p>
                   </div>
 
                   <form onSubmit={handleProfileSubmit} className="space-y-4 max-w-lg">
                     <div>
-                      <label className="text-academy-textMain/60 text-xs mb-1.5 block">{t('settings.full_name')}</label>
+                      <label className="text-neutral-700 dark:text-academy-textMain/75 text-xs font-semibold mb-1.5 block">{t('settings.full_name')}</label>
                       <input
                         type="text"
                         value={profileForm.name}
                         onChange={e => setProfileForm(p => ({ ...p, name: e.target.value }))}
-                        className="input-academy text-sm"
+                        className="input-academy text-sm bg-white dark:bg-academy-surfaceDark text-neutral-900 dark:text-academy-textMain border border-neutral-300 focus:border-academy-primary"
                         placeholder={t('settings.full_name_placeholder')}
                         required
                       />
                     </div>
 
                     <div>
-                      <label className="text-academy-textMain/60 text-xs mb-1.5 block">{t('settings.email')}</label>
+                      <div className="flex items-center justify-between mb-1.5">
+                        <label className="text-neutral-700 dark:text-academy-textMain/75 text-xs font-semibold block">{t('settings.email')}</label>
+                        <span className="text-[11px] text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-500/10 px-2 py-0.5 rounded border border-amber-200 dark:border-amber-500/25 font-medium flex items-center gap-1">
+                          <Lock size={11} /> Non modifiable
+                        </span>
+                      </div>
                       <input
                         type="email"
                         value={profileForm.email}
-                        onChange={e => setProfileForm(p => ({ ...p, email: e.target.value }))}
-                        className="input-academy text-sm"
-                        placeholder={t('settings.email_placeholder')}
-                        required
+                        disabled
+                        className="input-academy text-sm opacity-60 cursor-not-allowed bg-neutral-100 dark:bg-white/10 text-neutral-700 dark:text-academy-textMain/75 border border-neutral-200 dark:border-academy-border font-medium"
                       />
+                      <p className="text-neutral-400 dark:text-academy-textMain/40 text-[11px] mt-1">
+                        L'adresse email est liée à vos accès et ne peut pas être modifiée pour des raisons de sécurité.
+                      </p>
                     </div>
 
                     <div>
-                      <label className="text-academy-textMain/60 text-xs mb-1.5 block">{t('settings.role')}</label>
+                      <label className="text-neutral-700 dark:text-academy-textMain/75 text-xs font-semibold mb-1.5 block">{t('settings.role')}</label>
                       <input
                         type="text"
                         value={user?.role === 'ADMIN' ? t('settings.role_admin') : t('settings.role_student')}
                         disabled
-                        className="input-academy text-sm opacity-50 cursor-not-allowed bg-academy-surfaceDark/50"
+                        className="input-academy text-sm opacity-60 cursor-not-allowed bg-neutral-100 dark:bg-white/10 text-neutral-700 dark:text-academy-textMain/75 border border-neutral-200 dark:border-academy-border font-medium"
                       />
                     </div>
 
@@ -179,31 +222,31 @@ export default function SettingsPage() {
               {/* TAB 2: MOT DE PASSE */}
               {activeTab === 'password' && (
                 <div className="space-y-6 animate-fade-in">
-                  <div className="border-b border-academy-border/60 pb-4">
-                    <h2 className="font-display font-bold text-xl text-academy-textMain">{t('settings.password_title')}</h2>
-                    <p className="text-academy-textMain/40 text-xs mt-1">{t('settings.password_desc')}</p>
+                  <div className="border-b border-neutral-200 dark:border-academy-border pb-4">
+                    <h2 className="font-display font-bold text-xl text-neutral-900 dark:text-academy-textMain">{t('settings.password_title')}</h2>
+                    <p className="text-neutral-500 dark:text-academy-textMain/50 text-xs mt-1">{t('settings.password_desc')}</p>
                   </div>
 
                   <form onSubmit={handlePasswordSubmit} className="space-y-4 max-w-lg">
                     <div>
-                      <label className="text-academy-textMain/60 text-xs mb-1.5 block">{t('settings.current_password')} *</label>
+                      <label className="text-neutral-700 dark:text-academy-textMain/75 text-xs font-semibold mb-1.5 block">{t('settings.current_password')} *</label>
                       <input
                         type="password"
                         value={passwordForm.currentPassword}
                         onChange={e => setPasswordForm(p => ({ ...p, currentPassword: e.target.value }))}
-                        className="input-academy text-sm"
+                        className="input-academy text-sm bg-white dark:bg-academy-surfaceDark text-neutral-900 dark:text-academy-textMain border border-neutral-300 focus:border-academy-primary"
                         placeholder="••••••••"
                         required
                       />
                     </div>
 
                     <div>
-                      <label className="text-academy-textMain/60 text-xs mb-1.5 block">{t('settings.new_password')} *</label>
+                      <label className="text-neutral-700 dark:text-academy-textMain/75 text-xs font-semibold mb-1.5 block">{t('settings.new_password')} *</label>
                       <input
                         type="password"
                         value={passwordForm.newPassword}
                         onChange={e => setPasswordForm(p => ({ ...p, newPassword: e.target.value }))}
-                        className="input-academy text-sm"
+                        className="input-academy text-sm bg-white dark:bg-academy-surfaceDark text-neutral-900 dark:text-academy-textMain border border-neutral-300 focus:border-academy-primary"
                         placeholder="••••••••"
                         required
                         minLength={8}
@@ -211,12 +254,12 @@ export default function SettingsPage() {
                     </div>
 
                     <div>
-                      <label className="text-academy-textMain/60 text-xs mb-1.5 block">{t('settings.confirm_password')} *</label>
+                      <label className="text-neutral-700 dark:text-academy-textMain/75 text-xs font-semibold mb-1.5 block">{t('settings.confirm_password')} *</label>
                       <input
                         type="password"
                         value={passwordForm.confirmPassword}
                         onChange={e => setPasswordForm(p => ({ ...p, confirmPassword: e.target.value }))}
-                        className="input-academy text-sm"
+                        className="input-academy text-sm bg-white dark:bg-academy-surfaceDark text-neutral-900 dark:text-academy-textMain border border-neutral-300 focus:border-academy-primary"
                         placeholder="••••••••"
                         required
                         minLength={8}
@@ -237,16 +280,16 @@ export default function SettingsPage() {
               {/* TAB 3: CONFIDENTIALITÉ & NOTIFICATIONS */}
               {activeTab === 'privacy' && (
                 <div className="space-y-6 animate-fade-in">
-                  <div className="border-b border-academy-border/60 pb-4">
-                    <h2 className="font-display font-bold text-xl text-academy-textMain">{t('settings.privacy_title')}</h2>
-                    <p className="text-academy-textMain/40 text-xs mt-1">{t('settings.privacy_desc')}</p>
+                  <div className="border-b border-neutral-200 dark:border-academy-border pb-4">
+                    <h2 className="font-display font-bold text-xl text-neutral-900 dark:text-academy-textMain">{t('settings.privacy_title')}</h2>
+                    <p className="text-neutral-500 dark:text-academy-textMain/50 text-xs mt-1">{t('settings.privacy_desc')}</p>
                   </div>
 
                   <div className="space-y-5 max-w-lg">
-                    <div className="flex items-center justify-between p-4 bg-academy-surfaceDark border border-academy-border rounded-xl">
+                    <div className="flex items-center justify-between p-4 bg-neutral-50 dark:bg-white/5 border border-neutral-200/80 rounded-xl">
                       <div>
-                        <p className="text-academy-textMain text-sm font-medium">{t('settings.email_notifs')}</p>
-                        <p className="text-academy-textMain/40 text-xs mt-0.5">{t('settings.email_notifs_desc')}</p>
+                        <p className="text-neutral-900 dark:text-academy-textMain text-sm font-semibold">{t('settings.email_notifs')}</p>
+                        <p className="text-neutral-500 dark:text-academy-textMain/50 text-xs mt-0.5">{t('settings.email_notifs_desc')}</p>
                       </div>
                       <input
                         type="checkbox"
@@ -256,10 +299,10 @@ export default function SettingsPage() {
                       />
                     </div>
 
-                    <div className="flex items-center justify-between p-4 bg-academy-surfaceDark border border-academy-border rounded-xl">
+                    <div className="flex items-center justify-between p-4 bg-neutral-50 dark:bg-white/5 border border-neutral-200/80 rounded-xl">
                       <div>
-                        <p className="text-academy-textMain text-sm font-medium">{t('settings.hide_profile')}</p>
-                        <p className="text-academy-textMain/40 text-xs mt-0.5">{t('settings.hide_profile_desc')}</p>
+                        <p className="text-neutral-900 dark:text-academy-textMain text-sm font-semibold">{t('settings.hide_profile')}</p>
+                        <p className="text-neutral-500 dark:text-academy-textMain/50 text-xs mt-0.5">{t('settings.hide_profile_desc')}</p>
                       </div>
                       <input
                         type="checkbox"
@@ -269,10 +312,10 @@ export default function SettingsPage() {
                       />
                     </div>
 
-                    <div className="flex items-center justify-between p-4 bg-academy-surfaceDark border border-academy-border rounded-xl">
+                    <div className="flex items-center justify-between p-4 bg-neutral-50 dark:bg-white/5 border border-neutral-200/80 rounded-xl">
                       <div>
-                        <p className="text-academy-textMain text-sm font-medium">{t('settings.login_log')}</p>
-                        <p className="text-academy-textMain/40 text-xs mt-0.5">{t('settings.login_log_desc')}</p>
+                        <p className="text-neutral-900 dark:text-academy-textMain text-sm font-semibold">{t('settings.login_log')}</p>
+                        <p className="text-neutral-500 dark:text-academy-textMain/50 text-xs mt-0.5">{t('settings.login_log_desc')}</p>
                       </div>
                       <input
                         type="checkbox"
@@ -282,11 +325,32 @@ export default function SettingsPage() {
                       />
                     </div>
 
-                    <div className="p-4 bg-amber-950/20 border border-amber-700/30 rounded-xl flex items-start gap-3 text-xs text-amber-300">
-                      <Shield className="w-5 h-5 flex-shrink-0 text-amber-400 mt-0.5" />
-                      <div>
-                        <p className="font-semibold mb-1">{t('settings.data_protection_title')}</p>
-                        {t('settings.data_protection_desc')}
+                    <div className="p-5 bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/25 rounded-xl flex flex-col items-start gap-4 text-xs text-amber-950 shadow-xs">
+                      <div className="flex items-start gap-3">
+                        <Shield className="w-5 h-5 flex-shrink-0 text-amber-600 dark:text-amber-400 mt-0.5" />
+                        <div>
+                          <p className="font-bold text-sm text-amber-900 mb-1">{t('settings.data_protection_title')}</p>
+                          <p className="text-amber-800 dark:text-amber-300 text-xs leading-relaxed">{t('settings.data_protection_desc')}</p>
+                        </div>
+                      </div>
+                      
+                      {/* Actions RGPD */}
+                      <div className="flex flex-wrap items-center gap-3 mt-1 w-full pt-3 border-t border-amber-200 dark:border-amber-500/25">
+                        <button
+                          onClick={handleExportData}
+                          disabled={exportLoading}
+                          className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white font-semibold text-xs rounded-lg shadow-xs transition-colors"
+                        >
+                          {exportLoading ? 'Exportation...' : 'Exporter mes données (JSON)'}
+                        </button>
+                        
+                        <button
+                          onClick={handleDeleteAccount}
+                          disabled={deleteLoading}
+                          className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold text-xs rounded-lg shadow-xs transition-colors ml-auto"
+                        >
+                          {deleteLoading ? 'Suppression...' : 'Supprimer mon compte'}
+                        </button>
                       </div>
                     </div>
 

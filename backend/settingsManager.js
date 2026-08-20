@@ -4,7 +4,7 @@ const path = require('path')
 const settingsPath = path.join(__dirname, 'uploads', 'settings.json')
 
 const defaultSettings = {
-  introVideoUrl: 'http://localhost:3000/uploads/intro/intro.mp4',
+  introVideoUrl: 'https://www.youtube.com/watch?v=M7lc1UVf-VE',
   hero: {
     phrases: [
       'Formations Pratiques',
@@ -104,6 +104,7 @@ const defaultSettings = {
   topBanner: {
     isActive: true,
     text: "🚀 Promo exceptionnelle : -50% sur toutes les formations ! Inscrivez-vous vite.",
+    text2: "🔥 Places limitées ! Sécurisez votre place et commencez à apprendre dès aujourd'hui.",
     animation: "marquee",
     hasCountdown: true,
     countdownDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
@@ -120,6 +121,31 @@ const defaultSettings = {
     description: "Revenez jeudi prochain pour découvrir un nouvel outil secret indispensable !",
     url: "https://perplexity.ai",
     nextUpdateDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
+  },
+  // ── Marketplace Settings ──
+  marketplace: {
+    enabled: true,
+    instructorSpotPrice: 5000,      // Prix d'une place formateur (DA)
+    defaultCommissionRate: 20,      // % commission plateforme par défaut
+    autoApproveInstructors: false,  // Approbation manuelle par défaut
+    autoApproveCourses: false,      // Modération manuelle par défaut
+    minPayoutAmount: 1000,          // Montant minimum de retrait (DA)
+    maxPayoutAmount: 0,             // Plafond par demande (DA) — 0 = pas de plafond
+    payoutsEnabled: true,           // Permet de suspendre tous les retraits
+    requireIdentityForPayout: true, // Exige une identité vérifiée avant tout retrait
+    // Nombre de formations qu'un formateur peut créer, selon son offre.
+    // 0 (ou absent) = illimité. Modifiable par l'admin via PUT /api/admin/config.
+    defaultCourseLimit: 3,
+    courseLimitByPlan: {
+      Starter: 3,
+      Pro: 10,
+      Elite: 0,                     // illimité
+    },
+  },
+  modules: {
+    instructorEnabled: true,
+    resourcesEnabled: true,
+    blogEnabled: true
   }
 }
 
@@ -132,17 +158,45 @@ function getSettings() {
       return defaultSettings
     }
     const data = fs.readFileSync(settingsPath, 'utf8')
-    return { ...defaultSettings, ...JSON.parse(data) }
+    const parsed = JSON.parse(data)
+    return {
+      ...defaultSettings,
+      ...parsed,
+      hero: { ...defaultSettings.hero, ...(parsed.hero || {}) },
+      mission: { ...defaultSettings.mission, ...(parsed.mission || {}) },
+      topBanner: { ...defaultSettings.topBanner, ...(parsed.topBanner || {}) },
+      weeklyResource: { ...defaultSettings.weeklyResource, ...(parsed.weeklyResource || {}) },
+      marketplace: {
+        ...defaultSettings.marketplace,
+        ...(parsed.marketplace || {}),
+        // Fusion explicite : un plan absent du fichier garde sa limite par défaut
+        courseLimitByPlan: {
+          ...defaultSettings.marketplace.courseLimitByPlan,
+          ...(parsed.marketplace?.courseLimitByPlan || {}),
+        },
+      },
+      modules: { ...defaultSettings.modules, ...(parsed.modules || {}) },
+    }
   } catch (err) {
     console.error('Erreur lecture settings.json:', err)
     return defaultSettings
   }
 }
 
+const isPlainObject = (v) => v !== null && typeof v === 'object' && !Array.isArray(v)
+
 function updateSettings(newSettings) {
   try {
     const current = getSettings()
-    const updated = { ...current, ...newSettings }
+
+    // Fusion en profondeur (1 niveau) : envoyer { marketplace: { minPayoutAmount } }
+    // ne doit pas effacer les autres réglages marketplace (commission, prix de place…).
+    const updated = { ...current }
+    for (const [key, value] of Object.entries(newSettings || {})) {
+      updated[key] = isPlainObject(value) && isPlainObject(current[key])
+        ? { ...current[key], ...value }
+        : value
+    }
     const dir = path.dirname(settingsPath)
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true })
     fs.writeFileSync(settingsPath, JSON.stringify(updated, null, 2))

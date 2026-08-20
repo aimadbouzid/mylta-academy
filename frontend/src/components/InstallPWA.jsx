@@ -159,23 +159,29 @@ const InstallPWA = () => {
         <button
           onClick={handleDismiss}
           aria-label="Fermer"
-          className="absolute top-4 right-4 p-2 rounded-full bg-white/5 text-white/50 hover:bg-white/10 hover:text-white transition-all z-10"
+          className="absolute top-4 right-4 p-2 rounded-full bg-white/5 dark:bg-academy-surfaceDark/5 text-white/50 hover:bg-white/10 hover:text-white transition-all z-10"
         >
           <X className="w-5 h-5" />
         </button>
 
         {/* Header Section */}
         <div className="flex items-start gap-4 mb-6 relative z-10">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-neutral-800 to-black border border-white/10 flex items-center justify-center shrink-0 shadow-lg relative overflow-hidden">
-             {/* Logo inside an app icon shape */}
-             <div className="absolute inset-0 bg-white/5" />
-             <Download className="w-8 h-8 text-blue-400 drop-shadow-[0_0_10px_rgba(96,165,250,0.5)] animate-bounce" />
+          <div className="w-16 h-16 rounded-2xl bg-black border border-white/10 flex items-center justify-center shrink-0 shadow-lg relative overflow-hidden">
+             <img 
+               src="/logo-128.png" 
+               alt="Mylta Academy" 
+               className="w-full h-full object-cover"
+               onError={(e) => {
+                 e.target.onerror = null; 
+                 e.target.src = '/logo-256.png';
+               }}
+             />
           </div>
           <div className="pt-1">
             <h3 className="font-display font-bold text-white text-lg leading-tight mb-1">
               Installez l'application
             </h3>
-            <p className="text-neutral-400 text-sm leading-relaxed">
+            <p className="text-neutral-400 dark:text-academy-textMain/40 text-sm leading-relaxed">
               Pour une expérience 100% optimisée, fluide et hors-ligne.
             </p>
           </div>
@@ -184,7 +190,7 @@ const InstallPWA = () => {
         {/* iOS Instructions (Premium dark mode UI) */}
         {isIOS ? (
           <div className="bg-black/40 border border-white/5 rounded-2xl p-5 relative z-10">
-            <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest mb-4">
+            <p className="text-[10px] font-bold text-neutral-500 dark:text-academy-textMain/50 uppercase tracking-widest mb-4">
               {t('pwa.ios_how_to')}
             </p>
 
@@ -193,39 +199,39 @@ const InstallPWA = () => {
               <div className="flex items-center gap-3">
                 <div className="w-7 h-7 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center text-xs font-bold shrink-0 border border-blue-500/30">1</div>
                 <div className="text-sm text-neutral-300 flex items-center flex-wrap gap-1.5 leading-relaxed">
-                  Appuyez sur l'icône <span className="inline-flex items-center gap-1.5 bg-white/10 text-white px-2.5 py-1 rounded-md text-xs font-semibold border border-white/10"><Share className="w-3.5 h-3.5 text-blue-400" /> Partager</span>
+                  Appuyez sur l'icône <span className="inline-flex items-center gap-1.5 bg-white/10 dark:bg-academy-surfaceDark/10 text-white px-2.5 py-1 rounded-md text-xs font-semibold border border-white/10"><Share className="w-3.5 h-3.5 text-blue-400" /> Partager</span>
                 </div>
               </div>
 
               {/* Ligne de liaison */}
-              <div className="w-px h-4 bg-white/10 ml-3.5 -my-2" />
+              <div className="w-px h-4 bg-white/10 dark:bg-academy-surfaceDark/10 ml-3.5 -my-2" />
 
               {/* Étape 2 */}
               <div className="flex items-center gap-3">
                 <div className="w-7 h-7 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center text-xs font-bold shrink-0 border border-blue-500/30">2</div>
                 <div className="text-sm text-neutral-300 flex items-center flex-wrap gap-1.5 leading-relaxed">
-                  Sélectionnez <span className="inline-flex items-center gap-1.5 bg-white/10 text-white px-2.5 py-1 rounded-md text-xs font-semibold border border-white/10"><PlusSquare className="w-3.5 h-3.5" /> Sur l'écran d'accueil</span>
+                  Sélectionnez <span className="inline-flex items-center gap-1.5 bg-white/10 dark:bg-academy-surfaceDark/10 text-white px-2.5 py-1 rounded-md text-xs font-semibold border border-white/10"><PlusSquare className="w-3.5 h-3.5" /> Sur l'écran d'accueil</span>
                 </div>
               </div>
             </div>
           </div>
         ) : isAndroid && !promptInstall ? (
           <div className="bg-black/40 border border-white/5 rounded-2xl p-5 relative z-10">
-            <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest mb-4">
+            <p className="text-[10px] font-bold text-neutral-500 dark:text-academy-textMain/50 uppercase tracking-widest mb-4">
               {t('pwa.android_how_to')}
             </p>
             <div className="space-y-4">
               <div className="flex items-center gap-3">
                 <div className="w-7 h-7 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center text-xs font-bold shrink-0 border border-blue-500/30">1</div>
                 <div className="text-sm text-neutral-300 flex items-center flex-wrap gap-1.5 leading-relaxed">
-                  Appuyez sur le menu <span className="inline-flex items-center gap-1.5 bg-white/10 text-white px-2.5 py-1 rounded-md text-xs font-semibold border border-white/10">⋮ Options</span>
+                  Appuyez sur le menu <span className="inline-flex items-center gap-1.5 bg-white/10 dark:bg-academy-surfaceDark/10 text-white px-2.5 py-1 rounded-md text-xs font-semibold border border-white/10">⋮ Options</span>
                 </div>
               </div>
-              <div className="w-px h-4 bg-white/10 ml-3.5 -my-2" />
+              <div className="w-px h-4 bg-white/10 dark:bg-academy-surfaceDark/10 ml-3.5 -my-2" />
               <div className="flex items-center gap-3">
                 <div className="w-7 h-7 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center text-xs font-bold shrink-0 border border-blue-500/30">2</div>
                 <div className="text-sm text-neutral-300 flex items-center flex-wrap gap-1.5 leading-relaxed">
-                  Sélectionnez <span className="inline-flex items-center gap-1.5 bg-white/10 text-white px-2.5 py-1 rounded-md text-xs font-semibold border border-white/10">Ajouter à l'écran d'accueil</span>
+                  Sélectionnez <span className="inline-flex items-center gap-1.5 bg-white/10 dark:bg-academy-surfaceDark/10 text-white px-2.5 py-1 rounded-md text-xs font-semibold border border-white/10">Ajouter à l'écran d'accueil</span>
                 </div>
               </div>
             </div>

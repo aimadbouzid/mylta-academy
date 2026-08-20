@@ -6,6 +6,18 @@
 const { PrismaClient } = require('@prisma/client')
 const argon2 = require('argon2')
 
+// Ce script crée un admin avec un mot de passe codé en dur (admin123) plus
+// deux comptes de test — parfait en développement, catastrophique sur un
+// VPS public. Utiliser `npm run db:create-admin` (scripts/create-admin.js)
+// en production à la place. SEED_ALLOW_PRODUCTION=true débloque ce garde
+// pour les cas exceptionnels où on l'exécute sciemment (ex: staging).
+if (process.env.NODE_ENV === 'production' && process.env.SEED_ALLOW_PRODUCTION !== 'true') {
+  console.error('❌ db:seed refusé en production (comptes de test + mot de passe admin faible codés en dur).')
+  console.error('   Utiliser à la place : npm run db:create-admin')
+  console.error("   (ou définir SEED_ALLOW_PRODUCTION=true si c'est volontaire, ex. staging)")
+  process.exit(1)
+}
+
 const prisma = new PrismaClient()
 
 const COURSES_DATA = [
@@ -19,10 +31,10 @@ const COURSES_DATA = [
     level: 'Avancé',
     isPublished: true,
     lessons: [
-      { title: 'Introduction au Marketing Digital', description: 'Vue d\'ensemble des canaux et stratégies', externalVideoUrl: 'https://drive.google.com/file/d/DEMO_ID_1/view', order: 1, duration: '45min' },
-      { title: 'SEO & Référencement Naturel', description: 'Optimisation pour Google DZ', externalVideoUrl: 'https://drive.google.com/file/d/DEMO_ID_2/view', order: 2, duration: '1h 15min' },
-      { title: 'Publicité sur les Réseaux Sociaux', description: 'Facebook, Instagram, TikTok Ads', externalVideoUrl: 'https://drive.google.com/file/d/DEMO_ID_3/view', order: 3, duration: '1h 30min' },
-      { title: 'Email Marketing & Automation', description: 'Séquences automatisées pour convertir', externalVideoUrl: 'https://drive.google.com/file/d/DEMO_ID_4/view', order: 4, duration: '55min' },
+      { title: 'Introduction au Marketing Digital', description: 'Vue d\'ensemble des canaux et stratégies', externalVideoUrl: 'https://www.youtube.com/watch?v=bMknfKXIFA8', order: 1, duration: '45min' },
+      { title: 'SEO & Référencement Naturel', description: 'Optimisation pour Google DZ', externalVideoUrl: 'https://www.youtube.com/watch?v=bMknfKXIFA8', order: 2, duration: '1h 15min' },
+      { title: 'Publicité sur les Réseaux Sociaux', description: 'Facebook, Instagram, TikTok Ads', externalVideoUrl: 'https://www.youtube.com/watch?v=bMknfKXIFA8', order: 3, duration: '1h 30min' },
+      { title: 'Email Marketing & Automation', description: 'Séquences automatisées pour convertir', externalVideoUrl: 'https://www.youtube.com/watch?v=bMknfKXIFA8', order: 4, duration: '55min' },
     ],
   },
   {
@@ -35,10 +47,10 @@ const COURSES_DATA = [
     level: 'Intermédiaire',
     isPublished: true,
     lessons: [
-      { title: 'HTML5 & CSS3 Modernes', description: 'Les bases solides du web', externalVideoUrl: 'https://drive.google.com/file/d/DEMO_ID_5/view', order: 1, duration: '2h 00min' },
-      { title: 'JavaScript Avancé & ES6+', description: 'Fonctionnalités modernes', externalVideoUrl: 'https://drive.google.com/file/d/DEMO_ID_6/view', order: 2, duration: '3h 30min' },
-      { title: 'React & Hooks', description: 'Interfaces réactives professionnelles', externalVideoUrl: 'https://drive.google.com/file/d/DEMO_ID_7/view', order: 3, duration: '4h 00min' },
-      { title: 'Node.js & Express', description: 'Backend JavaScript robuste', externalVideoUrl: 'https://drive.google.com/file/d/DEMO_ID_8/view', order: 4, duration: '3h 00min' },
+      { title: 'HTML5 & CSS3 Modernes', description: 'Les bases solides du web', externalVideoUrl: 'https://www.youtube.com/watch?v=bMknfKXIFA8', order: 1, duration: '2h 00min' },
+      { title: 'JavaScript Avancé & ES6+', description: 'Fonctionnalités modernes', externalVideoUrl: 'https://www.youtube.com/watch?v=bMknfKXIFA8', order: 2, duration: '3h 30min' },
+      { title: 'React & Hooks', description: 'Interfaces réactives professionnelles', externalVideoUrl: 'https://www.youtube.com/watch?v=bMknfKXIFA8', order: 3, duration: '4h 00min' },
+      { title: 'Node.js & Express', description: 'Backend JavaScript robuste', externalVideoUrl: 'https://www.youtube.com/watch?v=bMknfKXIFA8', order: 4, duration: '3h 00min' },
     ],
   },
   {
@@ -51,9 +63,9 @@ const COURSES_DATA = [
     level: 'Débutant',
     isPublished: true,
     lessons: [
-      { title: 'Idéation & Validation du Marché', description: 'Trouver une idée rentable', externalVideoUrl: 'https://drive.google.com/file/d/DEMO_ID_10/view', order: 1, duration: '1h 00min' },
-      { title: 'Business Plan Simplifié', description: 'Le plan qui convainct les investisseurs', externalVideoUrl: 'https://drive.google.com/file/d/DEMO_ID_11/view', order: 2, duration: '1h 30min' },
-      { title: 'Inscription au CNRC & Statuts', description: 'Étapes légales en Algérie', externalVideoUrl: 'https://drive.google.com/file/d/DEMO_ID_12/view', order: 3, duration: '45min' },
+      { title: 'Idéation & Validation du Marché', description: 'Trouver une idée rentable', externalVideoUrl: 'https://www.youtube.com/watch?v=bMknfKXIFA8', order: 1, duration: '1h 00min' },
+      { title: 'Business Plan Simplifié', description: 'Le plan qui convainct les investisseurs', externalVideoUrl: 'https://www.youtube.com/watch?v=bMknfKXIFA8', order: 2, duration: '1h 30min' },
+      { title: 'Inscription au CNRC & Statuts', description: 'Étapes légales en Algérie', externalVideoUrl: 'https://www.youtube.com/watch?v=bMknfKXIFA8', order: 3, duration: '45min' },
     ],
   },
 ]
@@ -69,10 +81,10 @@ async function main() {
   // ─── Créer le compte Admin ───
   const adminPassword = await argon2.hash('admin123')
   const admin = await prisma.user.upsert({
-    where: { email: 'admin@myltaacademy.dz' },
+    where: { email: 'academymylta@gmail.com' },
     update: {},
     create: {
-      email: 'admin@myltaacademy.dz',
+      email: 'academymylta@gmail.com',
       password: adminPassword,
       name: 'Administrateur Mylta Academy',
       role: 'ADMIN',
@@ -95,6 +107,23 @@ async function main() {
     },
   })
   console.log(`✅ Étudiant créé: ${student.email} (mot de passe: student123)`)
+
+  // ─── Créer un formateur de test (approuvé) ───
+  const instructorPassword = await argon2.hash('formateur123')
+  const instructor = await prisma.user.upsert({
+    where: { email: 'formateur@test.dz' },
+    update: {},
+    create: {
+      email: 'formateur@test.dz',
+      password: instructorPassword,
+      name: 'Karim Formateur',
+      role: 'INSTRUCTOR',
+      emailVerified: true,
+      instructorApproved: true,
+      instructorAppliedAt: new Date(),
+    },
+  })
+  console.log(`✅ Formateur créé: ${instructor.email} (mot de passe: formateur123)`)
 
   // ─── Créer les 3 formations ───
   const createdCourses = []

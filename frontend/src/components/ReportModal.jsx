@@ -51,11 +51,11 @@ export default function ReportModal({ isOpen, onClose }) {
     <div className={`fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 ${isRtl ? 'dir-rtl' : 'dir-ltr'}`}>
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
       
-      <div className="relative w-full max-w-md max-h-[95vh] flex flex-col bg-white rounded-2xl shadow-2xl overflow-hidden animate-fade-up">
+      <div className="relative w-full max-w-md max-h-[95vh] flex flex-col bg-white dark:bg-academy-surfaceDark rounded-2xl shadow-2xl overflow-hidden animate-fade-up">
         {/* Header */}
-        <div className="bg-red-50 p-4 sm:p-6 flex items-start justify-between border-b border-red-100 flex-shrink-0">
+        <div className="bg-red-50 dark:bg-red-500/10 p-4 sm:p-6 flex items-start justify-between border-b border-red-100 dark:border-red-500/20 flex-shrink-0">
           <div className="flex gap-4">
-            <div className="w-12 h-12 bg-red-100 text-red-600 rounded-full flex items-center justify-center shrink-0">
+            <div className="w-12 h-12 bg-red-100 dark:bg-red-500/15 text-red-600 dark:text-red-400 rounded-full flex items-center justify-center shrink-0">
               <AlertTriangle size={24} />
             </div>
             <div>
@@ -73,17 +73,17 @@ export default function ReportModal({ isOpen, onClose }) {
         {/* Content */}
         <div className="p-4 sm:p-6 overflow-y-auto space-y-4">
           <div>
-            <label className="block text-sm font-bold text-gray-700 mb-2">{t('report.subject_label') || 'Quel est le sujet ? *'}</label>
+            <label className="block text-sm font-bold text-gray-700 dark:text-academy-textMain/75 mb-2">{t('report.subject_label') || 'Quel est le sujet ? *'}</label>
             <div className="space-y-2">
               {topics.map(topic => (
-                <label key={topic.id} className={`flex items-center gap-3 p-2.5 rounded-xl border cursor-pointer transition-all ${selectedTopic === topic.id ? 'bg-red-50 border-red-200 text-red-800' : 'bg-gray-50 border-gray-200 text-gray-600 hover:bg-gray-100'}`}>
+                <label key={topic.id} className={`flex items-center gap-3 p-2.5 rounded-xl border cursor-pointer transition-all ${selectedTopic === topic.id ? 'bg-red-50 dark:bg-red-500/10 border-red-200 dark:border-red-500/25 text-red-800 dark:text-red-300' : 'bg-gray-50 dark:bg-white/5 border-gray-200 dark:border-academy-border text-gray-600 dark:text-academy-textMain/60 hover:bg-gray-100'}`}>
                   <input
                     type="radio"
                     name="report_topic"
                     value={topic.id}
                     checked={selectedTopic === topic.id}
                     onChange={(e) => setSelectedTopic(e.target.value)}
-                    className="w-4 h-4 text-red-600 focus:ring-red-500"
+                    className="w-4 h-4 text-red-600 dark:text-red-400 focus:ring-red-500"
                   />
                   <span className="text-sm font-medium">{topic.label}</span>
                 </label>
@@ -92,21 +92,21 @@ export default function ReportModal({ isOpen, onClose }) {
           </div>
 
           <div>
-            <label className="block text-sm font-bold text-gray-700 mb-2">{t('report.details_label') || 'Détails supplémentaires (Optionnel)'}</label>
+            <label className="block text-sm font-bold text-gray-700 dark:text-academy-textMain/75 mb-2">{t('report.details_label') || 'Détails supplémentaires (Optionnel)'}</label>
             <textarea
               value={details}
               onChange={(e) => setDetails(e.target.value)}
               placeholder={t('report.details_placeholder') || 'Décrivez votre problème en quelques mots...'}
-              className="w-full h-20 p-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 resize-none transition-all text-gray-800"
+              className="w-full h-20 p-3 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-academy-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 resize-none transition-all text-gray-800 dark:text-academy-textMain/85"
             />
           </div>
         </div>
 
         {/* Footer */}
-        <div className="p-4 sm:p-6 bg-gray-50 border-t border-gray-100 flex justify-end gap-3 flex-shrink-0">
+        <div className="p-4 sm:p-6 bg-gray-50 dark:bg-white/5 border-t border-gray-100 dark:border-academy-border flex justify-end gap-3 flex-shrink-0">
           <button
             onClick={onClose}
-            className="px-5 py-2.5 text-sm font-bold text-gray-600 hover:text-gray-800 transition-colors"
+            className="px-5 py-2.5 text-sm font-bold text-gray-600 dark:text-academy-textMain/60 hover:text-gray-800 transition-colors"
           >
             {t('report.cancel') || 'Annuler'}
           </button>

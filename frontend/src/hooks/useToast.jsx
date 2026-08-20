@@ -28,11 +28,16 @@ export function useToast() {
   const ctx = useContext(ToastContext)
   if (!ctx) throw new Error('useToast doit être dans <ToastProvider>')
 
+  const success = useCallback((msg, dur) => ctx.addToast(msg, 'success', dur), [ctx.addToast])
+  const error = useCallback((msg, dur) => ctx.addToast(msg, 'error', dur), [ctx.addToast])
+  const info = useCallback((msg, dur) => ctx.addToast(msg, 'info', dur), [ctx.addToast])
+  const warning = useCallback((msg, dur) => ctx.addToast(msg, 'warning', dur), [ctx.addToast])
+
   return {
-    success: (msg, dur) => ctx.addToast(msg, 'success', dur),
-    error:   (msg, dur) => ctx.addToast(msg, 'error',   dur),
-    info:    (msg, dur) => ctx.addToast(msg, 'info',    dur),
-    warning: (msg, dur) => ctx.addToast(msg, 'warning', dur),
+    success,
+    error,
+    info,
+    warning,
     toasts:  ctx.toasts,
     remove:  ctx.removeToast,
   }

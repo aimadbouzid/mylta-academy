@@ -22,7 +22,7 @@ export function useCourses(filters = {}) {
 
       const { data } = await api.get(`/courses?${params}`)
       setCourses(data.courses || [])
-      setTotal(data.total || 0)
+      setTotal(data.pagination?.total || 0)
     } catch (err) {
       setError(
         err.response?.data?.error ||

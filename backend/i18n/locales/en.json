@@ -22,7 +22,9 @@
     "notifications_read": "Notifications marked as read.",
     "forbidden_admin": "Access restricted to administrators.",
     "unauthenticated": "Not authenticated.",
-    "refresh_success": "Token refreshed successfully."
+    "refresh_success": "Token refreshed successfully.",
+    "invalid_input": "The information you entered is invalid. Please check the fields and try again.",
+    "session_invalidated": "Your session has expired or was revoked. Please sign in again."
   },
   "courses": {
     "id_invalid": "Invalid ID.",
@@ -33,7 +35,8 @@
     "progress_updated": "Progress updated.",
     "rating_invalid": "Rating must be a number between 1 and 5.",
     "must_buy_to_rate": "You must purchase this course to rate it.",
-    "review_saved": "Review saved."
+    "review_saved": "Review saved.",
+    "complete_previous_first": "Complete the previous lesson to unlock this one."
   },
   "payments": {
     "course_id_required": "Course ID is required.",
@@ -80,9 +83,10 @@
     "no_video": "No video file received.",
     "config_updated": "Site configuration updated successfully.",
     "intro_uploaded": "Introduction video uploaded successfully!",
-    "notification_course_unlocked": "🎉 Course Unlocked!",
+    "notification_course_unlocked": "Course Unlocked",
     "notification_course_unlocked_msg": "Congratulations! Your payment for \"{{course}}\" has been approved. You now have full access.",
-    "notification_receipt_rejected": "⚠️ Receipt not validated",
+    "notification_receipt_accepted": "Receipt Accepted",
+    "notification_receipt_rejected": "Receipt not validated",
     "notification_receipt_rejected_msg": "Your receipt for \"{{course}}\" was not validated. Reason: {{reason}}"
   },
   "errors": {

@@ -18,7 +18,7 @@ export default function RegisterPage() {
       <main className="flex-grow flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
         <RegistrationForm />
       </main>
-      <footer className="py-6 text-center text-xs text-neutral-600 border-t border-neutral-900">
+      <footer className="py-6 text-center text-xs text-neutral-600 dark:text-academy-textMain/60 border-t border-neutral-900">
         © {new Date().getFullYear()} MYLTA ACADEMY — {t('common.all_rights')}
       </footer>
     </div>

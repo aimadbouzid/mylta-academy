@@ -5,33 +5,66 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
 
     <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" href="/logo-128.png" />
+
+    <!-- Preload critical assets -->
+    <link rel="preload" as="image" href="/logo-128.png" fetchpriority="high" />
+    <link rel="preload" as="font" href="https://fonts.gstatic.com/s/inter/v18/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuLyfAZ9hjQ.woff2" type="font/woff2" crossorigin />
+    <link rel="alternate icon" href="/pwa-192x192.png" />
 
     <!-- PWA — Apple (iOS) -->
-    <link rel="apple-touch-icon" sizes="180x180" href="/pwa-192x192.png">
+    <link rel="apple-touch-icon" href="/logo-256.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="Mylta Academy">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-    <!-- PWA — Android / Chrome -->
-    <meta name="theme-color" content="#2563EB">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="Mylta Academy">
+    <!-- PWA — Android / Chrome (valeur ajustée au thème par ThemeContext) -->
+    <meta name="theme-color" content="#f1f5f7">
 
-    <!-- Polices Google Fonts (preconnect pour perf) -->
+    <!-- Thème appliqué AVANT le premier rendu.
+         Sans ce script bloquant, un utilisateur en mode sombre verrait un
+         flash blanc le temps que React démarre. Volontairement minimal. -->
+    <script>
+      (function () {
+        try {
+          var saved = localStorage.getItem('mylta_theme') || 'system';
+          var dark = saved === 'dark' || (saved === 'system' &&
+            window.matchMedia('(prefers-color-scheme: dark)').matches);
+          if (dark) {
+            document.documentElement.classList.add('dark');
+            var m = document.querySelector('meta[name="theme-color"]');
+            if (m) m.setAttribute('content', '#000000');
+          }
+        } catch (e) {}
+      })();
+    </script>
+    <!-- Polices Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Sora:wght@600;700;800&family=Cairo:wght@400;600;700;800;900&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
 
     <!-- SEO de base (enrichi dynamiquement par SEOHead via react-helmet-async) -->
-    <title>Mylta Academy | Formation Premium en Algérie</title>
+    <title>Mylta Academy | Formation Premium sur Smartphone & Outils de Réussite</title>
     <meta
       name="description"
-      content="Mylta Academy — La plateforme de formation premium en Algérie. Développez vos compétences en Marketing Digital, Tech, Business et Design. Paiement par CCP et BaridiMob."
+      content="Mylta Academy — La plateforme e-learning 100% accessible sur smartphone en Algérie. Formations pratiques, outils IA et business depuis votre téléphone."
     />
+    <!-- Google Analytics (TODO: Remplacer G-XXXXXXXXXX par votre ID) -->
+    <!-- 
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-XXXXXXXXXX');
+    </script>
+    -->
+
+    <!-- Meta Pixel : volontairement absent d'index.html.
+         Il est chargé par src/lib/facebookPixel.js UNIQUEMENT après acceptation
+         des cookies, et l'ID vient de VITE_FACEBOOK_PIXEL_ID. Un snippet placé
+         ici se déclencherait avant tout consentement, et ne compterait qu'une
+         vue par session (la navigation SPA ne recharge pas la page). -->
   </head>
   <body>
     <div id="root"></div>

@@ -8,7 +8,7 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       injectRegister: 'auto',
-      includeAssets: ['favicon.svg', 'pwa-192x192.png', 'pwa-512x512.png'],
+      includeAssets: ['favicon.svg', 'logo-256.png', 'logo-128.png'],
       manifest: {
         name: 'Mylta Academy — Formation Premium',
         short_name: 'Mylta Academy',
@@ -24,10 +24,16 @@ export default defineConfig({
         dir: 'ltr',
         icons: [
           {
-            src: '/pwa-192x192.png',
-            sizes: '192x192',
+            src: '/logo-128.png',
+            sizes: '128x128',
             type: 'image/png',
           },
+          {
+            src: '/logo-256.png',
+            sizes: '256x256',
+            type: 'image/png',
+          },
+          // Une icône 512×512 est exigée pour qu'une PWA soit installable
           {
             src: '/pwa-512x512.png',
             sizes: '512x512',
@@ -43,8 +49,22 @@ export default defineConfig({
         screenshots: [],
       },
       workbox: {
-        // Précacher les assets statiques
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,woff,woff2}'],
+        // Précharger UNIQUEMENT la coquille de l'application.
+        //
+        // Le motif précédent (`**/*.{js,png,…}`) embarquait tout : 9 Mo étaient
+        // téléchargés dès la première visite, dont les gros chunks de routes
+        // pourtant chargées à la demande (React.lazy) — ce qui annulait le
+        // découpage de code. Sur mobile en Algérie, c'est un coût direct en
+        // données pour l'utilisateur.
+        globPatterns: [
+          '**/*.{css,html,woff,woff2,svg}',
+          'assets/index-*.js',
+          'assets/vendor-*.js',
+          'logo-*.png',
+          'pwa-*.png',
+        ],
+        // Filet de sécurité : rien d'anormalement lourd ne rentre dans le précache
+        maximumFileSizeToCacheInBytes: 1.5 * 1024 * 1024,
         // Ne pas cacher les API
         navigateFallback: 'index.html',
         navigateFallbackDenylist: [/^\/api\//, /^\/uploads\//],
@@ -76,6 +96,23 @@ export default defineConfig({
               },
             },
           },
+          // Chunks de routes (React.lazy) : mis en cache À L'USAGE plutôt que
+          // préchargés. L'utilisateur ne paie que les pages qu'il visite, et
+          // la seconde visite reste instantanée.
+          {
+            urlPattern: /\/assets\/.*\.js$/i,
+            handler: 'StaleWhileRevalidate',
+            options: {
+              cacheName: 'route-chunks',
+              expiration: {
+                maxEntries: 60,
+                maxAgeSeconds: 60 * 60 * 24 * 30,
+              },
+              cacheableResponse: {
+                statuses: [0, 200],
+              },
+            },
+          },
           // Thumbnails des formations (cache 7 jours)
           {
             urlPattern: /\/uploads\/thumbnails\/.*/i,
@@ -91,22 +128,11 @@ export default defineConfig({
               },
             },
           },
-          // API courses (stale-while-revalidate — montre le cache puis met à jour)
-          {
-            urlPattern: /\/api\/courses(\?.*)?$/i,
-            handler: 'StaleWhileRevalidate',
-            options: {
-              cacheName: 'api-courses',
-              expiration: {
-                maxEntries: 20,
-                maxAgeSeconds: 60 * 5, // 5 minutes
-              },
-              cacheableResponse: {
-                statuses: [0, 200],
-              },
-            },
-          },
-          // API config (cache long)
+          // ⚠️ Ne JAMAIS cacher /api/courses ici : la réponse contient hasAccess,
+          // propre à chaque compte. Le service worker est partagé par tout le
+          // navigateur, donc la réponse d'un acheteur était resservie à un
+          // visiteur déconnecté (formations affichées comme déjà acquises).
+          // API config (cache long) — réglages publics identiques pour tous
           {
             urlPattern: /\/api\/config\/.*/i,
             handler: 'StaleWhileRevalidate',
@@ -144,15 +170,15 @@ export default defineConfig({
     port: 5173,
     proxy: {
       '/api': {
-        target: 'http://localhost:3000',
+        target: 'http://localhost:3001',
         changeOrigin: true,
       },
       '/uploads': {
-        target: 'http://localhost:3000',
+        target: 'http://localhost:3001',
         changeOrigin: true,
       },
       '/socket.io': {
-        target: 'http://localhost:3000',
+        target: 'http://localhost:3001',
         ws: true,
       },
     },
@@ -162,9 +188,14 @@ export default defineConfig({
     sourcemap: false,
     rollupOptions: {
       output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom', 'react-router-dom'],
-          ui: ['lucide-react'],
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router-dom')) return 'vendor';
+            if (id.includes('lucide-react')) return 'ui';
+            if (id.includes('plyr') || id.includes('plyr-react')) return 'media';
+            if (id.includes('socket.io-client')) return 'realtime';
+            if (id.includes('@react-oauth/google')) return 'auth';
+          }
         },
       },
     },

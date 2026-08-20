@@ -1,7 +1,12 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { User, Mail, Phone, UploadCloud, CheckCircle, FileText, X, Loader2, ShieldCheck } from 'lucide-react';
+import { User, Mail, Phone, UploadCloud, CheckCircle, FileText, X, Loader2, ShieldCheck, MapPin, Lock, Eye, EyeOff } from 'lucide-react';
+import HumanVerification from './HumanVerification';
+import { GoogleLogin } from '@react-oauth/google';
+import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
+import { optimizeImage } from '../utils/imageOptimizer';
+import { facebookLogin } from '../utils/facebookAuth';
 
 /**
  * Composant RegistrationForm pour la plateforme "MYLTA ACADEMY"
@@ -10,17 +15,22 @@ import { useLanguage } from '../context/LanguageContext';
  */
 const RegistrationForm = ({ onSuccess }) => {
   const { t } = useLanguage();
+  const { loginWithGoogle, loginWithFacebook, checkAuth } = useAuth();
   // États du formulaire
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
     phone: '',
+    address: '',
+    password: '',
   });
+  const [showPassword, setShowPassword] = useState(false);
   const [receiptFile, setReceiptFile] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isHumanVerified, setIsHumanVerified] = useState(false);
 
   // Gestion du changement des champs textuels
   const handleChange = (e) => {
@@ -29,8 +39,35 @@ const RegistrationForm = ({ onSuccess }) => {
     if (error) setError(null);
   };
 
+  const handleGoogleSuccess = async (credentialResponse) => {
+    setLoading(true);
+    try {
+      await loginWithGoogle(credentialResponse.credential);
+      await checkAuth();
+      if (onSuccess) onSuccess();
+    } catch (err) {
+      setError(err.response?.data?.error || 'Erreur Google Auth');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleFacebookLogin = async () => {
+    setLoading(true);
+    try {
+      const accessToken = await facebookLogin();
+      await loginWithFacebook(accessToken);
+      await checkAuth();
+      if (onSuccess) onSuccess();
+    } catch (err) {
+      setError(err.response?.data?.error || 'Échec de la connexion Facebook');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Traitement et vérification du fichier sélectionné
-  const handleFileSelect = (file) => {
+  const handleFileSelect = async (file) => {
     if (!file) return;
 
     // Validation du type de fichier (Images ou PDF)
@@ -40,14 +77,25 @@ const RegistrationForm = ({ onSuccess }) => {
       return;
     }
 
+    setError(null);
+
+    let fileToUse = file;
+    if (file.type.startsWith('image/')) {
+      try {
+        const optimized = await optimizeImage(file);
+        fileToUse = optimized;
+      } catch (err) {
+        console.error('Image optimization failed, using original file:', err);
+      }
+    }
+
     // Validation de la taille (ex: max 10MB)
-    if (file.size > 10 * 1024 * 1024) {
+    if (fileToUse.size > 10 * 1024 * 1024) {
       setError(t('register.file_too_large'));
       return;
     }
 
-    setError(null);
-    setReceiptFile(file);
+    setReceiptFile(fileToUse);
   };
 
   // Gestion de l'input d'upload classique
@@ -83,6 +131,11 @@ const RegistrationForm = ({ onSuccess }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!isHumanVerified) {
+      setError('Veuillez compléter la vérification humaine.');
+      return;
+    }
+
     if (!receiptFile) {
       setError(t('register.receipt_required'));
       return;
@@ -103,6 +156,8 @@ const RegistrationForm = ({ onSuccess }) => {
       data.append('fullName', formData.fullName);
       data.append('email', formData.email);
       data.append('phone', formData.phone);
+      data.append('address', formData.address);
+      data.append('password', formData.password);
       
       // La clé 'receipt' doit correspondre au nom attendu par Multer dans votre route Express 
       // Exemple backend : upload.single('receipt')
@@ -146,10 +201,10 @@ const RegistrationForm = ({ onSuccess }) => {
         <h3 className="text-2xl font-bold text-academy-textMain mb-2 tracking-tight">
           {t('register.success_title')}
         </h3>
-        <p className="text-neutral-400 mb-6 text-sm leading-relaxed">
+        <p className="text-neutral-400 dark:text-academy-textMain/40 mb-6 text-sm leading-relaxed">
           Merci <span className="text-academy-textMain font-medium">{formData.fullName}</span>. {t('register.success_desc')} <strong className="text-blue-400">MYLTA ACADEMY</strong>. {t('register.success_email')}
         </p>
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-neutral-900 border border-neutral-800 text-xs text-neutral-400">
+        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-neutral-900 border border-neutral-800 text-xs text-neutral-400 dark:text-academy-textMain/40">
           <ShieldCheck className="w-4 h-4 text-blue-400" />
           {t('register.verifying')}
         </div>
@@ -164,7 +219,7 @@ const RegistrationForm = ({ onSuccess }) => {
         <h2 className="text-2xl sm:text-3xl font-extrabold text-academy-textMain tracking-wider uppercase mb-3">
           {t('register.title')}
         </h2>
-        <p className="text-neutral-400 text-sm sm:text-base leading-relaxed max-w-md mx-auto">
+        <p className="text-neutral-400 dark:text-academy-textMain/40 text-sm sm:text-base leading-relaxed max-w-md mx-auto">
           {t('register.subtitle')}
         </p>
       </div>
@@ -173,11 +228,40 @@ const RegistrationForm = ({ onSuccess }) => {
       {error && (
         <div className="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm flex items-start justify-between">
           <span>{error}</span>
-          <button onClick={() => setError(null)} className="text-red-400 hover:text-red-300">
+          <button type="button" onClick={() => setError(null)} className="text-red-400 hover:text-red-300">
             <X className="w-4 h-4" />
           </button>
         </div>
       )}
+
+      {/* Bouton Google Auth */}
+      <div className="mb-3 flex justify-center">
+        <GoogleLogin
+          onSuccess={handleGoogleSuccess}
+          onError={() => setError('Échec de la connexion Google')}
+          useOneTap
+          theme="filled_black"
+          size="large"
+          text="continue_with"
+        />
+      </div>
+
+      {/* Bouton Facebook Auth */}
+      <button
+        type="button"
+        onClick={handleFacebookLogin}
+        disabled={loading}
+        className="mb-6 w-full flex items-center justify-center gap-2.5 h-11 rounded-xl bg-[#1877F2] hover:bg-[#166FE5] text-white text-sm font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/>
+        </svg>
+        Continuer avec Facebook
+      </button>
+
+      <div className="mb-6 flex items-center before:mt-0.5 before:flex-1 before:border-t before:border-neutral-800 after:mt-0.5 after:flex-1 after:border-t after:border-neutral-800">
+        <span className="mx-4 text-sm text-neutral-500 dark:text-academy-textMain/50 font-medium">{t('login.or') || 'ou'}</span>
+      </div>
 
       {/* 2. Le Formulaire */}
       <form onSubmit={handleSubmit} className="space-y-6">
@@ -187,7 +271,7 @@ const RegistrationForm = ({ onSuccess }) => {
             {t('register.full_name')}
           </label>
           <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-neutral-500">
+            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-neutral-500 dark:text-academy-textMain/50">
               <User className="w-5 h-5" />
             </div>
             <input
@@ -209,7 +293,7 @@ const RegistrationForm = ({ onSuccess }) => {
             {t('register.email')}
           </label>
           <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-neutral-500">
+            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-neutral-500 dark:text-academy-textMain/50">
               <Mail className="w-5 h-5" />
             </div>
             <input
@@ -231,7 +315,7 @@ const RegistrationForm = ({ onSuccess }) => {
             {t('register.phone')}
           </label>
           <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-neutral-500">
+            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-neutral-500 dark:text-academy-textMain/50">
               <Phone className="w-5 h-5" />
             </div>
             <input
@@ -244,6 +328,57 @@ const RegistrationForm = ({ onSuccess }) => {
               placeholder="06 12 34 56 78"
               className="w-full pl-11 pr-4 py-3.5 bg-neutral-900 border border-neutral-800 rounded-xl text-academy-textMain placeholder-neutral-600 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all duration-200"
             />
+          </div>
+        </div>
+
+        {/* Champ Adresse */}
+        <div>
+          <label htmlFor="address" className="block text-xs font-medium text-neutral-300 uppercase tracking-wider mb-2">
+            {t('register.address')}
+          </label>
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-neutral-500 dark:text-academy-textMain/50">
+              <MapPin className="w-5 h-5" />
+            </div>
+            <input
+              type="text"
+              id="address"
+              name="address"
+              required
+              value={formData.address}
+              onChange={handleChange}
+              placeholder={t('register.address_placeholder')}
+              className="w-full pl-11 pr-4 py-3.5 bg-neutral-900 border border-neutral-800 rounded-xl text-academy-textMain placeholder-neutral-600 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all duration-200"
+            />
+          </div>
+        </div>
+
+        {/* Champ Mot de passe */}
+        <div>
+          <label htmlFor="password" className="block text-xs font-medium text-neutral-300 uppercase tracking-wider mb-2">
+            {t('register.password')}
+          </label>
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-neutral-500 dark:text-academy-textMain/50">
+              <Lock className="w-5 h-5" />
+            </div>
+            <input
+              type={showPassword ? "text" : "password"}
+              id="password"
+              name="password"
+              required
+              value={formData.password}
+              onChange={handleChange}
+              placeholder="••••••••••••"
+              className="w-full pl-11 pr-12 py-3.5 bg-neutral-900 border border-neutral-800 rounded-xl text-academy-textMain placeholder-neutral-600 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all duration-200"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-neutral-500 dark:text-academy-textMain/50 hover:text-neutral-300"
+            >
+              {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+            </button>
           </div>
         </div>
 
@@ -274,13 +409,13 @@ const RegistrationForm = ({ onSuccess }) => {
               }`}
             >
               <div className="flex flex-col items-center justify-center pt-5 pb-6 text-center">
-                <div className="w-12 h-12 mb-3 rounded-full bg-neutral-800/80 flex items-center justify-center text-neutral-400 group-hover:text-academy-textMain transition-colors">
-                  <UploadCloud className="w-6 h-6 text-neutral-400" />
+                <div className="w-12 h-12 mb-3 rounded-full bg-neutral-800/80 flex items-center justify-center text-neutral-400 dark:text-academy-textMain/40 group-hover:text-academy-textMain transition-colors">
+                  <UploadCloud className="w-6 h-6 text-neutral-400 dark:text-academy-textMain/40" />
                 </div>
                 <p className="mb-1 text-sm text-neutral-300">
                   <span className="font-semibold text-blue-400">{t('register.upload_click')}</span> {t('register.upload_drop')}
                 </p>
-                <p className="text-xs text-neutral-500">
+                <p className="text-xs text-neutral-500 dark:text-academy-textMain/50">
                   {t('register.upload_formats')}
                 </p>
               </div>
@@ -296,7 +431,7 @@ const RegistrationForm = ({ onSuccess }) => {
                   <p className="text-sm font-medium text-academy-textMain truncate">
                     {receiptFile.name}
                   </p>
-                  <p className="text-xs text-neutral-500">
+                  <p className="text-xs text-neutral-500 dark:text-academy-textMain/50">
                     {(receiptFile.size / (1024 * 1024)).toFixed(2)} MB
                   </p>
                 </div>
@@ -304,7 +439,7 @@ const RegistrationForm = ({ onSuccess }) => {
               <button
                 type="button"
                 onClick={handleRemoveFile}
-                className="p-2 text-neutral-400 hover:text-academy-textMain rounded-lg hover:bg-neutral-800 transition-colors"
+                className="p-2 text-neutral-400 dark:text-academy-textMain/40 hover:text-academy-textMain rounded-lg hover:bg-neutral-800 transition-colors"
                 title="Supprimer le fichier"
               >
                 <X className="w-5 h-5" />
@@ -313,10 +448,21 @@ const RegistrationForm = ({ onSuccess }) => {
           )}
         </div>
 
+        {/* Vérification Humaine Premium */}
+        <div>
+          <label className="block text-xs font-medium text-neutral-300 uppercase tracking-wider mb-2">
+            Vérification Humaine
+          </label>
+          <HumanVerification
+            variant="dark"
+            onVerified={(verified) => setIsHumanVerified(verified)}
+          />
+        </div>
+
         {/* 3. Bouton de Soumission */}
         <button
           type="submit"
-          disabled={loading}
+          disabled={loading || !isHumanVerified}
           className="w-full py-4 px-6 mt-4 bg-blue-600 hover:bg-blue-500 text-academy-textMain font-semibold rounded-xl shadow-[0_0_20px_rgba(59,130,246,0.3)] hover:shadow-[0_0_25px_rgba(59,130,246,0.5)] transition-all duration-300 flex items-center justify-center space-x-2 text-sm sm:text-base disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-wider"
         >
           {loading ? (

@@ -1,4 +1,4 @@
-// ============================================================
+// ============================================================  
 // SERVER.JS — Mylta Academy API (Production-Ready, Hardened)
 // Scalable, Secure, Internationalized
 // ============================================================
@@ -13,8 +13,10 @@ const path       = require('path')
 const fs         = require('fs')
 const rateLimit  = require('express-rate-limit')
 const cookieParser = require('cookie-parser')
+const jwt        = require('jsonwebtoken')
 const prisma     = require('./prisma')
 const { initSocket } = require('./socket')
+const { initCron } = require('./cron/cleanupReceipts')
 
 const { httpLogger, errorHandler } = require('./middleware/errorHandler')
 const {
@@ -30,8 +32,8 @@ const videoRoutes   = require('./routes/video')
 const paymentRoutes = require('./routes/payments')
 const adminRoutes   = require('./routes/admin')
 const seoRoutes     = require('./routes/seo')
-const chatbotRoutes = require('./routes/chatbot')
-const nlpManager    = require('./chatbot/nlpManager')
+const instructorRoutes = require('./routes/instructor')
+const blogRoutes    = require('./routes/blog')
 
 // ─── App & Config ─────────────────────────────────────────────
 const app    = express()
@@ -65,10 +67,30 @@ const apiLimiter = rateLimit({
   keyGenerator: (req) => req.ip, // IP-based
 })
 
+// Compte le quota PAR COMPTE plutôt que par IP : chez les opérateurs mobiles
+// algériens, des milliers d'abonnés partagent une même IP publique (CGNAT), et
+// plusieurs administrateurs travaillent souvent depuis le même bureau. Avec une
+// clé par IP, des utilisateurs sans lien entre eux se bloquaient mutuellement.
+// Ces limiteurs s'exécutent avant `authenticate`, d'où la lecture directe du JWT.
+const keyByAccountOrIp = (req) => {
+  const token = req.cookies?.token
+    || (req.headers.authorization?.startsWith('Bearer ') ? req.headers.authorization.slice(7) : null)
+
+  if (token) {
+    try {
+      const { userId } = jwt.verify(token, process.env.JWT_SECRET)
+      if (userId) return `user:${userId}`
+    } catch { /* jeton absent/expiré : on retombe sur l'IP */ }
+  }
+  // Visiteur non authentifié : l'IP reste le seul identifiant disponible.
+  return `ip:${req.ip}`
+}
+
 const videoLimiter = rateLimit({
   windowMs: 60 * 60 * 1000,
   max: 300,
   message: { error: t('errors.video_rate_limited', 'fr'), code: 'VIDEO_RATE_LIMITED' },
+  keyGenerator: keyByAccountOrIp,
 })
 
 const authLimiter = rateLimit({
@@ -77,16 +99,23 @@ const authLimiter = rateLimit({
   message: { error: t('errors.auth_rate_limited', 'fr'), code: 'AUTH_RATE_LIMITED' },
   skip: (req) => {
     const p = req.path.toLowerCase()
-    return p !== '/login' && p !== '/register' && p !== '/refresh'
+    return !['/login', '/register', '/refresh', '/forgot-password', '/reset-password'].includes(p)
   },
 })
 
+// Le tableau de bord admin est un écran de supervision : il rafraîchit la
+// présence toutes les 5 s, soit ~180 requêtes par fenêtre de 15 min pour ce
+// seul écran. Avec l'ancien plafond de 100, l'administrateur se bloquait
+// lui-même au bout de ~8 minutes, puis voyait 15 minutes d'erreurs.
+// 600 laissent la marge du rafraîchissement + la navigation, tout en coupant
+// court à un usage réellement abusif.
 const adminLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 100,
+  max: 600,
   message: { error: t('errors.rate_limited', 'fr'), code: 'ADMIN_RATE_LIMITED' },
   standardHeaders: true,
   legacyHeaders: false,
+  keyGenerator: keyByAccountOrIp,
 })
 
 // Webhook limiter (très strict)
@@ -106,6 +135,26 @@ if (isProd) {
 
 // 1. Request ID (premier — nécessaire pour tout le tracing)
 app.use(requestId)
+
+// Force HTTPS (Chiffrement SSL) & Hide Server Version
+if (isProd) {
+  app.use((req, res, next) => {
+    // Retirer l'en-tête Server si ajouté par défaut ou proxy
+    res.removeHeader('Server')
+    
+    // Redirection HTTP vers HTTPS
+    if (req.headers['x-forwarded-proto'] && req.headers['x-forwarded-proto'] !== 'https') {
+      return res.redirect(`https://${req.headers.host}${req.url}`)
+    }
+    next()
+  })
+} else {
+  app.use((req, res, next) => {
+    res.removeHeader('Server')
+    next()
+  })
+}
+
 
 // 2. Block suspicious user agents (bots/scanners)
 app.use(blockSuspiciousUA)
@@ -133,11 +182,32 @@ app.use(helmet({
   contentSecurityPolicy: isProd ? {
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'"],
+      // accounts.google.com/gsi + connect.facebook.net : scripts injectés côté
+      // client par @react-oauth/google et le SDK JS Facebook pour les boutons
+      // "Continuer avec Google/Facebook" — sans ça, CSP bloque silencieusement
+      // ces logins en production alors qu'ils fonctionnent en dev (CSP désactivée).
+      scriptSrc: ["'self'", 'https://accounts.google.com', 'https://connect.facebook.net'],
       styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
       fontSrc: ["'self'", 'https://fonts.gstatic.com'],
       imgSrc: ["'self'", 'data:', 'https:'],
-      connectSrc: ["'self'"],
+      // www.facebook.com : destination des évènements du pixel Meta (/tr).
+      // fbevents.js les envoie en fetch/beacon, pas seulement en image — sans
+      // cette entrée, les conversions seraient perdues silencieusement.
+      connectSrc: [
+        "'self'",
+        'https://accounts.google.com',
+        'https://graph.facebook.com', 'https://www.facebook.com',
+      ],
+      // Les hébergeurs vidéo doivent figurer ici : UniversalVideoPlayer affiche
+      // chaque leçon dans une iframe (toutes les leçons actuelles sont YouTube).
+      // Sans eux, la CSP bloque le lecteur en production alors que tout
+      // fonctionne en dev, où la CSP est désactivée.
+      frameSrc: [
+        "'self'",
+        'https://accounts.google.com', 'https://www.facebook.com', 'https://web.facebook.com',
+        'https://www.youtube.com', 'https://www.youtube-nocookie.com',
+        'https://player.vimeo.com', 'https://www.loom.com', 'https://drive.google.com',
+      ],
     },
   } : false,
   crossOriginEmbedderPolicy: false,
@@ -158,11 +228,17 @@ const allowedOrigins = process.env.ALLOWED_ORIGINS
 
 app.use(cors({
   origin: (origin, callback) => {
-    // Reject null or missing origins in production (prevents CORS bypass)
-    if (!origin) {
-      if (isProd) return callback(new Error('Not allowed by CORS'))
-      return callback(null, true) // Allow in dev for tools like Postman
-    }
+    // Une requête SANS en-tête Origin n'est pas une requête cross-origin :
+    // c'est une navigation directe (l'utilisateur tape l'URL), un robot
+    // d'indexation, un aperçu de lien social ou une sonde de santé. Les
+    // refuser rendait le site totalement inaccessible en production — pages,
+    // robots.txt et sitemap.xml répondaient 403.
+    //
+    // Cela n'affaiblit pas la protection CSRF : elle repose sur le double
+    // cookie et SameSite=Strict, et toute requête cross-site déclenchée par
+    // un navigateur porte forcément un Origin, donc reste filtrée ci-dessous.
+    if (!origin) return callback(null, true)
+
     if (allowedOrigins.includes(origin)) {
       return callback(null, true)
     }
@@ -173,7 +249,20 @@ app.use(cors({
 }))
 
 // 10. Body & Cookie parsing (strict limits)
-app.use(express.json({ limit: '1mb' }))
+// Capture raw body for webhook signature verification (Chargily, Edahabia)
+app.use(express.json({
+  limit: '1mb',
+  verify: (req, res, buf) => {
+    // Store raw body for webhook routes that need HMAC verification
+    if (req.originalUrl && (
+      req.originalUrl.includes('/api/payments/chargily/webhook') ||
+      req.originalUrl.includes('/api/payments/edahabia/webhook') ||
+      req.originalUrl.includes('/api/payments/stripe/webhook')
+    )) {
+      req.rawBody = buf
+    }
+  },
+}))
 app.use(express.urlencoded({ extended: true, limit: '1mb' }))
 app.use(cookieParser())
 
@@ -190,13 +279,54 @@ app.use(xssSanitizer)
 // 13. Language detection (i18n)
 app.use(detectLanguage)
 
+const { authenticate, isAdmin } = require('./middleware/auth')
+
 // ─── Fichiers statiques (avec headers sécurisés) ──────────────
-app.use('/uploads/receipts', express.static(path.join(__dirname, 'uploads/receipts'), {
-  maxAge: '7d',
+// Pièces d'identité des formateurs : strictement réservées aux administrateurs
+// et jamais mises en cache (données personnelles sensibles).
+app.use('/uploads/identities', authenticate, isAdmin, express.static(path.join(__dirname, 'uploads/identities'), {
+  maxAge: 0,
   setHeaders: (res) => {
     res.setHeader('X-Content-Type-Options', 'nosniff')
+    res.setHeader('Cache-Control', 'no-store, private')
   },
 }))
+// Reçus de paiement : preuves de paiement nominatives (nom, numéro CCP,
+// montant). Deux garde-fous indispensables ici :
+//   1. Vérifier la PROPRIÉTÉ, pas seulement « connecté » : sinon n'importe quel
+//      compte peut lire le reçu d'un autre en connaissant le nom de fichier.
+//   2. Ne jamais autoriser un cache partagé : express.static posait
+//      "Cache-Control: public, max-age=604800" sur un contenu privé, ce qui
+//      permet à un CDN de le resservir à n'importe qui, authentification
+//      totalement court-circuitée.
+app.get('/uploads/receipts/:file', authenticate, async (req, res, next) => {
+  try {
+    // basename() neutralise toute tentative de remontée de répertoire
+    const file = path.basename(req.params.file)
+    const publicPath = `/uploads/receipts/${file}`
+
+    // Le fichier peut appartenir à un achat (Receipt) ou à une candidature
+    // formateur (InstructorApplication) : les deux stockent ce même chemin.
+    const [receipt, application] = await Promise.all([
+      prisma.receipt.findFirst({ where: { receiptImage: publicPath }, select: { userId: true } }),
+      prisma.instructorApplication.findFirst({ where: { receiptImage: publicPath }, select: { userId: true } }),
+    ])
+
+    const ownerId = receipt?.userId ?? application?.userId
+    if (ownerId === undefined) return res.status(404).end()
+
+    if (ownerId !== req.user.id && req.user.role !== 'ADMIN') {
+      return res.status(403).json({ error: 'Accès refusé.' })
+    }
+
+    res.setHeader('X-Content-Type-Options', 'nosniff')
+    res.setHeader('Cache-Control', 'no-store, private')
+    res.setHeader('Vary', 'Cookie, Authorization')
+    res.sendFile(path.join(__dirname, 'uploads/receipts', file), (err) => {
+      if (err) res.status(404).end()
+    })
+  } catch (err) { next(err) }
+})
 app.use('/uploads/thumbnails', express.static(path.join(__dirname, 'uploads/thumbnails'), {
   maxAge: '30d',
   setHeaders: (res) => {
@@ -215,14 +345,80 @@ app.use('/', seoRoutes)
 
 // ─── Routes API ───────────────────────────────────────────────
 // Auth: anti-enumeration on login/register pour prévenir les timing attacks
-app.use('/api/auth', authLimiter, apiLimiter, antiEnumeration(300), authRoutes)
+app.use('/api/auth', authLimiter, apiLimiter, antiEnumeration(100), authRoutes)
 app.use('/api/courses', apiLimiter, courseRoutes)
 app.use('/api/video', videoLimiter, videoRoutes)
 app.use('/api/payments', apiLimiter, paymentRoutes)
 // Webhook a son propre limiter strict
 app.use('/api/payments/edahabia/webhook', webhookLimiter)
+app.use('/api/payments/chargily/webhook', webhookLimiter)
+app.use('/api/payments/stripe/webhook', webhookLimiter)
+app.use('/api/payments/paypal/webhook', webhookLimiter)
 app.use('/api/admin', adminLimiter, adminRoutes)
-app.use('/api/chat', apiLimiter, chatbotRoutes)
+app.use('/api/instructor', apiLimiter, instructorRoutes)
+app.use('/api/blog', apiLimiter, blogRoutes)
+
+// ─── Analytics Public Track Click Route ──────────────────────
+// Endpoint non authentifié qui écrit en base : sans limite, n'importe qui peut
+// remplir la table ClickLog jusqu'à saturer le disque. Les limiteurs globaux
+// sont montés par préfixe (/api/auth, /api/courses…) et ne couvraient pas
+// cette route déclarée directement sur app.post.
+const trackClickLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 60, // le tracking est fréquent mais jamais en rafale
+  message: { error: 'Trop de requêtes de tracking.', code: 'TRACK_RATE_LIMITED' },
+  standardHeaders: true,
+  legacyHeaders: false,
+})
+
+app.post('/api/analytics/track-click', trackClickLimiter, async (req, res) => {
+  try {
+    const { pageUrl, elementText, elementTag, elementId } = req.body || {}
+    if (!pageUrl) return res.status(400).json({ error: 'Missing pageUrl' })
+
+    let userId = null
+    let userName = 'Visiteur Anonyme'
+    let userEmail = null
+    let isGuest = true
+
+    const authHeader = req.headers.authorization
+    const token = authHeader?.startsWith('Bearer ') ? authHeader.substring(7) : req.cookies?.token
+
+    if (token) {
+      try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET)
+        const user = await prisma.user.findUnique({
+          where: { id: decoded.userId },
+          select: { id: true, name: true, email: true }
+        })
+        if (user) {
+          userId = user.id
+          userName = user.name || 'Utilisateur'
+          userEmail = user.email
+          isGuest = false
+        }
+      } catch (e) {}
+    }
+
+    const clickLog = await prisma.clickLog.create({
+      data: {
+        userId,
+        userName,
+        userEmail,
+        isGuest,
+        pageUrl: String(pageUrl).slice(0, 250),
+        elementText: elementText ? String(elementText).trim().slice(0, 200) : null,
+        elementTag: elementTag ? String(elementTag).toUpperCase().slice(0, 50) : null,
+        elementId: elementId ? String(elementId).slice(0, 100) : null,
+        ip: String(req.ip || '127.0.0.1').slice(0, 45)
+      }
+    })
+
+    res.json({ success: true, id: clickLog.id })
+  } catch (err) {
+    res.status(500).json({ error: 'Click tracking error' })
+  }
+})
 
 const { getSettings } = require('./settingsManager')
 
@@ -241,7 +437,8 @@ app.get('/api/config/mission', (req, res) => {
 
 app.get('/api/config/site', (req, res) => {
   const settings = getSettings()
-  res.setHeader('Cache-Control', 'public, max-age=300')
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate')
+  res.setHeader('Expires', '0')
   res.json({ settings })
 })
 
@@ -285,6 +482,10 @@ if (isProd) {
   if (fs.existsSync(frontendDist)) {
     // Liste des User-Agents des robots sociaux
     const botUserAgents = [
+      // Moteurs de recherche (SEO critique)
+      'googlebot', 'bingbot', 'yandexbot', 'baiduspider', 'duckduckbot',
+      'slurp', 'ia_archiver', 'applebot',
+      // Robots sociaux (partage de liens)
       'facebookexternalhit', 'twitterbot', 'linkedinbot', 'whatsapp', 
       'telegrambot', 'skypeuripreview', 'pinterest', 'vkshare'
     ]
@@ -292,7 +493,14 @@ if (isProd) {
     // Servir les fichiers statiques (JS, CSS, images) sauf index.html
     app.use(express.static(frontendDist, { index: false, maxAge: '1y', immutable: true }))
 
-    app.get('*', async (req, res) => {
+    app.get('*', async (req, res, next) => {
+      // Ce catch-all est monté avant le 404 JSON de '/api/*' (plus bas dans le
+      // fichier). Sans cette sortie, une route API inconnue (typo, endpoint
+      // supprimé) recevait le index.html de l'app React avec un statut 200 au
+      // lieu d'un 404 JSON — les clients ne pouvaient jamais distinguer une
+      // route API manquante d'une page existante.
+      if (req.path.startsWith('/api/')) return next()
+
       const ua = (req.headers['user-agent'] || '').toLowerCase()
       const isBot = botUserAgents.some(bot => ua.includes(bot))
 
@@ -304,11 +512,13 @@ if (isProd) {
       // ─── PRERENDERING POUR LES BOTS SOCIAUX ───
       try {
         let html = fs.readFileSync(path.join(frontendDist, 'index.html'), 'utf8')
-        let title = 'Mylta Academy | Formation Premium en Algérie'
-        let description = 'Développez vos compétences en Marketing Digital, Tech, Business et Design. La plateforme e-learning premium.'
-        let image = 'https://myltaacademy.dz/og-image.jpg'
+        const SITE = process.env.SITE_URL || 'https://myltaacademy.com'
+        let title = 'Mylta Academy | Formation Premium & Outils de Réussite'
+        let description = 'Mylta Academy — La plateforme e-learning de référence en Algérie. Formations pratiques, outils, IA et masterclass accessibles depuis votre smartphone.'
+        let image = `${SITE}/og-image.png`
+        const canonical = `${SITE}${req.path}`
 
-        // Si c'est une page de formation spécifique
+        // Page de formation
         const courseMatch = req.path.match(/^\/courses\/(\d+)$/)
         if (courseMatch) {
           const courseId = parseInt(courseMatch[1], 10)
@@ -319,25 +529,71 @@ if (isProd) {
           if (course) {
             title = `${course.title} | Mylta Academy`
             description = course.description || description
-            image = course.thumbnail || image
+            // Les robots sociaux n'interprètent jamais une URL relative
+            if (course.thumbnail) {
+              image = course.thumbnail.startsWith('http') ? course.thumbnail : `${SITE}${course.thumbnail}`
+            }
           }
         }
 
-        // Injection des balises Open Graph dans le <head>
+        // Article de blog — même traitement, sinon tout partage d'article
+        // affichait le texte générique du site.
+        const blogMatch = req.path.match(/^\/blog\/([a-zA-Z0-9-_]+)$/)
+        if (blogMatch) {
+          const post = await prisma.blogPost.findFirst({
+            where: { slug: blogMatch[1], isPublished: true },
+            select: { title: true, summary: true, thumbnail: true }
+          })
+          if (post) {
+            title = `${post.title} | Mylta Academy`
+            description = post.summary || description
+            if (post.thumbnail) {
+              image = post.thumbnail.startsWith('http') ? post.thumbnail : `${SITE}${post.thumbnail}`
+            }
+          }
+        }
+
+        const escapeHtml = (unsafe) => {
+          return String(unsafe)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+        };
+
+        const safeTitle = escapeHtml(title);
+        const safeDescription = escapeHtml(description);
+        const safeImage = escapeHtml(image);
+
+        const safeCanonical = escapeHtml(canonical)
+
         const ogTags = `
-          <title>${title}</title>
-          <meta name="description" content="${description}" />
-          <meta property="og:title" content="${title}" />
-          <meta property="og:description" content="${description}" />
-          <meta property="og:image" content="${image}" />
+          <title>${safeTitle}</title>
+          <meta name="description" content="${safeDescription}" />
+          <link rel="canonical" href="${safeCanonical}" />
+          <meta property="og:title" content="${safeTitle}" />
+          <meta property="og:description" content="${safeDescription}" />
+          <meta property="og:image" content="${safeImage}" />
+          <meta property="og:image:width" content="1200" />
+          <meta property="og:image:height" content="630" />
+          <meta property="og:url" content="${safeCanonical}" />
+          <meta property="og:site_name" content="Mylta Academy" />
           <meta property="og:type" content="website" />
           <meta name="twitter:card" content="summary_large_image" />
-          <meta name="twitter:title" content="${title}" />
-          <meta name="twitter:description" content="${description}" />
-          <meta name="twitter:image" content="${image}" />
+          <meta name="twitter:title" content="${safeTitle}" />
+          <meta name="twitter:description" content="${safeDescription}" />
+          <meta name="twitter:image" content="${safeImage}" />
         `
-        
-        html = html.replace('<head>', `<head>\n${ogTags}`)
+
+        // index.html porte déjà un <title> et une meta description statiques.
+        // Sans ce retrait, la page servie aux robots en contenait DEUX : un
+        // document invalide, où le titre retenu dépend du crawler.
+        html = html
+          .replace(/<title>[\s\S]*?<\/title>/i, '')
+          .replace(/<meta\s+name="description"[\s\S]*?\/?>/i, '')
+          .replace('<head>', `<head>\n${ogTags}`)
+
         res.send(html)
 
       } catch (err) {
@@ -369,10 +625,19 @@ async function gracefulShutdown(signal) {
 
   console.log(`\n\x1b[33m⏳ [${signal}] Arrêt gracieux en cours...\x1b[0m`)
 
-  // Refuser les nouvelles connexions
+  // Timeout de sécurité (10s max) — annulé si l'arrêt se termine avant.
+  const forceExitTimer = setTimeout(() => {
+    console.error('\x1b[31m❌ Arrêt forcé après timeout.\x1b[0m')
+    process.exit(1)
+  }, 10000)
+
+  // Refuser les nouvelles connexions et attendre que les requêtes en cours se terminent
   if (server) {
-    server.close(() => {
-      console.log('\x1b[32m✅ Serveur HTTP fermé.\x1b[0m')
+    await new Promise((resolve) => {
+      server.close(() => {
+        console.log('\x1b[32m✅ Serveur HTTP fermé.\x1b[0m')
+        resolve()
+      })
     })
   }
 
@@ -384,12 +649,7 @@ async function gracefulShutdown(signal) {
     console.error('\x1b[31m❌ Erreur déconnexion Prisma:\x1b[0m', err)
   }
 
-  // Timeout de sécurité (10s max)
-  setTimeout(() => {
-    console.error('\x1b[31m❌ Arrêt forcé après timeout.\x1b[0m')
-    process.exit(1)
-  }, 10000)
-
+  clearTimeout(forceExitTimer)
   process.exit(0)
 }
 
@@ -412,11 +672,9 @@ async function main() {
     await prisma.$connect()
     console.log('\x1b[32m✅ Prisma connecté\x1b[0m')
 
-    // Initialisation du Chatbot IA
-    await nlpManager.initialize()
-
     server = app.listen(PORT, () => {
       initSocket(server, allowedOrigins)
+      initCron()
       
       console.log('\n' + '═'.repeat(55))
       console.log('  🎓  Mylta Academy API — Production Ready')

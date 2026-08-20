@@ -3,9 +3,9 @@ import { SearchX } from 'lucide-react'
 
 export default function EmptyState({ message = "Aucun résultat trouvé.", subMessage = "Essayez de modifier votre recherche ou vos filtres.", onReset }) {
   return (
-    <div className="flex flex-col items-center justify-center py-16 px-4 bg-white/5 border border-academy-border/50 rounded-3xl w-full text-center">
-      <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4 border border-gray-200">
-        <SearchX className="text-gray-400" size={32} />
+    <div className="flex flex-col items-center justify-center py-16 px-4 bg-white/5 dark:bg-academy-surfaceDark/5 border border-academy-border/50 rounded-3xl w-full text-center">
+      <div className="w-20 h-20 bg-gray-100 dark:bg-white/10 rounded-full flex items-center justify-center mb-4 border border-gray-200 dark:border-academy-border">
+        <SearchX className="text-gray-400 dark:text-academy-textMain/40" size={32} />
       </div>
       <h3 className="text-xl font-bold text-academy-textMain font-display mb-2">{message}</h3>
       <p className="text-academy-textMain/60 max-w-sm mx-auto mb-6">

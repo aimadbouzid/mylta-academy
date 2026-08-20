@@ -4,21 +4,37 @@ export default {
   darkMode: 'class',
   theme: {
     extend: {
+      // Palier intermédiaire entre le mobile étroit et `sm` (640px).
+      // CourseCard s'en sert pour choisir un libellé de bouton selon la place
+      // disponible ; sans ce point de rupture, les classes `xs:` ne sont pas
+      // générées et plusieurs libellés s'affichent en même temps.
+      screens: {
+        xs: '475px',
+      },
       colors: {
+        // Tokens branchés sur les variables CSS de src/index.css.
+        // `<alpha-value>` préserve les modificateurs d'opacité Tailwind
+        // (text-academy-textMain/50…), très utilisés dans le projet.
         academy: {
-          primary: '#a93232',
-          light: '#d25b5b',
-          dark: '#7d1f1f',
-          surface: '#f1f5f7',
-          surfaceDark: '#e7eef2',
-          textMain: '#171717',
-          border: '#e1e1e1',
-          white: '#ffffff',
+          primary:     'rgb(var(--academy-primary) / <alpha-value>)',
+          light:       'rgb(var(--academy-light) / <alpha-value>)',
+          dark:        'rgb(var(--academy-dark) / <alpha-value>)',
+          surface:     'rgb(var(--academy-surface) / <alpha-value>)',
+          surfaceDark: 'rgb(var(--academy-surface-dark) / <alpha-value>)',
+          textMain:    'rgb(var(--academy-text) / <alpha-value>)',
+          border:      'rgb(var(--academy-border) / <alpha-value>)',
+          // Texte/icône posé SUR un fond `academy-primary` : blanc en clair,
+          // noir en sombre (où l'accent devient blanc). À utiliser partout où
+          // le code écrivait `text-white` sur une surface de marque.
+          onPrimary:   'rgb(var(--academy-on-primary) / <alpha-value>)',
+          // `white` désigne les cartes : en sombre, ce n'est plus du blanc.
+          white:       'rgb(var(--academy-card) / <alpha-value>)',
         },
       },
       fontFamily: {
-        sans:    ['"DM Sans"', 'system-ui', 'sans-serif'],
-        display: ['"DM Sans"', 'sans-serif'],
+        sans:    ['"Inter"', 'system-ui', 'sans-serif'],
+        display: ['"Inter"', 'system-ui', 'sans-serif'],
+        mono:    ['"Inter"', 'system-ui', 'sans-serif'],
       },
       boxShadow: {
         'soft': '0 4px 20px rgba(0, 0, 0, 0.05)',

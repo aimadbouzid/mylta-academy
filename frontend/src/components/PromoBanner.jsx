@@ -9,7 +9,7 @@ export default function PromoBanner({ title, description, linkText, linkUrl }) {
       <div className="absolute bottom-0 left-0 w-48 h-48 bg-indigo-500/20 rounded-full blur-2xl translate-y-1/3 -translate-x-1/4 pointer-events-none"></div>
       
       <div className="flex items-start gap-4 z-10 w-full md:w-auto">
-        <div className="w-12 h-12 rounded-xl bg-white/10 backdrop-blur-md flex items-center justify-center shrink-0 border border-white/20">
+        <div className="w-12 h-12 rounded-xl bg-white/10 dark:bg-academy-surfaceDark/10 backdrop-blur-md flex items-center justify-center shrink-0 border border-white/20">
           <Rocket className="text-fuchsia-300" size={24} />
         </div>
         <div>
@@ -27,7 +27,7 @@ export default function PromoBanner({ title, description, linkText, linkUrl }) {
       
       <Link 
         to={linkUrl} 
-        className="shrink-0 w-full md:w-auto bg-white hover:bg-gray-50 text-indigo-900 font-bold py-3.5 px-8 rounded-xl transition-all shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:shadow-[0_0_30px_rgba(255,255,255,0.5)] text-center z-10 flex items-center justify-center gap-2 group-hover:scale-105"
+        className="shrink-0 w-full md:w-auto bg-white dark:bg-academy-surfaceDark hover:bg-gray-50 text-indigo-900 font-bold py-3.5 px-8 rounded-xl transition-all shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:shadow-[0_0_30px_rgba(255,255,255,0.5)] text-center z-10 flex items-center justify-center gap-2 group-hover:scale-105"
       >
         {linkText} <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
       </Link>

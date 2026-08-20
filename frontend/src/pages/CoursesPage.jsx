@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Search, SlidersHorizontal, BookOpen, X } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import CourseCard from '../components/CourseCard'
 import LoginModal from '../components/LoginModal'
@@ -19,8 +19,12 @@ export default function CoursesPage() {
   const { t } = useLanguage()
   const [category,    setCategory]    = useState('Tous')
   const [level,       setLevel]       = useState('Tous')
-  const [search,      setSearch]      = useState('')
-  const [searchInput, setSearchInput] = useState('')
+  // `?search=` permet d'arriver ici depuis un lien externe ou la page 404
+  // avec la recherche déjà appliquée.
+  const [searchParams] = useSearchParams()
+  const initialSearch = searchParams.get('search') || ''
+  const [search,      setSearch]      = useState(initialSearch)
+  const [searchInput, setSearchInput] = useState(initialSearch)
   const [loginOpen,   setLoginOpen]   = useState(false)
   const [payModal,    setPayModal]    = useState(null)
 
@@ -122,7 +126,7 @@ export default function CoursesPage() {
                 onClick={() => setCategory(c)}
                 className={`px-3 py-1 sm:px-5 sm:py-2 rounded-full text-[11px] sm:text-sm whitespace-nowrap font-bold transition-all duration-300
                             ${category === c
-                              ? 'bg-academy-primary text-academy-textMain shadow-soft'
+                              ? 'bg-academy-primary text-academy-onPrimary shadow-soft'
                               : 'bg-red-950/5 border-red-900/10 backdrop-blur-md border border-academy-border text-academy-textMain/70 hover:border-academy-primary/50 hover:text-academy-primary shadow-sm'
                             }`}
               >
@@ -132,8 +136,8 @@ export default function CoursesPage() {
 
             {hasFilters && (
               <button onClick={clearFilters}
-                      className="flex items-center gap-1.5 px-4 py-1.5 sm:px-5 sm:py-2 rounded-full text-xs sm:text-sm whitespace-nowrap font-bold text-red-600 bg-red-50
-                                 border border-red-200 hover:bg-red-100 transition-all shadow-sm">
+                      className="flex items-center gap-1.5 px-4 py-1.5 sm:px-5 sm:py-2 rounded-full text-xs sm:text-sm whitespace-nowrap font-bold text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10
+                                 border border-red-200 dark:border-red-500/25 hover:bg-red-100 transition-all shadow-sm">
                 <X size={14} /> {t('courses_page.reset')}
               </button>
             )}

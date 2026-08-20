@@ -1,5 +1,96 @@
 export const translations = {
   fr: {
+    instructor_apply: {
+      seo_title: "Devenir Formateur",
+      marketplace_badge: "Marketplace Formateurs",
+      title_start: "Devenez",
+      title_highlight: "Formateur",
+      subtitle: "Vendez vos formations sur notre plateforme et touchez des revenus sur chaque vente. Rejoignez notre communauté d'experts.",
+      advantages: {
+        rev_title: "Gagnez des revenus",
+        rev_desc: "Vendez vos formations et touchez jusqu'à 100% sur chaque vente.",
+        audience_title: "Audience existante",
+        audience_desc: "Profitez de notre base d'étudiants actifs pour atteindre plus de monde.",
+        security_title: "Plateforme sécurisée",
+        security_desc: "Infrastructure robuste, paiements sécurisés et support technique.",
+        analytics_title: "Dashboard analytics",
+        analytics_desc: "Suivez vos ventes, revenus et retraits en temps réel."
+      },
+      login_required: {
+        title: "Connectez-vous pour postuler",
+        desc: "Vous devez avoir un compte pour soumettre votre candidature.",
+        desc_prefix: "Vous devez avoir un compte pour souscrire au plan",
+        desc_suffix: "et soumettre votre candidature.",
+        btn: "Se connecter"
+      },
+      loading: "Chargement...",
+      pending: {
+        title: "Candidature en cours d'examen",
+        desc_prefix: "Votre candidature a été soumise le",
+        desc_suffix: ". L'admin va l'examiner et vous recevrez une notification.",
+        status_label: "En attente"
+      },
+      approved: {
+        title: "Vous êtes formateur ! 🎉",
+        desc: "Votre candidature a été approuvée. Accédez à votre dashboard.",
+        btn: "Accéder au Dashboard",
+        status_label: "Approuvée"
+      },
+      rejected: {
+        title: "Candidature précédente refusée",
+        default_notes: "Vous pouvez soumettre une nouvelle candidature.",
+        status_label: "Refusée"
+      },
+      plans: {
+        title: "Choisissez votre abonnement",
+        subtitle: "Sélectionnez le plan qui correspond le mieux à vos objectifs.",
+        popular: "Le plus choisi",
+        currency: "DA / 6 mois",
+        btn_selected: "Sélectionné",
+        btn_choose: "Choisir ce plan",
+        starter: {
+          f1: "1 formation active",
+          f2: "80% de commission par vente",
+          f3: "Dashboard analytique basique",
+          f4: "Support par email"
+        },
+        pro: {
+          f1: "Jusqu'à 5 formations actives",
+          f2: "90% de commission par vente",
+          f3: "Mise en avant sur la plateforme",
+          f4: "Support prioritaire WhatsApp"
+        },
+        elite: {
+          f1: "Jusqu'à 10 formations actives",
+          f2: "100% de commission par vente",
+          f3: "Badge Formateur Elite",
+          f4: "Accompagnement marketing dédié"
+        }
+      },
+      form: {
+        title: "Détails de la candidature",
+        plan_chosen: "Plan choisi :",
+        specialty_label: "Votre spécialité *",
+        specialty_placeholder: "Ex: Marketing Digital, Développement Web, Design...",
+        message_label: "Pourquoi voulez-vous devenir formateur ? *",
+        message_placeholder: "Parlez-nous de votre expérience, vos compétences et ce que vous souhaitez enseigner...",
+        how_it_works: "💡 Comment ça marche ?",
+        step1: "Soumettez votre candidature via WhatsApp",
+        step2: "L'admin examine votre profil",
+        step3: "Vous recevez une notification d'approbation",
+        step4: "Créez et vendez vos formations !",
+        submit_btn: "Continuer vers WhatsApp",
+        whatsapp_redirect: "Redirection vers WhatsApp...",
+        whatsapp_error: "Erreur lors de la redirection."
+      },
+      whatsapp: {
+        new_app: "*Nouvelle Candidature Formateur 🎓*",
+        plan: "*Abonnement Choisi :*",
+        month: "DA/mois",
+        specialty: "*Spécialité :*",
+        motivation: "*Motivations :*"
+      }
+    },
     report: {
       button: "Signaler",
       title: "Signaler un problème",
@@ -29,11 +120,12 @@ export const translations = {
       login: "Se connecter",
       logout: "Déconnexion",
       language: "Langue",
-      resources: "Ressources"
+      resources: "Ressources",
+      instructor: "Formateur"
     },
     hero: {
-      title: "Apprenez les métiers de demain, dès aujourd'hui.",
-      subtitle: "La plateforme e-learning de référence en Algérie. Développez vos compétences en Tech, Design, Marketing et Business.",
+      title: "The 1% — Formations & Outils de Réussite",
+      subtitle: "La plateforme e-learning de référence. Découvrez les meilleures formations, outils secrets, IA et masterclass pour exploser votre business.",
       start_learning: "Commencer l'apprentissage",
       view_catalog: "Voir le catalogue"
     },
@@ -86,7 +178,7 @@ export const translations = {
       view_all: "Voir toutes les formations",
     
       seo_title: "Toutes nos formations",
-      seo_desc: "Découvrez toutes nos formations premium : Marketing Digital, Développement Web, Business, Design. Paiement CCP et BaridiMob.",
+      seo_desc: "Découvrez toutes nos formations premium : Marketing Digital, Développement Web, Business, Design. Paiement par Edahabia, CIB, CCP, BaridiMob et RedotPay.",
       home: "Accueil",
       formations: "Formations",
       title_all: "Toutes nos",
@@ -98,7 +190,6 @@ export const translations = {
       search_placeholder: "Rechercher une formation…",
       all_levels: "Tous les niveaux",
       reset: "Réinitialiser",
-      empty: "Aucune formation trouvée",
       try_modifying_filters: "Essayez de modifier vos filtres de recherche.",
       see_all: "Voir toutes les formations",
       categories: {
@@ -147,6 +238,8 @@ export const translations = {
       access_price: "Tarif d'accès",
       access_granted: "Accès Accordé",
       already_owned: "Vous possédez déjà cette formation.",
+      admin_access: "Accès administrateur",
+      admin_access_hint: "Vous consultez cette formation en tant qu'administrateur, sans l'avoir achetée.",
       access_lessons: "Accéder à mes leçons",
       buy_course: "Acheter cette formation",
       join: "Rejoindre",
@@ -237,6 +330,7 @@ export const translations = {
       welcome: "Bienvenue",
       join_us: "Rejoignez-nous",
       secure_access: "Accès Sécurisé",
+      or: "ou",
       full_name: "Nom complet",
       email: "Adresse email",
       password: "Mot de passe",
@@ -314,6 +408,9 @@ export const translations = {
       full_name: "Nom complet",
       email: "Adresse Email",
       phone: "Numéro de téléphone",
+      address: "Adresse",
+      address_placeholder: "Votre adresse complète",
+      password: "Mot de passe",
       receipt: "Preuve de paiement (Reçu / Capture)",
       upload_click: "Cliquez pour téléverser",
       upload_drop: "ou glissez-déposez",
@@ -353,7 +450,8 @@ export const translations = {
       title: "Page Introuvable - 404",
       heading: "Oups ! Page introuvable.",
       description: "La page que vous recherchez a peut-être été supprimée, a changé de nom ou est temporairement indisponible.",
-      back_home: "Retour à l'accueil"
+      back_home: "Retour à l'accueil",
+      go_back: "Page précédente"
     },
     common: {
       loading: "Chargement...",
@@ -422,11 +520,17 @@ export const translations = {
       buy_to_watch: "Vous devez acheter ce cours pour visionner ses leçons.",
       back_to_catalog: "Retour au catalogue",
       my_courses: "Mes formations",
-      network_error: "Erreur de lecture vidéo. Le flux réseau a été interrompu."
+      network_error: "Erreur de lecture vidéo. Le flux réseau a été interrompu.",
+      mark_done: "Marquer comme terminé",
+      lesson_done: "Terminé",
+      prev_lesson: "Leçon précédente",
+      next_lesson: "Leçon suivante",
+      rate_course: "Évaluer la formation",
+      finish_previous: "Terminez la leçon précédente (regardez-la jusqu'à la fin ou cochez son cercle) pour continuer."
     },
     resources_page: {
-      title: "La Bible du",
-      title_highlight: "Business",
+      title: "The",
+      title_highlight: "1%",
       subtitle: "Outils secrets, prompts magiques, masterclass et idées virales.",
       free_badge: "100% Gratuit",
       tabs: {
@@ -434,10 +538,14 @@ export const translations = {
         tools: "Logiciels & IA",
         prompts: "Prompts Magiques",
         masterclass: "Masterclass",
-        combos: "Combos ⚡",
+        combos: "Combos",
         credits: "Crédits IA 💰"
       },
       search_placeholder: "Chercher un outil, un prompt...",
+      hero_title_1: "Les meilleurs outils pour ",
+      hero_title_1_highlight: "réussir avec 0 budget.",
+      combos_title: "Stratégies & Stacks Combos",
+      combos_ideas: "idées",
       lab: {
         title: "Générateur d'Idées Virales",
         desc: "Cliquez sur le bouton pour générer une idée de business ou de contenu viral.",
@@ -469,7 +577,21 @@ export const translations = {
       result_3: "Résistance aux pannes API",
       result_4: "Scalabilité instantanée",
       savings: "Économies Moyennes",
-      amount: "+8,000 / an"
+      amount: "+8,000 / an",
+      resources_title: "Ressources & Outils Recommandés",
+      resources_subtitle: "Les outils indispensables pour mettre en place cette architecture et protéger votre budget.",
+      tool_upstash_title: "Upstash Redis",
+      tool_upstash_desc: "Base de données Serverless idéale pour le caching des requêtes IA avec une faible latence.",
+      tool_groq_title: "Groq (LPU)",
+      tool_groq_desc: "L'inférence IA la plus rapide au monde. Parfait pour les petits modèles ouverts (Llama 3, Mixtral).",
+      tool_openrouter_title: "OpenRouter",
+      tool_openrouter_desc: "API unifiée pour accéder à tous les modèles (GPT-4o, Claude 3) avec un routing intelligent et le meilleur prix.",
+      tool_tiktoken_title: "Tiktoken",
+      tool_tiktoken_desc: "Librairie open-source d'OpenAI pour compter précisément les tokens avant de les envoyer.",
+      best_practices_title: "Bonnes Pratiques Additionnelles",
+      bp_1: "Définissez toujours des alertes de budget (Hard limit / Soft limit) dans le dashboard de vos fournisseurs API.",
+      bp_2: "Utilisez l'API 'stream' (flux) pour que l'utilisateur n'attende pas, ce qui réduit la sensation de lenteur.",
+      bp_3: "Nettoyez vos prompts : retirez les espaces inutiles, les exemples redondants et les instructions vagues qui gaspillent des tokens."
     },
     landing_data: {
       features: [
@@ -479,7 +601,7 @@ export const translations = {
         },
         {
           title: 'Prix Imbattable & Paiement Local',
-          desc: 'Le meilleur rapport qualité/prix en Algérie. Payez facilement en Dinars (DZD) via CCP ou BaridiMob.'
+          desc: 'Le meilleur rapport qualité/prix en Algérie. Payez facilement via Edahabia, CIB, CCP, BaridiMob ou RedotPay.'
         },
         {
           title: 'Accès Illimité & à Vie',
@@ -498,7 +620,7 @@ export const translations = {
         { val: '3', label: 'Formations d\'excellence' },
         { val: '100%', label: 'Pratique & Concret' },
         { val: '24/7', label: 'Accès illimité' },
-        { val: 'CCP / Baridi', label: 'Paiement facile' }
+        { val: 'Edahabia / CIB', label: 'Paiement 100% sécurisé' }
       ],
       faq: [
         { question: "Ai-je besoin d'expérience pour commencer ?", answer: "Non, aucun prérequis n'est nécessaire ! Nos formations sont conçues de manière progressive, adaptées aussi bien aux débutants complets qu'aux personnes souhaitant perfectionner leurs compétences." },
@@ -514,11 +636,102 @@ export const translations = {
         'Business & Entrepreneuriat'
       ],
       hero_title: 'Les compétences d\'aujourd\'hui, le succès de demain',
-      hero_subtitle: 'Des cours structurés, concrets et conçus par des experts. Accédez aux meilleures formations et payez facilement via CCP ou BaridiMob.'
+      hero_subtitle: 'Des cours structurés, concrets et conçus par des experts. Accédez aux meilleures formations et payez facilement via Edahabia, CIB, CCP, BaridiMob ou RedotPay.'
     }
   },
 
   en: {
+    instructor_apply: {
+      seo_title: "Become an Instructor",
+      marketplace_badge: "Instructor Marketplace",
+      title_start: "Become an",
+      title_highlight: "Instructor",
+      subtitle: "Sell your courses on our platform and earn revenue on every sale. Join our community of experts.",
+      advantages: {
+        rev_title: "Earn Revenue",
+        rev_desc: "Sell your courses and earn up to 100% on every sale.",
+        audience_title: "Existing Audience",
+        audience_desc: "Take advantage of our active student base to reach more people.",
+        security_title: "Secure Platform",
+        security_desc: "Robust infrastructure, secure payments, and technical support.",
+        analytics_title: "Analytics Dashboard",
+        analytics_desc: "Track your sales, revenue, and withdrawals in real time."
+      },
+      login_required: {
+        title: "Log in to apply",
+        desc: "You need an account to submit your application.",
+        desc_prefix: "You need an account to subscribe to the",
+        desc_suffix: "plan and submit your application.",
+        btn: "Log in"
+      },
+      loading: "Loading...",
+      pending: {
+        title: "Application under review",
+        desc_prefix: "Your application was submitted on",
+        desc_suffix: ". The admin will review it and you will receive a notification.",
+        status_label: "Pending"
+      },
+      approved: {
+        title: "You are an instructor! 🎉",
+        desc: "Your application has been approved. Go to your dashboard.",
+        btn: "Go to Dashboard",
+        status_label: "Approved"
+      },
+      rejected: {
+        title: "Previous application rejected",
+        default_notes: "You can submit a new application.",
+        status_label: "Rejected"
+      },
+      plans: {
+        title: "Choose your plan",
+        subtitle: "Select the plan that best fits your goals.",
+        popular: "Most Popular",
+        currency: "DA / 6 months",
+        btn_selected: "Selected",
+        btn_choose: "Choose this plan",
+        starter: {
+          f1: "1 active course",
+          f2: "80% commission per sale",
+          f3: "Basic analytics dashboard",
+          f4: "Email support"
+        },
+        pro: {
+          f1: "Up to 5 active courses",
+          f2: "90% commission per sale",
+          f3: "Featured on the platform",
+          f4: "Priority WhatsApp support"
+        },
+        elite: {
+          f1: "Up to 10 active courses",
+          f2: "100% commission per sale",
+          f3: "Elite Instructor Badge",
+          f4: "Dedicated marketing support"
+        }
+      },
+      form: {
+        title: "Application details",
+        plan_chosen: "Chosen plan:",
+        specialty_label: "Your specialty *",
+        specialty_placeholder: "Ex: Digital Marketing, Web Development, Design...",
+        message_label: "Why do you want to become an instructor? *",
+        message_placeholder: "Tell us about your experience, skills, and what you want to teach...",
+        how_it_works: "💡 How it works?",
+        step1: "Submit your application via WhatsApp",
+        step2: "The admin reviews your profile",
+        step3: "You receive an approval notification",
+        step4: "Create and sell your courses!",
+        submit_btn: "Continue to WhatsApp",
+        whatsapp_redirect: "Redirecting to WhatsApp...",
+        whatsapp_error: "Error redirecting."
+      },
+      whatsapp: {
+        new_app: "*New Instructor Application 🎓*",
+        plan: "*Chosen Plan:*",
+        month: "DA/month",
+        specialty: "*Specialty:*",
+        motivation: "*Motivations:*"
+      }
+    },
     report: {
       button: "Report",
       title: "Report an issue",
@@ -548,7 +761,8 @@ export const translations = {
       login: "Login",
       logout: "Logout",
       language: "Language",
-      resources: "Resources"
+      resources: "Resources",
+      instructor: "Instructor"
     },
     hero: {
       title: "Learn the skills of tomorrow, today.",
@@ -605,7 +819,7 @@ export const translations = {
       view_all: "View all courses",
     
       seo_title: "All our courses",
-      seo_desc: "Discover all our premium courses: Digital Marketing, Web Development, Business, Design. CCP and BaridiMob payment.",
+      seo_desc: "Discover all our premium courses: Digital Marketing, Web Development, Business, Design. Edahabia, CIB, CCP, BaridiMob and RedotPay payment.",
       home: "Home",
       formations: "Courses",
       title_all: "All our",
@@ -617,7 +831,6 @@ export const translations = {
       search_placeholder: "Search for a course…",
       all_levels: "All levels",
       reset: "Reset",
-      empty: "No courses found",
       try_modifying_filters: "Try modifying your search filters.",
       see_all: "See all courses",
       categories: {
@@ -666,6 +879,8 @@ export const translations = {
       access_price: "Access price",
       access_granted: "Access Granted",
       already_owned: "You already own this course.",
+      admin_access: "Administrator access",
+      admin_access_hint: "You are viewing this course as an administrator, without having purchased it.",
       access_lessons: "Access my lessons",
       buy_course: "Buy this course",
       join: "Join",
@@ -756,6 +971,7 @@ export const translations = {
       welcome: "Welcome",
       join_us: "Join Us",
       secure_access: "Secure Access",
+      or: "or",
       full_name: "Full name",
       email: "Email address",
       password: "Password",
@@ -833,6 +1049,9 @@ export const translations = {
       full_name: "Full Name",
       email: "Email Address",
       phone: "Phone Number",
+      address: "Address",
+      address_placeholder: "Your full address",
+      password: "Password",
       receipt: "Proof of Payment (Receipt / Screenshot)",
       upload_click: "Click to upload",
       upload_drop: "or drag and drop",
@@ -872,7 +1091,8 @@ export const translations = {
       title: "Page Not Found - 404",
       heading: "Oops! Page not found.",
       description: "The page you are looking for may have been removed, had its name changed, or is temporarily unavailable.",
-      back_home: "Back to Home"
+      back_home: "Back to Home",
+      go_back: "Previous page"
     },
     common: {
       loading: "Loading...",
@@ -940,7 +1160,21 @@ export const translations = {
       result_3: "Resistance to API failures",
       result_4: "Instant scalability",
       savings: "Average Savings",
-      amount: "+8,000 / year"
+      amount: "+8,000 / year",
+      resources_title: "Recommended Resources & Tools",
+      resources_subtitle: "The essential tools to implement this architecture and protect your budget.",
+      tool_upstash_title: "Upstash Redis",
+      tool_upstash_desc: "Serverless database ideal for caching AI queries with low latency.",
+      tool_groq_title: "Groq (LPU)",
+      tool_groq_desc: "The world's fastest AI inference. Perfect for small open models (Llama 3, Mixtral).",
+      tool_openrouter_title: "OpenRouter",
+      tool_openrouter_desc: "Unified API to access all models (GPT-4o, Claude 3) with smart routing and best pricing.",
+      tool_tiktoken_title: "Tiktoken",
+      tool_tiktoken_desc: "OpenAI's open-source library to accurately count tokens before sending them.",
+      best_practices_title: "Additional Best Practices",
+      bp_1: "Always set budget alerts (Hard limit / Soft limit) in your API provider dashboard.",
+      bp_2: "Use the 'stream' API so the user doesn't wait, reducing the feeling of slowness.",
+      bp_3: "Clean your prompts: remove useless spaces, redundant examples, and vague instructions that waste tokens."
     },
     watch: {
       completed_lessons: "completed",
@@ -965,11 +1199,17 @@ export const translations = {
       buy_to_watch: "You must purchase this course to watch its lessons.",
       back_to_catalog: "Back to catalog",
       my_courses: "My courses",
-      network_error: "Video playback error. The network stream was interrupted."
+      network_error: "Video playback error. The network stream was interrupted.",
+      mark_done: "Mark as complete",
+      lesson_done: "Completed",
+      prev_lesson: "Previous lesson",
+      next_lesson: "Next lesson",
+      rate_course: "Rate this course",
+      finish_previous: "Finish the previous lesson (watch it to the end or tick its circle) to continue."
     },
     resources_page: {
-      title: "The Business",
-      title_highlight: "Bible",
+      title: "The",
+      title_highlight: "1%",
       subtitle: "Secret tools, magic prompts, masterclasses, and viral ideas.",
       free_badge: "100% Free",
       tabs: {
@@ -977,10 +1217,14 @@ export const translations = {
         tools: "Tools & AI",
         prompts: "Magic Prompts",
         masterclass: "Masterclasses",
-        combos: "Combos ⚡",
+        combos: "Combos",
         credits: "AI Credits 💰"
       },
       search_placeholder: "Search for a tool, a prompt...",
+      hero_title_1: "The best tools to ",
+      hero_title_1_highlight: "succeed with 0 budget.",
+      combos_title: "Strategies & Combo Stacks",
+      combos_ideas: "ideas",
       lab: {
         title: "Viral Idea Generator",
         desc: "Click the button to generate a viral business or content idea.",
@@ -998,7 +1242,7 @@ export const translations = {
         },
         {
           title: 'Unbeatable Price & Local Payment',
-          desc: 'The best value for money in Algeria. Pay easily in Dinars (DZD) via CCP or BaridiMob.'
+          desc: 'The best value for money in Algeria. Pay easily via Edahabia, CIB, CCP, BaridiMob or RedotPay.'
         },
         {
           title: 'Unlimited & Lifetime Access',
@@ -1017,7 +1261,7 @@ export const translations = {
         { val: '3', label: 'Excellent Courses' },
         { val: '100%', label: 'Practical & Concrete' },
         { val: '24/7', label: 'Unlimited Access' },
-        { val: 'CCP / Baridi', label: 'Easy Payment' }
+        { val: 'Edahabia / CIB', label: '100% Secure Payment' }
       ],
       faq: [
         { question: "Do I need experience to start?", answer: "No, no prerequisites are needed! Our courses are designed progressively, suitable for both complete beginners and those wishing to perfect their skills." },
@@ -1033,11 +1277,102 @@ export const translations = {
         'Business & Entrepreneurship'
       ],
       hero_title: 'Today\'s skills, tomorrow\'s success',
-      hero_subtitle: 'Structured, practical courses designed by experts. Access the best training and pay easily via CCP or BaridiMob.'
+      hero_subtitle: 'Structured, practical courses designed by experts. Access the best training and pay easily via Edahabia, CIB, CCP, BaridiMob or RedotPay.'
     }
   },
 
   ar: {
+    instructor_apply: {
+      seo_title: "كن مدرباً",
+      marketplace_badge: "سوق المدربين",
+      title_start: "كن",
+      title_highlight: "مدرباً",
+      subtitle: "بع دوراتك على منصتنا واكسب إيرادات من كل عملية بيع. انضم إلى مجتمع الخبراء لدينا.",
+      advantages: {
+        rev_title: "اكسب إيرادات",
+        rev_desc: "بع دوراتك واكسب ما يصل إلى 100٪ من كل عملية بيع.",
+        audience_title: "جمهور حالي",
+        audience_desc: "استفد من قاعدة طلابنا النشطين للوصول إلى المزيد من الأشخاص.",
+        security_title: "منصة آمنة",
+        security_desc: "بنية تحتية قوية، مدفوعات آمنة، ودعم فني.",
+        analytics_title: "لوحة تحليلات",
+        analytics_desc: "تتبع مبيعاتك وإيراداتك وسحوباتك في الوقت الفعلي."
+      },
+      login_required: {
+        title: "تسجيل الدخول للتقديم",
+        desc: "تحتاج إلى حساب لتقديم طلبك.",
+        desc_prefix: "تحتاج إلى حساب للاشتراك في خطة",
+        desc_suffix: "وتقديم طلبك.",
+        btn: "تسجيل الدخول"
+      },
+      loading: "جاري التحميل...",
+      pending: {
+        title: "الطلب قيد المراجعة",
+        desc_prefix: "تم تقديم طلبك في",
+        desc_suffix: ". سيقوم المشرف بمراجعته وستتلقى إشعارًا.",
+        status_label: "قيد الانتظار"
+      },
+      approved: {
+        title: "أنت مدرب! 🎉",
+        desc: "تمت الموافقة على طلبك. انتقل إلى لوحة التحكم الخاصة بك.",
+        btn: "انتقل إلى لوحة التحكم",
+        status_label: "موافق عليه"
+      },
+      rejected: {
+        title: "تم رفض الطلب السابق",
+        default_notes: "يمكنك تقديم طلب جديد.",
+        status_label: "مرفوض"
+      },
+      plans: {
+        title: "اختر خطتك",
+        subtitle: "حدد الخطة التي تناسب أهدافك بشكل أفضل.",
+        popular: "الأكثر اختياراً",
+        currency: "د.ج / 6 أشهر",
+        btn_selected: "محدد",
+        btn_choose: "اختر هذه الخطة",
+        starter: {
+          f1: "دورة واحدة نشطة",
+          f2: "80٪ عمولة لكل عملية بيع",
+          f3: "لوحة تحليلات أساسية",
+          f4: "دعم عبر البريد الإلكتروني"
+        },
+        pro: {
+          f1: "حتى 5 دورات نشطة",
+          f2: "90٪ عمولة لكل عملية بيع",
+          f3: "إبراز على المنصة",
+          f4: "دعم أولوية عبر واتساب"
+        },
+        elite: {
+          f1: "حتى 10 دورات نشطة",
+          f2: "100٪ عمولة لكل عملية بيع",
+          f3: "شارة مدرب النخبة",
+          f4: "دعم تسويقي مخصص"
+        }
+      },
+      form: {
+        title: "تفاصيل الطلب",
+        plan_chosen: "الخطة المختارة:",
+        specialty_label: "تخصصك *",
+        specialty_placeholder: "مثال: التسويق الرقمي، تطوير الويب، التصميم...",
+        message_label: "لماذا تريد أن تصبح مدرباً؟ *",
+        message_placeholder: "أخبرنا عن خبرتك ومهاراتك وما تريد تدريسه...",
+        how_it_works: "💡 كيف يعمل؟",
+        step1: "قدم طلبك عبر واتساب",
+        step2: "يقوم المشرف بمراجعة ملفك الشخصي",
+        step3: "تتلقى إشعار الموافقة",
+        step4: "قم بإنشاء وبيع دوراتك!",
+        submit_btn: "المتابعة إلى واتساب",
+        whatsapp_redirect: "إعادة التوجيه إلى واتساب...",
+        whatsapp_error: "خطأ في إعادة التوجيه."
+      },
+      whatsapp: {
+        new_app: "*طلب مدرب جديد 🎓*",
+        plan: "*الخطة المختارة:*",
+        month: "د.ج/شهر",
+        specialty: "*التخصص:*",
+        motivation: "*الدوافع:*"
+      }
+    },
     report: {
       button: "إبلاغ",
       title: "الإبلاغ عن مشكلة",
@@ -1067,7 +1402,8 @@ export const translations = {
       login: "تسجيل الدخول",
       logout: "تسجيل خروج",
       language: "اللغة",
-      resources: "المصادر"
+      resources: "المصادر",
+      instructor: "مدرب"
     },
     hero: {
       title: "تعلم مهن المستقبل، من اليوم.",
@@ -1183,6 +1519,8 @@ export const translations = {
       access_price: "سعر الوصول",
       access_granted: "تم منح الوصول",
       already_owned: "أنت تمتلك هذه الدورة بالفعل.",
+      admin_access: "وصول المسؤول",
+      admin_access_hint: "أنت تطّلع على هذه الدورة بصفتك مسؤولاً، دون شرائها.",
       access_lessons: "الوصول لدروسي",
       buy_course: "شراء هذه الدورة",
       join: "انضمام",
@@ -1273,6 +1611,7 @@ export const translations = {
       welcome: "مرحبًا",
       join_us: "انضم إلينا",
       secure_access: "وصول آمن",
+      or: "أو",
       full_name: "الاسم الكامل",
       email: "البريد الإلكتروني",
       password: "كلمة المرور",
@@ -1295,6 +1634,9 @@ export const translations = {
       full_name: "الاسم الكامل",
       email: "البريد الإلكتروني",
       phone: "رقم الهاتف",
+      address: "العنوان",
+      address_placeholder: "عنوانك الكامل",
+      password: "كلمة المرور",
       receipt: "إثبات الدفع (إيصال / لقطة شاشة)",
       upload_click: "انقر للرفع",
       upload_drop: "أو اسحب وأفلت",
@@ -1334,7 +1676,8 @@ export const translations = {
       title: "الصفحة غير موجودة - 404",
       heading: "عذرًا! الصفحة غير موجودة.",
       description: "ربما تم حذف الصفحة التي تبحث عنها، أو تغيّر اسمها، أو أنها غير متاحة مؤقتًا.",
-      back_home: "العودة للرئيسية"
+      back_home: "العودة للرئيسية",
+      go_back: "الصفحة السابقة"
     },
     common: {
       loading: "جاري التحميل...",
@@ -1449,7 +1792,21 @@ export const translations = {
       result_3: "مقاومة أعطال واجهة برمجة التطبيقات",
       result_4: "قابلية التوسع الفورية",
       savings: "متوسط المدخرات",
-      amount: "+8,000 / سنة"
+      amount: "+8,000 / سنة",
+      resources_title: "الموارد والأدوات الموصى بها",
+      resources_subtitle: "الأدوات الأساسية لتنفيذ هذه البنية وحماية ميزانيتك.",
+      tool_upstash_title: "Upstash Redis",
+      tool_upstash_desc: "قاعدة بيانات بدون خادم مثالية للتخزين المؤقت لاستعلامات الذكاء الاصطناعي بزمن انتقال منخفض.",
+      tool_groq_title: "Groq (LPU)",
+      tool_groq_desc: "أسرع استدلال للذكاء الاصطناعي في العالم. مثالي للنماذج المفتوحة الصغيرة (Llama 3، Mixtral).",
+      tool_openrouter_title: "OpenRouter",
+      tool_openrouter_desc: "واجهة برمجة تطبيقات موحدة للوصول إلى جميع النماذج مع توجيه ذكي وأفضل الأسعار.",
+      tool_tiktoken_title: "Tiktoken",
+      tool_tiktoken_desc: "مكتبة مفتوحة المصدر من OpenAI لحساب الرموز بدقة قبل إرسالها.",
+      best_practices_title: "أفضل الممارسات الإضافية",
+      bp_1: "قم دائمًا بتعيين تنبيهات الميزانية في لوحة معلومات مزود واجهة برمجة التطبيقات الخاص بك.",
+      bp_2: "استخدم واجهة برمجة تطبيقات 'stream' حتى لا ينتظر المستخدم، مما يقلل من الشعور بالبطء.",
+      bp_3: "نظّف مطالباتك: أزل المسافات غير الضرورية والأمثلة المتكررة والتعليمات الغامضة التي تهدر الرموز."
     },
     watch: {
       completed_lessons: "مكتملة",
@@ -1474,11 +1831,17 @@ export const translations = {
       buy_to_watch: "يجب عليك شراء هذه الدورة لمشاهدة دروسها.",
       back_to_catalog: "العودة إلى الكتالوج",
       my_courses: "دوراتي",
-      network_error: "خطأ في تشغيل الفيديو. تم قطع الاتصال بالشبكة."
+      network_error: "خطأ في تشغيل الفيديو. تم قطع الاتصال بالشبكة.",
+      mark_done: "تحديد كمكتمل",
+      lesson_done: "مكتمل",
+      prev_lesson: "الدرس السابق",
+      next_lesson: "الدرس التالي",
+      rate_course: "تقييم الدورة",
+      finish_previous: "أكمل الدرس السابق (شاهده حتى النهاية أو حدّد دائرته) للمتابعة."
     },
     resources_page: {
-      title: "دليل",
-      title_highlight: "الأعمال",
+      title: "The",
+      title_highlight: "1%",
       subtitle: "أدوات سرية، أوامر ذكية، دورات متقدمة وأفكار سريعة الانتشار.",
       free_badge: "مجاني 100%",
       tabs: {
@@ -1486,10 +1849,14 @@ export const translations = {
         tools: "البرامج والذكاء الاصطناعي",
         prompts: "الأوامر الذكية (Prompts)",
         masterclass: "دورات متقدمة",
-        combos: "تجميعات ⚡",
+        combos: "تجميعات",
         credits: "رصيد الذكاء الاصطناعي 💰"
       },
       search_placeholder: "ابحث عن أداة، أمر ذكي...",
+      hero_title_1: "أفضل الأدوات للنجاح ",
+      hero_title_1_highlight: "بميزانية 0.",
+      combos_title: "استراتيجيات وتجميعات",
+      combos_ideas: "أفكار",
       lab: {
         title: "مولد الأفكار الفيروسية",
         desc: "انقر على الزر لتوليد فكرة عمل أو محتوى سريع الانتشار.",
@@ -1507,7 +1874,7 @@ export const translations = {
         },
         {
           title: 'سعر لا يضاهى ودفع محلي',
-          desc: 'أفضل قيمة مقابل السعر في الجزائر. ادفع بسهولة بالدينار (DZD) عبر البريد (CCP) أو بريدي موب.'
+          desc: 'أفضل قيمة مقابل السعر في الجزائر. ادفع بسهولة عبر الذهبية، CIB، بريد الجزائر (CCP)، بريدي موب أو RedotPay.'
         },
         {
           title: 'وصول غير محدود ومدى الحياة',
@@ -1526,7 +1893,7 @@ export const translations = {
         { val: '3', label: 'دورات استثنائية' },
         { val: '100%', label: 'عملي وتطبيقي' },
         { val: '24/7', label: 'وصول غير محدود' },
-        { val: 'CCP / Baridi', label: 'دفع سهل' }
+        { val: 'الذهبية / CIB', label: 'دفع آمن 100%' }
       ],
       faq: [
         { question: "هل أحتاج إلى خبرة للبدء؟", answer: "لا، ليست هناك حاجة لأي شروط مسبقة! دوراتنا مصممة بشكل تدريجي لتناسب المبتدئين تمامًا وكذلك الأشخاص الذين يرغبون في تحسين مهاراتهم." },
@@ -1542,7 +1909,7 @@ export const translations = {
         'الأعمال وريادة الأعمال'
       ],
       hero_title: 'مهارات اليوم، نجاح الغد',
-      hero_subtitle: 'دورات منظمة وعملية ومصممة من قبل خبراء. احصل على أفضل التدريبات وادفع بسهولة عبر البريد (CCP) أو بريدي موب.'
+      hero_subtitle: 'دورات منظمة وعملية ومصممة من قبل خبراء. احصل على أفضل التدريبات وادفع بسهولة عبر البطاقة الذهبية، CIB، البريد، بريدي موب أو RedotPay.'
     }
   }
 }

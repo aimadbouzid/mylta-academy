@@ -1,0 +1,104 @@
+# ============================================================
+# NGINX — Mylta Academy (reverse proxy + TLS)
+# ============================================================
+# À copier vers /etc/nginx/sites-available/myltaacademy.conf puis :
+#   ln -s /etc/nginx/sites-available/myltaacademy.conf /etc/nginx/sites-enabled/
+#   nginx -t && systemctl reload nginx
+#
+# Remplacer :
+#   - myltaacademy.com / www.myltaacademy.com par le vrai domaine
+#   - les chemins /etc/letsencrypt/... (générés par `certbot --nginx`)
+#
+# Le backend Express sert déjà le build React (backend/server.js sert
+# frontend/dist en production) : nginx n'a PAS besoin de connaître le
+# chemin de build, il proxifie tout vers Node sur 127.0.0.1:3001.
+
+# Redirection HTTP → HTTPS
+server {
+    listen 80;
+    listen [::]:80;
+    server_name myltaacademy.com www.myltaacademy.com;
+
+    # Requis par certbot pour le renouvellement (challenge HTTP-01)
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
+
+    location / {
+        return 301 https://$host$request_uri;
+    }
+}
+
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name myltaacademy.com www.myltaacademy.com;
+
+    ssl_certificate     /etc/letsencrypt/live/myltaacademy.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/myltaacademy.com/privkey.pem;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers HIGH:!aNULL:!MD5;
+    ssl_prefer_server_ciphers on;
+    ssl_session_cache shared:SSL:10m;
+    ssl_session_timeout 10m;
+
+    # Le JWT_SECRET côté Node exige déjà HTTPS pour les cookies Secure/__Host- :
+    # sans ce bloc, aucune session n'est possible en production.
+    add_header Strict-Transport-Security "max-age=63072000; includeSubDomains; preload" always;
+
+    client_max_body_size 15m; # marge au-dessus des 10 Mo max upload (reçus/miniatures)
+
+    access_log /var/log/nginx/myltaacademy.access.log;
+    error_log  /var/log/nginx/myltaacademy.error.log;
+
+    # ─── Assets statiques du build React : cache long, immutables ─────
+    # server.js les sert déjà avec maxAge 1y, mais laisser nginx absorber
+    # ces requêtes évite un aller-retour Node inutile sur chaque asset.
+    location /assets/ {
+        proxy_pass http://127.0.0.1:3001;
+        proxy_set_header Host $host;
+        add_header Cache-Control "public, max-age=31536000, immutable";
+    }
+
+    # ─── Socket.IO : upgrade WebSocket obligatoire ─────────────────────
+    location /socket.io/ {
+        proxy_pass http://127.0.0.1:3001;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_read_timeout 86400; # connexions longues pour le temps réel
+    }
+
+    # ─── Streaming vidéo : pas de buffering, timeouts longs ────────────
+    # backend/routes/video.js proxifie Google Drive avec support des
+    # requêtes Range. Le buffering nginx casserait le seek vidéo.
+    location /api/video/ {
+        proxy_pass http://127.0.0.1:3001;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_buffering off;
+        proxy_read_timeout 300s;
+        proxy_send_timeout 300s;
+    }
+
+    # ─── Tout le reste : API + app React (SPA + prerendering SEO) ─────
+    location / {
+        proxy_pass http://127.0.0.1:3001;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        # X-Forwarded-Proto est lu par server.js pour la redirection HTTPS et
+        # par `trust proxy` pour le rate-limiting par IP réelle : sans cet
+        # en-tête, tous les clients apparaissent derrière la même IP nginx.
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_read_timeout 60s;
+    }
+}

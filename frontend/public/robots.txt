@@ -1,7 +1,22 @@
+# Utilisé uniquement si le frontend est déployé SÉPARÉMENT du backend
+# (Netlify, Vercel…). En déploiement unique, backend/routes/seo.js prend le
+# relais et génère l'équivalent — garder les deux synchronisés.
+
 User-agent: *
 Allow: /
-Disallow: /admin/
-Disallow: /settings/
-Disallow: /api/
 
-Sitemap: https://votre-domaine.com/sitemap.xml
+# Espaces privés : contenu réservé, sans valeur en résultat de recherche.
+# Ils ne renvoient qu'un écran de connexion aux robots (contenu pauvre).
+Disallow: /admin
+Disallow: /instructor
+Disallow: /settings
+Disallow: /my-courses
+Disallow: /watch/
+Disallow: /payment/
+Disallow: /reset-password
+
+# API et fichiers internes
+Disallow: /api/
+Disallow: /uploads/
+
+Sitemap: https://myltaacademy.com/sitemap.xml

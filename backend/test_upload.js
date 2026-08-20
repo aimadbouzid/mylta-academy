@@ -11,7 +11,7 @@ async function testUpload() {
     
     // Simulate login to get token
     const loginRes = await axios.post('http://localhost:3000/api/auth/login', {
-      email: 'admin@myltaacademy.dz',
+      email: 'academymylta@gmail.com',
       password: 'admin123'
     });
     const token = loginRes.data.token;

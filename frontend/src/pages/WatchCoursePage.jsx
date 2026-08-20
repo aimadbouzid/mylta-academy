@@ -3,7 +3,8 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import {
   Play, CheckCircle, Lock, ArrowLeft, BookOpen, Clock, AlertCircle, Star,
-  RotateCcw, RotateCw, ShieldAlert, PlayCircle
+  RotateCcw, RotateCw, ShieldAlert, PlayCircle, CreditCard, Award,
+  ChevronLeft, ChevronRight, Check
 } from 'lucide-react'
 import Navbar from '../components/Navbar'
 import SEOHead from '../components/SEOHead'
@@ -13,7 +14,42 @@ import { useSocket } from '../context/SocketContext'
 import { useLanguage } from '../context/LanguageContext'
 import api from '../api/axios'
 import PremiumPlayer from '../components/PremiumPlayer'
+import UniversalVideoPlayer from '../components/UniversalVideoPlayer'
+import StandardPlayer from '../components/StandardPlayer'
+import StudentCertificate from '../components/StudentCertificate'
+import LeaveReviewModal from '../components/LeaveReviewModal'
+const DynamicWatermark = ({ email }) => {
+  const [position, setPosition] = useState({ top: 10, left: 10 })
+  const [direction, setDirection] = useState({ x: 1, y: 1 })
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setPosition(prev => {
+        let newX = prev.left + (direction.x * 0.5)
+        let newY = prev.top + (direction.y * 0.5)
+        let newDirX = direction.x
+        let newDirY = direction.y
+
+        if (newX >= 80 || newX <= 5) newDirX *= -1
+        if (newY >= 80 || newY <= 5) newDirY *= -1
+
+        setDirection({ x: newDirX, y: newDirY })
+        return { top: newY, left: newX }
+      })
+    }, 50)
+    return () => clearInterval(interval)
+  }, [direction])
+
+  return (
+    <div
+      className="absolute z-20 pointer-events-none opacity-25 select-none font-medium text-[12px] text-white/80 transition-all duration-75"
+      style={{ top: `${position.top}%`, left: `${position.left}%` }}
+    >
+      <div>MYLTA ACADEMY PROTECTED</div>
+      <div>{email}</div>
+    </div>
+  )
+}
 
 export default function WatchCoursePage() {
   const { courseId } = useParams()
@@ -26,6 +62,9 @@ export default function WatchCoursePage() {
   const [activeLesson, setActiveLesson] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [showCertificate, setShowCertificate] = useState(false)
+  const [showReviewModal, setShowReviewModal] = useState(false)
+  const [useAlternativePlayer, setUseAlternativePlayer] = useState(false)
 
   const [videoBlobUrl, setVideoBlobUrl] = useState(null)
   const [videoLoading, setVideoLoading] = useState(false)
@@ -41,6 +80,8 @@ export default function WatchCoursePage() {
 
   // Anti-screenshot / security blur state
   const [isBlackout, setIsBlackout] = useState(false)
+
+
 
   // Fetch course detail
   useEffect(() => {
@@ -58,6 +99,7 @@ export default function WatchCoursePage() {
         if (data.userProgress) {
           setProgress(new Set(data.userProgress))
         }
+
       } catch (err) {
         setError(err.response?.data?.error || t('watch.load_error'))
       } finally {
@@ -73,6 +115,8 @@ export default function WatchCoursePage() {
       localStorage.setItem(`mylta_last_lesson_${courseId}`, activeLesson.id)
     }
   }, [activeLesson, courseId])
+
+
 
   // Real-time synchronization
   const { socket } = useSocket()
@@ -105,14 +149,20 @@ export default function WatchCoursePage() {
     setVideoError(null)
     setIsVideoBuffering(true)
 
+    const isExternal = !!activeLesson.externalVideoUrl
+    if (isExternal) {
+      setVideoLoading(false)
+      setIsVideoBuffering(false)
+      return () => { cancelled = true }
+    }
+
     const loadVideo = async () => {
       try {
         const { data } = await api.post(`/video/token/${activeLesson.id}`)
         if (cancelled) return
 
-        const isDev = import.meta.env.DEV
-        const baseUrl = isDev ? 'http://localhost:3000/api' : '/api'
-        setVideoBlobUrl(`${baseUrl}/video/${activeLesson.id}?vtoken=${data.videoToken}`)
+        // Passe par le proxy Vite en dev comme en prod : pas de port codé en dur
+        setVideoBlobUrl(`/api/video/${activeLesson.id}?vtoken=${data.videoToken}`)
         setVideoLoading(false)
       } catch (err) {
         if (cancelled) return
@@ -127,26 +177,21 @@ export default function WatchCoursePage() {
     return () => {
       cancelled = true
       setVideoBlobUrl(null)
+      setUseAlternativePlayer(false)
     }
   }, [activeLesson])
 
-  // Anti-screenshot / Anti-recording handlers (Visibility API & Focus)
+  // Anti-screenshot / Anti-recording handlers (Visibility API)
   useEffect(() => {
     const handleVisibility = () => {
       if (document.hidden) setIsBlackout(true)
       else setIsBlackout(false)
     }
-    const handleBlur = () => setIsBlackout(true)
-    const handleFocus = () => setIsBlackout(false)
 
     document.addEventListener('visibilitychange', handleVisibility)
-    window.addEventListener('blur', handleBlur)
-    window.addEventListener('focus', handleFocus)
 
     return () => {
       document.removeEventListener('visibilitychange', handleVisibility)
-      window.removeEventListener('blur', handleBlur)
-      window.removeEventListener('focus', handleFocus)
     }
   }, [])
 
@@ -169,12 +214,14 @@ export default function WatchCoursePage() {
     }
   }
 
-  const handleVideoEnded = () => {
+  const handleVideoEnded = async () => {
     if (!progress.has(activeLesson.id)) {
       const newSet = new Set(progress)
       newSet.add(activeLesson.id)
       setProgress(newSet)
-      api.post(`/courses/${courseId}/progress`, { lessonId: activeLesson.id, isCompleted: true }).catch(() => {})
+      try {
+        await api.post(`/courses/${courseId}/progress`, { lessonId: activeLesson.id, isCompleted: true })
+      } catch (err) {}
     }
 
     if (course && course.lessons) {
@@ -218,6 +265,29 @@ export default function WatchCoursePage() {
     }
   }, [activeLesson, courseId])
 
+  // Navigation séquentielle entre leçons
+  const lessons = course?.lessons || []
+  const activeIndex = activeLesson ? lessons.findIndex(l => l.id === activeLesson.id) : -1
+  const prevLesson = activeIndex > 0 ? lessons[activeIndex - 1] : null
+  const nextLesson = activeIndex >= 0 && activeIndex < lessons.length - 1 ? lessons[activeIndex + 1] : null
+  const completionPercent = lessons.length > 0 ? Math.round((progress.size / lessons.length) * 100) : 0
+
+  // Verrou séquentiel & Remboursement
+  const isLessonLocked = (lesson) => {
+    if (!course?.lessons) return false
+    const firstLesson = course.lessons[0]
+    if (lesson.id === firstLesson.id) return false
+    
+    const lessonIndex = course.lessons.findIndex(l => l.id === lesson.id)
+    if (lessonIndex > 0) {
+      const prevLesson = course.lessons[lessonIndex - 1]
+      if (!progress.has(prevLesson.id)) return true
+    }
+    return false
+  }
+
+
+
   if (loading) {
     return (
       <div className="min-h-screen bg-academy-surface text-academy-textMain flex items-center justify-center">
@@ -236,7 +306,9 @@ export default function WatchCoursePage() {
         <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
           <AlertCircle className="w-16 h-16 text-red-400 mb-4" />
           <h2 className="font-display font-bold text-2xl mb-2">{t('watch.access_restricted')}</h2>
-          <p className="text-academy-textMain/50 text-sm max-w-md mb-6">{error || t('watch.buy_to_watch')}</p>
+          <p className="text-academy-textMain/50 text-sm max-w-md mb-6">
+            {error || t('watch.buy_to_watch')}
+          </p>
           <Link to="/courses" className="btn-primary text-sm py-2.5 px-6">
             {t('watch.back_to_catalog')}
           </Link>
@@ -247,32 +319,54 @@ export default function WatchCoursePage() {
 
   return (
     <>
-      <SEOHead title={`Visionner: ${course.title}`} description="Espace de visionnage sécurisé Mylta Academy" canonicalPath={`/watch/${courseId}`} />
+      <SEOHead title={`Visionner: ${course.title}`} description="Espace de visionnage sécurisé Mylta Academy" canonicalPath={`/watch/${courseId}`} noindex />
 
       <div className="h-[100dvh] bg-academy-surface text-academy-textMain flex flex-col select-none overflow-hidden">
-        {/* Header simple avec retour */}
-        <header className="h-16 flex-shrink-0 border-b border-academy-border bg-academy-surfaceDark flex items-center px-6 justify-between z-50">
-          <div className="flex items-center gap-4">
-            <button onClick={() => navigate('/my-courses')} className="flex items-center gap-2 text-academy-textMain/60 hover:text-academy-textMain text-sm transition-colors">
+        {/* Header : retour, titre du cours, progression globale */}
+        <header className="h-16 flex-shrink-0 border-b border-academy-border bg-white dark:bg-academy-surfaceDark flex items-center px-4 sm:px-6 justify-between gap-4 z-50">
+          <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+            <button onClick={() => navigate('/my-courses')} className="flex items-center gap-2 text-academy-textMain/60 hover:text-academy-textMain text-sm font-medium transition-colors flex-shrink-0">
               <ArrowLeft size={16} />
               <span className="hidden sm:inline">{t('watch.my_courses')}</span>
             </button>
-            <div className="h-4 w-px bg-academy-border" />
-            <h1 className="font-display font-bold text-academy-textMain text-base truncate max-w-md sm:max-w-xl">
+            <div className="h-4 w-px bg-academy-border flex-shrink-0" />
+            <h1 className="font-display font-bold text-academy-textMain text-sm sm:text-base truncate">
               {course.title}
             </h1>
+          </div>
+
+          {/* Pastille de progression */}
+          <div className="flex items-center gap-3 flex-shrink-0">
+            <div className="hidden sm:flex items-center gap-2 text-xs font-bold text-academy-textMain/50">
+              <span>{progress.size}/{lessons.length}</span>
+              <span className="text-academy-textMain/30">{t('watch.completed_lessons')}</span>
+            </div>
+            <div className="relative w-9 h-9 flex-shrink-0" title={`${completionPercent}%`}>
+              <svg className="w-9 h-9 -rotate-90" viewBox="0 0 36 36">
+                <circle cx="18" cy="18" r="15" fill="none" stroke="var(--clr-border)" strokeWidth="3" />
+                <circle
+                  cx="18" cy="18" r="15" fill="none" stroke="var(--clr-primary)" strokeWidth="3"
+                  strokeLinecap="round"
+                  strokeDasharray={`${(completionPercent / 100) * 94.25} 94.25`}
+                  className="transition-all duration-500"
+                />
+              </svg>
+              <span className="absolute inset-0 flex items-center justify-center text-[10px] font-black text-academy-primary">
+                {completionPercent}
+              </span>
+            </div>
           </div>
         </header>
 
         {/* Main Content (Player + Lessons List) */}
-        <div className="flex-1 flex flex-col lg:flex-row bg-academy-surface overflow-hidden">
+        <div className="flex-1 min-h-0 flex flex-col lg:flex-row bg-academy-surface overflow-hidden">
           {/* Left / Top: Video Player Area */}
-          <div className="flex-none lg:flex-1 flex flex-col overflow-y-auto hide-scrollbar lg:border-none pb-4 lg:pb-0 relative z-10">
-            {/* Zone Vidéo Sombre */}
-            <div className="w-full bg-[#0a0a0a] border-b border-academy-border/30 p-0 lg:p-8 flex flex-col justify-center flex-shrink-0">
+          <div className="flex-1 min-h-0 flex flex-col overflow-y-auto lg:overflow-hidden hide-scrollbar relative z-10">
+            {/* Zone Vidéo Sombre — occupe la hauteur disponible sans bande noire inutile */}
+            <div className="w-full bg-[#0a0a0a] flex items-center justify-center flex-shrink-0 lg:flex-1 lg:min-h-0 p-0 lg:p-5">
               <div
                 onContextMenu={(e) => e.preventDefault()}
-                className="max-w-5xl mx-auto w-full aspect-video bg-black lg:rounded-2xl overflow-hidden relative lg:shadow-2xl flex items-center justify-center group lg:ring-1 lg:ring-white/10"
+                className="w-full max-w-6xl aspect-video lg:max-h-full bg-black lg:rounded-xl overflow-hidden relative lg:shadow-2xl flex items-center justify-center group lg:ring-1 lg:ring-white/10"
               >
                 {/* Overlay Anti-capture quand l'écran perd le focus */}
                 {isBlackout && (
@@ -283,30 +377,55 @@ export default function WatchCoursePage() {
                   </div>
                 )}
 
-                {/* Watermark Filigrane Anti-piratage */}
-                <div className="absolute top-4 right-4 z-20 pointer-events-none opacity-25 select-none text-right font-mono text-[10px] text-white/80">
-                  <div>MYLTA ACADEMY PROTECTED</div>
-                  <div>{user?.email || t('watch.certified_student')}</div>
-                </div>
+                {/* Watermark Filigrane Anti-piratage (Dynamique & Aléatoire) */}
+                <DynamicWatermark email={user?.email || t('watch.certified_student')} />
 
                 {videoError ? (
-                  <div className="p-6 text-center max-w-md">
+                  <div className="p-6 text-center max-w-md z-50">
                     <Lock className="w-12 h-12 text-academy-primary mx-auto mb-3" />
-                    <p className="font-semibold text-white text-sm mb-1">{t('watch.playback_unavailable')}</p>
-                    <p className="text-white/50 text-xs">{videoError}</p>
+                    <p className="font-semibold text-white text-sm mb-1">{t('watch.playback_unavailable') || 'Lecture non disponible'}</p>
+                    <p className="text-white/50 text-xs mb-5">{videoError}</p>
+                    <button 
+                      onClick={() => {
+                        setVideoError(null);
+                        setUseAlternativePlayer(true);
+                      }}
+                      className="bg-academy-primary/20 hover:bg-academy-primary/30 text-academy-primary font-bold py-2 px-4 rounded-xl text-xs transition-colors"
+                    >
+                      Essayer le lecteur secondaire
+                    </button>
                   </div>
+                ) : activeLesson?.externalVideoUrl ? (
+                  <UniversalVideoPlayer 
+                    key={activeLesson.id}
+                    url={activeLesson.externalVideoUrl} 
+                    className="w-full h-full border-0 lg:rounded-2xl shadow-none"
+                    initialTime={parseFloat(localStorage.getItem(`mylta_video_progress_${courseId}_${activeLesson.id}`)) || 0}
+                    onTimeUpdate={(target) => handleTimeUpdate(target.currentTime)}
+                  />
                 ) : videoBlobUrl || videoLoading ? (
                   <>
-                    <PremiumPlayer
-                      videoUrl={videoBlobUrl}
-                      onEnded={handleVideoEnded}
-                      onTimeUpdate={handleTimeUpdate}
-                      onLoadedMetadata={handleLoadedMetadata}
-                      onError={(e) => {
-                        console.error('Video Player Error:', e)
-                        setVideoError(t('watch.network_error'))
-                      }}
-                    />
+                    {useAlternativePlayer ? (
+                      <StandardPlayer
+                        key={activeLesson.id + '-alt'}
+                        url={videoBlobUrl}
+                        onEnded={handleVideoEnded}
+                        onTimeUpdate={handleTimeUpdate}
+                        initialTime={parseFloat(localStorage.getItem(`mylta_video_progress_${courseId}_${activeLesson.id}`)) || 0}
+                      />
+                    ) : (
+                      <PremiumPlayer
+                        key={activeLesson.id}
+                        videoUrl={videoBlobUrl}
+                        onEnded={handleVideoEnded}
+                        onTimeUpdate={handleTimeUpdate}
+                        initialTime={parseFloat(localStorage.getItem(`mylta_video_progress_${courseId}_${activeLesson.id}`)) || 0}
+                        onError={(e) => {
+                          console.error('Video Player Error:', e)
+                          setVideoError(t('watch.network_error') || 'Erreur de lecture vidéo. Le flux réseau a été interrompu.')
+                        }}
+                      />
+                    )}
                   </>
                 ) : (
                   <p className="text-white/40 text-sm">{t('watch.select_lesson')}</p>
@@ -314,81 +433,181 @@ export default function WatchCoursePage() {
               </div>
             </div>
 
-            {/* Current Lesson Info */}
+            {/* Infos leçon courante + navigation */}
             {activeLesson && (
-              <div className="max-w-4xl mx-auto w-full mt-6 flex flex-col gap-3 px-1">
-                <div className="flex items-center justify-between">
-                  <h2 className="font-display font-black text-2xl sm:text-3xl text-academy-textMain tracking-tight">
-                    <span className="text-academy-primary mr-2">{t('watch.lesson')} {activeLesson.order}:</span> 
+              <div className="flex-shrink-0 bg-white dark:bg-academy-surfaceDark border-t border-academy-border lg:max-h-[42%] lg:overflow-y-auto hide-scrollbar">
+                <div className="max-w-6xl mx-auto w-full px-5 py-4 sm:px-7 sm:py-5">
+                  {/* Ligne méta + action */}
+                  <div className="flex items-center justify-between gap-4 mb-2.5 flex-wrap">
+                    <div className="flex items-center gap-2 text-xs font-bold text-academy-textMain/50">
+                      <span className="text-academy-primary">
+                        {t('watch.lesson')} {activeLesson.order}
+                      </span>
+                      <span className="text-academy-textMain/25">/</span>
+                      <span>{lessons.length}</span>
+                      {activeLesson.duration && (
+                        <>
+                          <span className="text-academy-textMain/25">·</span>
+                          <span className="inline-flex items-center gap-1">
+                            <Clock size={12} /> {activeLesson.duration}
+                          </span>
+                        </>
+                      )}
+                    </div>
+
+                    <button
+                      onClick={(e) => toggleLessonProgress(activeLesson.id, e)}
+                      className={`inline-flex items-center gap-2 text-xs font-bold px-3.5 py-2 rounded-xl border transition-all
+                        ${progress.has(activeLesson.id)
+                          ? 'bg-green-50 dark:bg-green-500/10 border-green-300 text-green-700 dark:text-green-300 hover:bg-green-100'
+                          : 'bg-academy-surface border-academy-border text-academy-textMain/70 hover:border-academy-primary/50 hover:text-academy-primary'
+                        }`}
+                    >
+                      {progress.has(activeLesson.id)
+                        ? <><Check size={14} strokeWidth={3} /> {t('watch.lesson_done')}</>
+                        : <><CheckCircle size={14} /> {t('watch.mark_done')}</>
+                      }
+                    </button>
+                  </div>
+
+                  {/* Titre */}
+                  <h2 className="font-display font-black text-xl sm:text-2xl text-academy-textMain tracking-tight leading-snug">
                     {activeLesson.title}
                   </h2>
-                </div>
-                {activeLesson.description && (
-                  <p className="text-academy-textMain/70 text-sm sm:text-base leading-relaxed">{activeLesson.description}</p>
-                )}
-                {activeLesson.duration && (
-                  <div className="mt-2">
-                    <span className="inline-flex items-center gap-1.5 text-xs font-bold font-mono bg-academy-textMain/5 text-academy-textMain/70 px-3 py-1.5 rounded-lg border border-academy-border">
-                      <Clock size={14} /> {activeLesson.duration}
-                    </span>
+
+                  {activeLesson.description && (
+                    <p className="text-academy-textMain/60 text-sm leading-relaxed mt-1.5">
+                      {activeLesson.description}
+                    </p>
+                  )}
+
+                  {/* Navigation précédent / suivant */}
+                  <div className="flex items-center justify-between gap-3 mt-4 pt-4 border-t border-academy-border">
+                    <button
+                      onClick={() => prevLesson && setActiveLesson(prevLesson)}
+                      disabled={!prevLesson}
+                      className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-academy-textMain/70 hover:text-academy-primary
+                                 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:text-academy-textMain/70 transition-colors min-w-0"
+                    >
+                      <ChevronLeft size={18} className="flex-shrink-0" />
+                      <span className="truncate">{t('watch.prev_lesson')}</span>
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        if (!nextLesson) return
+                        if (isLessonLocked(nextLesson)) {
+                          toastError(t('watch.finish_previous'))
+                          return
+                        }
+                        setActiveLesson(nextLesson)
+                      }}
+                      disabled={!nextLesson}
+                      className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold px-4 py-2.5 rounded-xl bg-academy-primary text-academy-onPrimary
+                                 hover:bg-academy-dark disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-academy-primary
+                                 transition-all shadow-sm min-w-0"
+                    >
+                      <span className="truncate">{t('watch.next_lesson')}</span>
+                      {nextLesson && isLessonLocked(nextLesson)
+                        ? <Lock size={15} className="flex-shrink-0" />
+                        : <ChevronRight size={18} className="flex-shrink-0" />
+                      }
+                    </button>
                   </div>
-                )}
+                </div>
               </div>
             )}
           </div>
 
           {/* Right Sidebar: Lessons List */}
-          <div className="flex-1 lg:flex-none w-full lg:w-[400px] bg-white dark:bg-academy-surface border-t lg:border-t-0 lg:border-l border-academy-border flex flex-col shadow-soft-xl z-20 overflow-hidden relative">
-            <div className="p-6 border-b border-academy-border bg-academy-surfaceDark/30 flex-shrink-0">
-              <h3 className="font-display font-black text-academy-textMain text-lg flex items-center gap-2.5 mb-4">
-                <div className="w-8 h-8 rounded-lg bg-academy-primary/10 flex items-center justify-center">
-                  <BookOpen size={16} className="text-academy-primary" />
-                </div>
-                {t('watch.course_program')}
-              </h3>
+          <div className="flex-shrink-0 lg:flex-none w-full lg:w-[360px] bg-white dark:bg-academy-surfaceDark border-t lg:border-t-0 lg:border-l border-academy-border flex flex-col z-20 overflow-hidden relative">
+            <div className="px-5 py-4 border-b border-academy-border flex-shrink-0">
+              <div className="flex items-center justify-between gap-3 mb-3">
+                <h3 className="font-display font-black text-academy-textMain text-sm flex items-center gap-2 uppercase tracking-wide">
+                  <BookOpen size={15} className="text-academy-primary" />
+                  {t('watch.course_program')}
+                </h3>
+                <span className="text-xs font-black text-academy-primary tabular-nums">
+                  {completionPercent}%
+                </span>
+              </div>
 
-              {/* Progress bar */}
-              <div className="flex justify-between text-xs font-bold text-academy-textMain/50 mb-2">
-                <span>{t('watch.progress')}</span>
-                <span className="font-mono text-academy-primary">{progress.size} / {course.lessons?.length || 0}</span>
+              {/* Barre de progression */}
+              <div className="w-full bg-academy-border/60 rounded-full h-1.5 overflow-hidden">
+                <div
+                  className="bg-academy-primary h-1.5 rounded-full transition-all duration-500"
+                  style={{ width: `${completionPercent}%` }}
+                />
               </div>
-              <div className="w-full bg-academy-border/50 rounded-full h-2 overflow-hidden">
-                <div className="bg-gradient-to-r from-academy-primary to-red-400 h-2 rounded-full transition-all duration-500" style={{ width: `${course.lessons?.length > 0 ? (progress.size / course.lessons.length) * 100 : 0}%` }} />
-              </div>
+
+              {progress.size === lessons.length && lessons.length > 0 && (
+                <button
+                  onClick={() => setShowReviewModal(true)}
+                  className="mt-4 w-full bg-yellow-400 hover:bg-yellow-300 text-black font-bold py-2.5 px-4 text-sm rounded-xl flex items-center justify-center gap-2 transition-all shadow-sm"
+                >
+                  <Star size={16} className="fill-black" /> {t('watch.rate_course')}
+                </button>
+              )}
             </div>
 
-            <div className="flex-1 overflow-y-auto p-4 space-y-2 hide-scrollbar bg-academy-surface">
-              {course.lessons?.map((lesson) => {
+            <div className="flex-1 overflow-y-auto p-2.5 space-y-1 hide-scrollbar bg-white dark:bg-academy-surfaceDark max-h-[38vh] lg:max-h-none">
+              {lessons.map((lesson) => {
                 const isActive = activeLesson?.id === lesson.id
                 const isCompleted = progress.has(lesson.id)
+                const isLocked = isLessonLocked(lesson)
                 return (
                   <button
                     key={lesson.id}
-                    onClick={() => setActiveLesson(lesson)}
-                    className={`w-full flex items-center gap-4 p-3.5 rounded-2xl text-left transition-all duration-300 border
+                    onClick={() => {
+                      if (isLocked) {
+                        toastError(t('watch.finish_previous'))
+                        return
+                      }
+                      setActiveLesson(lesson)
+                    }}
+                    className={`w-full flex items-center gap-3 p-3 rounded-xl text-left transition-all duration-200 border-l-[3px]
                               ${isActive
-                                ? 'bg-white dark:bg-academy-surfaceDark border-academy-primary/40 shadow-md ring-1 ring-academy-primary/20 scale-[1.02]'
-                                : 'bg-transparent border-transparent hover:bg-academy-border/30'
+                                ? 'bg-academy-primary/[0.06] border-l-academy-primary'
+                                : isLocked
+                                  ? 'border-l-transparent cursor-not-allowed'
+                                  : 'border-l-transparent hover:bg-academy-surface'
                               }`}
                   >
-                    <div onClick={(e) => toggleLessonProgress(lesson.id, e)} className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 cursor-pointer transition-all duration-300 border-2
-                                  ${isCompleted ? 'bg-green-500 border-green-500 text-white shadow-inner' : isActive ? 'border-academy-primary/50 text-transparent' : 'border-academy-border hover:border-academy-primary/50 text-transparent'}`}>
-                      <CheckCircle size={14} className={isCompleted ? 'text-white' : 'opacity-0'} strokeWidth={3} />
+                    {/* Pastille : coche si terminé, sinon numéro */}
+                    <div
+                      onClick={(e) => !isLocked && toggleLessonProgress(lesson.id, e)}
+                      className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 text-[11px] font-black transition-all duration-200 border-2
+                        ${isCompleted
+                          ? 'bg-green-500 border-green-500 text-white cursor-pointer'
+                          : isLocked
+                            ? 'border-academy-border text-academy-textMain/30'
+                            : isActive
+                              ? 'border-academy-primary text-academy-primary cursor-pointer'
+                              : 'border-academy-border text-academy-textMain/40 hover:border-academy-primary/60 cursor-pointer'
+                        }`}
+                    >
+                      {isCompleted ? <Check size={14} strokeWidth={3.5} /> : lesson.order}
                     </div>
+
                     <div className="flex-1 min-w-0">
-                      <p className={`text-sm font-bold truncate ${isActive ? 'text-academy-primary' : 'text-academy-textMain'}`}>
-                        {lesson.order}. {lesson.title}
+                      <p className={`text-[13px] font-bold leading-snug line-clamp-2 ${
+                        isActive ? 'text-academy-primary' : isLocked ? 'text-academy-textMain/40' : 'text-academy-textMain'
+                      }`}>
+                        {lesson.title}
                       </p>
                       {lesson.duration && (
-                        <p className={`text-[11px] mt-1 flex items-center gap-1.5 font-mono font-medium ${isActive ? 'text-academy-textMain/70' : 'text-academy-textMain/40'}`}>
-                          <Clock size={12} /> {lesson.duration}
+                        <p className={`text-[11px] mt-0.5 flex items-center gap-1 font-medium ${
+                          isActive ? 'text-academy-primary/60' : 'text-academy-textMain/40'
+                        }`}>
+                          <Clock size={11} /> {lesson.duration}
                         </p>
                       )}
                     </div>
-                    {isActive ? (
-                       <div className="w-8 h-8 rounded-full bg-academy-primary/10 flex items-center justify-center">
-                         <Play size={14} className="text-academy-primary flex-shrink-0 ml-0.5" fill="currentColor" />
-                       </div>
+
+                    {isLocked ? (
+                      <Lock size={14} className="text-academy-textMain/30 flex-shrink-0" />
+                    ) : isActive ? (
+                      <Play size={14} className="text-academy-primary flex-shrink-0" fill="currentColor" />
                     ) : null}
                   </button>
                 )
@@ -399,6 +618,22 @@ export default function WatchCoursePage() {
           </div>
         </div>
       </div>
+
+      {showCertificate && (
+        <StudentCertificate 
+          studentName={user?.name || 'Étudiant'} 
+          courseName={course?.title || 'Formation'} 
+          onClose={() => setShowCertificate(false)} 
+        />
+      )}
+
+      {showReviewModal && (
+        <LeaveReviewModal 
+          courseId={courseId} 
+          courseName={course?.title || 'Formation'} 
+          onClose={() => setShowReviewModal(false)} 
+        />
+      )}
     </>
   )
 }

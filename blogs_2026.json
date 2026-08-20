@@ -1,0 +1,122 @@
+[
+  {
+    "id": 1,
+    "category": "AI",
+    "title_fr": "L'IA Générative et les Vidéos Holographiques en 2026",
+    "content_fr": "En 2026, l'IA générative a franchi une nouvelle étape avec la création de vidéos holographiques en temps réel. Les créateurs de contenu peuvent désormais générer des environnements 3D immersifs à partir de simples descriptions textuelles, révolutionnant ainsi l'industrie du cinéma et du jeu vidéo.",
+    "title_ar": "الذكاء الاصطناعي التوليدي ومقاطع الفيديو الهولوغرافية في عام 2026",
+    "content_ar": "في عام 2026، اتخذ الذكاء الاصطناعي التوليدي خطوة جديدة من خلال إنشاء مقاطع فيديو هولوغرافية في الوقت الفعلي. يمكن لمنشئي المحتوى الآن إنشاء بيئات ثلاثية الأبعاد غامرة من أوصاف نصية بسيطة، مما يُحدث ثورة في صناعة السينما وألعاب الفيديو."
+  },
+  {
+    "id": 2,
+    "category": "AI",
+    "title_fr": "Les Modèles Fondateurs Multimodaux de 4ème Génération",
+    "content_fr": "Les modèles d'IA de 4ème génération ne se contentent plus de traiter du texte ou des images. Ils comprennent désormais les émotions, le ton de la voix et le langage corporel via des flux vidéo, permettant des interactions humain-machine d'une fluidité inégalée.",
+    "title_ar": "النماذج الأساسية متعددة الوسائط من الجيل الرابع",
+    "content_ar": "لم تعد نماذج الذكاء الاصطناعي من الجيل الرابع تكتفي بمعالجة النصوص أو الصور. فهي تفهم الآن المشاعر ونبرة الصوت ولغة الجسد عبر تدفقات الفيديو، مما يتيح تفاعلات بين الإنسان والآلة بسلاسة لا مثيل لها."
+  },
+  {
+    "id": 3,
+    "category": "AI",
+    "title_fr": "L'Éthique de l'IA et les Nouvelles Régulations de 2026",
+    "content_fr": "Avec l'omniprésence de l'IA, 2026 marque l'année de la maturité pour les régulations internationales. Les nouvelles lois exigent une transparence totale sur les données d'entraînement et imposent des audits stricts pour éviter les biais algorithmiques.",
+    "title_ar": "أخلاقيات الذكاء الاصطناعي واللوائح التنظيمية الجديدة لعام 2026",
+    "content_ar": "مع انتشار الذكاء الاصطناعي، يمثل عام 2026 عام النضج للوائح الدولية. تتطلب القوانين الجديدة شفافية كاملة بشأن بيانات التدريب وتفرض عمليات تدقيق صارمة لتجنب التحيز الخوارزمي."
+  },
+  {
+    "id": 4,
+    "category": "AI",
+    "title_fr": "L'IA dans le Domaine Médical : Diagnostics Prédictifs Avancés",
+    "content_fr": "L'intelligence artificielle est désormais capable de prédire des maladies génétiques complexes des années avant l'apparition des premiers symptômes, grâce à l'analyse croisée de l'ADN et des habitudes de vie.",
+    "title_ar": "الذكاء الاصطناعي في المجال الطبي: التشخيصات التنبؤية المتقدمة",
+    "content_ar": "أصبح الذكاء الاصطناعي الآن قادرًا على التنبؤ بالأمراض الوراثية المعقدة قبل سنوات من ظهور الأعراض الأولى، وذلك بفضل التحليل المتقاطع للحمض النووي وعادات نمط الحياة."
+  },
+  {
+    "id": 5,
+    "category": "AI",
+    "title_fr": "Les Assistants Virtuels Proactifs",
+    "content_fr": "Fini le temps où vous deviez demander à votre assistant d'agir. En 2026, les assistants virtuels sont proactifs : ils anticipent vos besoins, gèrent votre emploi du temps et prennent des initiatives basées sur vos habitudes quotidiennes.",
+    "title_ar": "المساعدون الافتراضيون الاستباقيون",
+    "content_ar": "لقد ولت الأيام التي كان عليك فيها أن تطلب من مساعدك التصرف. في عام 2026، أصبح المساعدون الافتراضيون استباقيين: فهم يتوقعون احتياجاتك، ويديرون جدولك الزمني، ويتخذون مبادرات بناءً على عاداتك اليومية."
+  },
+  {
+    "id": 6,
+    "category": "Photography",
+    "title_fr": "Les Appareils Photo Hybrides avec IA Intégrée",
+    "content_fr": "Les boîtiers photo de 2026 intègrent des puces neuronales dédiées. La mise au point automatique suit non seulement les yeux, mais anticipe les mouvements des sujets, rendant les photos floues obsolètes, même dans des conditions extrêmes.",
+    "title_ar": "الكاميرات الهجينة المزودة بذكاء اصطناعي مدمج",
+    "content_ar": "تدمج كاميرات عام 2026 شرائح عصبية مخصصة. لا يتتبع التركيز البؤري التلقائي العيون فحسب، بل يتوقع حركات الأهداف، مما يجعل الصور الباهتة شيئًا من الماضي، حتى في الظروف القاسية."
+  },
+  {
+    "id": 7,
+    "category": "Photography",
+    "title_fr": "La Photographie Computationnelle Poussée à l'Extrême",
+    "content_fr": "Les smartphones de 2026 n'ont plus besoin d'objectifs massifs. La photographie computationnelle utilise l'IA pour recréer la profondeur de champ, l'éclairage studio et la texture optique parfaite à partir de capteurs minuscules.",
+    "title_ar": "التصوير الحسابي يصل إلى أقصى حدوده",
+    "content_ar": "لم تعد الهواتف الذكية لعام 2026 بحاجة إلى عدسات ضخمة. يستخدم التصوير الحسابي الذكاء الاصطناعي لإعادة إنشاء عمق المجال وإضاءة الاستوديو والنسيج البصري المثالي من مستشعرات صغيرة جدًا."
+  },
+  {
+    "id": 8,
+    "category": "Photography",
+    "title_fr": "Capteurs Quantiques : La Fin du Bruit Numérique",
+    "content_fr": "La technologie des capteurs quantiques est enfin arrivée sur le marché grand public. Ces capteurs capturent chaque photon individuellement, offrant des images parfaites même dans une obscurité quasi totale, sans aucun bruit numérique.",
+    "title_ar": "المستشعرات الكمومية: نهاية الضوضاء الرقمية",
+    "content_ar": "لقد وصلت تقنية المستشعرات الكمومية أخيرًا إلى السوق الاستهلاكية. تلتقط هذه المستشعرات كل فوتون على حدة، مما يوفر صورًا مثالية حتى في ظلام شبه تام، دون أي ضوضاء رقمية."
+  },
+  {
+    "id": 9,
+    "category": "Photography",
+    "title_fr": "Le Renouveau des Hologrammes Photographiques",
+    "content_fr": "Imprimer des photos plates est dépassé. La tendance en 2026 est la capture d'images volumétriques qui peuvent être projetées sous forme d'hologrammes sur votre table de salon, offrant une nouvelle dimension aux souvenirs.",
+    "title_ar": "نهضة الهولوغرام الفوتوغرافي",
+    "content_ar": "طباعة الصور المسطحة أصبحت قديمة. الاتجاه السائد في عام 2026 هو التقاط صور حجمية يمكن عرضها كصور ثلاثية الأبعاد (هولوغرام) على طاولة غرفة المعيشة الخاصة بك، مما يوفر بُعدًا جديدًا للذكريات."
+  },
+  {
+    "id": 10,
+    "category": "Photography",
+    "title_fr": "La Photographie par Drone Autonome",
+    "content_fr": "Les drones de photographie ne nécessitent plus de pilotage. Vous définissez le style (cinématique, documentaire, portrait), et l'essaim de mini-drones capture la scène sous les meilleurs angles de manière totalement autonome.",
+    "title_ar": "التصوير بواسطة الطائرات بدون طيار المستقلة",
+    "content_ar": "لم تعد طائرات التصوير بدون طيار بحاجة إلى طيار. أنت تحدد النمط (سينمائي، وثائقي، صورة شخصية)، ويقوم سرب من الطائرات الصغيرة بالتقاط المشهد من أفضل الزوايا بشكل مستقل تمامًا."
+  },
+  {
+    "id": 11,
+    "category": "Development",
+    "title_fr": "L'Ére de l'Ingénierie des Prompts et des Agents Autonomes",
+    "content_fr": "Le développement logiciel a radicalement changé. Les développeurs écrivent moins de code manuel et passent plus de temps à orchestrer des agents IA autonomes qui écrivent, testent et déploient des applications complexes.",
+    "title_ar": "عصر هندسة التلقين والوكلاء المستقلين",
+    "content_ar": "لقد تغير تطوير البرمجيات بشكل جذري. يكتب المطورون رمزًا يدويًا أقل ويقضون وقتًا أطول في توجيه وكلاء الذكاء الاصطناعي المستقلين الذين يكتبون التطبيقات المعقدة ويختبرونها وينشرونها."
+  },
+  {
+    "id": 12,
+    "category": "Development",
+    "title_fr": "WebAssembly (Wasm) devient le Standard Universel",
+    "content_fr": "WebAssembly a dépassé le cadre du navigateur en 2026. Il est désormais le standard pour l'exécution d'applications cross-platform, permettant d'écrire des applications ultra-rapides en Rust, Go, ou C++ qui tournent partout sans modification.",
+    "title_ar": "تجميع الويب (WebAssembly) يصبح المعيار العالمي",
+    "content_ar": "لقد تجاوز WebAssembly حدود المتصفح في عام 2026. أصبح الآن المعيار لتشغيل التطبيقات عبر الأنظمة الأساسية، مما يسمح بكتابة تطبيقات فائقة السرعة بلغات مثل Rust أو Go أو C++ تعمل في كل مكان دون تعديل."
+  },
+  {
+    "id": 13,
+    "category": "Development",
+    "title_fr": "L'Edge Computing Remplace le Cloud Centralisé",
+    "content_fr": "Les architectures centralisées laissent place à l'Edge Computing absolu. Les applications de 2026 s'exécutent au plus près de l'utilisateur final, réduisant la latence à presque zéro et améliorant la confidentialité des données.",
+    "title_ar": "حوسبة الحافة تحل محل الحوسبة السحابية المركزية",
+    "content_ar": "تفسح البنى المركزية المجال لحوسبة الحافة المطلقة. تعمل تطبيقات عام 2026 بالقرب من المستخدم النهائي، مما يقلل من زمن الوصول إلى الصفر تقريبًا ويحسن خصوصية البيانات."
+  },
+  {
+    "id": 14,
+    "category": "Development",
+    "title_fr": "Le No-Code Intégré au Code Traditionnel (Low-Code Hybride)",
+    "content_fr": "La frontière entre le développement traditionnel et le No-Code a disparu. Les IDE modernes intègrent des interfaces visuelles où la logique métier est générée automatiquement, permettant aux développeurs de se concentrer uniquement sur l'architecture.",
+    "title_ar": "دمج البرمجة بدون كود مع البرمجة التقليدية (البرمجة الهجينة قليلة الكود)",
+    "content_ar": "لقد اختفى الخط الفاصل بين التطوير التقليدي والبرمجة بدون كود. تدمج بيئات التطوير المتكاملة الحديثة واجهات مرئية حيث يتم إنشاء منطق الأعمال تلقائيًا، مما يسمح للمطورين بالتركيز فقط على البنية."
+  },
+  {
+    "id": 15,
+    "category": "Development",
+    "title_fr": "Sécurité 'Zero Trust' et Cryptographie Post-Quantique",
+    "content_fr": "Avec l'avènement des ordinateurs quantiques en 2026, le développement web a dû s'adapter. Les nouveaux frameworks intègrent par défaut la cryptographie post-quantique et des modèles de sécurité 'Zero Trust' pour protéger les données utilisateurs.",
+    "title_ar": "أمان 'انعدام الثقة' والتشفير ما بعد الكمي",
+    "content_ar": "مع ظهور أجهزة الكمبيوتر الكمومية في عام 2026، اضطر تطوير الويب إلى التكيف. تدمج أطر العمل الجديدة افتراضيًا التشفير ما بعد الكمي ونماذج أمان 'انعدام الثقة' لحماية بيانات المستخدم."
+  }
+]

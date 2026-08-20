@@ -169,8 +169,11 @@ const BLOCKED_USER_AGENTS = [
 const blockSuspiciousUA = (req, res, next) => {
   const ua = (req.headers['user-agent'] || '').toLowerCase()
 
-  // Bloquer les UA vides en production (bots)
-  if (process.env.NODE_ENV === 'production' && !ua) {
+  // Bloquer les UA vides en production (bots) — sauf le health check : les
+  // sondes d'uptime (UptimeRobot, le healthcheck Docker, curl de monitoring)
+  // n'envoient souvent aucun User-Agent, et /api/health ne renvoie rien de
+  // sensible. Sans cette exemption, le VPS répondait 403 au monitoring lui-même.
+  if (process.env.NODE_ENV === 'production' && !ua && req.path !== '/api/health') {
     security.blocked('EMPTY_USER_AGENT', { ip: req.ip, path: req.path }, req)
     return res.status(403).json({ error: 'Forbidden', code: 'BLOCKED' })
   }
@@ -553,7 +556,7 @@ function validateId(id) {
 /**
  * Vérifie que le paymentType est valide (whitelist)
  */
-const VALID_PAYMENT_TYPES = ['CCP', 'BARIDIMOB', 'EDAHABIA', 'CIB']
+const VALID_PAYMENT_TYPES = ['CCP', 'BARIDIMOB', 'EDAHABIA', 'CIB', 'CHARGILY', 'REDOTPAY', 'STRIPE', 'PAYPAL', 'REFERRAL_REWARD']
 
 function validatePaymentType(type) {
   return VALID_PAYMENT_TYPES.includes(type?.toUpperCase()) ? type.toUpperCase() : null

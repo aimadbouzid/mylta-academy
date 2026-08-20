@@ -207,7 +207,7 @@ export const resourceCategories = [
 export const freeCombosData = [
   {
     title: "Créer une vidéo virale (TikTok/Reel) en 15 min",
-    goal: "Produire des shorts viraux de qualité professionnelle sans montrer son visage et sans dépenser 1€.",
+    goal: "Produire des shorts viraux de qualité professionnelle sans montrer son visage et sans dépenser200 DZD.",
     tools: ["Claude 3.5 Sonnet", "Leonardo.ai", "CapCut Desktop"],
     steps: [
       "Rédigez le script de la vidéo en utilisant Claude 3.5 Sonnet avec un prompt axé sur la rétention (ex: 'MrBeast style').",
@@ -215,7 +215,7 @@ export const freeCombosData = [
       "Assemblez le tout dans CapCut Desktop. Utilisez la fonction de synthèse vocale gratuite pour la voix-off, puis générez les sous-titres automatiques en 1 clic."
     ],
     time: "15 min",
-    cost: "0€ (100% Gratuit)"
+    cost: "0 DZD (100% Gratuit)"
   },
   {
     title: "Créer et héberger un site web ou portfolio pro",
@@ -227,7 +227,7 @@ export const freeCombosData = [
       "Créez un compte gratuit sur Netlify ou Vercel, et glissez-déposez le dossier de votre projet pour le mettre en ligne instantanément."
     ],
     time: "30 min",
-    cost: "0€ (Hébergement à vie)"
+    cost: "0 DZD (Hébergement à vie)"
   },
   {
     title: "Créer un logo vectoriel haute définition",
@@ -239,7 +239,7 @@ export const freeCombosData = [
       "Importez le SVG dans Canva pour créer votre charte graphique et vos bannières de réseaux sociaux."
     ],
     time: "10 min",
-    cost: "0€ (Zéro outil payant)"
+    cost: "0 DZD (Zéro outil payant)"
   },
   {
     title: "Créer un système d'organisation et prise de notes",
@@ -251,7 +251,7 @@ export const freeCombosData = [
       "Utilisez Notion pour la gestion visuelle de vos projets collaboratifs et calendriers de tâches."
     ],
     time: "20 min",
-    cost: "0€ (Stockage local illimité)"
+    cost: "0 DZD (Stockage local illimité)"
   },
   {
     title: "Création de Shorts/Reels en masse",
@@ -259,7 +259,7 @@ export const freeCombosData = [
     tools: ["ChatGPT","Canva","Google Sheets"],
     steps: ["Demandez à ChatGPT de générer 30 citations ou faits intéressants.","Collez ces données dans un tableau Google Sheets et téléchargez en CSV.","Importez le CSV dans Canva via l'outil 'Création en bloc' pour générer 30 vidéos d'un coup."],
     time: "20 min",
-    cost: "0€ (Tout en gratuit)"
+    cost: "0 DZD (Tout en gratuit)"
   },
   {
     title: "Podcast IA 100% Automatisé",
@@ -267,7 +267,7 @@ export const freeCombosData = [
     tools: ["NotebookLM","Spotify for Podcasters"],
     steps: ["Importez vos notes, PDF ou articles de blog dans Google NotebookLM.","Générez un 'Audio Overview' pour obtenir un podcast réaliste de deux IA qui discutent de votre document.","Publiez gratuitement l'audio sur Spotify for Podcasters."],
     time: "10 min",
-    cost: "0€"
+    cost: "0 DZD"
   },
   {
     title: "Avatar Parlant Vidéo",
@@ -275,7 +275,7 @@ export const freeCombosData = [
     tools: ["Leonardo.ai","SadTalker","CapCut"],
     steps: ["Générez une image réaliste d'une personne avec Leonardo.ai.","Utilisez l'extension SadTalker (HuggingFace/Local) pour animer le visage de l'image avec un fichier audio.","Montez et ajoutez des sous-titres avec CapCut."],
     time: "30 min",
-    cost: "0€ (Open Source + Free Tiers)"
+    cost: "0 DZD (Open Source + Free Tiers)"
   },
   {
     title: "Clonage Vocal Parfait",
@@ -283,7 +283,7 @@ export const freeCombosData = [
     tools: ["ElevenLabs","Audacity"],
     steps: ["Enregistrez un échantillon clair de votre voix (1-2 minutes) avec Audacity.","Uploadez l'échantillon sur ElevenLabs (Instant Voice Cloning).","Générez de l'audio à l'infini avec votre propre voix en tapant simplement du texte."],
     time: "15 min",
-    cost: "Freemium (ou ~5€/mois)"
+    cost: "Freemium (ou ~1 000 DZD/mois)"
   },
   {
     title: "Création de Site E-Commerce Express",
@@ -291,7 +291,7 @@ export const freeCombosData = [
     tools: ["Ecwid","Canva"],
     steps: ["Créez vos designs de produits et logos avec Canva.","Créez un compte Ecwid gratuit (jusqu'à 5 produits sans frais d'abonnement).","Connectez votre boutique à vos réseaux sociaux et commencez à vendre."],
     time: "45 min",
-    cost: "0€ (+ frais de transaction)"
+    cost: "0 DZD (+ frais de transaction)"
   },
   {
     title: "Newsletter Automatisée IA",
@@ -299,7 +299,7 @@ export const freeCombosData = [
     tools: ["Perplexity","Substack"],
     steps: ["Faites une recherche approfondie sur un sujet de niche avec Perplexity AI pour obtenir des sources fiables.","Demandez à Claude ou ChatGPT de synthétiser la recherche en format newsletter.","Publiez et monétisez gratuitement avec Substack."],
     time: "30 min",
-    cost: "0€"
+    cost: "0 DZD"
   },
   {
     title: "Générateur d'Idées de Business",
@@ -307,7 +307,7 @@ export const freeCombosData = [
     tools: ["Phind","Notion IA"],
     steps: ["Cherchez des tendances de marché pour développeurs ou entrepreneurs avec Phind.","Utilisez les templates Notion pour structurer votre business model canvas.","Aidez-vous de l'IA de Notion pour brainstormer le nom et les offres."],
     time: "20 min",
-    cost: "0€"
+    cost: "0 DZD"
   },
   {
     title: "Résumé de Vidéos YouTube Longues",
@@ -315,7 +315,7 @@ export const freeCombosData = [
     tools: ["YouTube Transcript","Claude 3.5"],
     steps: ["Copiez le script de la vidéo YouTube via des extensions gratuites ou le bouton Transcript.","Collez le texte massif dans Claude 3.5 Sonnet (qui a une grande fenêtre de contexte).","Demandez un résumé en bullet points et des plans d'action concrets."],
     time: "5 min",
-    cost: "0€"
+    cost: "0 DZD"
   },
   {
     title: "Traduction de Vidéos Virales",
@@ -323,7 +323,7 @@ export const freeCombosData = [
     tools: ["CapCut","ElevenLabs (Optionnel)"],
     steps: ["Importez votre vidéo sur CapCut Desktop.","Utilisez la fonction 'Auto-Translate' pour traduire les sous-titres.","Générez les voix de synthèse dans la nouvelle langue directement via CapCut."],
     time: "15 min",
-    cost: "0€"
+    cost: "0 DZD"
   },
   {
     title: "Génération de Musiques Libres de Droits",
@@ -331,7 +331,7 @@ export const freeCombosData = [
     tools: ["Suno AI","CapCut"],
     steps: ["Entrez un prompt décrivant l'humeur et le genre musical sur Suno.com.","Téléchargez le MP3 généré (2 chansons gratuites par jour).","Ajoutez-le en fond sonore sur CapCut."],
     time: "5 min",
-    cost: "0€"
+    cost: "0 DZD"
   },
   {
     title: "Création de Pitch Deck (Présentation)",
@@ -339,7 +339,7 @@ export const freeCombosData = [
     tools: ["Gamma.app","Unsplash"],
     steps: ["Tapez simplement l'idée de votre projet sur Gamma.app.","L'IA génère les textes, la structure et le design complet des 10 slides.","Personnalisez les images avec la banque Unsplash intégrée."],
     time: "10 min",
-    cost: "0€ (Freemium)"
+    cost: "0 DZD (Freemium)"
   },
   {
     title: "Rédaction d'Articles SEO",
@@ -347,7 +347,7 @@ export const freeCombosData = [
     tools: ["ChatGPT","Google Keyword Planner"],
     steps: ["Trouvez un mot-clé pertinent et gratuit via Google Keyword Planner.","Demandez à ChatGPT de rédiger un article structuré avec des balises H2, H3.","Relisez et ajoutez votre touche personnelle."],
     time: "25 min",
-    cost: "0€"
+    cost: "0 DZD"
   },
   {
     title: "Application Mobile Sans Code",
@@ -355,7 +355,7 @@ export const freeCombosData = [
     tools: ["Glide","Google Sheets"],
     steps: ["Créez la base de données de votre app dans un simple fichier Google Sheets.","Connectez-le à Glide Apps.","L'interface de l'application est générée automatiquement et publiée sous forme d'app PWA."],
     time: "1 heure",
-    cost: "0€ (Plan gratuit)"
+    cost: "0 DZD (Plan gratuit)"
   },
   {
     title: "Automatisation Instagram (Bot MP)",
@@ -363,7 +363,7 @@ export const freeCombosData = [
     tools: ["ManyChat","Instagram"],
     steps: ["Connectez ManyChat à votre compte Instagram Pro.","Créez un flux: 'Si le commentaire contient [MOT]', envoyer un Message Privé.","Demandez à l'audience de commenter pour recevoir votre ressource gratuite."],
     time: "15 min",
-    cost: "0€ (Jusqu'à 1000 contacts)"
+    cost: "0 DZD (Jusqu'à 1000 contacts)"
   },
   {
     title: "Web Scraping (Extraction de données)",
@@ -371,7 +371,7 @@ export const freeCombosData = [
     tools: ["Apify","Google Sheets"],
     steps: ["Trouvez un scraper gratuit sur le store d'Apify (ex: Instagram Scraper).","Laissez l'outil tourner sur le profil cible.","Exportez les résultats en CSV et nettoyez-les dans Google Sheets."],
     time: "20 min",
-    cost: "0€ (Crédits de départ)"
+    cost: "0 DZD (Crédits de départ)"
   },
   {
     title: "Création de CV Parfait",
@@ -379,7 +379,7 @@ export const freeCombosData = [
     tools: ["ChatGPT","Canva"],
     steps: ["Donnez votre CV actuel et l'offre d'emploi à ChatGPT. Demandez d'optimiser les mots-clés.","Prenez le texte généré et insérez-le dans un template moderne sur Canva.","Exportez en PDF."],
     time: "15 min",
-    cost: "0€"
+    cost: "0 DZD"
   },
   {
     title: "Miniatures YouTube Virales",
@@ -387,7 +387,7 @@ export const freeCombosData = [
     tools: ["Photopea","Leonardo.ai","Remove.bg"],
     steps: ["Générez un fond hyper coloré et intrigant avec Leonardo.ai.","Prenez une photo de vous très expressive, et détourez-la avec Remove.bg.","Assemblez et ajoutez du contraste/texte sur Photopea (le Photoshop web gratuit)."],
     time: "20 min",
-    cost: "0€"
+    cost: "0 DZD"
   },
   {
     title: "Création de Fiches Produits",
@@ -395,7 +395,7 @@ export const freeCombosData = [
     tools: ["DeepL","ChatGPT"],
     steps: ["Copiez la fiche produit basique ou étrangère.","Traduisez avec DeepL si besoin pour une traduction naturelle.","Demandez à ChatGPT d'appliquer un framework de Copywriting (AIDA) sur le produit."],
     time: "5 min",
-    cost: "0€"
+    cost: "0 DZD"
   },
   {
     title: "Photos Produits Pro",
@@ -403,7 +403,7 @@ export const freeCombosData = [
     tools: ["Photoroom"],
     steps: ["Prenez votre produit en photo avec votre téléphone (même sur une table moche).","Importez-le dans l'application Photoroom.","L'IA détoure le produit et génère un fond studio réaliste (ombres incluses)."],
     time: "3 min",
-    cost: "0€ (Avec watermark facile à enlever)"
+    cost: "0 DZD (Avec watermark facile à enlever)"
   },
   {
     title: "Bot Service Client IA",
@@ -411,7 +411,7 @@ export const freeCombosData = [
     tools: ["Botpress","ChatGPT"],
     steps: ["Créez un compte Botpress (Gratuit).","Fournissez le lien de votre site web ou une FAQ PDF pour que le bot s'entraîne dessus.","Intégrez le code widget sur votre site web."],
     time: "30 min",
-    cost: "0€"
+    cost: "0 DZD"
   },
   {
     title: "Montage Vidéo Dynamique Automatique",
@@ -427,7 +427,7 @@ export const freeCombosData = [
     tools: ["Notion","Metricool"],
     steps: ["Préparez et rédigez vos posts dans un calendrier Notion.","Connectez Metricool à vos réseaux sociaux (gratuit jusqu'à 50 posts/mois).","Copiez/collez et planifiez les dates."],
     time: "2 heures",
-    cost: "0€"
+    cost: "0 DZD"
   },
   {
     title: "Création de Lead Magnets (E-book)",
@@ -435,7 +435,7 @@ export const freeCombosData = [
     tools: ["ChatGPT","Canva"],
     steps: ["Structurez un petit guide 'Comment faire X en 3 étapes' avec ChatGPT.","Trouvez un template de E-book ou présentation sur Canva.","Mettez en page et ajoutez des visuels gratuits."],
     time: "45 min",
-    cost: "0€"
+    cost: "0 DZD"
   },
   {
     title: "Veille Concurrentielle",
@@ -443,7 +443,7 @@ export const freeCombosData = [
     tools: ["Feedly","Google Alerts"],
     steps: ["Configurez Google Alerts sur le nom de vos concurrents.","Ajoutez les blogs de votre secteur dans Feedly.","Lisez chaque matin un résumé des nouveautés."],
     time: "10 min",
-    cost: "0€"
+    cost: "0 DZD"
   },
   {
     title: "Transcription de Réunions (Google Meet)",
@@ -451,7 +451,7 @@ export const freeCombosData = [
     tools: ["Otter.ai","Fireflies.ai"],
     steps: ["Installez l'extension Chrome de Fireflies ou Otter.","Connectez-vous à votre Google Meet / Zoom.","L'IA participe, transcrit tout ce qui est dit et vous envoie un résumé par mail."],
     time: "Automatique",
-    cost: "0€ (Limites de base)"
+    cost: "0 DZD (Limites de base)"
   },
   {
     title: "Analyse de Données Complexes",
@@ -459,7 +459,7 @@ export const freeCombosData = [
     tools: ["ChatGPT Advanced Data Analysis","Google Sheets"],
     steps: ["Exportez vos données de ventes, visites, ou finances en CSV.","Uploadez le fichier dans ChatGPT (version gratuite limite à quelques messages).","Demandez: 'Génère des graphiques et dis-moi quels produits performent le mieux'."],
     time: "10 min",
-    cost: "0€"
+    cost: "0 DZD"
   },
   {
     title: "Création de Logos Génératifs",
@@ -467,7 +467,7 @@ export const freeCombosData = [
     tools: ["Bing Image Creator (DALL-E 3)"],
     steps: ["Utilisez Bing Image Creator (gratuit).","Entrez : 'A minimalist vector logo for a coffee shop named Bean, white background'.","Répétez pour obtenir différentes variantes."],
     time: "5 min",
-    cost: "0€"
+    cost: "0 DZD"
   },
   {
     title: "Organisation de Voyages/Déplacements",
@@ -475,7 +475,7 @@ export const freeCombosData = [
     tools: ["Perplexity","Google Maps"],
     steps: ["Demandez à Perplexity: 'Fais un itinéraire de 3 jours à Rome pour un couple, budget moyen, avec les adresses et temps de trajet'.","Enregistrez les adresses dans une liste Google Maps partagée.","Profitez du voyage sans stress."],
     time: "15 min",
-    cost: "0€"
+    cost: "0 DZD"
   },
   {
     title: "Révision de Contrats / Juridique basique",
@@ -483,7 +483,7 @@ export const freeCombosData = [
     tools: ["Claude 3.5 Sonnet"],
     steps: ["Copiez/collez le contrat ou uploadez le PDF dans Claude.","Demandez: 'Résume les obligations, les pièges potentiels et les dates clés de ce contrat de façon très simple'.","Attention : l'IA ne remplace pas un avocat, mais c'est un bon premier filtre."],
     time: "5 min",
-    cost: "0€"
+    cost: "0 DZD"
   },
   {
     title: "Amélioration de Prompts IA",
@@ -491,7 +491,7 @@ export const freeCombosData = [
     tools: ["PromptPerfect","ChatGPT"],
     steps: ["Tapez une demande brouillon ('fais un poème sur la pluie').","Demandez à ChatGPT: 'Agis comme un expert en Prompt Engineering, améliore mon prompt pour avoir le meilleur résultat possible.'","Utilisez le nouveau prompt complexe généré."],
     time: "2 min",
-    cost: "0€"
+    cost: "0 DZD"
   },
   {
     title: "Générateur de Shorts Automatique",
@@ -499,7 +499,7 @@ export const freeCombosData = [
     tools: ["ChatGPT","Canva","ElevenLabs"],
     steps: ["Générez des faits intéressants avec ChatGPT.","Copiez-les dans Canva avec l'outil de création en vrac.","Ajoutez une voix ElevenLabs."],
     time: "60 min",
-    cost: "0€"
+    cost: "0 DZD"
   },
   {
     title: "Résumé de Podcast Viral",
@@ -507,7 +507,7 @@ export const freeCombosData = [
     tools: ["Opus Clip","YouTube"],
     steps: ["Prenez le lien d'un podcast populaire.","Collez-le dans Opus Clip.","L'IA génère 10 clips viraux avec sous-titres."],
     time: "10 min",
-    cost: "0€ (essai)"
+    cost: "0 DZD (essai)"
   },
   {
     title: "Cloneur de Voix pour Faceless",
@@ -515,7 +515,7 @@ export const freeCombosData = [
     tools: ["ElevenLabs","D-ID","Midjourney"],
     steps: ["Générez une image sur Midjourney.","Clonez une voix sur ElevenLabs.","Animez le visage avec D-ID."],
     time: "15 min",
-    cost: "0€ (essai)"
+    cost: "0 DZD (essai)"
   },
   {
     title: "Bot de Vente Instagram",
@@ -523,7 +523,7 @@ export const freeCombosData = [
     tools: ["ManyChat","ChatGPT","Instagram"],
     steps: ["Créez un Reel qui dit 'Commente X'.","Configurez ManyChat pour répondre au mot clé.","Le bot envoie le lien d'affiliation."],
     time: "20 min",
-    cost: "0€"
+    cost: "0 DZD"
   },
   {
     title: "Boutique E-commerce IA",
@@ -531,7 +531,7 @@ export const freeCombosData = [
     tools: ["Shopify","ChatGPT","Midjourney"],
     steps: ["Trouvez la niche avec ChatGPT.","Générez les logos et bannières avec Midjourney.","Rédigez les fiches produits avec l'IA."],
     time: "45 min",
-    cost: "0€"
+    cost: "0 DZD"
   },
   {
     title: "Création de Musique Lo-Fi",
@@ -539,7 +539,7 @@ export const freeCombosData = [
     tools: ["Suno AI","Leonardo.ai","CapCut"],
     steps: ["Générez la musique sur Suno AI.","Créez une animation en boucle sur Leonardo.","Montez une vidéo d'1h sur CapCut."],
     time: "30 min",
-    cost: "0€"
+    cost: "0 DZD"
   },
   {
     title: "Devenir Freelance Copywriter",
@@ -547,7 +547,7 @@ export const freeCombosData = [
     tools: ["Claude 3.5 Sonnet","Google Docs"],
     steps: ["Trouvez un client.","Utilisez Claude pour écrire avec le framework PAS.","Livrez le texte formaté sur Google Docs."],
     time: "25 min",
-    cost: "0€"
+    cost: "0 DZD"
   },
   {
     title: "Traduire des Vidéos YouTube",
@@ -555,7 +555,7 @@ export const freeCombosData = [
     tools: ["HeyGen","YouTube"],
     steps: ["Téléchargez votre vidéo française.","Uploadez sur HeyGen pour traduire en anglais (clonage vocal et labial).","Publiez sur une chaîne US."],
     time: "15 min",
-    cost: "0€"
+    cost: "0 DZD"
   },
   {
     title: "Création d'E-book Automatique",
@@ -563,7 +563,7 @@ export const freeCombosData = [
     tools: ["ChatGPT","Canva","Amazon KDP"],
     steps: ["Générez les chapitres avec ChatGPT.","Mettez en page sur un template Canva.","Publiez gratuitement sur Kindle Direct Publishing."],
     time: "2h",
-    cost: "0€"
+    cost: "0 DZD"
   },
   {
     title: "Analyse SEO des Concurrents",
@@ -571,7 +571,7 @@ export const freeCombosData = [
     tools: ["Ubersuggest","ChatGPT","WordPress"],
     steps: ["Analysez les mots clés du concurrent sur Ubersuggest.","Demandez à ChatGPT d'écrire un article 2x plus long.","Publiez sur votre blog."],
     time: "30 min",
-    cost: "0€"
+    cost: "0 DZD"
   },
   {
     title: "Générateur de Posts LinkedIn",
@@ -579,7 +579,7 @@ export const freeCombosData = [
     tools: ["Taplio","Claude","LinkedIn"],
     steps: ["Trouvez les posts viraux sur Taplio.","Réécrivez-les avec votre propre style via Claude.","Programmez vos posts pour le mois."],
     time: "20 min",
-    cost: "0€"
+    cost: "0 DZD"
   },
   {
     title: "Assistant Service Client IA",
@@ -587,7 +587,7 @@ export const freeCombosData = [
     tools: ["Chatbase","Site Web"],
     steps: ["Importez les documents de votre site sur Chatbase.","L'IA apprend toutes vos infos.","Intégrez le chatbot sur votre site en 1 clic."],
     time: "10 min",
-    cost: "0€"
+    cost: "0 DZD"
   },
   {
     title: "Veille Concurrentielle Automatisée",
@@ -595,15 +595,15 @@ export const freeCombosData = [
     tools: ["Feedly","ChatGPT","Slack"],
     steps: ["Ajoutez les blogs concurrents sur Feedly.","Utilisez Zapier pour envoyer les nouveaux articles à ChatGPT.","Recevez un résumé sur Slack."],
     time: "15 min",
-    cost: "0€"
+    cost: "0 DZD"
   },
   {
     title: "Création de Logos en Masse",
     goal: "Vendre des logos sur Fiverr.",
     tools: ["Midjourney","Vectorize.ai"],
-    steps: ["Générez des logos sur Midjourney.","Vectorisez-les gratuitement.","Vendez-les à vos clients 50€ pièce."],
+    steps: ["Générez des logos sur Midjourney.","Vectorisez-les gratuitement.","Vendez-les à vos clients10 000 DZD pièce."],
     time: "10 min",
-    cost: "0€"
+    cost: "0 DZD"
   },
   {
     title: "Newsletter Curated Auto",
@@ -611,7 +611,7 @@ export const freeCombosData = [
     tools: ["Beehiiv","Perplexity"],
     steps: ["Demandez à Perplexity les 5 grosses actus du jour.","Reformulez avec un ton amusant.","Envoyez sur Beehiiv (gratuit jusqu'à 2500 subs)."],
     time: "15 min",
-    cost: "0€"
+    cost: "0 DZD"
   },
   {
     title: "Création de Présentation Pitch Deck",
@@ -619,7 +619,7 @@ export const freeCombosData = [
     tools: ["Gamma.app","ChatGPT"],
     steps: ["Écrivez le plan avec ChatGPT.","Collez le texte dans Gamma.","L'IA génère les slides, images et design instantanément."],
     time: "5 min",
-    cost: "0€"
+    cost: "0 DZD"
   },
   {
     title: "Automatisation de Prospection B2B",
@@ -627,7 +627,7 @@ export const freeCombosData = [
     tools: ["Apollo.io","Lemlist","ChatGPT"],
     steps: ["Scrappez 1000 emails sur Apollo.","Écrivez une séquence avec ChatGPT.","Lancez la campagne sur Lemlist."],
     time: "40 min",
-    cost: "0€"
+    cost: "0 DZD"
   },
   {
     title: "Créateur de CV Parfait",
@@ -635,7 +635,7 @@ export const freeCombosData = [
     tools: ["Canva","ChatGPT"],
     steps: ["Prenez l'offre d'emploi.","Demandez à ChatGPT d'optimiser votre CV pour cette offre (mots clés).","Utilisez un beau template Canva."],
     time: "15 min",
-    cost: "0€"
+    cost: "0 DZD"
   },
   {
     title: "Génération de Code Python",
@@ -643,7 +643,7 @@ export const freeCombosData = [
     tools: ["Cursor","Python"],
     steps: ["Ouvrez Cursor Editor.","Appuyez sur Cmd+K et demandez 'un script de scraping web'.","Exécutez le code généré directement."],
     time: "5 min",
-    cost: "0€"
+    cost: "0 DZD"
   },
   {
     title: "Création d'Application Mobile",
@@ -651,7 +651,7 @@ export const freeCombosData = [
     tools: ["FlutterFlow","Firebase"],
     steps: ["Dessinez l'interface sur FlutterFlow.","Générez la base de données Firebase en 1 clic.","Publiez sur les stores."],
     time: "3h",
-    cost: "0€"
+    cost: "0 DZD"
   },
   {
     title: "Création de Formations en Ligne",
@@ -659,7 +659,7 @@ export const freeCombosData = [
     tools: ["Notion","Tella.tv","Systeme.io"],
     steps: ["Écrivez le plan sur Notion.","Enregistrez votre écran avec Tella.","Hébergez et vendez sur Systeme.io gratuitement."],
     time: "2h",
-    cost: "0€"
+    cost: "0 DZD"
   },
   {
     title: "Générateur d'Histoires pour Enfants",
@@ -667,7 +667,7 @@ export const freeCombosData = [
     tools: ["ChatGPT","Midjourney","Amazon KDP"],
     steps: ["Écrivez l'histoire avec ChatGPT.","Générez les illustrations style Pixar avec Midjourney.","Publiez le livre."],
     time: "2h",
-    cost: "0€"
+    cost: "0 DZD"
   },
   {
     title: "Automatisation Instagram Complète",
@@ -675,7 +675,7 @@ export const freeCombosData = [
     tools: ["Make.com","ChatGPT","Instagram"],
     steps: ["Make récupère l'actu du jour.","ChatGPT crée un post et image.","Make publie sur Instagram. Tout en automatique."],
     time: "1h",
-    cost: "0€"
+    cost: "0 DZD"
   },
   {
     title: "Assistant Comptable Personnel",
@@ -683,7 +683,7 @@ export const freeCombosData = [
     tools: ["ChatGPT Data Analysis","Excel"],
     steps: ["Exportez vos relevés bancaires.","Importez-les dans ChatGPT.","Demandez une analyse de vos dépenses inutiles."],
     time: "10 min",
-    cost: "0€"
+    cost: "0 DZD"
   },
   {
     title: "Génération de Quiz Viraux",
@@ -691,7 +691,7 @@ export const freeCombosData = [
     tools: ["Interact","ChatGPT"],
     steps: ["Générez des questions psychologiques avec ChatGPT.","Mettez-les sur Interact.","Récoltez des milliers d'emails via le quiz."],
     time: "20 min",
-    cost: "0€"
+    cost: "0 DZD"
   },
   {
     title: "Création de Voix Off Documentaire",
@@ -699,7 +699,7 @@ export const freeCombosData = [
     tools: ["ElevenLabs","CapCut"],
     steps: ["Écrivez le script du docu.","Utilisez une voix grave (ex: Marcus) sur ElevenLabs.","Ajoutez des musiques épiques sur CapCut."],
     time: "30 min",
-    cost: "0€"
+    cost: "0 DZD"
   },
   {
     title: "Traduire un Site Web Entier",
@@ -707,7 +707,7 @@ export const freeCombosData = [
     tools: ["Weglot","ChatGPT"],
     steps: ["Installez Weglot sur votre site (trad auto).","Réparez les petites erreurs avec ChatGPT.","Attirez des clients du monde entier."],
     time: "15 min",
-    cost: "0€"
+    cost: "0 DZD"
   },
   {
     title: "Création d'Art IA",
@@ -715,7 +715,7 @@ export const freeCombosData = [
     tools: ["Midjourney","Printify","Etsy"],
     steps: ["Générez des toiles abstraites sur Midjourney.","Placez-les sur des posters via Printify.","Listez-les sur Etsy sans gérer les stocks."],
     time: "45 min",
-    cost: "0€"
+    cost: "0 DZD"
   },
   {
     title: "Résumé de Vidéo en PDF",
@@ -723,7 +723,7 @@ export const freeCombosData = [
     tools: ["YouTube","ChatGPT","Canva"],
     steps: ["Copiez le transcript YouTube.","Demandez un résumé propre à ChatGPT.","Créez un PDF sur Canva pour récolter des emails."],
     time: "15 min",
-    cost: "0€"
+    cost: "0 DZD"
   },
   {
     title: "Rédaction de Poésie/Chansons",
@@ -731,7 +731,3607 @@ export const freeCombosData = [
     tools: ["ChatGPT","Suno AI"],
     steps: ["Générez des paroles émotionnelles avec ChatGPT.","Importez-les dans Suno AI pour créer la chanson.","Publiez sur Spotify via un distributeur."],
     time: "20 min",
-    cost: "0€"
+    cost: "0 DZD"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Fiverr",
+    goal: "Créer un business automatisé de e-commerce en utilisant Fiverr.",
+    tools: ["ChatGPT", "Canva", "Fiverr"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Fiverr.",
+      "Utilisez ChatGPT pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Canva et commencez à vendre."
+    ],
+    time: "15 min",
+    cost: "0 DZD"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Fiverr",
+    goal: "Créer un business automatisé de e-commerce en utilisant Fiverr.",
+    tools: ["Claude 3", "Notion", "Fiverr"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Fiverr.",
+      "Utilisez Claude 3 pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Notion et commencez à vendre."
+    ],
+    time: "30 min",
+    cost: "0 DZD (Plan Gratuit)"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Fiverr",
+    goal: "Créer un business automatisé de e-commerce en utilisant Fiverr.",
+    tools: ["Midjourney", "Discord", "Fiverr"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Fiverr.",
+      "Utilisez Midjourney pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Discord et commencez à vendre."
+    ],
+    time: "1 heure",
+    cost: "Moins de2 000 DZD"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Fiverr",
+    goal: "Créer un business automatisé de e-commerce en utilisant Fiverr.",
+    tools: ["Make.com", "Airtable", "Fiverr"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Fiverr.",
+      "Utilisez Make.com pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Airtable et commencez à vendre."
+    ],
+    time: "2 heures",
+    cost: "Freemium"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Fiverr",
+    goal: "Créer un business automatisé de e-commerce en utilisant Fiverr.",
+    tools: ["CapCut", "ElevenLabs", "Fiverr"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Fiverr.",
+      "Utilisez CapCut pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec ElevenLabs et commencez à vendre."
+    ],
+    time: "1 jour",
+    cost: "0 DZD (Essai)"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Fiverr",
+    goal: "Créer un business automatisé de e-commerce en utilisant Fiverr.",
+    tools: ["Webflow", "Figma", "Fiverr"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Fiverr.",
+      "Utilisez Webflow pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Figma et commencez à vendre."
+    ],
+    time: "2 jours",
+    cost: "0 DZD"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Fiverr",
+    goal: "Créer un business automatisé de e-commerce en utilisant Fiverr.",
+    tools: ["Stripe", "Zapier", "Fiverr"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Fiverr.",
+      "Utilisez Stripe pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Zapier et commencez à vendre."
+    ],
+    time: "15 min",
+    cost: "0 DZD (Plan Gratuit)"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Fiverr",
+    goal: "Créer un business automatisé de e-commerce en utilisant Fiverr.",
+    tools: ["Lemlist", "Apollo.io", "Fiverr"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Fiverr.",
+      "Utilisez Lemlist pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Apollo.io et commencez à vendre."
+    ],
+    time: "30 min",
+    cost: "Moins de2 000 DZD"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Fiverr",
+    goal: "Créer un business automatisé de e-commerce en utilisant Fiverr.",
+    tools: ["Brevo", "WordPress", "Fiverr"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Fiverr.",
+      "Utilisez Brevo pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec WordPress et commencez à vendre."
+    ],
+    time: "1 heure",
+    cost: "Freemium"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Upwork",
+    goal: "Créer un business automatisé de e-commerce en utilisant Upwork.",
+    tools: ["ChatGPT", "Canva", "Upwork"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Upwork.",
+      "Utilisez ChatGPT pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Canva et commencez à vendre."
+    ],
+    time: "2 heures",
+    cost: "0 DZD (Essai)"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Upwork",
+    goal: "Créer un business automatisé de e-commerce en utilisant Upwork.",
+    tools: ["Claude 3", "Notion", "Upwork"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Upwork.",
+      "Utilisez Claude 3 pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Notion et commencez à vendre."
+    ],
+    time: "1 jour",
+    cost: "0 DZD"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Upwork",
+    goal: "Créer un business automatisé de e-commerce en utilisant Upwork.",
+    tools: ["Midjourney", "Discord", "Upwork"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Upwork.",
+      "Utilisez Midjourney pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Discord et commencez à vendre."
+    ],
+    time: "2 jours",
+    cost: "0 DZD (Plan Gratuit)"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Upwork",
+    goal: "Créer un business automatisé de e-commerce en utilisant Upwork.",
+    tools: ["Make.com", "Airtable", "Upwork"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Upwork.",
+      "Utilisez Make.com pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Airtable et commencez à vendre."
+    ],
+    time: "15 min",
+    cost: "Moins de2 000 DZD"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Upwork",
+    goal: "Créer un business automatisé de e-commerce en utilisant Upwork.",
+    tools: ["CapCut", "ElevenLabs", "Upwork"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Upwork.",
+      "Utilisez CapCut pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec ElevenLabs et commencez à vendre."
+    ],
+    time: "30 min",
+    cost: "Freemium"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Upwork",
+    goal: "Créer un business automatisé de e-commerce en utilisant Upwork.",
+    tools: ["Webflow", "Figma", "Upwork"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Upwork.",
+      "Utilisez Webflow pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Figma et commencez à vendre."
+    ],
+    time: "1 heure",
+    cost: "0 DZD (Essai)"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Upwork",
+    goal: "Créer un business automatisé de e-commerce en utilisant Upwork.",
+    tools: ["Stripe", "Zapier", "Upwork"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Upwork.",
+      "Utilisez Stripe pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Zapier et commencez à vendre."
+    ],
+    time: "2 heures",
+    cost: "0 DZD"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Upwork",
+    goal: "Créer un business automatisé de e-commerce en utilisant Upwork.",
+    tools: ["Lemlist", "Apollo.io", "Upwork"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Upwork.",
+      "Utilisez Lemlist pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Apollo.io et commencez à vendre."
+    ],
+    time: "1 jour",
+    cost: "0 DZD (Plan Gratuit)"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Upwork",
+    goal: "Créer un business automatisé de e-commerce en utilisant Upwork.",
+    tools: ["Brevo", "WordPress", "Upwork"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Upwork.",
+      "Utilisez Brevo pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec WordPress et commencez à vendre."
+    ],
+    time: "2 jours",
+    cost: "Moins de2 000 DZD"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Malt",
+    goal: "Créer un business automatisé de e-commerce en utilisant Malt.",
+    tools: ["ChatGPT", "Canva", "Malt"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Malt.",
+      "Utilisez ChatGPT pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Canva et commencez à vendre."
+    ],
+    time: "15 min",
+    cost: "Freemium"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Malt",
+    goal: "Créer un business automatisé de e-commerce en utilisant Malt.",
+    tools: ["Claude 3", "Notion", "Malt"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Malt.",
+      "Utilisez Claude 3 pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Notion et commencez à vendre."
+    ],
+    time: "30 min",
+    cost: "0 DZD (Essai)"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Malt",
+    goal: "Créer un business automatisé de e-commerce en utilisant Malt.",
+    tools: ["Midjourney", "Discord", "Malt"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Malt.",
+      "Utilisez Midjourney pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Discord et commencez à vendre."
+    ],
+    time: "1 heure",
+    cost: "0 DZD"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Malt",
+    goal: "Créer un business automatisé de e-commerce en utilisant Malt.",
+    tools: ["Make.com", "Airtable", "Malt"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Malt.",
+      "Utilisez Make.com pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Airtable et commencez à vendre."
+    ],
+    time: "2 heures",
+    cost: "0 DZD (Plan Gratuit)"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Malt",
+    goal: "Créer un business automatisé de e-commerce en utilisant Malt.",
+    tools: ["CapCut", "ElevenLabs", "Malt"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Malt.",
+      "Utilisez CapCut pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec ElevenLabs et commencez à vendre."
+    ],
+    time: "1 jour",
+    cost: "Moins de2 000 DZD"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Malt",
+    goal: "Créer un business automatisé de e-commerce en utilisant Malt.",
+    tools: ["Webflow", "Figma", "Malt"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Malt.",
+      "Utilisez Webflow pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Figma et commencez à vendre."
+    ],
+    time: "2 jours",
+    cost: "Freemium"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Malt",
+    goal: "Créer un business automatisé de e-commerce en utilisant Malt.",
+    tools: ["Stripe", "Zapier", "Malt"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Malt.",
+      "Utilisez Stripe pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Zapier et commencez à vendre."
+    ],
+    time: "15 min",
+    cost: "0 DZD (Essai)"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Malt",
+    goal: "Créer un business automatisé de e-commerce en utilisant Malt.",
+    tools: ["Lemlist", "Apollo.io", "Malt"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Malt.",
+      "Utilisez Lemlist pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Apollo.io et commencez à vendre."
+    ],
+    time: "30 min",
+    cost: "0 DZD"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Malt",
+    goal: "Créer un business automatisé de e-commerce en utilisant Malt.",
+    tools: ["Brevo", "WordPress", "Malt"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Malt.",
+      "Utilisez Brevo pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec WordPress et commencez à vendre."
+    ],
+    time: "1 heure",
+    cost: "0 DZD (Plan Gratuit)"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Etsy",
+    goal: "Créer un business automatisé de e-commerce en utilisant Etsy.",
+    tools: ["ChatGPT", "Canva", "Etsy"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Etsy.",
+      "Utilisez ChatGPT pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Canva et commencez à vendre."
+    ],
+    time: "2 heures",
+    cost: "Moins de2 000 DZD"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Etsy",
+    goal: "Créer un business automatisé de e-commerce en utilisant Etsy.",
+    tools: ["Claude 3", "Notion", "Etsy"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Etsy.",
+      "Utilisez Claude 3 pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Notion et commencez à vendre."
+    ],
+    time: "1 jour",
+    cost: "Freemium"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Etsy",
+    goal: "Créer un business automatisé de e-commerce en utilisant Etsy.",
+    tools: ["Midjourney", "Discord", "Etsy"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Etsy.",
+      "Utilisez Midjourney pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Discord et commencez à vendre."
+    ],
+    time: "2 jours",
+    cost: "0 DZD (Essai)"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Etsy",
+    goal: "Créer un business automatisé de e-commerce en utilisant Etsy.",
+    tools: ["Make.com", "Airtable", "Etsy"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Etsy.",
+      "Utilisez Make.com pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Airtable et commencez à vendre."
+    ],
+    time: "15 min",
+    cost: "0 DZD"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Etsy",
+    goal: "Créer un business automatisé de e-commerce en utilisant Etsy.",
+    tools: ["CapCut", "ElevenLabs", "Etsy"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Etsy.",
+      "Utilisez CapCut pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec ElevenLabs et commencez à vendre."
+    ],
+    time: "30 min",
+    cost: "0 DZD (Plan Gratuit)"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Etsy",
+    goal: "Créer un business automatisé de e-commerce en utilisant Etsy.",
+    tools: ["Webflow", "Figma", "Etsy"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Etsy.",
+      "Utilisez Webflow pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Figma et commencez à vendre."
+    ],
+    time: "1 heure",
+    cost: "Moins de2 000 DZD"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Etsy",
+    goal: "Créer un business automatisé de e-commerce en utilisant Etsy.",
+    tools: ["Stripe", "Zapier", "Etsy"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Etsy.",
+      "Utilisez Stripe pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Zapier et commencez à vendre."
+    ],
+    time: "2 heures",
+    cost: "Freemium"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Etsy",
+    goal: "Créer un business automatisé de e-commerce en utilisant Etsy.",
+    tools: ["Lemlist", "Apollo.io", "Etsy"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Etsy.",
+      "Utilisez Lemlist pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Apollo.io et commencez à vendre."
+    ],
+    time: "1 jour",
+    cost: "0 DZD (Essai)"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Etsy",
+    goal: "Créer un business automatisé de e-commerce en utilisant Etsy.",
+    tools: ["Brevo", "WordPress", "Etsy"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Etsy.",
+      "Utilisez Brevo pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec WordPress et commencez à vendre."
+    ],
+    time: "2 jours",
+    cost: "0 DZD"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Shopify",
+    goal: "Créer un business automatisé de e-commerce en utilisant Shopify.",
+    tools: ["ChatGPT", "Canva", "Shopify"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Shopify.",
+      "Utilisez ChatGPT pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Canva et commencez à vendre."
+    ],
+    time: "15 min",
+    cost: "0 DZD (Plan Gratuit)"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Shopify",
+    goal: "Créer un business automatisé de e-commerce en utilisant Shopify.",
+    tools: ["Claude 3", "Notion", "Shopify"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Shopify.",
+      "Utilisez Claude 3 pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Notion et commencez à vendre."
+    ],
+    time: "30 min",
+    cost: "Moins de2 000 DZD"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Shopify",
+    goal: "Créer un business automatisé de e-commerce en utilisant Shopify.",
+    tools: ["Midjourney", "Discord", "Shopify"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Shopify.",
+      "Utilisez Midjourney pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Discord et commencez à vendre."
+    ],
+    time: "1 heure",
+    cost: "Freemium"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Shopify",
+    goal: "Créer un business automatisé de e-commerce en utilisant Shopify.",
+    tools: ["Make.com", "Airtable", "Shopify"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Shopify.",
+      "Utilisez Make.com pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Airtable et commencez à vendre."
+    ],
+    time: "2 heures",
+    cost: "0 DZD (Essai)"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Shopify",
+    goal: "Créer un business automatisé de e-commerce en utilisant Shopify.",
+    tools: ["CapCut", "ElevenLabs", "Shopify"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Shopify.",
+      "Utilisez CapCut pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec ElevenLabs et commencez à vendre."
+    ],
+    time: "1 jour",
+    cost: "0 DZD"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Shopify",
+    goal: "Créer un business automatisé de e-commerce en utilisant Shopify.",
+    tools: ["Webflow", "Figma", "Shopify"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Shopify.",
+      "Utilisez Webflow pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Figma et commencez à vendre."
+    ],
+    time: "2 jours",
+    cost: "0 DZD (Plan Gratuit)"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Shopify",
+    goal: "Créer un business automatisé de e-commerce en utilisant Shopify.",
+    tools: ["Stripe", "Zapier", "Shopify"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Shopify.",
+      "Utilisez Stripe pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Zapier et commencez à vendre."
+    ],
+    time: "15 min",
+    cost: "Moins de2 000 DZD"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Shopify",
+    goal: "Créer un business automatisé de e-commerce en utilisant Shopify.",
+    tools: ["Lemlist", "Apollo.io", "Shopify"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Shopify.",
+      "Utilisez Lemlist pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Apollo.io et commencez à vendre."
+    ],
+    time: "30 min",
+    cost: "Freemium"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Shopify",
+    goal: "Créer un business automatisé de e-commerce en utilisant Shopify.",
+    tools: ["Brevo", "WordPress", "Shopify"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Shopify.",
+      "Utilisez Brevo pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec WordPress et commencez à vendre."
+    ],
+    time: "1 heure",
+    cost: "0 DZD (Essai)"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Amazon KDP",
+    goal: "Créer un business automatisé de e-commerce en utilisant Amazon KDP.",
+    tools: ["ChatGPT", "Canva", "Amazon KDP"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Amazon KDP.",
+      "Utilisez ChatGPT pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Canva et commencez à vendre."
+    ],
+    time: "2 heures",
+    cost: "0 DZD"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Amazon KDP",
+    goal: "Créer un business automatisé de e-commerce en utilisant Amazon KDP.",
+    tools: ["Claude 3", "Notion", "Amazon KDP"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Amazon KDP.",
+      "Utilisez Claude 3 pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Notion et commencez à vendre."
+    ],
+    time: "1 jour",
+    cost: "0 DZD (Plan Gratuit)"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Amazon KDP",
+    goal: "Créer un business automatisé de e-commerce en utilisant Amazon KDP.",
+    tools: ["Midjourney", "Discord", "Amazon KDP"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Amazon KDP.",
+      "Utilisez Midjourney pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Discord et commencez à vendre."
+    ],
+    time: "2 jours",
+    cost: "Moins de2 000 DZD"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Amazon KDP",
+    goal: "Créer un business automatisé de e-commerce en utilisant Amazon KDP.",
+    tools: ["Make.com", "Airtable", "Amazon KDP"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Amazon KDP.",
+      "Utilisez Make.com pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Airtable et commencez à vendre."
+    ],
+    time: "15 min",
+    cost: "Freemium"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Amazon KDP",
+    goal: "Créer un business automatisé de e-commerce en utilisant Amazon KDP.",
+    tools: ["CapCut", "ElevenLabs", "Amazon KDP"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Amazon KDP.",
+      "Utilisez CapCut pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec ElevenLabs et commencez à vendre."
+    ],
+    time: "30 min",
+    cost: "0 DZD (Essai)"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Amazon KDP",
+    goal: "Créer un business automatisé de e-commerce en utilisant Amazon KDP.",
+    tools: ["Webflow", "Figma", "Amazon KDP"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Amazon KDP.",
+      "Utilisez Webflow pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Figma et commencez à vendre."
+    ],
+    time: "1 heure",
+    cost: "0 DZD"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Amazon KDP",
+    goal: "Créer un business automatisé de e-commerce en utilisant Amazon KDP.",
+    tools: ["Stripe", "Zapier", "Amazon KDP"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Amazon KDP.",
+      "Utilisez Stripe pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Zapier et commencez à vendre."
+    ],
+    time: "2 heures",
+    cost: "0 DZD (Plan Gratuit)"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Amazon KDP",
+    goal: "Créer un business automatisé de e-commerce en utilisant Amazon KDP.",
+    tools: ["Lemlist", "Apollo.io", "Amazon KDP"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Amazon KDP.",
+      "Utilisez Lemlist pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Apollo.io et commencez à vendre."
+    ],
+    time: "1 jour",
+    cost: "Moins de2 000 DZD"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Amazon KDP",
+    goal: "Créer un business automatisé de e-commerce en utilisant Amazon KDP.",
+    tools: ["Brevo", "WordPress", "Amazon KDP"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Amazon KDP.",
+      "Utilisez Brevo pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec WordPress et commencez à vendre."
+    ],
+    time: "2 jours",
+    cost: "Freemium"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Systeme.io",
+    goal: "Créer un business automatisé de e-commerce en utilisant Systeme.io.",
+    tools: ["ChatGPT", "Canva", "Systeme.io"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Systeme.io.",
+      "Utilisez ChatGPT pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Canva et commencez à vendre."
+    ],
+    time: "15 min",
+    cost: "0 DZD (Essai)"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Systeme.io",
+    goal: "Créer un business automatisé de e-commerce en utilisant Systeme.io.",
+    tools: ["Claude 3", "Notion", "Systeme.io"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Systeme.io.",
+      "Utilisez Claude 3 pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Notion et commencez à vendre."
+    ],
+    time: "30 min",
+    cost: "0 DZD"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Systeme.io",
+    goal: "Créer un business automatisé de e-commerce en utilisant Systeme.io.",
+    tools: ["Midjourney", "Discord", "Systeme.io"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Systeme.io.",
+      "Utilisez Midjourney pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Discord et commencez à vendre."
+    ],
+    time: "1 heure",
+    cost: "0 DZD (Plan Gratuit)"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Systeme.io",
+    goal: "Créer un business automatisé de e-commerce en utilisant Systeme.io.",
+    tools: ["Make.com", "Airtable", "Systeme.io"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Systeme.io.",
+      "Utilisez Make.com pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Airtable et commencez à vendre."
+    ],
+    time: "2 heures",
+    cost: "Moins de2 000 DZD"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Systeme.io",
+    goal: "Créer un business automatisé de e-commerce en utilisant Systeme.io.",
+    tools: ["CapCut", "ElevenLabs", "Systeme.io"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Systeme.io.",
+      "Utilisez CapCut pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec ElevenLabs et commencez à vendre."
+    ],
+    time: "1 jour",
+    cost: "Freemium"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Systeme.io",
+    goal: "Créer un business automatisé de e-commerce en utilisant Systeme.io.",
+    tools: ["Webflow", "Figma", "Systeme.io"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Systeme.io.",
+      "Utilisez Webflow pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Figma et commencez à vendre."
+    ],
+    time: "2 jours",
+    cost: "0 DZD (Essai)"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Systeme.io",
+    goal: "Créer un business automatisé de e-commerce en utilisant Systeme.io.",
+    tools: ["Stripe", "Zapier", "Systeme.io"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Systeme.io.",
+      "Utilisez Stripe pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Zapier et commencez à vendre."
+    ],
+    time: "15 min",
+    cost: "0 DZD"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Systeme.io",
+    goal: "Créer un business automatisé de e-commerce en utilisant Systeme.io.",
+    tools: ["Lemlist", "Apollo.io", "Systeme.io"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Systeme.io.",
+      "Utilisez Lemlist pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Apollo.io et commencez à vendre."
+    ],
+    time: "30 min",
+    cost: "0 DZD (Plan Gratuit)"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Systeme.io",
+    goal: "Créer un business automatisé de e-commerce en utilisant Systeme.io.",
+    tools: ["Brevo", "WordPress", "Systeme.io"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Systeme.io.",
+      "Utilisez Brevo pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec WordPress et commencez à vendre."
+    ],
+    time: "1 heure",
+    cost: "Moins de2 000 DZD"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Gumroad",
+    goal: "Créer un business automatisé de e-commerce en utilisant Gumroad.",
+    tools: ["ChatGPT", "Canva", "Gumroad"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Gumroad.",
+      "Utilisez ChatGPT pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Canva et commencez à vendre."
+    ],
+    time: "2 heures",
+    cost: "Freemium"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Gumroad",
+    goal: "Créer un business automatisé de e-commerce en utilisant Gumroad.",
+    tools: ["Claude 3", "Notion", "Gumroad"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Gumroad.",
+      "Utilisez Claude 3 pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Notion et commencez à vendre."
+    ],
+    time: "1 jour",
+    cost: "0 DZD (Essai)"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Gumroad",
+    goal: "Créer un business automatisé de e-commerce en utilisant Gumroad.",
+    tools: ["Midjourney", "Discord", "Gumroad"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Gumroad.",
+      "Utilisez Midjourney pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Discord et commencez à vendre."
+    ],
+    time: "2 jours",
+    cost: "0 DZD"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Gumroad",
+    goal: "Créer un business automatisé de e-commerce en utilisant Gumroad.",
+    tools: ["Make.com", "Airtable", "Gumroad"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Gumroad.",
+      "Utilisez Make.com pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Airtable et commencez à vendre."
+    ],
+    time: "15 min",
+    cost: "0 DZD (Plan Gratuit)"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Gumroad",
+    goal: "Créer un business automatisé de e-commerce en utilisant Gumroad.",
+    tools: ["CapCut", "ElevenLabs", "Gumroad"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Gumroad.",
+      "Utilisez CapCut pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec ElevenLabs et commencez à vendre."
+    ],
+    time: "30 min",
+    cost: "Moins de2 000 DZD"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Gumroad",
+    goal: "Créer un business automatisé de e-commerce en utilisant Gumroad.",
+    tools: ["Webflow", "Figma", "Gumroad"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Gumroad.",
+      "Utilisez Webflow pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Figma et commencez à vendre."
+    ],
+    time: "1 heure",
+    cost: "Freemium"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Gumroad",
+    goal: "Créer un business automatisé de e-commerce en utilisant Gumroad.",
+    tools: ["Stripe", "Zapier", "Gumroad"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Gumroad.",
+      "Utilisez Stripe pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Zapier et commencez à vendre."
+    ],
+    time: "2 heures",
+    cost: "0 DZD (Essai)"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Gumroad",
+    goal: "Créer un business automatisé de e-commerce en utilisant Gumroad.",
+    tools: ["Lemlist", "Apollo.io", "Gumroad"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Gumroad.",
+      "Utilisez Lemlist pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Apollo.io et commencez à vendre."
+    ],
+    time: "1 jour",
+    cost: "0 DZD"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Gumroad",
+    goal: "Créer un business automatisé de e-commerce en utilisant Gumroad.",
+    tools: ["Brevo", "WordPress", "Gumroad"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Gumroad.",
+      "Utilisez Brevo pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec WordPress et commencez à vendre."
+    ],
+    time: "2 jours",
+    cost: "0 DZD (Plan Gratuit)"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur LinkedIn",
+    goal: "Créer un business automatisé de e-commerce en utilisant LinkedIn.",
+    tools: ["ChatGPT", "Canva", "LinkedIn"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur LinkedIn.",
+      "Utilisez ChatGPT pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Canva et commencez à vendre."
+    ],
+    time: "15 min",
+    cost: "Moins de2 000 DZD"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur LinkedIn",
+    goal: "Créer un business automatisé de e-commerce en utilisant LinkedIn.",
+    tools: ["Claude 3", "Notion", "LinkedIn"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur LinkedIn.",
+      "Utilisez Claude 3 pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Notion et commencez à vendre."
+    ],
+    time: "30 min",
+    cost: "Freemium"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur LinkedIn",
+    goal: "Créer un business automatisé de e-commerce en utilisant LinkedIn.",
+    tools: ["Midjourney", "Discord", "LinkedIn"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur LinkedIn.",
+      "Utilisez Midjourney pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Discord et commencez à vendre."
+    ],
+    time: "1 heure",
+    cost: "0 DZD (Essai)"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur LinkedIn",
+    goal: "Créer un business automatisé de e-commerce en utilisant LinkedIn.",
+    tools: ["Make.com", "Airtable", "LinkedIn"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur LinkedIn.",
+      "Utilisez Make.com pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Airtable et commencez à vendre."
+    ],
+    time: "2 heures",
+    cost: "0 DZD"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur LinkedIn",
+    goal: "Créer un business automatisé de e-commerce en utilisant LinkedIn.",
+    tools: ["CapCut", "ElevenLabs", "LinkedIn"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur LinkedIn.",
+      "Utilisez CapCut pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec ElevenLabs et commencez à vendre."
+    ],
+    time: "1 jour",
+    cost: "0 DZD (Plan Gratuit)"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur LinkedIn",
+    goal: "Créer un business automatisé de e-commerce en utilisant LinkedIn.",
+    tools: ["Webflow", "Figma", "LinkedIn"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur LinkedIn.",
+      "Utilisez Webflow pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Figma et commencez à vendre."
+    ],
+    time: "2 jours",
+    cost: "Moins de2 000 DZD"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur LinkedIn",
+    goal: "Créer un business automatisé de e-commerce en utilisant LinkedIn.",
+    tools: ["Stripe", "Zapier", "LinkedIn"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur LinkedIn.",
+      "Utilisez Stripe pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Zapier et commencez à vendre."
+    ],
+    time: "15 min",
+    cost: "Freemium"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur LinkedIn",
+    goal: "Créer un business automatisé de e-commerce en utilisant LinkedIn.",
+    tools: ["Lemlist", "Apollo.io", "LinkedIn"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur LinkedIn.",
+      "Utilisez Lemlist pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Apollo.io et commencez à vendre."
+    ],
+    time: "30 min",
+    cost: "0 DZD (Essai)"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur LinkedIn",
+    goal: "Créer un business automatisé de e-commerce en utilisant LinkedIn.",
+    tools: ["Brevo", "WordPress", "LinkedIn"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur LinkedIn.",
+      "Utilisez Brevo pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec WordPress et commencez à vendre."
+    ],
+    time: "1 heure",
+    cost: "0 DZD"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Instagram",
+    goal: "Créer un business automatisé de e-commerce en utilisant Instagram.",
+    tools: ["ChatGPT", "Canva", "Instagram"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Instagram.",
+      "Utilisez ChatGPT pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Canva et commencez à vendre."
+    ],
+    time: "2 heures",
+    cost: "0 DZD (Plan Gratuit)"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Instagram",
+    goal: "Créer un business automatisé de e-commerce en utilisant Instagram.",
+    tools: ["Claude 3", "Notion", "Instagram"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Instagram.",
+      "Utilisez Claude 3 pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Notion et commencez à vendre."
+    ],
+    time: "1 jour",
+    cost: "Moins de2 000 DZD"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Instagram",
+    goal: "Créer un business automatisé de e-commerce en utilisant Instagram.",
+    tools: ["Midjourney", "Discord", "Instagram"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Instagram.",
+      "Utilisez Midjourney pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Discord et commencez à vendre."
+    ],
+    time: "2 jours",
+    cost: "Freemium"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Instagram",
+    goal: "Créer un business automatisé de e-commerce en utilisant Instagram.",
+    tools: ["Make.com", "Airtable", "Instagram"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Instagram.",
+      "Utilisez Make.com pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Airtable et commencez à vendre."
+    ],
+    time: "15 min",
+    cost: "0 DZD (Essai)"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Instagram",
+    goal: "Créer un business automatisé de e-commerce en utilisant Instagram.",
+    tools: ["CapCut", "ElevenLabs", "Instagram"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Instagram.",
+      "Utilisez CapCut pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec ElevenLabs et commencez à vendre."
+    ],
+    time: "30 min",
+    cost: "0 DZD"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Instagram",
+    goal: "Créer un business automatisé de e-commerce en utilisant Instagram.",
+    tools: ["Webflow", "Figma", "Instagram"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Instagram.",
+      "Utilisez Webflow pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Figma et commencez à vendre."
+    ],
+    time: "1 heure",
+    cost: "0 DZD (Plan Gratuit)"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Instagram",
+    goal: "Créer un business automatisé de e-commerce en utilisant Instagram.",
+    tools: ["Stripe", "Zapier", "Instagram"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Instagram.",
+      "Utilisez Stripe pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Zapier et commencez à vendre."
+    ],
+    time: "2 heures",
+    cost: "Moins de2 000 DZD"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Instagram",
+    goal: "Créer un business automatisé de e-commerce en utilisant Instagram.",
+    tools: ["Lemlist", "Apollo.io", "Instagram"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Instagram.",
+      "Utilisez Lemlist pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Apollo.io et commencez à vendre."
+    ],
+    time: "1 jour",
+    cost: "Freemium"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur Instagram",
+    goal: "Créer un business automatisé de e-commerce en utilisant Instagram.",
+    tools: ["Brevo", "WordPress", "Instagram"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur Instagram.",
+      "Utilisez Brevo pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec WordPress et commencez à vendre."
+    ],
+    time: "2 jours",
+    cost: "0 DZD (Essai)"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur TikTok",
+    goal: "Créer un business automatisé de e-commerce en utilisant TikTok.",
+    tools: ["ChatGPT", "Canva", "TikTok"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur TikTok.",
+      "Utilisez ChatGPT pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Canva et commencez à vendre."
+    ],
+    time: "15 min",
+    cost: "0 DZD"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur TikTok",
+    goal: "Créer un business automatisé de e-commerce en utilisant TikTok.",
+    tools: ["Claude 3", "Notion", "TikTok"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur TikTok.",
+      "Utilisez Claude 3 pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Notion et commencez à vendre."
+    ],
+    time: "30 min",
+    cost: "0 DZD (Plan Gratuit)"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur TikTok",
+    goal: "Créer un business automatisé de e-commerce en utilisant TikTok.",
+    tools: ["Midjourney", "Discord", "TikTok"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur TikTok.",
+      "Utilisez Midjourney pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Discord et commencez à vendre."
+    ],
+    time: "1 heure",
+    cost: "Moins de2 000 DZD"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur TikTok",
+    goal: "Créer un business automatisé de e-commerce en utilisant TikTok.",
+    tools: ["Make.com", "Airtable", "TikTok"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur TikTok.",
+      "Utilisez Make.com pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Airtable et commencez à vendre."
+    ],
+    time: "2 heures",
+    cost: "Freemium"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur TikTok",
+    goal: "Créer un business automatisé de e-commerce en utilisant TikTok.",
+    tools: ["CapCut", "ElevenLabs", "TikTok"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur TikTok.",
+      "Utilisez CapCut pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec ElevenLabs et commencez à vendre."
+    ],
+    time: "1 jour",
+    cost: "0 DZD (Essai)"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur TikTok",
+    goal: "Créer un business automatisé de e-commerce en utilisant TikTok.",
+    tools: ["Webflow", "Figma", "TikTok"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur TikTok.",
+      "Utilisez Webflow pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Figma et commencez à vendre."
+    ],
+    time: "2 jours",
+    cost: "0 DZD"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur TikTok",
+    goal: "Créer un business automatisé de e-commerce en utilisant TikTok.",
+    tools: ["Stripe", "Zapier", "TikTok"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur TikTok.",
+      "Utilisez Stripe pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Zapier et commencez à vendre."
+    ],
+    time: "15 min",
+    cost: "0 DZD (Plan Gratuit)"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur TikTok",
+    goal: "Créer un business automatisé de e-commerce en utilisant TikTok.",
+    tools: ["Lemlist", "Apollo.io", "TikTok"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur TikTok.",
+      "Utilisez Lemlist pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Apollo.io et commencez à vendre."
+    ],
+    time: "30 min",
+    cost: "Moins de2 000 DZD"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur TikTok",
+    goal: "Créer un business automatisé de e-commerce en utilisant TikTok.",
+    tools: ["Brevo", "WordPress", "TikTok"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur TikTok.",
+      "Utilisez Brevo pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec WordPress et commencez à vendre."
+    ],
+    time: "1 heure",
+    cost: "Freemium"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur YouTube",
+    goal: "Créer un business automatisé de e-commerce en utilisant YouTube.",
+    tools: ["ChatGPT", "Canva", "YouTube"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur YouTube.",
+      "Utilisez ChatGPT pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Canva et commencez à vendre."
+    ],
+    time: "2 heures",
+    cost: "0 DZD (Essai)"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur YouTube",
+    goal: "Créer un business automatisé de e-commerce en utilisant YouTube.",
+    tools: ["Claude 3", "Notion", "YouTube"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur YouTube.",
+      "Utilisez Claude 3 pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Notion et commencez à vendre."
+    ],
+    time: "1 jour",
+    cost: "0 DZD"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur YouTube",
+    goal: "Créer un business automatisé de e-commerce en utilisant YouTube.",
+    tools: ["Midjourney", "Discord", "YouTube"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur YouTube.",
+      "Utilisez Midjourney pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Discord et commencez à vendre."
+    ],
+    time: "2 jours",
+    cost: "0 DZD (Plan Gratuit)"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur YouTube",
+    goal: "Créer un business automatisé de e-commerce en utilisant YouTube.",
+    tools: ["Make.com", "Airtable", "YouTube"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur YouTube.",
+      "Utilisez Make.com pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Airtable et commencez à vendre."
+    ],
+    time: "15 min",
+    cost: "Moins de2 000 DZD"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur YouTube",
+    goal: "Créer un business automatisé de e-commerce en utilisant YouTube.",
+    tools: ["CapCut", "ElevenLabs", "YouTube"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur YouTube.",
+      "Utilisez CapCut pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec ElevenLabs et commencez à vendre."
+    ],
+    time: "30 min",
+    cost: "Freemium"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur YouTube",
+    goal: "Créer un business automatisé de e-commerce en utilisant YouTube.",
+    tools: ["Webflow", "Figma", "YouTube"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur YouTube.",
+      "Utilisez Webflow pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Figma et commencez à vendre."
+    ],
+    time: "1 heure",
+    cost: "0 DZD (Essai)"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur YouTube",
+    goal: "Créer un business automatisé de e-commerce en utilisant YouTube.",
+    tools: ["Stripe", "Zapier", "YouTube"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur YouTube.",
+      "Utilisez Stripe pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Zapier et commencez à vendre."
+    ],
+    time: "2 heures",
+    cost: "0 DZD"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur YouTube",
+    goal: "Créer un business automatisé de e-commerce en utilisant YouTube.",
+    tools: ["Lemlist", "Apollo.io", "YouTube"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur YouTube.",
+      "Utilisez Lemlist pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Apollo.io et commencez à vendre."
+    ],
+    time: "1 jour",
+    cost: "0 DZD (Plan Gratuit)"
+  },
+  {
+    title: "Générer des revenus avec E-commerce sur YouTube",
+    goal: "Créer un business automatisé de e-commerce en utilisant YouTube.",
+    tools: ["Brevo", "WordPress", "YouTube"],
+    steps: [
+      "Analysez la demande pour le secteur e-commerce sur YouTube.",
+      "Utilisez Brevo pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec WordPress et commencez à vendre."
+    ],
+    time: "2 jours",
+    cost: "Moins de2 000 DZD"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Fiverr",
+    goal: "Créer un business automatisé de saas en utilisant Fiverr.",
+    tools: ["ChatGPT", "Canva", "Fiverr"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Fiverr.",
+      "Utilisez ChatGPT pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Canva et commencez à vendre."
+    ],
+    time: "15 min",
+    cost: "Freemium"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Fiverr",
+    goal: "Créer un business automatisé de saas en utilisant Fiverr.",
+    tools: ["Claude 3", "Notion", "Fiverr"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Fiverr.",
+      "Utilisez Claude 3 pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Notion et commencez à vendre."
+    ],
+    time: "30 min",
+    cost: "0 DZD (Essai)"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Fiverr",
+    goal: "Créer un business automatisé de saas en utilisant Fiverr.",
+    tools: ["Midjourney", "Discord", "Fiverr"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Fiverr.",
+      "Utilisez Midjourney pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Discord et commencez à vendre."
+    ],
+    time: "1 heure",
+    cost: "0 DZD"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Fiverr",
+    goal: "Créer un business automatisé de saas en utilisant Fiverr.",
+    tools: ["Make.com", "Airtable", "Fiverr"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Fiverr.",
+      "Utilisez Make.com pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Airtable et commencez à vendre."
+    ],
+    time: "2 heures",
+    cost: "0 DZD (Plan Gratuit)"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Fiverr",
+    goal: "Créer un business automatisé de saas en utilisant Fiverr.",
+    tools: ["CapCut", "ElevenLabs", "Fiverr"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Fiverr.",
+      "Utilisez CapCut pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec ElevenLabs et commencez à vendre."
+    ],
+    time: "1 jour",
+    cost: "Moins de2 000 DZD"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Fiverr",
+    goal: "Créer un business automatisé de saas en utilisant Fiverr.",
+    tools: ["Webflow", "Figma", "Fiverr"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Fiverr.",
+      "Utilisez Webflow pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Figma et commencez à vendre."
+    ],
+    time: "2 jours",
+    cost: "Freemium"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Fiverr",
+    goal: "Créer un business automatisé de saas en utilisant Fiverr.",
+    tools: ["Stripe", "Zapier", "Fiverr"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Fiverr.",
+      "Utilisez Stripe pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Zapier et commencez à vendre."
+    ],
+    time: "15 min",
+    cost: "0 DZD (Essai)"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Fiverr",
+    goal: "Créer un business automatisé de saas en utilisant Fiverr.",
+    tools: ["Lemlist", "Apollo.io", "Fiverr"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Fiverr.",
+      "Utilisez Lemlist pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Apollo.io et commencez à vendre."
+    ],
+    time: "30 min",
+    cost: "0 DZD"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Fiverr",
+    goal: "Créer un business automatisé de saas en utilisant Fiverr.",
+    tools: ["Brevo", "WordPress", "Fiverr"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Fiverr.",
+      "Utilisez Brevo pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec WordPress et commencez à vendre."
+    ],
+    time: "1 heure",
+    cost: "0 DZD (Plan Gratuit)"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Upwork",
+    goal: "Créer un business automatisé de saas en utilisant Upwork.",
+    tools: ["ChatGPT", "Canva", "Upwork"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Upwork.",
+      "Utilisez ChatGPT pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Canva et commencez à vendre."
+    ],
+    time: "2 heures",
+    cost: "Moins de2 000 DZD"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Upwork",
+    goal: "Créer un business automatisé de saas en utilisant Upwork.",
+    tools: ["Claude 3", "Notion", "Upwork"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Upwork.",
+      "Utilisez Claude 3 pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Notion et commencez à vendre."
+    ],
+    time: "1 jour",
+    cost: "Freemium"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Upwork",
+    goal: "Créer un business automatisé de saas en utilisant Upwork.",
+    tools: ["Midjourney", "Discord", "Upwork"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Upwork.",
+      "Utilisez Midjourney pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Discord et commencez à vendre."
+    ],
+    time: "2 jours",
+    cost: "0 DZD (Essai)"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Upwork",
+    goal: "Créer un business automatisé de saas en utilisant Upwork.",
+    tools: ["Make.com", "Airtable", "Upwork"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Upwork.",
+      "Utilisez Make.com pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Airtable et commencez à vendre."
+    ],
+    time: "15 min",
+    cost: "0 DZD"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Upwork",
+    goal: "Créer un business automatisé de saas en utilisant Upwork.",
+    tools: ["CapCut", "ElevenLabs", "Upwork"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Upwork.",
+      "Utilisez CapCut pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec ElevenLabs et commencez à vendre."
+    ],
+    time: "30 min",
+    cost: "0 DZD (Plan Gratuit)"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Upwork",
+    goal: "Créer un business automatisé de saas en utilisant Upwork.",
+    tools: ["Webflow", "Figma", "Upwork"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Upwork.",
+      "Utilisez Webflow pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Figma et commencez à vendre."
+    ],
+    time: "1 heure",
+    cost: "Moins de2 000 DZD"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Upwork",
+    goal: "Créer un business automatisé de saas en utilisant Upwork.",
+    tools: ["Stripe", "Zapier", "Upwork"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Upwork.",
+      "Utilisez Stripe pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Zapier et commencez à vendre."
+    ],
+    time: "2 heures",
+    cost: "Freemium"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Upwork",
+    goal: "Créer un business automatisé de saas en utilisant Upwork.",
+    tools: ["Lemlist", "Apollo.io", "Upwork"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Upwork.",
+      "Utilisez Lemlist pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Apollo.io et commencez à vendre."
+    ],
+    time: "1 jour",
+    cost: "0 DZD (Essai)"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Upwork",
+    goal: "Créer un business automatisé de saas en utilisant Upwork.",
+    tools: ["Brevo", "WordPress", "Upwork"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Upwork.",
+      "Utilisez Brevo pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec WordPress et commencez à vendre."
+    ],
+    time: "2 jours",
+    cost: "0 DZD"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Malt",
+    goal: "Créer un business automatisé de saas en utilisant Malt.",
+    tools: ["ChatGPT", "Canva", "Malt"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Malt.",
+      "Utilisez ChatGPT pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Canva et commencez à vendre."
+    ],
+    time: "15 min",
+    cost: "0 DZD (Plan Gratuit)"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Malt",
+    goal: "Créer un business automatisé de saas en utilisant Malt.",
+    tools: ["Claude 3", "Notion", "Malt"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Malt.",
+      "Utilisez Claude 3 pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Notion et commencez à vendre."
+    ],
+    time: "30 min",
+    cost: "Moins de2 000 DZD"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Malt",
+    goal: "Créer un business automatisé de saas en utilisant Malt.",
+    tools: ["Midjourney", "Discord", "Malt"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Malt.",
+      "Utilisez Midjourney pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Discord et commencez à vendre."
+    ],
+    time: "1 heure",
+    cost: "Freemium"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Malt",
+    goal: "Créer un business automatisé de saas en utilisant Malt.",
+    tools: ["Make.com", "Airtable", "Malt"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Malt.",
+      "Utilisez Make.com pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Airtable et commencez à vendre."
+    ],
+    time: "2 heures",
+    cost: "0 DZD (Essai)"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Malt",
+    goal: "Créer un business automatisé de saas en utilisant Malt.",
+    tools: ["CapCut", "ElevenLabs", "Malt"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Malt.",
+      "Utilisez CapCut pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec ElevenLabs et commencez à vendre."
+    ],
+    time: "1 jour",
+    cost: "0 DZD"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Malt",
+    goal: "Créer un business automatisé de saas en utilisant Malt.",
+    tools: ["Webflow", "Figma", "Malt"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Malt.",
+      "Utilisez Webflow pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Figma et commencez à vendre."
+    ],
+    time: "2 jours",
+    cost: "0 DZD (Plan Gratuit)"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Malt",
+    goal: "Créer un business automatisé de saas en utilisant Malt.",
+    tools: ["Stripe", "Zapier", "Malt"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Malt.",
+      "Utilisez Stripe pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Zapier et commencez à vendre."
+    ],
+    time: "15 min",
+    cost: "Moins de2 000 DZD"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Malt",
+    goal: "Créer un business automatisé de saas en utilisant Malt.",
+    tools: ["Lemlist", "Apollo.io", "Malt"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Malt.",
+      "Utilisez Lemlist pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Apollo.io et commencez à vendre."
+    ],
+    time: "30 min",
+    cost: "Freemium"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Malt",
+    goal: "Créer un business automatisé de saas en utilisant Malt.",
+    tools: ["Brevo", "WordPress", "Malt"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Malt.",
+      "Utilisez Brevo pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec WordPress et commencez à vendre."
+    ],
+    time: "1 heure",
+    cost: "0 DZD (Essai)"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Etsy",
+    goal: "Créer un business automatisé de saas en utilisant Etsy.",
+    tools: ["ChatGPT", "Canva", "Etsy"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Etsy.",
+      "Utilisez ChatGPT pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Canva et commencez à vendre."
+    ],
+    time: "2 heures",
+    cost: "0 DZD"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Etsy",
+    goal: "Créer un business automatisé de saas en utilisant Etsy.",
+    tools: ["Claude 3", "Notion", "Etsy"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Etsy.",
+      "Utilisez Claude 3 pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Notion et commencez à vendre."
+    ],
+    time: "1 jour",
+    cost: "0 DZD (Plan Gratuit)"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Etsy",
+    goal: "Créer un business automatisé de saas en utilisant Etsy.",
+    tools: ["Midjourney", "Discord", "Etsy"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Etsy.",
+      "Utilisez Midjourney pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Discord et commencez à vendre."
+    ],
+    time: "2 jours",
+    cost: "Moins de2 000 DZD"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Etsy",
+    goal: "Créer un business automatisé de saas en utilisant Etsy.",
+    tools: ["Make.com", "Airtable", "Etsy"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Etsy.",
+      "Utilisez Make.com pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Airtable et commencez à vendre."
+    ],
+    time: "15 min",
+    cost: "Freemium"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Etsy",
+    goal: "Créer un business automatisé de saas en utilisant Etsy.",
+    tools: ["CapCut", "ElevenLabs", "Etsy"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Etsy.",
+      "Utilisez CapCut pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec ElevenLabs et commencez à vendre."
+    ],
+    time: "30 min",
+    cost: "0 DZD (Essai)"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Etsy",
+    goal: "Créer un business automatisé de saas en utilisant Etsy.",
+    tools: ["Webflow", "Figma", "Etsy"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Etsy.",
+      "Utilisez Webflow pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Figma et commencez à vendre."
+    ],
+    time: "1 heure",
+    cost: "0 DZD"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Etsy",
+    goal: "Créer un business automatisé de saas en utilisant Etsy.",
+    tools: ["Stripe", "Zapier", "Etsy"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Etsy.",
+      "Utilisez Stripe pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Zapier et commencez à vendre."
+    ],
+    time: "2 heures",
+    cost: "0 DZD (Plan Gratuit)"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Etsy",
+    goal: "Créer un business automatisé de saas en utilisant Etsy.",
+    tools: ["Lemlist", "Apollo.io", "Etsy"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Etsy.",
+      "Utilisez Lemlist pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Apollo.io et commencez à vendre."
+    ],
+    time: "1 jour",
+    cost: "Moins de2 000 DZD"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Etsy",
+    goal: "Créer un business automatisé de saas en utilisant Etsy.",
+    tools: ["Brevo", "WordPress", "Etsy"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Etsy.",
+      "Utilisez Brevo pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec WordPress et commencez à vendre."
+    ],
+    time: "2 jours",
+    cost: "Freemium"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Shopify",
+    goal: "Créer un business automatisé de saas en utilisant Shopify.",
+    tools: ["ChatGPT", "Canva", "Shopify"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Shopify.",
+      "Utilisez ChatGPT pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Canva et commencez à vendre."
+    ],
+    time: "15 min",
+    cost: "0 DZD (Essai)"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Shopify",
+    goal: "Créer un business automatisé de saas en utilisant Shopify.",
+    tools: ["Claude 3", "Notion", "Shopify"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Shopify.",
+      "Utilisez Claude 3 pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Notion et commencez à vendre."
+    ],
+    time: "30 min",
+    cost: "0 DZD"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Shopify",
+    goal: "Créer un business automatisé de saas en utilisant Shopify.",
+    tools: ["Midjourney", "Discord", "Shopify"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Shopify.",
+      "Utilisez Midjourney pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Discord et commencez à vendre."
+    ],
+    time: "1 heure",
+    cost: "0 DZD (Plan Gratuit)"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Shopify",
+    goal: "Créer un business automatisé de saas en utilisant Shopify.",
+    tools: ["Make.com", "Airtable", "Shopify"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Shopify.",
+      "Utilisez Make.com pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Airtable et commencez à vendre."
+    ],
+    time: "2 heures",
+    cost: "Moins de2 000 DZD"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Shopify",
+    goal: "Créer un business automatisé de saas en utilisant Shopify.",
+    tools: ["CapCut", "ElevenLabs", "Shopify"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Shopify.",
+      "Utilisez CapCut pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec ElevenLabs et commencez à vendre."
+    ],
+    time: "1 jour",
+    cost: "Freemium"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Shopify",
+    goal: "Créer un business automatisé de saas en utilisant Shopify.",
+    tools: ["Webflow", "Figma", "Shopify"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Shopify.",
+      "Utilisez Webflow pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Figma et commencez à vendre."
+    ],
+    time: "2 jours",
+    cost: "0 DZD (Essai)"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Shopify",
+    goal: "Créer un business automatisé de saas en utilisant Shopify.",
+    tools: ["Stripe", "Zapier", "Shopify"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Shopify.",
+      "Utilisez Stripe pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Zapier et commencez à vendre."
+    ],
+    time: "15 min",
+    cost: "0 DZD"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Shopify",
+    goal: "Créer un business automatisé de saas en utilisant Shopify.",
+    tools: ["Lemlist", "Apollo.io", "Shopify"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Shopify.",
+      "Utilisez Lemlist pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Apollo.io et commencez à vendre."
+    ],
+    time: "30 min",
+    cost: "0 DZD (Plan Gratuit)"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Shopify",
+    goal: "Créer un business automatisé de saas en utilisant Shopify.",
+    tools: ["Brevo", "WordPress", "Shopify"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Shopify.",
+      "Utilisez Brevo pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec WordPress et commencez à vendre."
+    ],
+    time: "1 heure",
+    cost: "Moins de2 000 DZD"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Amazon KDP",
+    goal: "Créer un business automatisé de saas en utilisant Amazon KDP.",
+    tools: ["ChatGPT", "Canva", "Amazon KDP"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Amazon KDP.",
+      "Utilisez ChatGPT pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Canva et commencez à vendre."
+    ],
+    time: "2 heures",
+    cost: "Freemium"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Amazon KDP",
+    goal: "Créer un business automatisé de saas en utilisant Amazon KDP.",
+    tools: ["Claude 3", "Notion", "Amazon KDP"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Amazon KDP.",
+      "Utilisez Claude 3 pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Notion et commencez à vendre."
+    ],
+    time: "1 jour",
+    cost: "0 DZD (Essai)"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Amazon KDP",
+    goal: "Créer un business automatisé de saas en utilisant Amazon KDP.",
+    tools: ["Midjourney", "Discord", "Amazon KDP"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Amazon KDP.",
+      "Utilisez Midjourney pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Discord et commencez à vendre."
+    ],
+    time: "2 jours",
+    cost: "0 DZD"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Amazon KDP",
+    goal: "Créer un business automatisé de saas en utilisant Amazon KDP.",
+    tools: ["Make.com", "Airtable", "Amazon KDP"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Amazon KDP.",
+      "Utilisez Make.com pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Airtable et commencez à vendre."
+    ],
+    time: "15 min",
+    cost: "0 DZD (Plan Gratuit)"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Amazon KDP",
+    goal: "Créer un business automatisé de saas en utilisant Amazon KDP.",
+    tools: ["CapCut", "ElevenLabs", "Amazon KDP"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Amazon KDP.",
+      "Utilisez CapCut pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec ElevenLabs et commencez à vendre."
+    ],
+    time: "30 min",
+    cost: "Moins de2 000 DZD"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Amazon KDP",
+    goal: "Créer un business automatisé de saas en utilisant Amazon KDP.",
+    tools: ["Webflow", "Figma", "Amazon KDP"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Amazon KDP.",
+      "Utilisez Webflow pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Figma et commencez à vendre."
+    ],
+    time: "1 heure",
+    cost: "Freemium"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Amazon KDP",
+    goal: "Créer un business automatisé de saas en utilisant Amazon KDP.",
+    tools: ["Stripe", "Zapier", "Amazon KDP"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Amazon KDP.",
+      "Utilisez Stripe pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Zapier et commencez à vendre."
+    ],
+    time: "2 heures",
+    cost: "0 DZD (Essai)"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Amazon KDP",
+    goal: "Créer un business automatisé de saas en utilisant Amazon KDP.",
+    tools: ["Lemlist", "Apollo.io", "Amazon KDP"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Amazon KDP.",
+      "Utilisez Lemlist pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Apollo.io et commencez à vendre."
+    ],
+    time: "1 jour",
+    cost: "0 DZD"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Amazon KDP",
+    goal: "Créer un business automatisé de saas en utilisant Amazon KDP.",
+    tools: ["Brevo", "WordPress", "Amazon KDP"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Amazon KDP.",
+      "Utilisez Brevo pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec WordPress et commencez à vendre."
+    ],
+    time: "2 jours",
+    cost: "0 DZD (Plan Gratuit)"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Systeme.io",
+    goal: "Créer un business automatisé de saas en utilisant Systeme.io.",
+    tools: ["ChatGPT", "Canva", "Systeme.io"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Systeme.io.",
+      "Utilisez ChatGPT pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Canva et commencez à vendre."
+    ],
+    time: "15 min",
+    cost: "Moins de2 000 DZD"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Systeme.io",
+    goal: "Créer un business automatisé de saas en utilisant Systeme.io.",
+    tools: ["Claude 3", "Notion", "Systeme.io"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Systeme.io.",
+      "Utilisez Claude 3 pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Notion et commencez à vendre."
+    ],
+    time: "30 min",
+    cost: "Freemium"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Systeme.io",
+    goal: "Créer un business automatisé de saas en utilisant Systeme.io.",
+    tools: ["Midjourney", "Discord", "Systeme.io"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Systeme.io.",
+      "Utilisez Midjourney pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Discord et commencez à vendre."
+    ],
+    time: "1 heure",
+    cost: "0 DZD (Essai)"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Systeme.io",
+    goal: "Créer un business automatisé de saas en utilisant Systeme.io.",
+    tools: ["Make.com", "Airtable", "Systeme.io"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Systeme.io.",
+      "Utilisez Make.com pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Airtable et commencez à vendre."
+    ],
+    time: "2 heures",
+    cost: "0 DZD"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Systeme.io",
+    goal: "Créer un business automatisé de saas en utilisant Systeme.io.",
+    tools: ["CapCut", "ElevenLabs", "Systeme.io"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Systeme.io.",
+      "Utilisez CapCut pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec ElevenLabs et commencez à vendre."
+    ],
+    time: "1 jour",
+    cost: "0 DZD (Plan Gratuit)"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Systeme.io",
+    goal: "Créer un business automatisé de saas en utilisant Systeme.io.",
+    tools: ["Webflow", "Figma", "Systeme.io"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Systeme.io.",
+      "Utilisez Webflow pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Figma et commencez à vendre."
+    ],
+    time: "2 jours",
+    cost: "Moins de2 000 DZD"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Systeme.io",
+    goal: "Créer un business automatisé de saas en utilisant Systeme.io.",
+    tools: ["Stripe", "Zapier", "Systeme.io"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Systeme.io.",
+      "Utilisez Stripe pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Zapier et commencez à vendre."
+    ],
+    time: "15 min",
+    cost: "Freemium"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Systeme.io",
+    goal: "Créer un business automatisé de saas en utilisant Systeme.io.",
+    tools: ["Lemlist", "Apollo.io", "Systeme.io"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Systeme.io.",
+      "Utilisez Lemlist pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Apollo.io et commencez à vendre."
+    ],
+    time: "30 min",
+    cost: "0 DZD (Essai)"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Systeme.io",
+    goal: "Créer un business automatisé de saas en utilisant Systeme.io.",
+    tools: ["Brevo", "WordPress", "Systeme.io"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Systeme.io.",
+      "Utilisez Brevo pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec WordPress et commencez à vendre."
+    ],
+    time: "1 heure",
+    cost: "0 DZD"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Gumroad",
+    goal: "Créer un business automatisé de saas en utilisant Gumroad.",
+    tools: ["ChatGPT", "Canva", "Gumroad"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Gumroad.",
+      "Utilisez ChatGPT pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Canva et commencez à vendre."
+    ],
+    time: "2 heures",
+    cost: "0 DZD (Plan Gratuit)"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Gumroad",
+    goal: "Créer un business automatisé de saas en utilisant Gumroad.",
+    tools: ["Claude 3", "Notion", "Gumroad"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Gumroad.",
+      "Utilisez Claude 3 pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Notion et commencez à vendre."
+    ],
+    time: "1 jour",
+    cost: "Moins de2 000 DZD"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Gumroad",
+    goal: "Créer un business automatisé de saas en utilisant Gumroad.",
+    tools: ["Midjourney", "Discord", "Gumroad"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Gumroad.",
+      "Utilisez Midjourney pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Discord et commencez à vendre."
+    ],
+    time: "2 jours",
+    cost: "Freemium"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Gumroad",
+    goal: "Créer un business automatisé de saas en utilisant Gumroad.",
+    tools: ["Make.com", "Airtable", "Gumroad"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Gumroad.",
+      "Utilisez Make.com pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Airtable et commencez à vendre."
+    ],
+    time: "15 min",
+    cost: "0 DZD (Essai)"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Gumroad",
+    goal: "Créer un business automatisé de saas en utilisant Gumroad.",
+    tools: ["CapCut", "ElevenLabs", "Gumroad"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Gumroad.",
+      "Utilisez CapCut pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec ElevenLabs et commencez à vendre."
+    ],
+    time: "30 min",
+    cost: "0 DZD"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Gumroad",
+    goal: "Créer un business automatisé de saas en utilisant Gumroad.",
+    tools: ["Webflow", "Figma", "Gumroad"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Gumroad.",
+      "Utilisez Webflow pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Figma et commencez à vendre."
+    ],
+    time: "1 heure",
+    cost: "0 DZD (Plan Gratuit)"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Gumroad",
+    goal: "Créer un business automatisé de saas en utilisant Gumroad.",
+    tools: ["Stripe", "Zapier", "Gumroad"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Gumroad.",
+      "Utilisez Stripe pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Zapier et commencez à vendre."
+    ],
+    time: "2 heures",
+    cost: "Moins de2 000 DZD"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Gumroad",
+    goal: "Créer un business automatisé de saas en utilisant Gumroad.",
+    tools: ["Lemlist", "Apollo.io", "Gumroad"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Gumroad.",
+      "Utilisez Lemlist pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Apollo.io et commencez à vendre."
+    ],
+    time: "1 jour",
+    cost: "Freemium"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Gumroad",
+    goal: "Créer un business automatisé de saas en utilisant Gumroad.",
+    tools: ["Brevo", "WordPress", "Gumroad"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Gumroad.",
+      "Utilisez Brevo pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec WordPress et commencez à vendre."
+    ],
+    time: "2 jours",
+    cost: "0 DZD (Essai)"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur LinkedIn",
+    goal: "Créer un business automatisé de saas en utilisant LinkedIn.",
+    tools: ["ChatGPT", "Canva", "LinkedIn"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur LinkedIn.",
+      "Utilisez ChatGPT pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Canva et commencez à vendre."
+    ],
+    time: "15 min",
+    cost: "0 DZD"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur LinkedIn",
+    goal: "Créer un business automatisé de saas en utilisant LinkedIn.",
+    tools: ["Claude 3", "Notion", "LinkedIn"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur LinkedIn.",
+      "Utilisez Claude 3 pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Notion et commencez à vendre."
+    ],
+    time: "30 min",
+    cost: "0 DZD (Plan Gratuit)"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur LinkedIn",
+    goal: "Créer un business automatisé de saas en utilisant LinkedIn.",
+    tools: ["Midjourney", "Discord", "LinkedIn"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur LinkedIn.",
+      "Utilisez Midjourney pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Discord et commencez à vendre."
+    ],
+    time: "1 heure",
+    cost: "Moins de2 000 DZD"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur LinkedIn",
+    goal: "Créer un business automatisé de saas en utilisant LinkedIn.",
+    tools: ["Make.com", "Airtable", "LinkedIn"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur LinkedIn.",
+      "Utilisez Make.com pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Airtable et commencez à vendre."
+    ],
+    time: "2 heures",
+    cost: "Freemium"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur LinkedIn",
+    goal: "Créer un business automatisé de saas en utilisant LinkedIn.",
+    tools: ["CapCut", "ElevenLabs", "LinkedIn"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur LinkedIn.",
+      "Utilisez CapCut pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec ElevenLabs et commencez à vendre."
+    ],
+    time: "1 jour",
+    cost: "0 DZD (Essai)"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur LinkedIn",
+    goal: "Créer un business automatisé de saas en utilisant LinkedIn.",
+    tools: ["Webflow", "Figma", "LinkedIn"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur LinkedIn.",
+      "Utilisez Webflow pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Figma et commencez à vendre."
+    ],
+    time: "2 jours",
+    cost: "0 DZD"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur LinkedIn",
+    goal: "Créer un business automatisé de saas en utilisant LinkedIn.",
+    tools: ["Stripe", "Zapier", "LinkedIn"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur LinkedIn.",
+      "Utilisez Stripe pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Zapier et commencez à vendre."
+    ],
+    time: "15 min",
+    cost: "0 DZD (Plan Gratuit)"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur LinkedIn",
+    goal: "Créer un business automatisé de saas en utilisant LinkedIn.",
+    tools: ["Lemlist", "Apollo.io", "LinkedIn"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur LinkedIn.",
+      "Utilisez Lemlist pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Apollo.io et commencez à vendre."
+    ],
+    time: "30 min",
+    cost: "Moins de2 000 DZD"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur LinkedIn",
+    goal: "Créer un business automatisé de saas en utilisant LinkedIn.",
+    tools: ["Brevo", "WordPress", "LinkedIn"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur LinkedIn.",
+      "Utilisez Brevo pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec WordPress et commencez à vendre."
+    ],
+    time: "1 heure",
+    cost: "Freemium"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Instagram",
+    goal: "Créer un business automatisé de saas en utilisant Instagram.",
+    tools: ["ChatGPT", "Canva", "Instagram"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Instagram.",
+      "Utilisez ChatGPT pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Canva et commencez à vendre."
+    ],
+    time: "2 heures",
+    cost: "0 DZD (Essai)"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Instagram",
+    goal: "Créer un business automatisé de saas en utilisant Instagram.",
+    tools: ["Claude 3", "Notion", "Instagram"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Instagram.",
+      "Utilisez Claude 3 pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Notion et commencez à vendre."
+    ],
+    time: "1 jour",
+    cost: "0 DZD"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Instagram",
+    goal: "Créer un business automatisé de saas en utilisant Instagram.",
+    tools: ["Midjourney", "Discord", "Instagram"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Instagram.",
+      "Utilisez Midjourney pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Discord et commencez à vendre."
+    ],
+    time: "2 jours",
+    cost: "0 DZD (Plan Gratuit)"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Instagram",
+    goal: "Créer un business automatisé de saas en utilisant Instagram.",
+    tools: ["Make.com", "Airtable", "Instagram"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Instagram.",
+      "Utilisez Make.com pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Airtable et commencez à vendre."
+    ],
+    time: "15 min",
+    cost: "Moins de2 000 DZD"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Instagram",
+    goal: "Créer un business automatisé de saas en utilisant Instagram.",
+    tools: ["CapCut", "ElevenLabs", "Instagram"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Instagram.",
+      "Utilisez CapCut pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec ElevenLabs et commencez à vendre."
+    ],
+    time: "30 min",
+    cost: "Freemium"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Instagram",
+    goal: "Créer un business automatisé de saas en utilisant Instagram.",
+    tools: ["Webflow", "Figma", "Instagram"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Instagram.",
+      "Utilisez Webflow pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Figma et commencez à vendre."
+    ],
+    time: "1 heure",
+    cost: "0 DZD (Essai)"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Instagram",
+    goal: "Créer un business automatisé de saas en utilisant Instagram.",
+    tools: ["Stripe", "Zapier", "Instagram"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Instagram.",
+      "Utilisez Stripe pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Zapier et commencez à vendre."
+    ],
+    time: "2 heures",
+    cost: "0 DZD"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Instagram",
+    goal: "Créer un business automatisé de saas en utilisant Instagram.",
+    tools: ["Lemlist", "Apollo.io", "Instagram"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Instagram.",
+      "Utilisez Lemlist pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Apollo.io et commencez à vendre."
+    ],
+    time: "1 jour",
+    cost: "0 DZD (Plan Gratuit)"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur Instagram",
+    goal: "Créer un business automatisé de saas en utilisant Instagram.",
+    tools: ["Brevo", "WordPress", "Instagram"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur Instagram.",
+      "Utilisez Brevo pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec WordPress et commencez à vendre."
+    ],
+    time: "2 jours",
+    cost: "Moins de2 000 DZD"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur TikTok",
+    goal: "Créer un business automatisé de saas en utilisant TikTok.",
+    tools: ["ChatGPT", "Canva", "TikTok"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur TikTok.",
+      "Utilisez ChatGPT pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Canva et commencez à vendre."
+    ],
+    time: "15 min",
+    cost: "Freemium"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur TikTok",
+    goal: "Créer un business automatisé de saas en utilisant TikTok.",
+    tools: ["Claude 3", "Notion", "TikTok"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur TikTok.",
+      "Utilisez Claude 3 pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Notion et commencez à vendre."
+    ],
+    time: "30 min",
+    cost: "0 DZD (Essai)"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur TikTok",
+    goal: "Créer un business automatisé de saas en utilisant TikTok.",
+    tools: ["Midjourney", "Discord", "TikTok"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur TikTok.",
+      "Utilisez Midjourney pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Discord et commencez à vendre."
+    ],
+    time: "1 heure",
+    cost: "0 DZD"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur TikTok",
+    goal: "Créer un business automatisé de saas en utilisant TikTok.",
+    tools: ["Make.com", "Airtable", "TikTok"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur TikTok.",
+      "Utilisez Make.com pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Airtable et commencez à vendre."
+    ],
+    time: "2 heures",
+    cost: "0 DZD (Plan Gratuit)"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur TikTok",
+    goal: "Créer un business automatisé de saas en utilisant TikTok.",
+    tools: ["CapCut", "ElevenLabs", "TikTok"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur TikTok.",
+      "Utilisez CapCut pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec ElevenLabs et commencez à vendre."
+    ],
+    time: "1 jour",
+    cost: "Moins de2 000 DZD"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur TikTok",
+    goal: "Créer un business automatisé de saas en utilisant TikTok.",
+    tools: ["Webflow", "Figma", "TikTok"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur TikTok.",
+      "Utilisez Webflow pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Figma et commencez à vendre."
+    ],
+    time: "2 jours",
+    cost: "Freemium"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur TikTok",
+    goal: "Créer un business automatisé de saas en utilisant TikTok.",
+    tools: ["Stripe", "Zapier", "TikTok"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur TikTok.",
+      "Utilisez Stripe pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Zapier et commencez à vendre."
+    ],
+    time: "15 min",
+    cost: "0 DZD (Essai)"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur TikTok",
+    goal: "Créer un business automatisé de saas en utilisant TikTok.",
+    tools: ["Lemlist", "Apollo.io", "TikTok"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur TikTok.",
+      "Utilisez Lemlist pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Apollo.io et commencez à vendre."
+    ],
+    time: "30 min",
+    cost: "0 DZD"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur TikTok",
+    goal: "Créer un business automatisé de saas en utilisant TikTok.",
+    tools: ["Brevo", "WordPress", "TikTok"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur TikTok.",
+      "Utilisez Brevo pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec WordPress et commencez à vendre."
+    ],
+    time: "1 heure",
+    cost: "0 DZD (Plan Gratuit)"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur YouTube",
+    goal: "Créer un business automatisé de saas en utilisant YouTube.",
+    tools: ["ChatGPT", "Canva", "YouTube"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur YouTube.",
+      "Utilisez ChatGPT pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Canva et commencez à vendre."
+    ],
+    time: "2 heures",
+    cost: "Moins de2 000 DZD"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur YouTube",
+    goal: "Créer un business automatisé de saas en utilisant YouTube.",
+    tools: ["Claude 3", "Notion", "YouTube"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur YouTube.",
+      "Utilisez Claude 3 pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Notion et commencez à vendre."
+    ],
+    time: "1 jour",
+    cost: "Freemium"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur YouTube",
+    goal: "Créer un business automatisé de saas en utilisant YouTube.",
+    tools: ["Midjourney", "Discord", "YouTube"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur YouTube.",
+      "Utilisez Midjourney pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Discord et commencez à vendre."
+    ],
+    time: "2 jours",
+    cost: "0 DZD (Essai)"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur YouTube",
+    goal: "Créer un business automatisé de saas en utilisant YouTube.",
+    tools: ["Make.com", "Airtable", "YouTube"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur YouTube.",
+      "Utilisez Make.com pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Airtable et commencez à vendre."
+    ],
+    time: "15 min",
+    cost: "0 DZD"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur YouTube",
+    goal: "Créer un business automatisé de saas en utilisant YouTube.",
+    tools: ["CapCut", "ElevenLabs", "YouTube"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur YouTube.",
+      "Utilisez CapCut pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec ElevenLabs et commencez à vendre."
+    ],
+    time: "30 min",
+    cost: "0 DZD (Plan Gratuit)"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur YouTube",
+    goal: "Créer un business automatisé de saas en utilisant YouTube.",
+    tools: ["Webflow", "Figma", "YouTube"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur YouTube.",
+      "Utilisez Webflow pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Figma et commencez à vendre."
+    ],
+    time: "1 heure",
+    cost: "Moins de2 000 DZD"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur YouTube",
+    goal: "Créer un business automatisé de saas en utilisant YouTube.",
+    tools: ["Stripe", "Zapier", "YouTube"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur YouTube.",
+      "Utilisez Stripe pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Zapier et commencez à vendre."
+    ],
+    time: "2 heures",
+    cost: "Freemium"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur YouTube",
+    goal: "Créer un business automatisé de saas en utilisant YouTube.",
+    tools: ["Lemlist", "Apollo.io", "YouTube"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur YouTube.",
+      "Utilisez Lemlist pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Apollo.io et commencez à vendre."
+    ],
+    time: "1 jour",
+    cost: "0 DZD (Essai)"
+  },
+  {
+    title: "Générer des revenus avec SaaS sur YouTube",
+    goal: "Créer un business automatisé de saas en utilisant YouTube.",
+    tools: ["Brevo", "WordPress", "YouTube"],
+    steps: [
+      "Analysez la demande pour le secteur saas sur YouTube.",
+      "Utilisez Brevo pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec WordPress et commencez à vendre."
+    ],
+    time: "2 jours",
+    cost: "0 DZD"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Fiverr",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Fiverr.",
+    tools: ["ChatGPT", "Canva", "Fiverr"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Fiverr.",
+      "Utilisez ChatGPT pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Canva et commencez à vendre."
+    ],
+    time: "15 min",
+    cost: "0 DZD (Plan Gratuit)"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Fiverr",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Fiverr.",
+    tools: ["Claude 3", "Notion", "Fiverr"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Fiverr.",
+      "Utilisez Claude 3 pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Notion et commencez à vendre."
+    ],
+    time: "30 min",
+    cost: "Moins de2 000 DZD"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Fiverr",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Fiverr.",
+    tools: ["Midjourney", "Discord", "Fiverr"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Fiverr.",
+      "Utilisez Midjourney pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Discord et commencez à vendre."
+    ],
+    time: "1 heure",
+    cost: "Freemium"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Fiverr",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Fiverr.",
+    tools: ["Make.com", "Airtable", "Fiverr"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Fiverr.",
+      "Utilisez Make.com pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Airtable et commencez à vendre."
+    ],
+    time: "2 heures",
+    cost: "0 DZD (Essai)"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Fiverr",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Fiverr.",
+    tools: ["CapCut", "ElevenLabs", "Fiverr"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Fiverr.",
+      "Utilisez CapCut pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec ElevenLabs et commencez à vendre."
+    ],
+    time: "1 jour",
+    cost: "0 DZD"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Fiverr",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Fiverr.",
+    tools: ["Webflow", "Figma", "Fiverr"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Fiverr.",
+      "Utilisez Webflow pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Figma et commencez à vendre."
+    ],
+    time: "2 jours",
+    cost: "0 DZD (Plan Gratuit)"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Fiverr",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Fiverr.",
+    tools: ["Stripe", "Zapier", "Fiverr"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Fiverr.",
+      "Utilisez Stripe pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Zapier et commencez à vendre."
+    ],
+    time: "15 min",
+    cost: "Moins de2 000 DZD"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Fiverr",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Fiverr.",
+    tools: ["Lemlist", "Apollo.io", "Fiverr"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Fiverr.",
+      "Utilisez Lemlist pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Apollo.io et commencez à vendre."
+    ],
+    time: "30 min",
+    cost: "Freemium"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Fiverr",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Fiverr.",
+    tools: ["Brevo", "WordPress", "Fiverr"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Fiverr.",
+      "Utilisez Brevo pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec WordPress et commencez à vendre."
+    ],
+    time: "1 heure",
+    cost: "0 DZD (Essai)"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Upwork",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Upwork.",
+    tools: ["ChatGPT", "Canva", "Upwork"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Upwork.",
+      "Utilisez ChatGPT pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Canva et commencez à vendre."
+    ],
+    time: "2 heures",
+    cost: "0 DZD"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Upwork",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Upwork.",
+    tools: ["Claude 3", "Notion", "Upwork"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Upwork.",
+      "Utilisez Claude 3 pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Notion et commencez à vendre."
+    ],
+    time: "1 jour",
+    cost: "0 DZD (Plan Gratuit)"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Upwork",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Upwork.",
+    tools: ["Midjourney", "Discord", "Upwork"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Upwork.",
+      "Utilisez Midjourney pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Discord et commencez à vendre."
+    ],
+    time: "2 jours",
+    cost: "Moins de2 000 DZD"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Upwork",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Upwork.",
+    tools: ["Make.com", "Airtable", "Upwork"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Upwork.",
+      "Utilisez Make.com pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Airtable et commencez à vendre."
+    ],
+    time: "15 min",
+    cost: "Freemium"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Upwork",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Upwork.",
+    tools: ["CapCut", "ElevenLabs", "Upwork"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Upwork.",
+      "Utilisez CapCut pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec ElevenLabs et commencez à vendre."
+    ],
+    time: "30 min",
+    cost: "0 DZD (Essai)"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Upwork",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Upwork.",
+    tools: ["Webflow", "Figma", "Upwork"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Upwork.",
+      "Utilisez Webflow pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Figma et commencez à vendre."
+    ],
+    time: "1 heure",
+    cost: "0 DZD"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Upwork",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Upwork.",
+    tools: ["Stripe", "Zapier", "Upwork"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Upwork.",
+      "Utilisez Stripe pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Zapier et commencez à vendre."
+    ],
+    time: "2 heures",
+    cost: "0 DZD (Plan Gratuit)"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Upwork",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Upwork.",
+    tools: ["Lemlist", "Apollo.io", "Upwork"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Upwork.",
+      "Utilisez Lemlist pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Apollo.io et commencez à vendre."
+    ],
+    time: "1 jour",
+    cost: "Moins de2 000 DZD"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Upwork",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Upwork.",
+    tools: ["Brevo", "WordPress", "Upwork"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Upwork.",
+      "Utilisez Brevo pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec WordPress et commencez à vendre."
+    ],
+    time: "2 jours",
+    cost: "Freemium"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Malt",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Malt.",
+    tools: ["ChatGPT", "Canva", "Malt"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Malt.",
+      "Utilisez ChatGPT pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Canva et commencez à vendre."
+    ],
+    time: "15 min",
+    cost: "0 DZD (Essai)"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Malt",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Malt.",
+    tools: ["Claude 3", "Notion", "Malt"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Malt.",
+      "Utilisez Claude 3 pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Notion et commencez à vendre."
+    ],
+    time: "30 min",
+    cost: "0 DZD"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Malt",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Malt.",
+    tools: ["Midjourney", "Discord", "Malt"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Malt.",
+      "Utilisez Midjourney pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Discord et commencez à vendre."
+    ],
+    time: "1 heure",
+    cost: "0 DZD (Plan Gratuit)"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Malt",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Malt.",
+    tools: ["Make.com", "Airtable", "Malt"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Malt.",
+      "Utilisez Make.com pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Airtable et commencez à vendre."
+    ],
+    time: "2 heures",
+    cost: "Moins de2 000 DZD"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Malt",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Malt.",
+    tools: ["CapCut", "ElevenLabs", "Malt"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Malt.",
+      "Utilisez CapCut pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec ElevenLabs et commencez à vendre."
+    ],
+    time: "1 jour",
+    cost: "Freemium"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Malt",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Malt.",
+    tools: ["Webflow", "Figma", "Malt"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Malt.",
+      "Utilisez Webflow pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Figma et commencez à vendre."
+    ],
+    time: "2 jours",
+    cost: "0 DZD (Essai)"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Malt",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Malt.",
+    tools: ["Stripe", "Zapier", "Malt"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Malt.",
+      "Utilisez Stripe pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Zapier et commencez à vendre."
+    ],
+    time: "15 min",
+    cost: "0 DZD"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Malt",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Malt.",
+    tools: ["Lemlist", "Apollo.io", "Malt"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Malt.",
+      "Utilisez Lemlist pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Apollo.io et commencez à vendre."
+    ],
+    time: "30 min",
+    cost: "0 DZD (Plan Gratuit)"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Malt",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Malt.",
+    tools: ["Brevo", "WordPress", "Malt"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Malt.",
+      "Utilisez Brevo pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec WordPress et commencez à vendre."
+    ],
+    time: "1 heure",
+    cost: "Moins de2 000 DZD"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Etsy",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Etsy.",
+    tools: ["ChatGPT", "Canva", "Etsy"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Etsy.",
+      "Utilisez ChatGPT pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Canva et commencez à vendre."
+    ],
+    time: "2 heures",
+    cost: "Freemium"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Etsy",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Etsy.",
+    tools: ["Claude 3", "Notion", "Etsy"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Etsy.",
+      "Utilisez Claude 3 pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Notion et commencez à vendre."
+    ],
+    time: "1 jour",
+    cost: "0 DZD (Essai)"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Etsy",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Etsy.",
+    tools: ["Midjourney", "Discord", "Etsy"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Etsy.",
+      "Utilisez Midjourney pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Discord et commencez à vendre."
+    ],
+    time: "2 jours",
+    cost: "0 DZD"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Etsy",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Etsy.",
+    tools: ["Make.com", "Airtable", "Etsy"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Etsy.",
+      "Utilisez Make.com pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Airtable et commencez à vendre."
+    ],
+    time: "15 min",
+    cost: "0 DZD (Plan Gratuit)"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Etsy",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Etsy.",
+    tools: ["CapCut", "ElevenLabs", "Etsy"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Etsy.",
+      "Utilisez CapCut pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec ElevenLabs et commencez à vendre."
+    ],
+    time: "30 min",
+    cost: "Moins de2 000 DZD"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Etsy",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Etsy.",
+    tools: ["Webflow", "Figma", "Etsy"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Etsy.",
+      "Utilisez Webflow pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Figma et commencez à vendre."
+    ],
+    time: "1 heure",
+    cost: "Freemium"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Etsy",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Etsy.",
+    tools: ["Stripe", "Zapier", "Etsy"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Etsy.",
+      "Utilisez Stripe pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Zapier et commencez à vendre."
+    ],
+    time: "2 heures",
+    cost: "0 DZD (Essai)"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Etsy",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Etsy.",
+    tools: ["Lemlist", "Apollo.io", "Etsy"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Etsy.",
+      "Utilisez Lemlist pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Apollo.io et commencez à vendre."
+    ],
+    time: "1 jour",
+    cost: "0 DZD"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Etsy",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Etsy.",
+    tools: ["Brevo", "WordPress", "Etsy"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Etsy.",
+      "Utilisez Brevo pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec WordPress et commencez à vendre."
+    ],
+    time: "2 jours",
+    cost: "0 DZD (Plan Gratuit)"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Shopify",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Shopify.",
+    tools: ["ChatGPT", "Canva", "Shopify"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Shopify.",
+      "Utilisez ChatGPT pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Canva et commencez à vendre."
+    ],
+    time: "15 min",
+    cost: "Moins de2 000 DZD"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Shopify",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Shopify.",
+    tools: ["Claude 3", "Notion", "Shopify"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Shopify.",
+      "Utilisez Claude 3 pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Notion et commencez à vendre."
+    ],
+    time: "30 min",
+    cost: "Freemium"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Shopify",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Shopify.",
+    tools: ["Midjourney", "Discord", "Shopify"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Shopify.",
+      "Utilisez Midjourney pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Discord et commencez à vendre."
+    ],
+    time: "1 heure",
+    cost: "0 DZD (Essai)"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Shopify",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Shopify.",
+    tools: ["Make.com", "Airtable", "Shopify"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Shopify.",
+      "Utilisez Make.com pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Airtable et commencez à vendre."
+    ],
+    time: "2 heures",
+    cost: "0 DZD"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Shopify",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Shopify.",
+    tools: ["CapCut", "ElevenLabs", "Shopify"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Shopify.",
+      "Utilisez CapCut pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec ElevenLabs et commencez à vendre."
+    ],
+    time: "1 jour",
+    cost: "0 DZD (Plan Gratuit)"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Shopify",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Shopify.",
+    tools: ["Webflow", "Figma", "Shopify"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Shopify.",
+      "Utilisez Webflow pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Figma et commencez à vendre."
+    ],
+    time: "2 jours",
+    cost: "Moins de2 000 DZD"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Shopify",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Shopify.",
+    tools: ["Stripe", "Zapier", "Shopify"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Shopify.",
+      "Utilisez Stripe pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Zapier et commencez à vendre."
+    ],
+    time: "15 min",
+    cost: "Freemium"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Shopify",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Shopify.",
+    tools: ["Lemlist", "Apollo.io", "Shopify"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Shopify.",
+      "Utilisez Lemlist pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Apollo.io et commencez à vendre."
+    ],
+    time: "30 min",
+    cost: "0 DZD (Essai)"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Shopify",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Shopify.",
+    tools: ["Brevo", "WordPress", "Shopify"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Shopify.",
+      "Utilisez Brevo pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec WordPress et commencez à vendre."
+    ],
+    time: "1 heure",
+    cost: "0 DZD"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Amazon KDP",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Amazon KDP.",
+    tools: ["ChatGPT", "Canva", "Amazon KDP"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Amazon KDP.",
+      "Utilisez ChatGPT pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Canva et commencez à vendre."
+    ],
+    time: "2 heures",
+    cost: "0 DZD (Plan Gratuit)"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Amazon KDP",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Amazon KDP.",
+    tools: ["Claude 3", "Notion", "Amazon KDP"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Amazon KDP.",
+      "Utilisez Claude 3 pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Notion et commencez à vendre."
+    ],
+    time: "1 jour",
+    cost: "Moins de2 000 DZD"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Amazon KDP",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Amazon KDP.",
+    tools: ["Midjourney", "Discord", "Amazon KDP"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Amazon KDP.",
+      "Utilisez Midjourney pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Discord et commencez à vendre."
+    ],
+    time: "2 jours",
+    cost: "Freemium"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Amazon KDP",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Amazon KDP.",
+    tools: ["Make.com", "Airtable", "Amazon KDP"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Amazon KDP.",
+      "Utilisez Make.com pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Airtable et commencez à vendre."
+    ],
+    time: "15 min",
+    cost: "0 DZD (Essai)"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Amazon KDP",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Amazon KDP.",
+    tools: ["CapCut", "ElevenLabs", "Amazon KDP"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Amazon KDP.",
+      "Utilisez CapCut pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec ElevenLabs et commencez à vendre."
+    ],
+    time: "30 min",
+    cost: "0 DZD"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Amazon KDP",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Amazon KDP.",
+    tools: ["Webflow", "Figma", "Amazon KDP"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Amazon KDP.",
+      "Utilisez Webflow pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Figma et commencez à vendre."
+    ],
+    time: "1 heure",
+    cost: "0 DZD (Plan Gratuit)"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Amazon KDP",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Amazon KDP.",
+    tools: ["Stripe", "Zapier", "Amazon KDP"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Amazon KDP.",
+      "Utilisez Stripe pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Zapier et commencez à vendre."
+    ],
+    time: "2 heures",
+    cost: "Moins de2 000 DZD"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Amazon KDP",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Amazon KDP.",
+    tools: ["Lemlist", "Apollo.io", "Amazon KDP"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Amazon KDP.",
+      "Utilisez Lemlist pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Apollo.io et commencez à vendre."
+    ],
+    time: "1 jour",
+    cost: "Freemium"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Amazon KDP",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Amazon KDP.",
+    tools: ["Brevo", "WordPress", "Amazon KDP"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Amazon KDP.",
+      "Utilisez Brevo pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec WordPress et commencez à vendre."
+    ],
+    time: "2 jours",
+    cost: "0 DZD (Essai)"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Systeme.io",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Systeme.io.",
+    tools: ["ChatGPT", "Canva", "Systeme.io"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Systeme.io.",
+      "Utilisez ChatGPT pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Canva et commencez à vendre."
+    ],
+    time: "15 min",
+    cost: "0 DZD"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Systeme.io",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Systeme.io.",
+    tools: ["Claude 3", "Notion", "Systeme.io"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Systeme.io.",
+      "Utilisez Claude 3 pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Notion et commencez à vendre."
+    ],
+    time: "30 min",
+    cost: "0 DZD (Plan Gratuit)"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Systeme.io",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Systeme.io.",
+    tools: ["Midjourney", "Discord", "Systeme.io"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Systeme.io.",
+      "Utilisez Midjourney pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Discord et commencez à vendre."
+    ],
+    time: "1 heure",
+    cost: "Moins de2 000 DZD"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Systeme.io",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Systeme.io.",
+    tools: ["Make.com", "Airtable", "Systeme.io"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Systeme.io.",
+      "Utilisez Make.com pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Airtable et commencez à vendre."
+    ],
+    time: "2 heures",
+    cost: "Freemium"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Systeme.io",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Systeme.io.",
+    tools: ["CapCut", "ElevenLabs", "Systeme.io"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Systeme.io.",
+      "Utilisez CapCut pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec ElevenLabs et commencez à vendre."
+    ],
+    time: "1 jour",
+    cost: "0 DZD (Essai)"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Systeme.io",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Systeme.io.",
+    tools: ["Webflow", "Figma", "Systeme.io"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Systeme.io.",
+      "Utilisez Webflow pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Figma et commencez à vendre."
+    ],
+    time: "2 jours",
+    cost: "0 DZD"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Systeme.io",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Systeme.io.",
+    tools: ["Stripe", "Zapier", "Systeme.io"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Systeme.io.",
+      "Utilisez Stripe pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Zapier et commencez à vendre."
+    ],
+    time: "15 min",
+    cost: "0 DZD (Plan Gratuit)"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Systeme.io",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Systeme.io.",
+    tools: ["Lemlist", "Apollo.io", "Systeme.io"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Systeme.io.",
+      "Utilisez Lemlist pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Apollo.io et commencez à vendre."
+    ],
+    time: "30 min",
+    cost: "Moins de2 000 DZD"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Systeme.io",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Systeme.io.",
+    tools: ["Brevo", "WordPress", "Systeme.io"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Systeme.io.",
+      "Utilisez Brevo pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec WordPress et commencez à vendre."
+    ],
+    time: "1 heure",
+    cost: "Freemium"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Gumroad",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Gumroad.",
+    tools: ["ChatGPT", "Canva", "Gumroad"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Gumroad.",
+      "Utilisez ChatGPT pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Canva et commencez à vendre."
+    ],
+    time: "2 heures",
+    cost: "0 DZD (Essai)"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Gumroad",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Gumroad.",
+    tools: ["Claude 3", "Notion", "Gumroad"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Gumroad.",
+      "Utilisez Claude 3 pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Notion et commencez à vendre."
+    ],
+    time: "1 jour",
+    cost: "0 DZD"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Gumroad",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Gumroad.",
+    tools: ["Midjourney", "Discord", "Gumroad"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Gumroad.",
+      "Utilisez Midjourney pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Discord et commencez à vendre."
+    ],
+    time: "2 jours",
+    cost: "0 DZD (Plan Gratuit)"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Gumroad",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Gumroad.",
+    tools: ["Make.com", "Airtable", "Gumroad"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Gumroad.",
+      "Utilisez Make.com pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Airtable et commencez à vendre."
+    ],
+    time: "15 min",
+    cost: "Moins de2 000 DZD"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Gumroad",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Gumroad.",
+    tools: ["CapCut", "ElevenLabs", "Gumroad"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Gumroad.",
+      "Utilisez CapCut pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec ElevenLabs et commencez à vendre."
+    ],
+    time: "30 min",
+    cost: "Freemium"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Gumroad",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Gumroad.",
+    tools: ["Webflow", "Figma", "Gumroad"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Gumroad.",
+      "Utilisez Webflow pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Figma et commencez à vendre."
+    ],
+    time: "1 heure",
+    cost: "0 DZD (Essai)"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Gumroad",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Gumroad.",
+    tools: ["Stripe", "Zapier", "Gumroad"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Gumroad.",
+      "Utilisez Stripe pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Zapier et commencez à vendre."
+    ],
+    time: "2 heures",
+    cost: "0 DZD"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Gumroad",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Gumroad.",
+    tools: ["Lemlist", "Apollo.io", "Gumroad"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Gumroad.",
+      "Utilisez Lemlist pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Apollo.io et commencez à vendre."
+    ],
+    time: "1 jour",
+    cost: "0 DZD (Plan Gratuit)"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Gumroad",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Gumroad.",
+    tools: ["Brevo", "WordPress", "Gumroad"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Gumroad.",
+      "Utilisez Brevo pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec WordPress et commencez à vendre."
+    ],
+    time: "2 jours",
+    cost: "Moins de2 000 DZD"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur LinkedIn",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant LinkedIn.",
+    tools: ["ChatGPT", "Canva", "LinkedIn"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur LinkedIn.",
+      "Utilisez ChatGPT pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Canva et commencez à vendre."
+    ],
+    time: "15 min",
+    cost: "Freemium"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur LinkedIn",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant LinkedIn.",
+    tools: ["Claude 3", "Notion", "LinkedIn"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur LinkedIn.",
+      "Utilisez Claude 3 pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Notion et commencez à vendre."
+    ],
+    time: "30 min",
+    cost: "0 DZD (Essai)"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur LinkedIn",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant LinkedIn.",
+    tools: ["Midjourney", "Discord", "LinkedIn"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur LinkedIn.",
+      "Utilisez Midjourney pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Discord et commencez à vendre."
+    ],
+    time: "1 heure",
+    cost: "0 DZD"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur LinkedIn",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant LinkedIn.",
+    tools: ["Make.com", "Airtable", "LinkedIn"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur LinkedIn.",
+      "Utilisez Make.com pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Airtable et commencez à vendre."
+    ],
+    time: "2 heures",
+    cost: "0 DZD (Plan Gratuit)"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur LinkedIn",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant LinkedIn.",
+    tools: ["CapCut", "ElevenLabs", "LinkedIn"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur LinkedIn.",
+      "Utilisez CapCut pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec ElevenLabs et commencez à vendre."
+    ],
+    time: "1 jour",
+    cost: "Moins de2 000 DZD"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur LinkedIn",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant LinkedIn.",
+    tools: ["Webflow", "Figma", "LinkedIn"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur LinkedIn.",
+      "Utilisez Webflow pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Figma et commencez à vendre."
+    ],
+    time: "2 jours",
+    cost: "Freemium"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur LinkedIn",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant LinkedIn.",
+    tools: ["Stripe", "Zapier", "LinkedIn"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur LinkedIn.",
+      "Utilisez Stripe pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Zapier et commencez à vendre."
+    ],
+    time: "15 min",
+    cost: "0 DZD (Essai)"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur LinkedIn",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant LinkedIn.",
+    tools: ["Lemlist", "Apollo.io", "LinkedIn"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur LinkedIn.",
+      "Utilisez Lemlist pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Apollo.io et commencez à vendre."
+    ],
+    time: "30 min",
+    cost: "0 DZD"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur LinkedIn",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant LinkedIn.",
+    tools: ["Brevo", "WordPress", "LinkedIn"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur LinkedIn.",
+      "Utilisez Brevo pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec WordPress et commencez à vendre."
+    ],
+    time: "1 heure",
+    cost: "0 DZD (Plan Gratuit)"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Instagram",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Instagram.",
+    tools: ["ChatGPT", "Canva", "Instagram"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Instagram.",
+      "Utilisez ChatGPT pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Canva et commencez à vendre."
+    ],
+    time: "2 heures",
+    cost: "Moins de2 000 DZD"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Instagram",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Instagram.",
+    tools: ["Claude 3", "Notion", "Instagram"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Instagram.",
+      "Utilisez Claude 3 pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Notion et commencez à vendre."
+    ],
+    time: "1 jour",
+    cost: "Freemium"
+  },
+  {
+    title: "Générer des revenus avec Freelance Copywriting sur Instagram",
+    goal: "Créer un business automatisé de freelance copywriting en utilisant Instagram.",
+    tools: ["Midjourney", "Discord", "Instagram"],
+    steps: [
+      "Analysez la demande pour le secteur freelance copywriting sur Instagram.",
+      "Utilisez Midjourney pour générer votre offre, votre branding ou vos textes.",
+      "Mettez en place votre vitrine/produit final avec Discord et commencez à vendre."
+    ],
+    time: "2 jours",
+    cost: "0 DZD (Essai)"
   }
 ]
 
@@ -746,7 +4346,7 @@ export const masterclassCategories = [
     color: "text-orange-500",
     strategies: [
       {
-        title: "100M$ Offers (Alex Hormozi)",
+        title: "20 000 000 000 DZD Offers (Alex Hormozi)",
         icon: <ShoppingCart className="text-orange-500" size={24} />,
         color: "bg-orange-50 text-orange-600 border-orange-100",
         desc: "L'art de créer une offre irrésistible.",
@@ -796,7 +4396,7 @@ export const masterclassCategories = [
         desc: "Ne perds pas 3 mois sur un produit incertain.",
         points: [
           "⏱️ Crée ta boutique express en 2 heures max.",
-          "💸 Dépense juste 50€ en pub (TikTok ou Meta).",
+          "💸 Dépense juste10 000 DZD en pub (TikTok ou Meta).",
           "🔪 Si ça marche : Scale. Si ça flop : Coupe tout sans regret."
         ]
       },
@@ -915,7 +4515,7 @@ export const masterclassCategories = [
         desc: "Pas besoin de millions d'abonnés pour vivre.",
         points: [
           "❤️ Trouve 1000 fans prêts à acheter tout ce que tu fais.",
-          "💰 S'ils payent 100€/an = tu gagnes 100 000€.",
+          "💰 S'ils payent20 000 DZD/an = tu gagnes20 000 000 DZD.",
           "🤝 Privilégie une audience petite mais ultra-engagée."
         ]
       },
@@ -967,7 +4567,7 @@ export const masterclassCategories = [
       },
       {
         id: "v4",
-        title: "Comment j'ai revendu mon SaaS 150M$",
+        title: "Comment j'ai revendu mon SaaS30 000 000 000 DZD",
         channel: "Guillaume Moubeche",
         desc: "Le CEO de Lemlist explique sa stratégie de Cold Emailing. Un condensé de valeur brute avec des templates d'emails souvent offerts dans la bio.",
         url: "https:www.youtube.com/results?search_query=guillaume+moubeche+lemlist",
@@ -1068,7 +4668,7 @@ export const labIdeasData = [
     ]
   },
   {
-    title: "3 Business à lancer en 2027 avec 0€",
+    title: "3 Business à lancer en 2027 avec0 DZD",
     type: "TikTok",
     niche: "Entrepreneuriat",
     difficulty: "Facile",

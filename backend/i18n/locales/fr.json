@@ -22,7 +22,9 @@
     "notifications_read": "Notifications marquées comme lues.",
     "forbidden_admin": "Accès réservé aux administrateurs.",
     "unauthenticated": "Non authentifié.",
-    "refresh_success": "Token rafraîchi avec succès."
+    "refresh_success": "Token rafraîchi avec succès.",
+    "invalid_input": "Les informations saisies sont invalides. Vérifiez les champs et réessayez.",
+    "session_invalidated": "Votre session a expiré ou a été révoquée. Veuillez vous reconnecter."
   },
   "courses": {
     "id_invalid": "ID invalide.",
@@ -33,7 +35,8 @@
     "progress_updated": "Progression mise à jour.",
     "rating_invalid": "La note doit être un nombre entre 1 et 5.",
     "must_buy_to_rate": "Vous devez acheter cette formation pour la noter.",
-    "review_saved": "Avis enregistré."
+    "review_saved": "Avis enregistré.",
+    "complete_previous_first": "Terminez la leçon précédente pour débloquer celle-ci."
   },
   "payments": {
     "course_id_required": "ID de la formation requis.",
@@ -80,9 +83,9 @@
     "no_video": "Aucun fichier vidéo n'a été reçu.",
     "config_updated": "Configuration du site mise à jour avec succès.",
     "intro_uploaded": "Vidéo d'introduction téléversée avec succès !",
-    "notification_course_unlocked": "🎉 Formation débloquée !",
+    "notification_course_unlocked": "Formation débloquée",
     "notification_course_unlocked_msg": "Félicitations ! Votre paiement pour \"{{course}}\" a été approuvé. Vous avez maintenant accès complet aux cours.",
-    "notification_receipt_rejected": "⚠️ Reçu non validé",
+    "notification_receipt_rejected": "Reçu non validé",
     "notification_receipt_rejected_msg": "Votre reçu pour \"{{course}}\" n'a pas été validé. Motif: {{reason}}"
   },
   "errors": {
