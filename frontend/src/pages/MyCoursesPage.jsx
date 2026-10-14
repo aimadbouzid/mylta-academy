@@ -133,7 +133,7 @@ export default function MyCoursesPage() {
                     
                     <div className="absolute top-4 left-4 px-3 py-1.5 bg-white/95 dark:bg-academy-surfaceDark/95 backdrop-blur-md text-slate-800 dark:text-academy-textMain/85 text-[11px] rounded-full flex items-center gap-1.5 font-bold shadow-sm">
                       <CheckCircle2 size={14} className="text-emerald-500" />
-                      Accès à vie
+                      Accès illimité
                     </div>
                   </div>
 

@@ -9,7 +9,7 @@ import {
   XCircle, Plus, Trash2, Globe, GlobeLock,
   GraduationCap, AlertCircle, X, Edit3, Film, Info, HelpCircle, Upload, Save, MessageSquare, Compass, Sparkles,
   Radio, RefreshCw, Search, Activity, MousePointer, BarChart2, Award, ChevronRight, Mail, Settings,
-  Ticket, CreditCard, FileText
+  Ticket, CreditCard, CalendarDays
 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
@@ -19,7 +19,7 @@ import Logo from '../components/Logo'
 import CertificateGenerator from '../components/CertificateGenerator'
 import AdminCouponsTab from '../components/admin/AdminCouponsTab'
 import AdminPayoutsTab from '../components/admin/AdminPayoutsTab'
-import AdminBlogTab from '../components/admin/AdminBlogTab'
+import AdminCoachingTab from '../components/admin/AdminCoachingTab'
 import api from '../api/axios'
 import { useLanguage } from '../context/LanguageContext'
 
@@ -383,7 +383,7 @@ function SettingsTab() {
   const { t } = useLanguage()
   const { success: toastSuccess, error: toastError } = useToast()
   const [videoUrl, setVideoUrl] = useState('')
-  const [modules, setModules] = useState({ instructorEnabled: true, resourcesEnabled: true, blogEnabled: true, inAppBrowserGuardEnabled: true })
+  const [modules, setModules] = useState({ instructorEnabled: true, resourcesEnabled: true, inAppBrowserGuardEnabled: true })
   const [loading, setLoading] = useState(false)
   const [uploading, setUploading] = useState(false)
 
@@ -532,22 +532,6 @@ function SettingsTab() {
                   className="sr-only peer" 
                   checked={modules.resourcesEnabled}
                   onChange={(e) => setModules({...modules, resourcesEnabled: e.target.checked})}
-                />
-                <div className="w-11 h-6 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
-              </label>
-            </div>
-
-            <div className="flex items-center justify-between p-4 bg-black/20 rounded-xl border border-white/5">
-              <div>
-                <p className="text-white font-medium">Section Blog</p>
-                <p className="text-neutral-400 text-xs">Activer l'accès à la page des articles de blog.</p>
-              </div>
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input 
-                  type="checkbox" 
-                  className="sr-only peer" 
-                  checked={modules.blogEnabled !== false}
-                  onChange={(e) => setModules({...modules, blogEnabled: e.target.checked})}
                 />
                 <div className="w-11 h-6 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
               </label>
@@ -1651,7 +1635,6 @@ function DeleteInstructorModal({ instructor, onClose, onSuccess }) {
                 <li>Le compte, ses notifications, avis et candidatures sont supprimés.</li>
                 <li>Ses formations <strong>déjà vendues</strong> sont rattachées à la plateforme — les étudiants gardent leur accès.</li>
                 <li>Ses formations <strong>sans aucune vente</strong> sont supprimées avec leurs leçons.</li>
-                <li>Ses articles de blog vous sont transférés.</li>
               </ul>
               {coursesCount > 0 && (
                 <p className="pt-1 text-xs">Formations concernées : <strong>{coursesCount}</strong></p>
@@ -1862,7 +1845,7 @@ export default function AdminDashboard() {
     { id: 'payouts', icon: CreditCard, label: 'Retraits Formateurs' },
     { id: 'certificates', icon: Award, label: 'Certificats' },
     { id: 'coupons', icon: Ticket, label: 'Coupons (Promo)' },
-    { id: 'blog', icon: FileText, label: 'Blog & Articles' },
+    { id: 'coaching', icon: CalendarDays, label: 'Coaching en ligne' },
     { id: 'newsletter', icon: Mail, label: 'Newsletter', badge: stats?.totalSubscribers > 0 ? stats.totalSubscribers : null },
     { id: 'site_cms', icon: Globe, label: 'Gestion du Site (CMS)' },
     { id: 'settings', icon: Settings, label: 'Paramètres' },
@@ -2423,7 +2406,7 @@ export default function AdminDashboard() {
           {tab === 'site_cms' && <SiteCMSConfigTab />}
           {tab === 'coupons' && <AdminCouponsTab />}
           {tab === 'payouts' && <AdminPayoutsTab />}
-          {tab === 'blog' && <AdminBlogTab />}
+          {tab === 'coaching' && <AdminCoachingTab />}
           {tab === 'settings' && <SettingsTab />}
         </div>
       </main>

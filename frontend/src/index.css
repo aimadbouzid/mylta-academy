@@ -2,6 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Mobile / écrans tactiles : les grands halos flous décoratifs (filter: blur
+   de 70 à 130 px sur la moitié de l'écran) sont recalculés à chaque défilement
+   par Safari iOS et rendaient le site saccadé sur iPhone. Purement
+   décoratifs : on les retire sur ces appareils. */
+@media (max-width: 1023px), (hover: none) {
+  .pointer-events-none[style*="blur("],
+  .pointer-events-none.blur-3xl,
+  .pointer-events-none.blur-2xl,
+  .pointer-events-none[class~="blur-[70px]"],
+  .pointer-events-none[class~="blur-[100px]"],
+  .pointer-events-none[class~="blur-[120px]"] {
+    display: none;
+  }
+}
+
 /* ═══════════════════════════════════════════════════════════
    Design Tokens (CSS Variables)
 

@@ -664,6 +664,42 @@ router.delete('/lessons/:id', async (req, res, next) => {
   } catch (err) { next(err) }
 })
 
+// ─── COACHING EN LIGNE : RÉSERVATIONS ─────────────────────────
+router.get('/coaching-bookings', async (req, res, next) => {
+  try {
+    const bookings = await prisma.coachingBooking.findMany({
+      orderBy: [{ date: 'desc' }, { timeSlot: 'asc' }],
+      take: 500,
+    })
+    res.json(bookings)
+  } catch (err) { next(err) }
+})
+
+router.put('/coaching-bookings/:id', async (req, res, next) => {
+  try {
+    const id = validateId(req.params.id)
+    if (!id) return res.status(400).json({ error: 'ID invalide.' })
+    const { status } = req.body
+    if (!['PENDING', 'CONFIRMED', 'CANCELLED'].includes(status)) {
+      return res.status(400).json({ error: 'Statut invalide.' })
+    }
+    const booking = await prisma.coachingBooking.update({
+      where: { id },
+      data: { status },
+    })
+    res.json(booking)
+  } catch (err) { next(err) }
+})
+
+router.delete('/coaching-bookings/:id', async (req, res, next) => {
+  try {
+    const id = validateId(req.params.id)
+    if (!id) return res.status(400).json({ error: 'ID invalide.' })
+    await prisma.coachingBooking.delete({ where: { id } })
+    res.json({ success: true })
+  } catch (err) { next(err) }
+})
+
 // ─── CONFIGURATION PLATEFORME ─────────────────────────────────
 const { getSettings, updateSettings } = require('../settingsManager')
 
@@ -1414,42 +1450,6 @@ router.get('/newsletter/subscribers', async (req, res, next) => {
         total,
         totalPages: Math.ceil(total / limit),
       },
-    })
-  } catch (err) { next(err) }
-})
-
-// ─── GET /api/admin/blog — Lister les articles (incl. brouillons) ────────────
-router.get('/blog', async (req, res, next) => {
-  try {
-    const page = Math.max(1, parseInt(req.query.page) || 1)
-    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit) || 100))
-    const skip = (page - 1) * limit
-
-    const [posts, total] = await Promise.all([
-      prisma.blogPost.findMany({
-        orderBy: { createdAt: 'desc' },
-        select: {
-          id: true,
-          title: true,
-          slug: true,
-          summary: true,
-          thumbnail: true,
-          isPublished: true,
-          createdAt: true,
-          author: { select: { name: true, email: true } },
-        },
-        skip,
-        take: limit,
-      }),
-      prisma.blogPost.count()
-    ])
-
-    res.json({
-      posts,
-      pagination: {
-        page, limit, total,
-        totalPages: Math.ceil(total / limit)
-      }
     })
   } catch (err) { next(err) }
 })

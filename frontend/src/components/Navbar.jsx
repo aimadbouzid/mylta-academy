@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { GraduationCap, BookOpen, LayoutDashboard, LogOut, User, Menu, X, Bell, Settings, PlayCircle, CheckCircle2, AlertTriangle, Info, Home, Users, Target, Globe, Gift, Award, FileText } from 'lucide-react'
+import { GraduationCap, BookOpen, LayoutDashboard, LogOut, User, Menu, X, Bell, Settings, PlayCircle, CheckCircle2, AlertTriangle, Info, Home, Users, Target, Globe, Gift, Award, CalendarDays } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { useLanguage } from '../context/LanguageContext'
 import { useSiteSettings } from '../context/SiteSettingsContext'
@@ -9,7 +9,6 @@ import api from '../api/axios'
 
 import Logo from './Logo'
 import LoginModal from './LoginModal'
-import ThemeToggle from './ThemeToggle'
 import TopBanner from './TopBanner'
 
 export default function Navbar({ onLoginClick }) {
@@ -133,9 +132,9 @@ export default function Navbar({ onLoginClick }) {
       </div>
 
       <div className={`w-full px-2 sm:px-4 lg:px-8 pointer-events-none transition-all duration-500 ${scrolled ? 'mt-1 sm:mt-1.5' : 'mt-1 sm:mt-1.5'}`}>
-        <nav className="pointer-events-auto w-full max-w-6xl mx-auto bg-white/70 dark:bg-academy-surfaceDark/70 backdrop-blur-[32px] saturate-[1.2] border border-white/80 shadow-[0_16px_40px_-12px_rgba(0,0,0,0.1)] rounded-[20px] md:rounded-full transition-all duration-500 hover:bg-white/80 hover:shadow-[0_16px_40px_-12px_rgba(0,0,0,0.15)] relative">
+        <nav className="pointer-events-auto w-full max-w-6xl mx-auto bg-white/95 md:bg-white/70 dark:bg-academy-surfaceDark/70 md:backdrop-blur-[32px] md:saturate-[1.2] border border-white/80 shadow-[0_16px_40px_-12px_rgba(0,0,0,0.1)] rounded-[20px] md:rounded-full transition-all duration-500 hover:bg-white/80 hover:shadow-[0_16px_40px_-12px_rgba(0,0,0,0.15)] relative">
           {/* Subtle inner highlight */}
-          <div className="absolute inset-0 rounded-[20px] md:rounded-full border border-white/40 pointer-events-none mix-blend-overlay"></div>
+          <div className="hidden md:block absolute inset-0 rounded-[20px] md:rounded-full border border-white/40 pointer-events-none mix-blend-overlay"></div>
           
           <div className="w-full flex items-center justify-between h-[52px] md:h-16 px-4 lg:px-6 gap-3 xl:gap-6 relative z-10">
 
@@ -143,7 +142,7 @@ export default function Navbar({ onLoginClick }) {
             <Link 
               to="/" 
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} 
-              className="flex items-center group shrink-0"
+              className="flex items-center group shrink-0 absolute left-1/2 -translate-x-1/2 xl:static xl:translate-x-0"
             >
               <Logo size="md" />
             </Link>
@@ -162,9 +161,9 @@ export default function Navbar({ onLoginClick }) {
                   <Gift size={15} /> {t('nav.resources') || "Ressources"}
                 </Link>
               )}
-              {settings?.modules?.blogEnabled !== false && (
-                <Link to="/blog" className="px-3 py-2 whitespace-nowrap rounded-full text-[13px] font-bold text-neutral-600 dark:text-academy-textMain/60 hover:text-black hover:bg-white hover:shadow-xs transition-all flex items-center gap-1.5">
-                  <FileText size={15} /> Blog
+              {settings?.coaching?.enabled !== false && (
+                <Link to="/coaching" className="px-3 py-2 whitespace-nowrap rounded-full text-[13px] font-bold text-neutral-600 dark:text-academy-textMain/60 hover:text-black hover:bg-white hover:shadow-xs transition-all flex items-center gap-1.5">
+                  <CalendarDays size={15} /> Coaching
                 </Link>
               )}
               {isAuthenticated && !isAdmin && !isInstructor && (
@@ -191,7 +190,6 @@ export default function Navbar({ onLoginClick }) {
 
             {/* Actions — Desktop */}
             <div className="hidden lg:flex items-center gap-2 shrink-0">
-              <ThemeToggle />
 
               {/* Language Dropdown */}
               <div className="relative">
@@ -354,7 +352,7 @@ export default function Navbar({ onLoginClick }) {
 
           {/* Mobile hamburger */}
           <button
-            className="xl:hidden p-2 text-academy-textMain/70 hover:text-academy-primary transition-colors focus:outline-none focus:ring-0 active:bg-transparent"
+            className="xl:hidden ml-auto p-2 text-academy-textMain/70 hover:text-academy-primary transition-colors focus:outline-none focus:ring-0 active:bg-transparent"
             style={{ WebkitTapHighlightColor: 'transparent' }}
             onClick={() => setMobileOpen(p => !p)}
           >
@@ -365,7 +363,7 @@ export default function Navbar({ onLoginClick }) {
       {/* Mobile Menu — Design Solide & Épuré */}
       {mobileOpen && (
         <div className="xl:hidden absolute top-[calc(100%+8px)] left-0 right-0 z-50 pointer-events-auto">
-          <div className="bg-white/95 dark:bg-academy-surfaceDark/95 backdrop-blur-2xl border border-black/5 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.2)] rounded-[20px] overflow-hidden">
+          <div className="bg-white dark:bg-academy-surfaceDark/95 border border-black/5 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.2)] rounded-[20px] overflow-hidden">
             <div className="p-3 flex flex-col gap-1.5">
               <Link to="/" onClick={() => setMobileOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl text-neutral-700 dark:text-academy-textMain/75 font-bold hover:bg-black/5 hover:text-black transition-colors">
                 <Home size={16} /> Accueil
@@ -381,9 +379,9 @@ export default function Navbar({ onLoginClick }) {
                   <Gift size={16} /> {t('nav.resources') || "Ressources"}
                 </Link>
               )}
-              {settings?.modules?.blogEnabled !== false && (
-                <Link to="/blog" onClick={() => setMobileOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl text-neutral-700 dark:text-academy-textMain/75 font-bold hover:bg-black/5 hover:text-black transition-colors">
-                  <FileText size={16} /> Blog
+              {settings?.coaching?.enabled !== false && (
+                <Link to="/coaching" onClick={() => setMobileOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl text-neutral-700 dark:text-academy-textMain/75 font-bold hover:bg-black/5 hover:text-black transition-colors">
+                  <CalendarDays size={16} /> Coaching en ligne
                 </Link>
               )}
               {isAuthenticated && !isAdmin && !isInstructor && (
@@ -411,13 +409,6 @@ export default function Navbar({ onLoginClick }) {
                   <LayoutDashboard size={16} /> {t('nav.admin')}
                 </Link>
               )}
-
-              {/* Thème — indispensable sur mobile : la bascule du menu desktop
-                  y est masquée, la fonctionnalité serait sinon inaccessible. */}
-              <div className="px-2 py-2 mt-2 border-t border-black/5 flex items-center justify-between">
-                <p className="text-[10px] uppercase font-bold text-neutral-400 dark:text-academy-textMain/40 tracking-wider">Apparence</p>
-                <ThemeToggle />
-              </div>
 
               {/* Mobile Language Selector */}
               <div className="px-2 py-2 border-t border-black/5">

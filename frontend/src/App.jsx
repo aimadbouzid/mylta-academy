@@ -33,8 +33,7 @@ const PrivacyPage = React.lazy(() => import('./pages/PrivacyPage'))
 const ResetPasswordPage = React.lazy(() => import('./pages/ResetPasswordPage'))
 const PaymentSuccessPage = React.lazy(() => import('./pages/PaymentSuccessPage'))
 const PaymentFailurePage = React.lazy(() => import('./pages/PaymentFailurePage'))
-const BlogPage = React.lazy(() => import('./pages/BlogPage'))
-const BlogPostDetails = React.lazy(() => import('./pages/BlogPostDetails'))
+const CoachingPage = React.lazy(() => import('./pages/CoachingPage'))
 
 const SuspenseFallback = () => (
   <div className="min-h-screen flex items-center justify-center">
@@ -112,6 +111,7 @@ export default function App() {
               <Route path="/" element={<LandingPage />} />
               <Route path="/register" element={<RegisterPage />} />
               <Route path="/mission" element={<MissionPage />} />
+              <Route path="/coaching" element={<CoachingPage />} />
               <Route path="/resources" element={<ModuleRoute moduleName="resourcesEnabled"><ResourcesPage /></ModuleRoute>} />
               <Route path="/ressources" element={<ModuleRoute moduleName="resourcesEnabled"><ResourcesPage /></ModuleRoute>} />
               <Route path="/terms" element={<TermsPage />} />
@@ -123,9 +123,6 @@ export default function App() {
               <Route path="/courses/:id" element={<CourseDetails />} />
               <Route path="/formations" element={<CoursesPage />} />
 
-              {/* Blog Public */}
-              <Route path="/blog" element={<ModuleRoute moduleName="blogEnabled"><BlogPage /></ModuleRoute>} />
-              <Route path="/blog/:slug" element={<ModuleRoute moduleName="blogEnabled"><BlogPostDetails /></ModuleRoute>} />
 
               {/* Pages de retour paiement Chargily */}
               <Route path="/payment/success" element={<PaymentSuccessPage />} />

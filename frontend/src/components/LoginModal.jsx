@@ -6,7 +6,6 @@ import { GoogleLogin } from '@react-oauth/google'
 import api from '../api/axios'
 import { useAuth } from '../context/AuthContext'
 import { useLanguage } from '../context/LanguageContext'
-import { useTheme } from '../context/ThemeContext'
 import { useToast } from '../hooks/useToast.jsx'
 import HumanVerification from './HumanVerification'
 import { facebookLogin } from '../utils/facebookAuth'
@@ -22,7 +21,6 @@ const FIELD_CLASS =
 
 export default function LoginModal({ onClose, onSuccess }) {
   const { t, currentLang } = useLanguage()
-  const { theme } = useTheme()
   const { login, loginWithGoogle, loginWithFacebook, register, checkAuth } = useAuth()
   const { success, error: toastError } = useToast()
   const [mode, setMode]         = useState('login') // 'login' | 'register' | 'forgot-password'
@@ -266,7 +264,7 @@ export default function LoginModal({ onClose, onSuccess }) {
                   onSuccess={handleGoogleSuccess}
                   onError={() => toastError('Échec de la connexion Google')}
                   useOneTap
-                  theme={theme === 'dark' ? 'filled_black' : 'outline'}
+                  theme="outline"
                   shape="pill"
                   size="large"
                   text="continue_with"
@@ -399,7 +397,7 @@ export default function LoginModal({ onClose, onSuccess }) {
             {mode === 'register' && (
               <div className="pt-0.5">
                 <HumanVerification
-                  variant={theme === 'dark' ? 'dark' : 'light'}
+                  variant="light"
                   onVerified={(verified) => setIsHumanVerified(verified)}
                 />
               </div>

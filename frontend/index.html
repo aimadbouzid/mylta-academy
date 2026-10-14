@@ -8,7 +8,7 @@
     <link rel="icon" type="image/png" href="/logo-128.png" />
 
     <!-- Preload critical assets -->
-    <link rel="preload" as="image" href="/logo-128.png" fetchpriority="high" />
+    <link rel="preload" as="image" href="/logo-wordmark.png" fetchpriority="high" />
     <link rel="preload" as="font" href="https://fonts.gstatic.com/s/inter/v18/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuLyfAZ9hjQ.woff2" type="font/woff2" crossorigin />
     <link rel="alternate icon" href="/pwa-192x192.png" />
 
@@ -18,26 +18,9 @@
     <meta name="apple-mobile-web-app-title" content="Mylta Academy">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-    <!-- PWA — Android / Chrome (valeur ajustée au thème par ThemeContext) -->
+    <!-- PWA — Android / Chrome -->
     <meta name="theme-color" content="#f1f5f7">
 
-    <!-- Thème appliqué AVANT le premier rendu.
-         Sans ce script bloquant, un utilisateur en mode sombre verrait un
-         flash blanc le temps que React démarre. Volontairement minimal. -->
-    <script>
-      (function () {
-        try {
-          var saved = localStorage.getItem('mylta_theme') || 'system';
-          var dark = saved === 'dark' || (saved === 'system' &&
-            window.matchMedia('(prefers-color-scheme: dark)').matches);
-          if (dark) {
-            document.documentElement.classList.add('dark');
-            var m = document.querySelector('meta[name="theme-color"]');
-            if (m) m.setAttribute('content', '#121212');
-          }
-        } catch (e) {}
-      })();
-    </script>
     <!-- Polices Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

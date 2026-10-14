@@ -33,7 +33,7 @@ const paymentRoutes = require('./routes/payments')
 const adminRoutes   = require('./routes/admin')
 const seoRoutes     = require('./routes/seo')
 const instructorRoutes = require('./routes/instructor')
-const blogRoutes    = require('./routes/blog')
+const coachingRoutes = require('./routes/coaching')
 
 // ─── App & Config ─────────────────────────────────────────────
 const app    = express()
@@ -356,7 +356,18 @@ app.use('/api/payments/stripe/webhook', webhookLimiter)
 app.use('/api/payments/paypal/webhook', webhookLimiter)
 app.use('/api/admin', adminLimiter, adminRoutes)
 app.use('/api/instructor', apiLimiter, instructorRoutes)
-app.use('/api/blog', apiLimiter, blogRoutes)
+
+// Réservation publique sans compte : plafond strict par IP contre le remplissage
+// du calendrier par un robot (une vraie personne réserve 1 ou 2 créneaux).
+const coachingBookLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 5,
+  message: { error: 'Trop de réservations depuis cette connexion. Réessayez plus tard.', code: 'COACHING_RATE_LIMITED' },
+  standardHeaders: true,
+  legacyHeaders: false,
+})
+app.use('/api/coaching/book', coachingBookLimiter)
+app.use('/api/coaching', apiLimiter, coachingRoutes)
 
 // ─── Analytics Public Track Click Route ──────────────────────
 // Endpoint non authentifié qui écrit en base : sans limite, n'importe qui peut
@@ -532,23 +543,6 @@ if (isProd) {
             // Les robots sociaux n'interprètent jamais une URL relative
             if (course.thumbnail) {
               image = course.thumbnail.startsWith('http') ? course.thumbnail : `${SITE}${course.thumbnail}`
-            }
-          }
-        }
-
-        // Article de blog — même traitement, sinon tout partage d'article
-        // affichait le texte générique du site.
-        const blogMatch = req.path.match(/^\/blog\/([a-zA-Z0-9-_]+)$/)
-        if (blogMatch) {
-          const post = await prisma.blogPost.findFirst({
-            where: { slug: blogMatch[1], isPublished: true },
-            select: { title: true, summary: true, thumbnail: true }
-          })
-          if (post) {
-            title = `${post.title} | Mylta Academy`
-            description = post.summary || description
-            if (post.thumbnail) {
-              image = post.thumbnail.startsWith('http') ? post.thumbnail : `${SITE}${post.thumbnail}`
             }
           }
         }

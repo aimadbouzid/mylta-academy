@@ -162,6 +162,7 @@ export default function LandingPage() {
                     <UniversalVideoPlayer
                       url={siteSettings.introVideoUrl}
                       title="Vidéo de présentation Mylta Academy"
+                      facade
                     />
                     {/* Repli : si le lecteur tiers ne charge pas (bloqueur de pub,
                         navigateur intégré Instagram/TikTok, réseau filtré), le
@@ -211,6 +212,28 @@ export default function LandingPage() {
             )}
           </div>
         </section>
+
+        {/* COACHING EN LIGNE */}
+        {siteSettings.coaching?.enabled && (
+          <section className="py-10 lg:py-14 border-t border-academy-border">
+            <div className="section-container">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 rounded-2xl border border-academy-border bg-white/60 dark:bg-academy-surfaceDark p-6 sm:p-8">
+                <div>
+                  <h2 className="font-display font-black text-2xl sm:text-3xl text-academy-textMain tracking-tight mb-2">{siteSettings.coaching.title}</h2>
+                  <p className="text-academy-textMain/60 text-sm sm:text-base font-medium mb-3">{siteSettings.coaching.subtitle}</p>
+                  <div className="flex flex-wrap gap-2">
+                    {(siteSettings.coaching.topics || []).map(tp => (
+                      <span key={tp.id} className="text-xs font-bold px-3 py-1 rounded-full border border-academy-border text-academy-textMain/70">{tp.label}</span>
+                    ))}
+                  </div>
+                </div>
+                <Link to="/coaching" className="shrink-0 inline-flex items-center justify-center gap-2 py-3 px-6 rounded-md bg-academy-primary text-academy-onPrimary text-sm font-bold hover:opacity-90 transition-opacity">
+                  Réserver une séance <ArrowRight size={15} />
+                </Link>
+              </div>
+            </div>
+          </section>
+        )}
 
         {/* FEATURES */}
         <section id="mission" className="pt-4 lg:pt-6 pb-12 lg:pb-16 bg-academy-surfaceDark/40 relative border-t border-academy-border overflow-hidden">

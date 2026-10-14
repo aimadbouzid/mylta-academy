@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { AlertCircle, Film } from 'lucide-react'
+import { AlertCircle, Film, Play } from 'lucide-react'
 
 export function parseVideoUrl(url, initialTime = 0) {
   if (!url || typeof url !== 'string') return { type: 'none' }
@@ -15,7 +15,8 @@ export function parseVideoUrl(url, initialTime = 0) {
   if (ytMatch && ytMatch[1]) {
     return {
       type: 'iframe',
-      embedUrl: `https://www.youtube.com/embed/${ytMatch[1]}?autoplay=1&rel=0&playsinline=1&modestbranding=1${ytTime}`
+      embedUrl: `https://www.youtube.com/embed/${ytMatch[1]}?autoplay=1&rel=0&playsinline=1&modestbranding=1${ytTime}`,
+      thumbnail: `https://i.ytimg.com/vi/${ytMatch[1]}/hqdefault.jpg`
     }
   }
 
@@ -61,9 +62,15 @@ export function parseVideoUrl(url, initialTime = 0) {
   }
 }
 
-export default function UniversalVideoPlayer({ url, className = '', title = 'Vidéo', initialTime = 0, onTimeUpdate }) {
+// facade : n'affiche qu'une miniature + bouton lecture ; le lecteur tiers
+// (YouTube ≈ 1 Mo de JS) n'est chargé qu'au clic. Indispensable sur mobile
+// pour une vidéo visible dès l'ouverture de la page.
+export default function UniversalVideoPlayer({ url, className = '', title = 'Vidéo', initialTime = 0, onTimeUpdate, facade = false }) {
   const [hasError, setHasError] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
+  const [activated, setActivated] = useState(!facade)
+
+  useEffect(() => { setActivated(!facade) }, [url, facade])
 
   useEffect(() => {
     setHasError(false)
@@ -74,7 +81,7 @@ export default function UniversalVideoPlayer({ url, className = '', title = 'Vid
     // ce délai, le lecteur restait sur « Chargement du lecteur… » pour de bon.
     const timer = setTimeout(() => setIsLoading(false), 4000)
     return () => clearTimeout(timer)
-  }, [url])
+  }, [url, activated])
 
   const videoInfo = parseVideoUrl(url)
 
@@ -99,6 +106,27 @@ export default function UniversalVideoPlayer({ url, className = '', title = 'Vid
           Le fichier vidéo ou l'URL spécifiée est introuvable (404) ou non supportée. Veuillez vérifier le lien YouTube/Vimeo ou téléverser un fichier MP4 valide.
         </p>
       </div>
+    )
+  }
+
+  if (videoInfo.type === 'iframe' && !activated) {
+    return (
+      <button
+        type="button"
+        onClick={() => setActivated(true)}
+        aria-label={`Lire la vidéo : ${title}`}
+        className={`aspect-video w-full rounded-2xl overflow-hidden bg-black border border-white/10 shadow-2xl relative group block ${className}`}
+      >
+        {videoInfo.thumbnail && (
+          <img src={videoInfo.thumbnail} alt="" className="absolute inset-0 w-full h-full object-cover" />
+        )}
+        <span className="absolute inset-0 bg-black/25 group-hover:bg-black/15 transition-colors" />
+        <span className="absolute inset-0 flex items-center justify-center">
+          <span className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-[#8b0000] text-white flex items-center justify-center shadow-xl group-hover:scale-105 transition-transform">
+            <Play size={30} fill="currentColor" className="ml-1" />
+          </span>
+        </span>
+      </button>
     )
   }
 

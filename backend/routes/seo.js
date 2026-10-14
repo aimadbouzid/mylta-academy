@@ -34,23 +34,16 @@ Sitemap: ${BASE_URL}/sitemap.xml
 // GET /sitemap.xml — Sitemap dynamique
 router.get('/sitemap.xml', async (req, res, next) => {
   try {
-    const [courses, blogs] = await Promise.all([
-      prisma.course.findMany({
-        where: { isPublished: true },
-        select: { id: true, updatedAt: true },
-        orderBy: { updatedAt: 'desc' },
-      }),
-      prisma.blogPost.findMany({
-        where: { isPublished: true },
-        select: { slug: true, updatedAt: true },
-        orderBy: { updatedAt: 'desc' },
-      })
-    ])
+    const courses = await prisma.course.findMany({
+      where: { isPublished: true },
+      select: { id: true, updatedAt: true },
+      orderBy: { updatedAt: 'desc' },
+    })
 
     const staticPages = [
       { url: '/', priority: '1.0', changefreq: 'weekly' },
       { url: '/courses', priority: '0.9', changefreq: 'daily' },
-      { url: '/blog', priority: '0.8', changefreq: 'weekly' },
+      { url: '/coaching', priority: '0.8', changefreq: 'weekly' },
     ]
 
     const coursePages = courses.map(c => ({
@@ -60,14 +53,7 @@ router.get('/sitemap.xml', async (req, res, next) => {
       lastmod: c.updatedAt.toISOString().split('T')[0],
     }))
 
-    const blogPages = blogs.map(b => ({
-      url: `/blog/${b.slug}`,
-      priority: '0.7',
-      changefreq: 'weekly',
-      lastmod: b.updatedAt.toISOString().split('T')[0],
-    }))
-
-    const allPages = [...staticPages, ...coursePages, ...blogPages]
+    const allPages = [...staticPages, ...coursePages]
 
     const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">

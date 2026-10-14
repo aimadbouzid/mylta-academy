@@ -143,7 +143,7 @@ export const translations = {
       tab_in_progress: "En cours",
       tab_all: "Toutes",
       tab_support: "Support",
-      lifetime_access: "Accès À Vie",
+      lifetime_access: "Accès Illimité",
       completed: "Complété",
       progress: "Progression",
       resume: "Reprendre",
@@ -156,7 +156,7 @@ export const translations = {
       guide_desc: "Conseils et assistance pour maximiser votre réussite",
       guide_q1: "Comment réviser efficacement ?",
       guide_a1: "Regardez chaque leçon attentivement et pratiquez les exercices directement sur votre ordinateur. La répétition est la clé de la maîtrise !",
-      guide_q2: "Sécurité & Accès à vie",
+      guide_q2: "Sécurité & Accès illimité",
       guide_a2: "Vos formations achetées restent accessibles 24h/24 et 7j/7 sans limite de temps. Vous pouvez revenir réviser vos cours à tout moment.",
       guide_q3: "Besoin d'aide ou d'assistance ?",
       guide_a3: "Si vous avez des questions sur vos cours ou votre compte, notre équipe d'assistance est disponible pour vous guider."
@@ -243,7 +243,7 @@ export const translations = {
       access_lessons: "Accéder à mes leçons",
       buy_course: "Acheter cette formation",
       join: "Rejoindre",
-      lifetime_access: "Accès illimité et à vie à la formation",
+      lifetime_access: "Accès illimité à la formation",
       updates_included: "Mises à jour du contenu incluses",
       support_included: "Support et assistance pédagogique",
       certificate: "Certificat de réussite nominatif",
@@ -605,7 +605,7 @@ export const translations = {
           desc: 'Le meilleur rapport qualité/prix en Algérie. Payez facilement via Edahabia, CIB, CCP, BaridiMob ou RedotPay.'
         },
         {
-          title: 'Accès Illimité & à Vie',
+          title: 'Accès Illimité',
           desc: 'Accédez à vos cours 24h/24 et 7j/7 sans aucune limite de temps. Apprenez à votre rythme et accédez aux mises à jour gratuites.'
         }
       ],
@@ -785,7 +785,7 @@ export const translations = {
       tab_in_progress: "In Progress",
       tab_all: "All Courses",
       tab_support: "Support",
-      lifetime_access: "Lifetime Access",
+      lifetime_access: "Unlimited Access",
       completed: "Completed",
       progress: "Progress",
       resume: "Resume",
@@ -798,7 +798,7 @@ export const translations = {
       guide_desc: "Tips and assistance to maximize your success",
       guide_q1: "How to revise effectively?",
       guide_a1: "Watch each lesson carefully and practice the exercises directly on your computer. Repetition is the key to mastery!",
-      guide_q2: "Security & Lifetime Access",
+      guide_q2: "Security & Unlimited Access",
       guide_a2: "Your purchased courses remain accessible 24/7 with no time limit. You can always come back and review your courses at any time.",
       guide_q3: "Need help or assistance?",
       guide_a3: "If you have any questions about your courses or account, our support team is available to guide you."
@@ -885,7 +885,7 @@ export const translations = {
       access_lessons: "Access my lessons",
       buy_course: "Buy this course",
       join: "Join",
-      lifetime_access: "Unlimited lifetime access to the course",
+      lifetime_access: "Unlimited access to the course",
       updates_included: "Content updates included",
       support_included: "Pedagogical support and assistance",
       certificate: "Personalized completion certificate",
@@ -1247,7 +1247,7 @@ export const translations = {
           desc: 'The best value for money in Algeria. Pay easily via Edahabia, CIB, CCP, BaridiMob or RedotPay.'
         },
         {
-          title: 'Unlimited & Lifetime Access',
+          title: 'Unlimited Access',
           desc: 'Access your courses 24/7 with no time limits. Learn at your own pace and get free updates.'
         }
       ],
@@ -1427,7 +1427,7 @@ export const translations = {
       tab_in_progress: "قيد الإنجاز",
       tab_all: "الكل",
       tab_support: "الدعم",
-      lifetime_access: "وصول مدى الحياة",
+      lifetime_access: "وصول غير محدود",
       completed: "مكتمل",
       progress: "التقدم",
       resume: "استئناف",
@@ -1440,7 +1440,7 @@ export const translations = {
       guide_desc: "نصائح ومساعدة لزيادة نجاحك",
       guide_q1: "كيف تراجع بفعالية؟",
       guide_a1: "شاهد كل درس بعناية ومارس التمارين مباشرة على جهاز الكمبيوتر الخاص بك. التكرار هو مفتاح الإتقان!",
-      guide_q2: "الأمان والوصول مدى الحياة",
+      guide_q2: "الأمان والوصول غير المحدود",
       guide_a2: "تظل دوراتك المشتراة متاحة على مدار الساعة طوال أيام الأسبوع دون حدود زمنية. يمكنك دائمًا العودة لمراجعة دوراتك في أي وقت.",
       guide_q3: "بحاجة إلى مساعدة أو دعم؟",
       guide_a3: "إذا كانت لديك أي أسئلة حول دوراتك أو حسابك، فريق الدعم لدينا متاح لإرشادك."
@@ -1526,7 +1526,7 @@ export const translations = {
       access_lessons: "الوصول لدروسي",
       buy_course: "شراء هذه الدورة",
       join: "انضمام",
-      lifetime_access: "وصول غير محدود ومدى الحياة للدورة",
+      lifetime_access: "وصول غير محدود للدورة",
       updates_included: "تحديثات المحتوى مضمنة",
       support_included: "دعم ومساعدة تعليمية",
       certificate: "شهادة إتمام شخصية",
@@ -1880,7 +1880,7 @@ export const translations = {
           desc: 'أفضل قيمة مقابل السعر في الجزائر. ادفع بسهولة عبر الذهبية، CIB، بريد الجزائر (CCP)، بريدي موب أو RedotPay.'
         },
         {
-          title: 'وصول غير محدود ومدى الحياة',
+          title: 'وصول غير محدود',
           desc: 'قم بالوصول إلى دوراتك على مدار الساعة طوال أيام الأسبوع بدون حدود زمنية. تعلم بالسرعة التي تناسبك واحصل على تحديثات مجانية.'
         }
       ],

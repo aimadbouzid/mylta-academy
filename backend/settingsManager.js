@@ -142,10 +142,28 @@ const defaultSettings = {
       Elite: 0,                     // illimité
     },
   },
+  // Coaching en ligne : tout est modifiable depuis l'admin (onglet Coaching).
+  // weekdays : 0 = dimanche … 6 = samedi. timeSlots vide = date seule.
+  coaching: {
+    enabled: true,
+    title: 'Coaching en ligne',
+    subtitle: 'Une séance individuelle en visio avec un expert, sur le sujet de votre choix.',
+    whatsappNumber: '213795103743',
+    currency: 'DA',
+    topics: [
+      { id: 'ia', label: 'Intelligence artificielle', price: 0, duration: '' },
+      { id: 'vibe-coding', label: 'Vibe coding', price: 0, duration: '' },
+      { id: 'site-web', label: 'Création de site web / landing page', price: 0, duration: '' },
+      { id: 'autre', label: 'Autre sujet', price: 0, duration: '' },
+    ],
+    weekdays: [0, 1, 2, 3, 4, 6],
+    timeSlots: ['10:00', '14:00', '18:00'],
+    maxDaysAhead: 30,
+    blockedDates: [],
+  },
   modules: {
     instructorEnabled: true,
     resourcesEnabled: true,
-    blogEnabled: true,
     // Redirige les visiteurs venus d'Instagram/TikTok/Facebook (navigateur
     // intégré) vers Chrome/Safari — voir InAppBrowserGuard côté frontend.
     inAppBrowserGuardEnabled: true
@@ -179,6 +197,7 @@ function getSettings() {
         },
       },
       modules: { ...defaultSettings.modules, ...(parsed.modules || {}) },
+      coaching: { ...defaultSettings.coaching, ...(parsed.coaching || {}) },
     }
   } catch (err) {
     console.error('Erreur lecture settings.json:', err)

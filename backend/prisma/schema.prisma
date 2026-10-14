@@ -374,3 +374,26 @@ model BlogPost {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
+
+// ─────────────────────────────────────────────
+// COACHING EN LIGNE — réservations publiques (sans compte)
+// date : "YYYY-MM-DD" (chaîne, pas de décalage de fuseau horaire)
+// status: "PENDING" | "CONFIRMED" | "CANCELLED"
+// ─────────────────────────────────────────────
+model CoachingBooking {
+  id         Int      @id @default(autoincrement())
+  fullName   String
+  phone      String
+  topicId    String
+  topicLabel String
+  price      Int      @default(0)
+  date       String
+  timeSlot   String   @default("")
+  message    String?
+  status     String   @default("PENDING")
+  ip         String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([date])
+}

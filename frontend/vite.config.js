@@ -190,7 +190,10 @@ export default defineConfig({
       output: {
         manualChunks(id) {
           if (id.includes('node_modules')) {
-            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router-dom')) return 'vendor';
+            // Seul le cœur React est commun à toutes les pages ; un simple
+            // includes('react') aspirait aussi plyr-react et chargeait tout le
+            // lecteur vidéo (chunk media) dès l'ouverture du site.
+            if (/node_modules\/(react|react-dom|react-router|react-router-dom|scheduler)\//.test(id)) return 'vendor';
             if (id.includes('lucide-react')) return 'ui';
             if (id.includes('plyr') || id.includes('plyr-react')) return 'media';
             if (id.includes('socket.io-client')) return 'realtime';
