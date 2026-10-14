@@ -29,14 +29,16 @@
 }
 
 /* Thème sombre — appliqué via la classe .dark sur <html> (ThemeContext).
-   Noir véritable : le fond est à #000000, ce qui éteint réellement les pixels
-   sur écran OLED (la majorité des smartphones) et donne un rendu très net.
+   Noir mat, pas noir pur : le fond est à #121212 (référence Material Design),
+   pas #000000. Le noir pur donne un rendu « corbeau », glacé, presque écran
+   éteint ; ce léger cran au-dessus casse cet effet miroir et repose l'œil,
+   au prix de quelques pixels OLED non totalement éteints — compromis assumé.
 
-   Les surfaces ne peuvent pas être noires elles aussi, sinon cartes et
-   barres de navigation disparaîtraient dans le fond : elles sont posées
-   quelques points au-dessus, procédé standard des thèmes noirs. Elles
-   restent volontairement très proches du noir (écart de 4 à 5 points) :
-   assez pour délimiter une carte, trop peu pour lire « gris ».
+   Les surfaces ne peuvent pas être aussi sombres que le fond, sinon cartes et
+   barres de navigation s'y noieraient : elles sont posées quelques points
+   au-dessus, procédé standard des thèmes sombres. Elles restent volontairement
+   proches du fond (écart de 10 à 28 points) : assez pour délimiter une carte,
+   trop peu pour lire « gris ».
 
    La couleur d'accent n'est PAS rouge en sombre : elle passe au blanc. Le rouge
    de marque reste intact en thème clair — seule cette section change. Les
@@ -49,11 +51,11 @@
   --academy-light: 235 235 235;      /* variante « claire » → légèrement grisée */
   --academy-dark: 212 212 212;       /* variante « foncée » : états de survol */
   --academy-on-primary: 0 0 0;       /* texte noir sur les pastilles blanches */
-  --academy-surface: 0 0 0;          /* fond général : noir pur */
-  --academy-surface-dark: 13 13 13;  /* surfaces surélevées (#0d0d0d) */
+  --academy-surface: 18 18 18;       /* fond général : noir mat (#121212) */
+  --academy-surface-dark: 31 31 31;  /* surfaces surélevées (#1f1f1f) */
   --academy-text: 240 240 240;       /* texte principal, gris neutre */
-  --academy-border: 28 28 28;        /* séparateurs discrets (#1c1c1c) */
-  --academy-card: 10 10 10;          /* cartes : à peine détachées du noir (#0a0a0a) */
+  --academy-border: 46 46 46;        /* séparateurs discrets (#2e2e2e) */
+  --academy-card: 28 28 28;          /* cartes : à peine détachées du fond (#1c1c1c) */
 
   color-scheme: dark;
 }

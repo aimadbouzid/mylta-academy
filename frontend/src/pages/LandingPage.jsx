@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import {
   ArrowRight, Star, Shield, Infinity, CreditCard,
-  Trophy, Users, BookOpen, TrendingUp, ChevronRight, Sparkles, Play, ChevronDown, HelpCircle,
+  Trophy, Users, BookOpen, TrendingUp, ChevronRight, Sparkles, ChevronDown, HelpCircle, ExternalLink,
   Instagram, Facebook
 } from 'lucide-react'
 import Navbar from '../components/Navbar'
@@ -11,6 +11,7 @@ import CourseCard from '../components/CourseCard'
 import LoginModal from '../components/LoginModal'
 import PaymentModal from '../components/PaymentModal'
 import IntroVideoModal from '../components/IntroVideoModal'
+import UniversalVideoPlayer from '../components/UniversalVideoPlayer'
 import Logo from '../components/Logo'
 import { LoadingGrid, ErrorState } from '../components/LoadingSkeleton'
 import { useSiteSettings } from '../context/SiteSettingsContext'
@@ -30,14 +31,13 @@ const FEATURE_STYLES = [
 export default function LandingPage() {
   const { isAuthenticated } = useAuth()
   const { t, currentLang } = useLanguage()
-  const { courses, total, loading, error, refetch } = useCourses({})
+  const { courses, loading, error, refetch } = useCourses({})
   const [loginOpen,   setLoginOpen]   = useState(false)
   const [payModal,    setPayModal]    = useState(null)
   const [openFaq,     setOpenFaq]     = useState(null)
   
   const landingData = t('landing_data') || {}
   const features = landingData.features || []
-  const stats = landingData.stats || []
   const faqItems = landingData.faq || []
   const heroPhrases = landingData.hero_phrases || []
 
@@ -59,13 +59,10 @@ export default function LandingPage() {
     if (sharedSettings) setSiteSettings(sharedSettings)
   }, [sharedSettings])
 
-  const [introOpen,   setIntroOpen]   = useState(() => {
-    return !sessionStorage.getItem('myltaacademy_intro_seen')
-  })
+  const [introOpen,   setIntroOpen]   = useState(false)
   const featuredCourses = courses.slice(0, 3)
 
   const handleCloseIntro = () => {
-    sessionStorage.setItem('myltaacademy_intro_seen', 'true')
     setIntroOpen(false)
   }
 
@@ -127,13 +124,6 @@ export default function LandingPage() {
                   {t('landing.discover_courses')}
                   <ArrowRight size={16} className="opacity-60 group-hover:translate-x-0.5 transition-transform" />
                 </Link>
-                <button
-                  onClick={() => setIntroOpen(true)}
-                  className="inline-flex items-center justify-center gap-2 py-3 px-6 rounded-md border border-academy-border text-academy-textMain text-sm font-semibold hover:bg-academy-textMain/5 transition-colors"
-                >
-                  <Play size={13} fill="currentColor" className="opacity-70" />
-                  {t('landing.intro_video')}
-                </button>
               </div>
 
               {/* Moyens de paiement : simple mention en ligne.
@@ -158,16 +148,36 @@ export default function LandingPage() {
             </div>
             
             <div className="flex-1 w-full mt-4 lg:mt-0">
-              {/* Grille sobre, alignée sur les badges de paiement à côté :
-                  bordure fine et fond quasi plat, sans flou ni dégradé ni
-                  animation au survol — cohérent avec les boutons du hero. */}
-              <div className="grid grid-cols-2 gap-px max-w-xl mx-auto lg:mr-0 rounded-lg border border-academy-border overflow-hidden bg-academy-border">
-                {stats.map((s, i) => (
-                  <div key={s.label} className="bg-academy-surface p-5 sm:p-6 flex flex-col items-center justify-center text-center">
-                    <p className={`font-display font-black text-academy-textMain tracking-tight mb-1 ${s.val.length > 8 ? 'text-lg sm:text-xl' : 'text-2xl sm:text-3xl'}`}>{i === 0 ? (loading ? s.val : total) : s.val}</p>
-                    <p className="text-academy-textMain/50 text-[10px] sm:text-xs font-bold uppercase tracking-widest leading-relaxed">{s.label}</p>
+              {/* Lecteur de présentation intégré au hero : visible et lisible
+                  directement, à côté du texte. Le flou est un halo décoratif
+                  POSÉ DERRIÈRE (même procédé que les blobs du hero), pas un
+                  flou du fond du lecteur lui-même.
+                  Affichage conditionnel : tant que les réglages ne sont pas
+                  chargés on n'affiche rien, plutôt que l'état vide du lecteur
+                  (dont le texte s'adresse à l'admin, pas au visiteur). */}
+              <div className="relative max-w-xl mx-auto lg:mr-0">
+                <div className="absolute -inset-8 rounded-full bg-academy-primary/20 dark:bg-academy-primary/[0.07] pointer-events-none select-none z-0" style={{ filter: 'blur(60px)', WebkitFilter: 'blur(60px)' }} />
+                {siteSettings.introVideoUrl && (
+                  <div className="relative z-10">
+                    <UniversalVideoPlayer
+                      url={siteSettings.introVideoUrl}
+                      title="Vidéo de présentation Mylta Academy"
+                    />
+                    {/* Repli : si le lecteur tiers ne charge pas (bloqueur de pub,
+                        navigateur intégré Instagram/TikTok, réseau filtré), le
+                        cadre reste noir et la vidéo est alors inaccessible
+                        depuis la page. Ce lien donne toujours une porte de sortie. */}
+                    <a
+                      href={siteSettings.introVideoUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-academy-textMain/55 hover:text-academy-primary transition-colors"
+                    >
+                      <ExternalLink size={13} />
+                      {t('landing.watch_video')}
+                    </a>
                   </div>
-                ))}
+                )}
               </div>
             </div>
           </div>

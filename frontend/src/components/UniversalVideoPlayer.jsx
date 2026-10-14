@@ -68,6 +68,12 @@ export default function UniversalVideoPlayer({ url, className = '', title = 'Vid
   useEffect(() => {
     setHasError(false)
     setIsLoading(true)
+    // Filet de sécurité : l'overlay de chargement ne doit jamais masquer la
+    // vidéo indéfiniment. L'événement `load` de l'iframe ne se déclenche pas
+    // toujours (lecteur tiers bloqué, réseau filtré, événement manqué) — sans
+    // ce délai, le lecteur restait sur « Chargement du lecteur… » pour de bon.
+    const timer = setTimeout(() => setIsLoading(false), 4000)
+    return () => clearTimeout(timer)
   }, [url])
 
   const videoInfo = parseVideoUrl(url)

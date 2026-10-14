@@ -36,7 +36,7 @@ export function ThemeProvider({ children }) {
 
     // Barre d'adresse mobile assortie au thème
     const meta = document.querySelector('meta[name="theme-color"]')
-    if (meta) meta.setAttribute('content', theme === 'dark' ? '#000000' : '#f1f5f7')
+    if (meta) meta.setAttribute('content', theme === 'dark' ? '#121212' : '#f1f5f7')
 
     try {
       localStorage.setItem(STORAGE_KEY, preference)

@@ -476,6 +476,7 @@ export const translations = {
     landing: {
       discover_courses: "Découvrir nos formations",
       intro_video: "Vidéo de présentation",
+      watch_video: "Ouvrir la vidéo",
       local_payment: "Paiement local :",
       our_courses: "Nos Formations",
       choose_path: "Sélectionnez votre parcours d'apprentissage",
@@ -1117,6 +1118,7 @@ export const translations = {
     landing: {
       discover_courses: "Discover our courses",
       intro_video: "Introduction video",
+      watch_video: "Open the video",
       local_payment: "Local payment:",
       our_courses: "Our Courses",
       choose_path: "Select your learning path",
@@ -1749,6 +1751,7 @@ export const translations = {
     landing: {
       discover_courses: "اكتشف دوراتنا",
       intro_video: "فيديو تعريفي",
+      watch_video: "افتح الفيديو",
       local_payment: "الدفع المحلي:",
       our_courses: "دوراتنا",
       choose_path: "اختر مسار التعلم الخاص بك",
