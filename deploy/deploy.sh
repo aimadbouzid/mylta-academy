@@ -25,7 +25,7 @@ echo "[$(date)] 💾 Backup avant migration (sécurité)..."
 
 echo "[$(date)] 📦 Installation des dépendances backend..."
 cd "$APP_DIR/backend"
-npm ci --omit=dev
+npm ci  # prisma (CLI) est en devDependencies, requis pour migrate deploy
 
 echo "[$(date)] 🗄️  Application des migrations Prisma..."
 npx prisma generate

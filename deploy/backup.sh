@@ -31,6 +31,9 @@ if [ -z "${DATABASE_URL:-}" ]; then
   exit 1
 fi
 
+# pg_dump refuse le paramètre Prisma ?schema=public
+DATABASE_URL="${DATABASE_URL%%\?*}"
+
 echo "[$(date)] 🗄️  Dump PostgreSQL..."
 pg_dump "$DATABASE_URL" --format=custom --file="$BACKUP_DIR/db/db_${TIMESTAMP}.dump"
 
