@@ -2,6 +2,7 @@ const express = require('express')
 const { z } = require('zod')
 const prisma = require('../prisma')
 const { getSettings } = require('../settingsManager')
+const { notifyOwner } = require('../utils/notifyOwner')
 
 const router = express.Router()
 
@@ -38,6 +39,7 @@ const registerSchema = z.object({
   sessionId: z.number().int().positive().nullable().optional(),
   profile: z.record(z.string().max(40), z.string().max(60)).optional().default({}),
   accepted: z.boolean().optional(),
+  website: z.string().optional(), // piège à robots : toujours vide pour un humain
 })
 
 // Questions du profil, dans l'ordre d'affichage (même liste côté page).
@@ -56,7 +58,8 @@ router.post('/register', async (req, res, next) => {
     if (!parsed.success) {
       return res.status(400).json({ error: 'Vérifiez votre nom et votre numéro de téléphone.' })
     }
-    const { fullName, phone, city, message, sessionId, profile, accepted } = parsed.data
+    const { fullName, phone, city, message, sessionId, profile, accepted, website } = parsed.data
+    if (website) return res.status(201).json({ registration: { id: 0, session: null } })
     if (sessionId && accepted !== true) {
       return res.status(400).json({ error: 'Merci d\'accepter les conditions de participation.' })
     }
@@ -66,8 +69,29 @@ router.post('/register', async (req, res, next) => {
       .join(' · ')
     const data = { fullName, phone, city, profile: profileText, message: message || null, ip: String(req.ip || '').slice(0, 45) }
 
+    // Une même personne (même numéro) ne s'inscrit qu'une fois par session / liste d'attente.
+    const normalizedPhone = phone.replace(/\D/g, '')
+    const existing = await prisma.inPersonRegistration.findMany({
+      where: { sessionId: sessionId || null, status: { not: 'CANCELLED' } },
+      select: { phone: true },
+    })
+    if (existing.some(r => r.phone.replace(/\D/g, '') === normalizedPhone)) {
+      return res.status(409).json({ error: sessionId
+        ? 'Vous êtes déjà inscrit à cette session. Écrivez-nous sur WhatsApp si besoin.'
+        : "Vous êtes déjà sur la liste d'attente : on vous prévient dès qu'une date est fixée." })
+    }
+
+    const notify = (id, session) => notifyOwner(
+      `📍 ${session ? 'Nouvelle inscription' : "Nouvelle demande (liste d'attente)"} — coaching présentiel n°${id}\n` +
+      `Nom : ${fullName}\nTél : ${phone}${city ? `\nVille : ${city}` : ''}` +
+      (session ? `\nSession : ${session.date}${session.city ? ` — ${session.city}` : ''}\nAcompte : en attente` : '') +
+      (profileText ? `\n${profileText}` : '') +
+      (message ? `\nMessage : ${message}` : '')
+    )
+
     if (!sessionId) {
       const registration = await prisma.inPersonRegistration.create({ data })
+      notify(registration.id, null)
       return res.status(201).json({ registration: { id: registration.id, session: null } })
     }
 
@@ -90,6 +114,7 @@ router.post('/register', async (req, res, next) => {
       return { id: registration.id, session: publicSession }
     })
 
+    notify(result.id, result.session)
     res.status(201).json({ registration: result })
   } catch (err) {
     if (err instanceof SessionError) return res.status(err.status).json({ error: err.message })

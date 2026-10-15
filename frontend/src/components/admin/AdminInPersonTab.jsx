@@ -74,6 +74,7 @@ export default function AdminInPersonTab() {
         ...cfg,
         price: Math.max(0, parseInt(cfg.price, 10) || 0),
         deposit: Math.max(0, parseInt(cfg.deposit, 10) || 0),
+        oldPrice: Math.max(0, parseInt(cfg.oldPrice, 10) || 0),
         program: cfg.program.filter(p => p.trim()),
         infos: cfg.infos.filter(p => p.trim()),
       }
@@ -261,7 +262,8 @@ export default function AdminInPersonTab() {
         <h3 className="font-bold">Textes de la page</h3>
         <div><label className={label}>Titre</label><input className={input} value={cfg.title} onChange={e => setCfg({ ...cfg, title: e.target.value })} /></div>
         <div><label className={label}>Sous-titre</label><textarea className={input} rows={2} value={cfg.subtitle} onChange={e => setCfg({ ...cfg, subtitle: e.target.value })} /></div>
-        <div className="grid grid-cols-2 gap-3 max-w-md">
+        <div className="grid grid-cols-3 gap-3 max-w-xl">
+          <div><label className={label}>Prix barré (0 = aucun)</label><input type="number" min="0" className={input} value={cfg.oldPrice ?? 0} onChange={e => setCfg({ ...cfg, oldPrice: e.target.value })} /></div>
           <div><label className={label}>Prix de la formation (DA)</label><input type="number" min="0" className={input} value={cfg.price ?? 0} onChange={e => setCfg({ ...cfg, price: e.target.value })} /></div>
           <div><label className={label}>Acompte pour réserver (DA)</label><input type="number" min="0" className={input} value={cfg.deposit ?? 0} onChange={e => setCfg({ ...cfg, deposit: e.target.value })} /></div>
         </div>

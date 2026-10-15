@@ -182,6 +182,7 @@ const defaultSettings = {
     title: 'Formation IA & Montage Vidéo',
     subtitle: "Filmez, montez et utilisez l'IA comme un pro, depuis votre smartphone. 3 jours en présentiel, en petit groupe.",
     price: 13000,   // prix de la formation (DA) — repris par défaut pour chaque session
+    oldPrice: 18000, // prix barré affiché à côté (offre de lancement) ; 0 = pas de prix barré
     deposit: 3000,  // acompte obligatoire pour réserver sa place
     program: [
       'Filmer comme un pro avec son smartphone : cadrage, lumière et son',

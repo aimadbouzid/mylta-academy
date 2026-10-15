@@ -2,6 +2,7 @@ const express = require('express')
 const { z } = require('zod')
 const prisma = require('../prisma')
 const { getSettings } = require('../settingsManager')
+const { notifyOwner } = require('../utils/notifyOwner')
 
 const router = express.Router()
 
@@ -48,6 +49,7 @@ const bookingSchema = z.object({
   channel: z.string().trim().max(50).optional().default(''),
   level: z.string().trim().max(30).optional().default(''),
   message: z.string().trim().max(500).optional(),
+  website: z.string().optional(), // piège à robots : toujours vide pour un humain
 })
 
 const LEVELS = ['Débutant', 'Intermédiaire', 'Avancé']
@@ -62,7 +64,9 @@ router.post('/book', async (req, res, next) => {
     if (!parsed.success) {
       return res.status(400).json({ error: 'Vérifiez votre nom, votre numéro de téléphone et le sujet choisi.' })
     }
-    const { fullName, phone, topicId, date, timeSlot, formatId, channel, level, message } = parsed.data
+    const { fullName, phone, topicId, date, timeSlot, formatId, channel, level, message, website } = parsed.data
+    // Robot : réponse normale pour ne pas lui signaler le piège, mais rien n'est enregistré.
+    if (website) return res.status(201).json({ booking: { id: 0, date, timeSlot, topicLabel: '', formatLabel: '', channel: '', level: '', price: 0 } })
 
     const topic = (cfg.topics || []).find(t => t.id === topicId)
     if (!topic) return res.status(400).json({ error: 'Sujet invalide.' })
@@ -90,6 +94,15 @@ router.post('/book', async (req, res, next) => {
     })
     if (taken) return res.status(409).json({ error: 'Ce créneau vient d\'être réservé. Choisissez-en un autre.' })
 
+    const normalizedPhone = phone.replace(/\D/g, '')
+    const sameDay = await prisma.coachingBooking.findMany({
+      where: { date, status: { not: 'CANCELLED' } },
+      select: { phone: true },
+    })
+    if (sameDay.some(b => b.phone.replace(/\D/g, '') === normalizedPhone)) {
+      return res.status(409).json({ error: 'Vous avez déjà une réservation ce jour-là. Écrivez-nous sur WhatsApp pour la modifier.' })
+    }
+
     const booking = await prisma.coachingBooking.create({
       data: {
         fullName,
@@ -106,6 +119,13 @@ router.post('/book', async (req, res, next) => {
         ip: String(req.ip || '').slice(0, 45),
       },
     })
+
+    notifyOwner(
+      `🎓 Nouvelle réservation coaching en ligne n°${booking.id}\n` +
+      `Nom : ${fullName}\nTél : ${phone}\nSujet : ${topic.label}\n` +
+      `Date : ${date}${slot ? ` à ${slot}` : ''}` +
+      (message ? `\nMessage : ${message}` : '')
+    )
 
     res.status(201).json({ booking: {
       id: booking.id, date, timeSlot: slot, topicLabel: topic.label,

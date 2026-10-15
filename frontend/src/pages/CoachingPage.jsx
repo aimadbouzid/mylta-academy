@@ -45,6 +45,7 @@ export default function CoachingPage() {
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
   const [done, setDone] = useState(null)
+  const [website, setWebsite] = useState('') // piège à robots
 
   const loadAvailability = () => {
     api.get('/coaching/availability').then(({ data }) => setBooked(data.booked || [])).catch(() => {})
@@ -129,7 +130,7 @@ export default function CoachingPage() {
     if (channels.length > 0 && !channel) return setError('Choisissez comment faire l\'appel vidéo.')
     setSubmitting(true)
     try {
-      const { data } = await api.post('/coaching/book', { fullName, phone, topicId, formatId, channel, date, timeSlot, message })
+      const { data } = await api.post('/coaching/book', { fullName, phone, topicId, formatId, channel, date, timeSlot, message, website })
       setDone(data.booking)
       requestAnimationFrame(() => topRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }))
     } catch (err) {
@@ -275,16 +276,13 @@ export default function CoachingPage() {
                     <div className="space-y-6">
                       {topicGroups.map(([category, items]) => (
                         <div key={category || 'autres'}>
-                          {category && <h3 className="font-bold text-academy-primary mb-2.5">{category}</h3>}
-                          <div className="grid sm:grid-cols-2 gap-2.5">
+                          {category && <h3 className="font-bold text-sm text-academy-primary mb-2">{category}</h3>}
+                          <div className="grid grid-cols-2 gap-2">
                             {items.map(t => (
                               <button type="button" key={t.id} onClick={() => { setTopicId(t.id); goTo(1) }}
-                                      className={`${choice(topicId === t.id)} p-4 flex items-start gap-3`}>
-                                <span className={radio(topicId === t.id)} aria-hidden="true" />
-                                <span>
-                                  <span className="font-bold block">{t.label}</span>
-                                  {t.description && <span className="text-sm text-academy-textMain/60 leading-snug">{t.description}</span>}
-                                </span>
+                                      className={`${choice(topicId === t.id)} p-3 flex flex-col justify-start min-h-[72px]`}>
+                                <span className="font-bold text-[13px] sm:text-sm leading-snug">{t.label}</span>
+                                {t.description && <span className="mt-1 text-[11px] sm:text-xs text-academy-textMain/55 leading-snug line-clamp-2">{t.description}</span>}
                               </button>
                             ))}
                           </div>
@@ -340,7 +338,7 @@ export default function CoachingPage() {
                             const free = isSlotFree(date, s)
                             return (
                               <button type="button" key={s} disabled={!free} onClick={() => setTimeSlot(s)}
-                                      className={`py-3 rounded-xl border-2 font-bold transition-colors ${
+                                      className={`py-2.5 rounded-lg border-2 text-sm font-bold transition-colors ${
                                         timeSlot === s ? 'border-academy-primary bg-academy-primary text-academy-onPrimary'
                                         : free ? 'border-academy-border hover:border-academy-primary/40'
                                         : 'border-academy-border text-academy-textMain/25 line-through cursor-not-allowed'}`}>
@@ -360,7 +358,7 @@ export default function CoachingPage() {
 
                 {/* 3. Coordonnées + récapitulatif */}
                 {step === 2 && (
-                  <form onSubmit={handleSubmit} className={`${card} space-y-4`}>
+                  <form onSubmit={handleSubmit} className={`${card} space-y-4 relative`}>
                     <div className="bg-academy-surface rounded-xl p-4 text-sm space-y-1.5">
                       <p className="font-bold">{topic?.label}</p>
                       <p className="text-academy-textMain/70">{formatDate(date)}{timeSlot ? ` à ${timeSlot.replace(':', 'h')}` : ''}{duration ? ` · ${duration}` : ''}</p>
@@ -395,6 +393,8 @@ export default function CoachingPage() {
                       </div>
                     )}
 
+                    <input type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" value={website}
+                           onChange={e => setWebsite(e.target.value)} className="absolute -left-[9999px] w-px h-px opacity-0" />
                     <h2 className="font-bold text-lg">Vos coordonnées</h2>
                     <input className={input} required minLength={3} maxLength={80} autoComplete="name" placeholder="Votre nom et prénom"
                            value={fullName} onChange={e => setFullName(e.target.value)} />

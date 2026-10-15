@@ -132,12 +132,15 @@ export default defineConfig({
           // propre à chaque compte. Le service worker est partagé par tout le
           // navigateur, donc la réponse d'un acheteur était resservie à un
           // visiteur déconnecté (formations affichées comme déjà acquises).
-          // API config (cache long) — réglages publics identiques pour tous
+          // Réglages publics : toujours la dernière version (un changement fait
+          // dans l'admin doit se voir tout de suite) ; le cache ne sert qu'en
+          // secours, hors connexion.
           {
             urlPattern: /\/api\/config\/.*/i,
-            handler: 'StaleWhileRevalidate',
+            handler: 'NetworkFirst',
             options: {
               cacheName: 'api-config',
+              networkTimeoutSeconds: 4,
               expiration: {
                 maxEntries: 5,
                 maxAgeSeconds: 60 * 30, // 30 minutes

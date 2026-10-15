@@ -66,6 +66,9 @@ export default function InPersonPage() {
   const selected = sessions?.find(s => s.id === sessionId)
   const price = Number(selected?.price) || Number(cfg?.price) || 0
   const deposit = Number(cfg?.deposit) || 0
+  const oldPrice = Number(cfg?.oldPrice) > price ? Number(cfg.oldPrice) : 0
+  const discount = oldPrice ? Math.round((1 - price / oldPrice) * 100) : 0
+  const [website, setWebsite] = useState('') // piège à robots
   const allAccepted = !selected || accepted.length === CONDITIONS.length
   const profileReady = QUESTIONS.every(q => profile[q.key])
 
@@ -81,7 +84,7 @@ export default function InPersonPage() {
     setSubmitting(true)
     try {
       const { data } = await api.post('/in-person/register', {
-        fullName, phone, city, message, sessionId, profile, accepted: accepted.length === CONDITIONS.length,
+        fullName, phone, city, message, sessionId, profile, accepted: accepted.length === CONDITIONS.length, website,
       })
       setDone(data.registration)
       requestAnimationFrame(() => topRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }))
@@ -119,13 +122,20 @@ export default function InPersonPage() {
   const primaryBtn = 'w-full py-4 rounded-xl bg-academy-primary text-academy-onPrimary font-bold text-lg flex items-center justify-center gap-2 transition-opacity hover:opacity-90 disabled:opacity-40'
 
   const PriceBox = () => (
-    <div className="rounded-xl border-2 border-academy-primary/30 bg-academy-primary/5 p-4 space-y-1">
-      <div className="flex justify-between gap-4"><span>Prix de la formation</span><span className="font-black">{money(price, currency)}</span></div>
+    <div className="rounded-xl border-2 border-academy-primary/30 bg-academy-primary/5 p-4">
+      {oldPrice > 0 && (
+        <p className="text-xs font-black uppercase tracking-wider text-academy-primary mb-1">Offre de lancement</p>
+      )}
+      <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+        <span className="text-3xl font-black">{money(price, currency)}</span>
+        {oldPrice > 0 && <span className="text-base text-academy-textMain/45 line-through">{money(oldPrice, currency)}</span>}
+        {discount > 0 && <span className="text-xs font-black text-white bg-emerald-600 rounded-full px-2 py-0.5">-{discount}%</span>}
+      </div>
       {deposit > 0 && (
-        <>
-          <div className="flex justify-between gap-4 text-academy-primary"><span className="font-bold">Acompte pour réserver</span><span className="font-black">{money(deposit, currency)}</span></div>
-          <div className="flex justify-between gap-4 text-sm text-academy-textMain/60"><span>Reste à payer ensuite</span><span>{money(Math.max(0, price - deposit), currency)}</span></div>
-        </>
+        <div className="mt-3 pt-3 border-t border-academy-primary/15 space-y-1 text-sm">
+          <div className="flex justify-between gap-4"><span className="font-bold text-academy-primary">Acompte pour réserver</span><span className="font-black">{money(deposit, currency)}</span></div>
+          <div className="flex justify-between gap-4 text-academy-textMain/60"><span>Reste à payer ensuite</span><span>{money(Math.max(0, price - deposit), currency)}</span></div>
+        </div>
       )}
     </div>
   )
@@ -270,12 +280,12 @@ export default function InPersonPage() {
                         {sessions.map(s => {
                           const full = s.seatsLeft <= 0
                           return (
-                            <button type="button" key={s.id} disabled={full} onClick={() => setSessionId(s.id)} className={choice(sessionId === s.id, full)}>
+                            <button type="button" key={s.id} disabled={full} onClick={() => setSessionId(s.id)} className={`${choice(sessionId === s.id, full)} !p-3`}>
                               <span className={radio(sessionId === s.id)} aria-hidden="true" />
                               <span className="flex-1 space-y-1">
-                                <span className="font-bold block">{formatDate(s.date)}</span>
+                                <span className="font-bold block text-[15px]">{formatDate(s.date)}</span>
                                 {s.title && <span className="block text-sm font-semibold">{s.title}</span>}
-                                <span className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-academy-textMain/65">
+                                <span className="flex flex-wrap gap-x-3 gap-y-0.5 text-[13px] text-academy-textMain/65">
                                   {hours(s) && <span className="inline-flex items-center gap-1"><Clock size={14} /> {hours(s)}</span>}
                                   {(s.city || s.place) && <span className="inline-flex items-center gap-1"><MapPin size={14} /> {[s.place, s.city].filter(Boolean).join(', ')}</span>}
                                   <span className={`inline-flex items-center gap-1 font-bold ${full ? 'text-red-600' : s.seatsLeft <= 3 ? 'text-amber-600' : ''}`}>
@@ -286,11 +296,11 @@ export default function InPersonPage() {
                             </button>
                           )
                         })}
-                        <button type="button" onClick={() => setSessionId(null)} className={choice(sessionId === null, false)}>
+                        <button type="button" onClick={() => setSessionId(null)} className={`${choice(sessionId === null, false)} !p-3`}>
                           <span className={radio(sessionId === null)} aria-hidden="true" />
                           <span>
-                            <span className="font-bold block">{sessions.length === 0 ? 'Me prévenir des prochaines dates' : 'Aucune date ne me convient'}</span>
-                            <span className="text-sm text-academy-textMain/60">Liste d'attente : on vous contacte dès qu'une date est fixée. Aucun paiement pour l'instant.</span>
+                            <span className="font-bold block text-[15px]">{sessions.length === 0 ? 'Me prévenir des prochaines dates' : 'Aucune date ne me convient'}</span>
+                            <span className="text-[13px] text-academy-textMain/60">Liste d'attente : on vous contacte dès qu'une date est fixée. Aucun paiement pour l'instant.</span>
                           </span>
                         </button>
                       </div>
@@ -303,15 +313,15 @@ export default function InPersonPage() {
 
                 {/* 3. Votre profil */}
                 {step === 2 && (
-                  <section className={`${card} space-y-6`}>
+                  <section className={`${card} space-y-5`}>
                     {QUESTIONS.map(q => (
                       <div key={q.key}>
-                        <h2 className="font-bold mb-2.5">{q.title}</h2>
-                        <div className="grid gap-2">
+                        <h2 className="font-bold text-[15px] mb-2">{q.title}</h2>
+                        <div className={`grid gap-2 ${q.options.length === 2 ? 'grid-cols-2' : 'grid-cols-3'}`}>
                           {q.options.map(o => (
-                            <button type="button" key={o} onClick={() => setProfile(p => ({ ...p, [q.key]: o }))} className={choice(profile[q.key] === o, false)}>
-                              <span className={radio(profile[q.key] === o)} aria-hidden="true" />
-                              <span className="font-semibold">{o}</span>
+                            <button type="button" key={o} onClick={() => setProfile(p => ({ ...p, [q.key]: o }))}
+                                    className={`min-h-[44px] px-2 py-2 rounded-lg border-2 text-[13px] leading-tight font-semibold text-center transition-colors ${profile[q.key] === o ? 'border-academy-primary bg-academy-primary text-academy-onPrimary' : 'border-academy-border hover:border-academy-primary/40'}`}>
+                              {o}
                             </button>
                           ))}
                         </div>
@@ -325,13 +335,15 @@ export default function InPersonPage() {
 
                 {/* 4. Vos infos + conditions */}
                 {step === 3 && (
-                  <form onSubmit={handleSubmit} className={`${card} space-y-4`}>
+                  <form onSubmit={handleSubmit} className={`${card} space-y-4 relative`}>
                     <div className="bg-academy-surface rounded-xl p-4 text-sm space-y-1">
                       <p className="font-bold">{selected ? formatDate(selected.date) : "Liste d'attente — prochaines dates"}</p>
                       {selected && (selected.city || hours(selected)) && <p className="text-academy-textMain/70">{[hours(selected), selected.city].filter(Boolean).join(' · ')}</p>}
                     </div>
                     {selected && price > 0 && <PriceBox />}
 
+                    <input type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" value={website}
+                           onChange={e => setWebsite(e.target.value)} className="absolute -left-[9999px] w-px h-px opacity-0" />
                     <h2 className="font-bold text-lg">Vos coordonnées</h2>
                     <input className={input} required minLength={3} maxLength={80} autoComplete="name" placeholder="Votre nom et prénom"
                            value={fullName} onChange={e => setFullName(e.target.value)} />
@@ -350,11 +362,11 @@ export default function InPersonPage() {
                           const on = accepted.includes(i)
                           return (
                             <button type="button" key={i} onClick={() => setAccepted(a => on ? a.filter(x => x !== i) : [...a, i])}
-                                    className={`${choice(on, false)} items-center`}>
+                                    className={`w-full text-left rounded-lg border p-3 flex items-center gap-3 transition-colors ${on ? 'border-academy-primary bg-academy-primary/5' : 'border-academy-border'}`}>
                               <span className={`w-5 h-5 rounded-md border-2 shrink-0 flex items-center justify-center ${on ? 'bg-academy-primary border-academy-primary text-academy-onPrimary' : 'border-academy-textMain/30'}`}>
                                 {on && <Check size={14} strokeWidth={3} />}
                               </span>
-                              <span className="text-sm font-semibold">{c}</span>
+                              <span className="text-[13px] font-semibold leading-snug">{c}</span>
                             </button>
                           )
                         })}

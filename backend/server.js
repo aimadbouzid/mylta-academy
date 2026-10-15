@@ -362,7 +362,10 @@ app.use('/api/instructor', apiLimiter, instructorRoutes)
 // du calendrier par un robot (une vraie personne réserve 1 ou 2 créneaux).
 const coachingBookLimiter = rateLimit({
   windowMs: 60 * 60 * 1000,
-  max: 5,
+  // Assez haut pour plusieurs abonnés mobiles derrière une même IP (CGNAT),
+  // assez bas pour stopper un robot ; le piège anti-robot et le refus des
+  // doublons par numéro complètent ce plafond.
+  max: 12,
   message: { error: 'Trop de réservations depuis cette connexion. Réessayez plus tard.', code: 'COACHING_RATE_LIMITED' },
   standardHeaders: true,
   legacyHeaders: false,
