@@ -44,6 +44,7 @@ router.get('/sitemap.xml', async (req, res, next) => {
       { url: '/', priority: '1.0', changefreq: 'weekly' },
       { url: '/courses', priority: '0.9', changefreq: 'daily' },
       { url: '/coaching', priority: '0.8', changefreq: 'weekly' },
+      { url: '/coaching-presentiel', priority: '0.8', changefreq: 'weekly' },
     ]
 
     const coursePages = courses.map(c => ({

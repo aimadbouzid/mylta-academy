@@ -34,6 +34,7 @@ const adminRoutes   = require('./routes/admin')
 const seoRoutes     = require('./routes/seo')
 const instructorRoutes = require('./routes/instructor')
 const coachingRoutes = require('./routes/coaching')
+const inPersonRoutes = require('./routes/inPerson')
 
 // ─── App & Config ─────────────────────────────────────────────
 const app    = express()
@@ -368,6 +369,8 @@ const coachingBookLimiter = rateLimit({
 })
 app.use('/api/coaching/book', coachingBookLimiter)
 app.use('/api/coaching', apiLimiter, coachingRoutes)
+app.use('/api/in-person/register', coachingBookLimiter)
+app.use('/api/in-person', apiLimiter, inPersonRoutes)
 
 // ─── Analytics Public Track Click Route ──────────────────────
 // Endpoint non authentifié qui écrit en base : sans limite, n'importe qui peut

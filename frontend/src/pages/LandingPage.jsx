@@ -227,9 +227,16 @@ export default function LandingPage() {
                     ))}
                   </div>
                 </div>
-                <Link to="/coaching" className="shrink-0 inline-flex items-center justify-center gap-2 py-3 px-6 rounded-md bg-academy-primary text-academy-onPrimary text-sm font-bold hover:opacity-90 transition-opacity">
-                  Réserver une séance <ArrowRight size={15} />
-                </Link>
+                <div className="shrink-0 flex flex-col sm:flex-row gap-2">
+                  <Link to="/coaching" className="inline-flex items-center justify-center gap-2 py-3 px-6 rounded-md bg-academy-primary text-academy-onPrimary text-sm font-bold hover:opacity-90 transition-opacity">
+                    En ligne <ArrowRight size={15} />
+                  </Link>
+                  {siteSettings.inPerson?.enabled && (
+                    <Link to="/coaching-presentiel" className="inline-flex items-center justify-center gap-2 py-3 px-6 rounded-md border-2 border-academy-primary text-academy-primary text-sm font-bold hover:bg-academy-primary/5 transition-colors">
+                      En présentiel <ArrowRight size={15} />
+                    </Link>
+                  )}
+                </div>
               </div>
             </div>
           </section>

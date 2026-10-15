@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo, useRef } from 'react'
 import { ArrowLeft, ArrowRight, CheckCircle2, MessageCircle, CalendarPlus, Clock, ChevronLeft, ChevronRight, Video } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import SEOHead from '../components/SEOHead'
 import api from '../api/axios'
@@ -238,6 +239,9 @@ export default function CoachingPage() {
                 <div className="text-center mb-6">
                   <h1 className="font-display font-black text-3xl sm:text-5xl tracking-tight mb-2">{cfg.title}</h1>
                   <p className="text-academy-textMain/60 sm:text-lg">{cfg.subtitle}</p>
+                  {settings?.inPerson?.enabled && (
+                    <p className="mt-2 text-sm">Vous préférez sur place, en groupe ? <Link to="/coaching-presentiel" className="font-bold text-academy-primary underline underline-offset-2">Coaching présentiel</Link></p>
+                  )}
                   {(duration || price > 0) && (
                     <p className="mt-3 inline-flex items-center gap-2 text-sm font-bold bg-white border border-academy-border rounded-full px-4 py-1.5">
                       <Video size={15} /> {duration ? `Séance de ${duration}` : 'Séance'} en appel vidéo{price > 0 ? ` · ${money(price, cfg.currency)}` : ''}

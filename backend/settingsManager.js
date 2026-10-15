@@ -175,6 +175,27 @@ const defaultSettings = {
     bookUntil: '2028-12-31', // dernière date réservable (AAAA-MM-JJ)
     blockedDates: [],
   },
+  // Coaching présentiel (formation en petit groupe). Les sessions (dates, lieux,
+  // places) sont en base ; ici, uniquement les textes de la page.
+  inPerson: {
+    enabled: true,
+    title: 'Coaching présentiel',
+    subtitle: "Une formation en petit groupe, sur place, pour apprendre l'IA et créer avec l'IA, accompagné du début à la fin.",
+    program: [
+      "Comprendre l'IA et bien utiliser ChatGPT au quotidien",
+      "Écrire des textes, des publications et des publicités avec l'IA",
+      "Créer des images et des vidéos avec l'IA",
+      "Créer son site ou sa page de vente avec l'IA, sans savoir coder",
+      "Gagner du temps en confiant les tâches répétitives à l'IA",
+      'Repartir avec un projet concret, réalisé pendant la formation',
+    ],
+    infos: [
+      'Pour débutants : aucune connaissance nécessaire',
+      'Petit groupe pour que chacun soit aidé',
+      'À apporter : un ordinateur portable (ou votre téléphone)',
+      'Attestation de participation remise à la fin',
+    ],
+  },
   modules: {
     instructorEnabled: true,
     resourcesEnabled: true,
@@ -227,6 +248,7 @@ function getSettings() {
       },
       modules: { ...defaultSettings.modules, ...(parsed.modules || {}) },
       coaching: upgradeCoaching(parsed.coaching),
+      inPerson: { ...defaultSettings.inPerson, ...(parsed.inPerson || {}) },
     }
   } catch (err) {
     console.error('Erreur lecture settings.json:', err)

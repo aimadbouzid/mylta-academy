@@ -166,6 +166,11 @@ export default function Navbar({ onLoginClick }) {
                   <CalendarDays size={15} /> Coaching
                 </Link>
               )}
+              {settings?.inPerson?.enabled !== false && (
+                <Link to="/coaching-presentiel" className="px-3 py-2 whitespace-nowrap rounded-full text-[13px] font-bold text-neutral-600 dark:text-academy-textMain/60 hover:text-black hover:bg-white hover:shadow-xs transition-all flex items-center gap-1.5">
+                  <Users size={15} /> Présentiel
+                </Link>
+              )}
               {isAuthenticated && !isAdmin && !isInstructor && (
                 <Link to="/my-courses" className="px-3 py-2 whitespace-nowrap rounded-full text-[13px] font-bold text-neutral-600 dark:text-academy-textMain/60 hover:text-black hover:bg-white hover:shadow-xs transition-all flex items-center gap-1.5">
                   <PlayCircle size={15} /> {t('nav.my_courses') || 'Mes Formations'}
@@ -382,6 +387,11 @@ export default function Navbar({ onLoginClick }) {
               {settings?.coaching?.enabled !== false && (
                 <Link to="/coaching" onClick={() => setMobileOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl text-neutral-700 dark:text-academy-textMain/75 font-bold hover:bg-black/5 hover:text-black transition-colors">
                   <CalendarDays size={16} /> Coaching en ligne
+                </Link>
+              )}
+              {settings?.inPerson?.enabled !== false && (
+                <Link to="/coaching-presentiel" onClick={() => setMobileOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl text-neutral-700 dark:text-academy-textMain/75 font-bold hover:bg-black/5 hover:text-black transition-colors">
+                  <Users size={16} /> Coaching présentiel
                 </Link>
               )}
               {isAuthenticated && !isAdmin && !isInstructor && (

@@ -7,6 +7,7 @@
 const express = require('express')
 const argon2 = require('argon2')
 const prisma = require('../prisma')
+const { z } = require('zod')
 const { authenticate, isAdmin } = require('../middleware/auth')
 const { t } = require('../i18n')
 const { validateId } = require('../middleware/security')
@@ -696,6 +697,84 @@ router.delete('/coaching-bookings/:id', async (req, res, next) => {
     const id = validateId(req.params.id)
     if (!id) return res.status(400).json({ error: 'ID invalide.' })
     await prisma.coachingBooking.delete({ where: { id } })
+    res.json({ success: true })
+  } catch (err) { next(err) }
+})
+
+// ─── COACHING PRÉSENTIEL : SESSIONS & INSCRIPTIONS ────────────
+const sessionSchema = z.object({
+  title: z.string().trim().max(120).optional().default(''),
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  startTime: z.string().regex(/^(\d{2}:\d{2})?$/).optional().default(''),
+  endTime: z.string().regex(/^(\d{2}:\d{2})?$/).optional().default(''),
+  city: z.string().trim().max(60).optional().default(''),
+  place: z.string().trim().max(200).optional().default(''),
+  capacity: z.coerce.number().int().min(1).max(500),
+  price: z.coerce.number().int().min(0).max(10000000).optional().default(0),
+  isOpen: z.boolean().optional().default(true),
+})
+
+router.get('/in-person', async (req, res, next) => {
+  try {
+    const [sessions, waitlist] = await Promise.all([
+      prisma.inPersonSession.findMany({
+        orderBy: [{ date: 'desc' }, { startTime: 'asc' }],
+        include: { registrations: { orderBy: { createdAt: 'asc' } } },
+      }),
+      prisma.inPersonRegistration.findMany({ where: { sessionId: null }, orderBy: { createdAt: 'desc' } }),
+    ])
+    res.json({ sessions, waitlist })
+  } catch (err) { next(err) }
+})
+
+router.post('/in-person/sessions', async (req, res, next) => {
+  try {
+    const parsed = sessionSchema.safeParse(req.body)
+    if (!parsed.success) return res.status(400).json({ error: 'Vérifiez la date et le nombre de places.' })
+    res.status(201).json(await prisma.inPersonSession.create({ data: parsed.data }))
+  } catch (err) { next(err) }
+})
+
+router.put('/in-person/sessions/:id', async (req, res, next) => {
+  try {
+    const id = validateId(req.params.id)
+    if (!id) return res.status(400).json({ error: 'ID invalide.' })
+    const parsed = sessionSchema.partial().safeParse(req.body)
+    if (!parsed.success) return res.status(400).json({ error: 'Vérifiez la date et le nombre de places.' })
+    res.json(await prisma.inPersonSession.update({ where: { id }, data: parsed.data }))
+  } catch (err) { next(err) }
+})
+
+// Supprimer une session renvoie ses inscrits en liste d'attente (onDelete: SetNull)
+router.delete('/in-person/sessions/:id', async (req, res, next) => {
+  try {
+    const id = validateId(req.params.id)
+    if (!id) return res.status(400).json({ error: 'ID invalide.' })
+    await prisma.inPersonSession.delete({ where: { id } })
+    res.json({ success: true })
+  } catch (err) { next(err) }
+})
+
+router.put('/in-person/registrations/:id', async (req, res, next) => {
+  try {
+    const id = validateId(req.params.id)
+    if (!id) return res.status(400).json({ error: 'ID invalide.' })
+    const { status, sessionId } = req.body
+    const data = {}
+    if (status !== undefined) {
+      if (!['PENDING', 'CONFIRMED', 'CANCELLED'].includes(status)) return res.status(400).json({ error: 'Statut invalide.' })
+      data.status = status
+    }
+    if (sessionId !== undefined) data.sessionId = sessionId === null ? null : validateId(sessionId)
+    res.json(await prisma.inPersonRegistration.update({ where: { id }, data }))
+  } catch (err) { next(err) }
+})
+
+router.delete('/in-person/registrations/:id', async (req, res, next) => {
+  try {
+    const id = validateId(req.params.id)
+    if (!id) return res.status(400).json({ error: 'ID invalide.' })
+    await prisma.inPersonRegistration.delete({ where: { id } })
     res.json({ success: true })
   } catch (err) { next(err) }
 })

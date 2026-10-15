@@ -20,6 +20,7 @@ import CertificateGenerator from '../components/CertificateGenerator'
 import AdminCouponsTab from '../components/admin/AdminCouponsTab'
 import AdminPayoutsTab from '../components/admin/AdminPayoutsTab'
 import AdminCoachingTab from '../components/admin/AdminCoachingTab'
+import AdminInPersonTab from '../components/admin/AdminInPersonTab'
 import api from '../api/axios'
 import { useLanguage } from '../context/LanguageContext'
 
@@ -1846,6 +1847,7 @@ export default function AdminDashboard() {
     { id: 'certificates', icon: Award, label: 'Certificats' },
     { id: 'coupons', icon: Ticket, label: 'Coupons (Promo)' },
     { id: 'coaching', icon: CalendarDays, label: 'Coaching en ligne' },
+    { id: 'in_person', icon: Users, label: 'Coaching présentiel' },
     { id: 'newsletter', icon: Mail, label: 'Newsletter', badge: stats?.totalSubscribers > 0 ? stats.totalSubscribers : null },
     { id: 'site_cms', icon: Globe, label: 'Gestion du Site (CMS)' },
     { id: 'settings', icon: Settings, label: 'Paramètres' },
@@ -2407,6 +2409,7 @@ export default function AdminDashboard() {
           {tab === 'coupons' && <AdminCouponsTab />}
           {tab === 'payouts' && <AdminPayoutsTab />}
           {tab === 'coaching' && <AdminCoachingTab />}
+          {tab === 'in_person' && <AdminInPersonTab />}
           {tab === 'settings' && <SettingsTab />}
         </div>
       </main>

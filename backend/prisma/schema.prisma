@@ -399,3 +399,42 @@ model CoachingBooking {
 
   @@index([date])
 }
+
+// ─────────────────────────────────────────────
+// COACHING PRÉSENTIEL — sessions de groupe et inscriptions
+// date : "YYYY-MM-DD" ; capacity : places maximum du groupe
+// Inscription sans sessionId = liste d'attente (date pas encore fixée)
+// ─────────────────────────────────────────────
+model InPersonSession {
+  id            Int                    @id @default(autoincrement())
+  title         String                 @default("")
+  date          String
+  startTime     String                 @default("")
+  endTime       String                 @default("")
+  city          String                 @default("")
+  place         String                 @default("")
+  capacity      Int                    @default(10)
+  price         Int                    @default(0)
+  isOpen        Boolean                @default(true)
+  registrations InPersonRegistration[]
+  createdAt     DateTime               @default(now())
+  updatedAt     DateTime               @updatedAt
+
+  @@index([date])
+}
+
+model InPersonRegistration {
+  id        Int              @id @default(autoincrement())
+  sessionId Int?
+  session   InPersonSession? @relation(fields: [sessionId], references: [id], onDelete: SetNull)
+  fullName  String
+  phone     String
+  city      String           @default("")
+  message   String?
+  status    String           @default("PENDING")
+  ip        String?
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  @@index([sessionId])
+}
