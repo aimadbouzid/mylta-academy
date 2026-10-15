@@ -1,12 +1,11 @@
 import { useState, useEffect, useMemo, useRef } from 'react'
-import { ArrowLeft, ArrowRight, CheckCircle2, MessageCircle, CalendarPlus, Clock, Video, ChevronLeft, ChevronRight } from 'lucide-react'
+import { ArrowLeft, ArrowRight, CheckCircle2, MessageCircle, CalendarPlus, Clock, ChevronLeft, ChevronRight, Video } from 'lucide-react'
 import Navbar from '../components/Navbar'
 import SEOHead from '../components/SEOHead'
 import api from '../api/axios'
 import { useSiteSettings } from '../context/SiteSettingsContext'
 
-const STEPS = ['Sujet', 'Formule', 'Date', 'Vos infos']
-const LEVELS = ['Débutant', 'Intermédiaire', 'Avancé']
+const STEPS = ['Le sujet', 'Le jour', 'Vos infos']
 const MONTHS = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre']
 const WEEKDAYS = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim']
 
@@ -19,10 +18,10 @@ const formatDate = (s) => {
 }
 const money = (n, cur) => `${Number(n).toLocaleString('fr-FR')} ${cur || 'DA'}`
 
-// Durée d'une séance en minutes, lue dans « 30 min », « 1 h », « 3 × 1 h »…
+// Durée d'une séance en minutes : « 2h30 », « 1 h », « 45 min »…
 const sessionMinutes = (duration = '') => {
-  const h = duration.match(/(\d+(?:[.,]\d+)?)\s*h/i)
-  if (h) return Math.round(parseFloat(h[1].replace(',', '.')) * 60)
+  const h = duration.match(/(\d+)\s*h\s*(\d+)?/i)
+  if (h) return Number(h[1]) * 60 + Number(h[2] || 0)
   const m = duration.match(/(\d+)\s*min/i)
   return m ? Number(m[1]) : 60
 }
@@ -36,7 +35,6 @@ export default function CoachingPage() {
   const [topicId, setTopicId] = useState('')
   const [formatId, setFormatId] = useState('')
   const [channel, setChannel] = useState('')
-  const [level, setLevel] = useState('')
   const [date, setDate] = useState('')
   const [timeSlot, setTimeSlot] = useState('')
   const [fullName, setFullName] = useState('')
@@ -56,8 +54,15 @@ export default function CoachingPage() {
   const formats = cfg?.formats || []
   const channels = cfg?.channels || []
   const slots = cfg?.timeSlots || []
+
+  // Une seule formule : choisie d'office, le client n'a rien à décider.
+  useEffect(() => { if (formats.length === 1) setFormatId(formats[0].id) }, [formats])
+
   const topic = topics.find(t => t.id === topicId)
-  // Sujets regroupés par filière, dans l'ordre où elles apparaissent.
+  const format = formats.find(f => f.id === formatId)
+  const price = Number(format?.price) || Number(topic?.price) || 0
+  const duration = format?.duration || (formats.length === 1 ? formats[0].duration : '')
+
   const topicGroups = useMemo(() => {
     const groups = new Map()
     for (const t of topics) {
@@ -67,8 +72,6 @@ export default function CoachingPage() {
     }
     return [...groups.entries()]
   }, [topics])
-  const format = formats.find(f => f.id === formatId)
-  const price = Number(format?.price) || Number(topic?.price) || 0
 
   const isSlotTaken = (d, s) => booked.some(b => b.date === d && b.timeSlot === s)
   const isSlotPast = (d, s) => {
@@ -103,9 +106,9 @@ export default function CoachingPage() {
     requestAnimationFrame(() => topRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }))
   }
 
-  // En arrivant sur l'étape Date, le premier jour libre est présélectionné.
+  // En arrivant sur le choix du jour, le premier jour libre est déjà sélectionné.
   useEffect(() => {
-    if (step !== 2 || date || !cfg) return
+    if (step !== 1 || date || !cfg) return
     for (let i = 0; i < 120; i++) {
       const d = new Date(today.getFullYear(), today.getMonth(), today.getDate() + i)
       if (isDayAvailable(d)) {
@@ -116,20 +119,21 @@ export default function CoachingPage() {
     }
   }, [step, date, cfg, booked])
 
-  const step1Ready = (formats.length === 0 || formatId) && (channels.length === 0 || channel)
-  const step2Ready = date && (slots.length === 0 || timeSlot)
+  const dateReady = date && (slots.length === 0 || timeSlot)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
+    if (formats.length > 1 && !formatId) return setError('Choisissez une formule.')
+    if (channels.length > 0 && !channel) return setError('Choisissez comment faire l\'appel vidéo.')
     setSubmitting(true)
     try {
-      const { data } = await api.post('/coaching/book', { fullName, phone, topicId, formatId, channel, level, date, timeSlot, message })
+      const { data } = await api.post('/coaching/book', { fullName, phone, topicId, formatId, channel, date, timeSlot, message })
       setDone(data.booking)
       requestAnimationFrame(() => topRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }))
     } catch (err) {
       setError(err.response?.data?.error || 'La réservation a échoué. Réessayez.')
-      if (err.response?.status === 409) { setTimeSlot(''); loadAvailability(); goTo(2) }
+      if (err.response?.status === 409) { setTimeSlot(''); loadAvailability(); goTo(1) }
     } finally {
       setSubmitting(false)
     }
@@ -137,16 +141,15 @@ export default function CoachingPage() {
 
   const summaryLines = (b) => [
     ['Sujet', b.topicLabel],
-    b.formatLabel && ['Formule', b.formatLabel],
-    b.channel && ['Où', b.channel],
-    b.level && ['Niveau', b.level],
-    ['Date', `${formatDate(b.date)}${b.timeSlot ? ` à ${b.timeSlot}` : ''}`],
-    b.price > 0 && ['Tarif', money(b.price, cfg?.currency)],
+    ['Jour', `${formatDate(b.date)}${b.timeSlot ? ` à ${b.timeSlot.replace(':', 'h')}` : ''}`],
+    duration && ['Durée', duration],
+    b.channel && ['Appel vidéo', b.channel],
+    b.price > 0 && ['Prix', money(b.price, cfg?.currency)],
   ].filter(Boolean)
 
   const whatsappUrl = done && cfg?.whatsappNumber
     ? `https://wa.me/${cfg.whatsappNumber.replace(/\D/g, '')}?text=${encodeURIComponent(
-        `Bonjour Mylta Academy, je viens de réserver un coaching en ligne :\n` +
+        `Bonjour Mylta Academy, je viens de réserver une séance de coaching :\n` +
         `• Nom : ${fullName}\n• Téléphone : ${phone}\n` +
         summaryLines(done).map(([k, v]) => `• ${k} : ${v}`).join('\n') + '\n' +
         (message ? `• Message : ${message}\n` : '') +
@@ -161,9 +164,12 @@ export default function CoachingPage() {
     if (done.timeSlot) {
       const [h, m] = done.timeSlot.split(':').map(Number)
       const start = new Date(2000, 0, 1, h, m)
-      const end = new Date(start.getTime() + sessionMinutes(format?.duration) * 60000)
+      const end = new Date(start.getTime() + sessionMinutes(duration) * 60000)
       const t = (x) => `${pad(x.getHours())}${pad(x.getMinutes())}00`
-      dates = `${base}T${t(start)}/${base}T${t(end)}`
+      const endBase = end.getDate() !== start.getDate()
+        ? toYmd(new Date(fromYmd(done.date).getTime() + 86400000)).replace(/-/g, '')
+        : base
+      dates = `${base}T${t(start)}/${endBase}T${t(end)}`
     } else {
       const next = fromYmd(done.date); next.setDate(next.getDate() + 1)
       dates = `${base}/${toYmd(next).replace(/-/g, '')}`
@@ -182,13 +188,14 @@ export default function CoachingPage() {
   const input = 'w-full bg-white border border-academy-border rounded-xl px-4 py-3.5 text-base text-academy-textMain outline-none focus:border-academy-primary'
   const choice = (active) => `text-left rounded-xl border-2 transition-colors ${active ? 'border-academy-primary bg-academy-primary/5' : 'border-academy-border hover:border-academy-primary/40'}`
   const chip = (active) => `px-4 py-2.5 rounded-full border-2 text-sm font-bold transition-colors ${active ? 'border-academy-primary bg-academy-primary text-academy-onPrimary' : 'border-academy-border hover:border-academy-primary/40'}`
+  const radio = (active) => `mt-1 w-4 h-4 rounded-full border-2 shrink-0 ${active ? 'border-academy-primary bg-academy-primary shadow-[inset_0_0_0_3px_white]' : 'border-academy-textMain/30'}`
   const primaryBtn = 'w-full py-4 rounded-xl bg-academy-primary text-academy-onPrimary font-bold text-lg flex items-center justify-center gap-2 transition-opacity hover:opacity-90 disabled:opacity-40'
 
   return (
     <>
       <SEOHead
         title="Coaching en ligne | Mylta Academy"
-        description="Réservez une séance de coaching en ligne en intelligence artificielle et vibe coding : outils IA, automatisation, créer une app ou un site avec l'IA."
+        description="Réservez une séance de coaching en ligne de 2h30 : apprendre à utiliser l'IA, faire des vidéos et des textes avec l'IA, créer votre site ou votre application sans savoir coder."
         canonicalPath="/coaching"
       />
       <div className="min-h-screen bg-transparent text-academy-textMain flex flex-col">
@@ -212,7 +219,7 @@ export default function CoachingPage() {
                 </dl>
                 {whatsappUrl && (
                   <>
-                    <p className="text-sm text-academy-textMain/60 mb-3">Dernière étape : confirmez sur WhatsApp, on vous répond rapidement.</p>
+                    <p className="text-sm text-academy-textMain/60 mb-3">Dernière étape : envoyez-nous ce message sur WhatsApp pour confirmer.</p>
                     <a href={whatsappUrl} target="_blank" rel="noopener noreferrer"
                        className="w-full inline-flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#1ebe5a] text-white font-bold px-6 py-4 rounded-xl transition-colors text-lg">
                       <MessageCircle size={20} /> Confirmer sur WhatsApp
@@ -231,10 +238,15 @@ export default function CoachingPage() {
                 <div className="text-center mb-6">
                   <h1 className="font-display font-black text-3xl sm:text-5xl tracking-tight mb-2">{cfg.title}</h1>
                   <p className="text-academy-textMain/60 sm:text-lg">{cfg.subtitle}</p>
+                  {(duration || price > 0) && (
+                    <p className="mt-3 inline-flex items-center gap-2 text-sm font-bold bg-white border border-academy-border rounded-full px-4 py-1.5">
+                      <Video size={15} /> {duration ? `Séance de ${duration}` : 'Séance'} en appel vidéo{price > 0 ? ` · ${money(price, cfg.currency)}` : ''}
+                    </p>
+                  )}
                 </div>
 
                 {/* Progression */}
-                <ol className="grid grid-cols-4 gap-2 mb-6">
+                <ol className="grid grid-cols-3 gap-2 mb-6">
                   {STEPS.map((label, i) => (
                     <li key={label}>
                       <button type="button" disabled={i > step} onClick={() => goTo(i)} className="w-full text-left disabled:cursor-default">
@@ -254,16 +266,17 @@ export default function CoachingPage() {
                 {/* 1. Sujet */}
                 {step === 0 && (
                   <section className={card}>
-                    <h2 className="font-bold text-lg mb-5">Sur quoi voulez-vous être coaché ?</h2>
+                    <h2 className="font-bold text-lg mb-1">Que voulez-vous apprendre ?</h2>
+                    <p className="text-sm text-academy-textMain/60 mb-5">Choisissez un sujet. Vous pourrez nous expliquer votre besoin juste après.</p>
                     <div className="space-y-6">
                       {topicGroups.map(([category, items]) => (
                         <div key={category || 'autres'}>
-                          {category && <h3 className="text-xs font-black uppercase tracking-widest text-academy-primary mb-2.5">{category}</h3>}
+                          {category && <h3 className="font-bold text-academy-primary mb-2.5">{category}</h3>}
                           <div className="grid sm:grid-cols-2 gap-2.5">
                             {items.map(t => (
                               <button type="button" key={t.id} onClick={() => { setTopicId(t.id); goTo(1) }}
                                       className={`${choice(topicId === t.id)} p-4 flex items-start gap-3`}>
-                                <span className={`mt-1 w-4 h-4 rounded-full border-2 shrink-0 ${topicId === t.id ? 'border-academy-primary bg-academy-primary shadow-[inset_0_0_0_3px_white]' : 'border-academy-textMain/30'}`} aria-hidden="true" />
+                                <span className={radio(topicId === t.id)} aria-hidden="true" />
                                 <span>
                                   <span className="font-bold block">{t.label}</span>
                                   {t.description && <span className="text-sm text-academy-textMain/60 leading-snug">{t.description}</span>}
@@ -277,55 +290,8 @@ export default function CoachingPage() {
                   </section>
                 )}
 
-                {/* 2. Formule, canal, niveau */}
+                {/* 2. Jour et heure */}
                 {step === 1 && (
-                  <section className={`${card} space-y-6`}>
-                    {formats.length > 0 && (
-                      <div>
-                        <h2 className="font-bold text-lg mb-3">Choisissez votre formule</h2>
-                        <div className="space-y-3">
-                          {formats.map(f => (
-                            <button type="button" key={f.id} onClick={() => setFormatId(f.id)}
-                                    className={`${choice(formatId === f.id)} w-full p-4 flex items-center justify-between gap-4`}>
-                              <span>
-                                <span className="font-bold block">{f.label}{f.duration ? <span className="font-medium text-academy-textMain/55"> · {f.duration}</span> : null}</span>
-                                {f.description && <span className="text-sm text-academy-textMain/60">{f.description}</span>}
-                              </span>
-                              {Number(f.price) > 0 && <span className="font-black whitespace-nowrap">{money(f.price, cfg.currency)}</span>}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {channels.length > 0 && (
-                      <div>
-                        <h2 className="font-bold mb-3 flex items-center gap-2"><Video size={18} /> Où se passe la séance ?</h2>
-                        <div className="flex flex-wrap gap-2">
-                          {channels.map(c => (
-                            <button type="button" key={c} onClick={() => setChannel(c)} className={chip(channel === c)}>{c}</button>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    <div>
-                      <h2 className="font-bold mb-3">Votre niveau <span className="font-medium text-academy-textMain/50">(facultatif)</span></h2>
-                      <div className="flex flex-wrap gap-2">
-                        {LEVELS.map(l => (
-                          <button type="button" key={l} onClick={() => setLevel(level === l ? '' : l)} className={chip(level === l)}>{l}</button>
-                        ))}
-                      </div>
-                    </div>
-
-                    <button type="button" disabled={!step1Ready} onClick={() => goTo(2)} className={primaryBtn}>
-                      Choisir la date <ArrowRight size={18} />
-                    </button>
-                  </section>
-                )}
-
-                {/* 3. Date & heure */}
-                {step === 2 && (
                   <section className={`${card} space-y-6`}>
                     <div>
                       <h2 className="font-bold text-lg mb-3">Quel jour ?</h2>
@@ -363,8 +329,9 @@ export default function CoachingPage() {
 
                     {date && slots.length > 0 && (
                       <div>
-                        <h2 className="font-bold mb-3 flex flex-wrap items-center gap-2"><Clock size={18} /> À quelle heure ? <span className="font-medium text-academy-textMain/55">{formatDate(date)}</span></h2>
-                        <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                        <h2 className="font-bold mb-1 flex flex-wrap items-center gap-2"><Clock size={18} /> À quelle heure ?</h2>
+                        <p className="text-sm text-academy-textMain/60 mb-3">{formatDate(date)}{duration ? ` — la séance dure ${duration}` : ''}</p>
+                        <div className="grid grid-cols-3 gap-2">
                           {slots.map(s => {
                             const free = isSlotFree(date, s)
                             return (
@@ -373,7 +340,7 @@ export default function CoachingPage() {
                                         timeSlot === s ? 'border-academy-primary bg-academy-primary text-academy-onPrimary'
                                         : free ? 'border-academy-border hover:border-academy-primary/40'
                                         : 'border-academy-border text-academy-textMain/25 line-through cursor-not-allowed'}`}>
-                                {s}
+                                {s.replace(':', 'h')}
                               </button>
                             )
                           })}
@@ -381,29 +348,56 @@ export default function CoachingPage() {
                       </div>
                     )}
 
-                    <button type="button" disabled={!step2Ready} onClick={() => goTo(3)} className={primaryBtn}>
+                    <button type="button" disabled={!dateReady} onClick={() => goTo(2)} className={primaryBtn}>
                       Continuer <ArrowRight size={18} />
                     </button>
                   </section>
                 )}
 
-                {/* 4. Coordonnées + récapitulatif */}
-                {step === 3 && (
+                {/* 3. Coordonnées + récapitulatif */}
+                {step === 2 && (
                   <form onSubmit={handleSubmit} className={`${card} space-y-4`}>
                     <div className="bg-academy-surface rounded-xl p-4 text-sm space-y-1.5">
                       <p className="font-bold">{topic?.label}</p>
-                      {format && <p className="text-academy-textMain/70">{format.label}{format.duration ? ` · ${format.duration}` : ''}{channel ? ` · ${channel}` : ''}</p>}
-                      <p className="text-academy-textMain/70">{formatDate(date)}{timeSlot ? ` à ${timeSlot}` : ''}</p>
-                      <p className="font-black">{price > 0 ? money(price, cfg.currency) : 'Tarif confirmé sur WhatsApp'}</p>
+                      <p className="text-academy-textMain/70">{formatDate(date)}{timeSlot ? ` à ${timeSlot.replace(':', 'h')}` : ''}{duration ? ` · ${duration}` : ''}</p>
+                      <p className="font-black">{price > 0 ? money(price, cfg.currency) : 'Le prix vous sera donné sur WhatsApp'}</p>
                     </div>
 
+                    {formats.length > 1 && (
+                      <div className="space-y-2">
+                        <h2 className="font-bold">Quelle formule ?</h2>
+                        {formats.map(f => (
+                          <button type="button" key={f.id} onClick={() => setFormatId(f.id)}
+                                  className={`${choice(formatId === f.id)} w-full p-4 flex items-start gap-3`}>
+                            <span className={radio(formatId === f.id)} aria-hidden="true" />
+                            <span className="flex-1">
+                              <span className="font-bold">{f.label}{f.duration ? ` · ${f.duration}` : ''}</span>
+                              {f.description && <span className="block text-sm text-academy-textMain/60">{f.description}</span>}
+                            </span>
+                            {Number(f.price) > 0 && <span className="font-black whitespace-nowrap">{money(f.price, cfg.currency)}</span>}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+
+                    {channels.length > 0 && (
+                      <div>
+                        <h2 className="font-bold mb-2">Comment faire l'appel vidéo ?</h2>
+                        <div className="flex flex-wrap gap-2">
+                          {channels.map(c => (
+                            <button type="button" key={c} onClick={() => setChannel(c)} className={chip(channel === c)}>{c}</button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
                     <h2 className="font-bold text-lg">Vos coordonnées</h2>
-                    <input className={input} required minLength={3} maxLength={80} autoComplete="name" placeholder="Nom et prénom"
+                    <input className={input} required minLength={3} maxLength={80} autoComplete="name" placeholder="Votre nom et prénom"
                            value={fullName} onChange={e => setFullName(e.target.value)} />
                     <input className={input} required type="tel" inputMode="tel" autoComplete="tel" maxLength={20} pattern="\+?[0-9 ]{8,20}"
-                           title="Exemple : 0555 12 34 56" placeholder="Numéro WhatsApp (ex : 0555 12 34 56)"
+                           title="Exemple : 0555 12 34 56" placeholder="Votre numéro WhatsApp (ex : 0555 12 34 56)"
                            value={phone} onChange={e => setPhone(e.target.value)} />
-                    <textarea className={input} rows={3} maxLength={500} placeholder="Votre besoin en quelques mots (facultatif)"
+                    <textarea className={input} rows={3} maxLength={500} placeholder="Expliquez-nous en quelques mots ce que vous voulez faire (facultatif)"
                               value={message} onChange={e => setMessage(e.target.value)} />
 
                     {error && <p className="text-center text-sm font-bold text-red-600">{error}</p>}
@@ -414,7 +408,7 @@ export default function CoachingPage() {
                   </form>
                 )}
 
-                {error && step !== 3 && <p className="mt-4 text-center text-sm font-bold text-red-600">{error}</p>}
+                {error && step !== 2 && <p className="mt-4 text-center text-sm font-bold text-red-600">{error}</p>}
               </>
             )}
           </div>

@@ -221,7 +221,10 @@ export default function AdminCoachingTab() {
         </div>
 
         <div className="flex items-center justify-between mt-8 mb-4">
-          <h3 className="font-bold">Formules (durée et prix)</h3>
+          <div>
+            <h3 className="font-bold">Formules (durée et prix)</h3>
+            <p className="text-xs text-neutral-500">Une seule formule : le client n'a rien à choisir. Plusieurs : il choisit à la dernière étape.</p>
+          </div>
           <button type="button" onClick={() => set({ formats: [...(cfg.formats || []), { id: '', label: '', duration: '', price: 0, description: '' }] })}
                   className="flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/15">
             <Plus size={14} /> Ajouter une formule
@@ -243,7 +246,8 @@ export default function AdminCoachingTab() {
           ))}
         </div>
 
-        <h3 className="font-bold mt-8 mb-3">Où se passe la séance ?</h3>
+        <h3 className="font-bold mt-8">Moyen d'appel vidéo</h3>
+        <p className="text-xs text-neutral-500 mb-3">Laisser vide : vous convenez du moyen (WhatsApp, Meet…) avec le client sur WhatsApp. Sinon, il choisit dans cette liste.</p>
         <div className="flex flex-wrap gap-2 mb-2">
           {(cfg.channels || []).map(c => (
             <span key={c} className="inline-flex items-center gap-1.5 bg-white/5 border border-white/10 rounded-lg px-2.5 py-1 text-xs font-bold">
