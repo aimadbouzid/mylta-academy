@@ -195,24 +195,28 @@ export default function AdminCoachingTab() {
       <div className={panel}>
         <div className="flex items-center justify-between mb-4">
           <h3 className="font-bold">Sujets</h3>
-          <button type="button" onClick={() => set({ topics: [...cfg.topics, { id: '', label: '', description: '', price: 0, duration: '' }] })}
+          <button type="button" onClick={() => set({ topics: [...cfg.topics, { id: '', category: cfg.topics[cfg.topics.length - 1]?.category || '', label: '', description: '', price: 0, duration: '' }] })}
                   className="flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/15">
             <Plus size={14} /> Ajouter un sujet
           </button>
         </div>
         <div className="space-y-2">
           <div className="hidden sm:grid grid-cols-12 gap-2 text-xs font-bold text-neutral-500 px-1">
-            <span className="col-span-4">Sujet</span><span className="col-span-5">Description courte</span><span className="col-span-2">Prix*</span>
+            <span className="col-span-3">Filière</span><span className="col-span-3">Sujet</span><span className="col-span-4">Description courte</span><span className="col-span-1">Prix*</span>
           </div>
           {cfg.topics.map((t, i) => (
             <div key={i} className="grid grid-cols-12 gap-2">
-              <input className={`${input} col-span-12 sm:col-span-4`} placeholder="Nom du sujet" value={t.label} onChange={e => setTopic(i, { label: e.target.value })} />
-              <input className={`${input} col-span-12 sm:col-span-5`} placeholder="Ex : ChatGPT, outils IA…" value={t.description || ''} onChange={e => setTopic(i, { description: e.target.value })} />
-              <input type="number" min="0" className={`${input} col-span-10 sm:col-span-2`} value={t.price} onChange={e => setTopic(i, { price: e.target.value })} />
+              <input className={`${input} col-span-12 sm:col-span-3`} list="coaching-categories" placeholder="Intelligence artificielle" value={t.category || ''} onChange={e => setTopic(i, { category: e.target.value })} />
+              <input className={`${input} col-span-12 sm:col-span-3`} placeholder="Nom du sujet" value={t.label} onChange={e => setTopic(i, { label: e.target.value })} />
+              <input className={`${input} col-span-12 sm:col-span-4`} placeholder="Ex : ChatGPT, outils IA…" value={t.description || ''} onChange={e => setTopic(i, { description: e.target.value })} />
+              <input type="number" min="0" className={`${input} col-span-10 sm:col-span-1`} value={t.price} onChange={e => setTopic(i, { price: e.target.value })} />
               <button type="button" onClick={() => set({ topics: cfg.topics.filter((_, j) => j !== i) })}
                       className="col-span-2 sm:col-span-1 flex items-center justify-center rounded-xl text-red-400 hover:bg-red-500/10"><Trash2 size={16} /></button>
             </div>
           ))}
+          <datalist id="coaching-categories">
+            {[...new Set(cfg.topics.map(t => t.category).filter(Boolean))].map(c => <option key={c} value={c} />)}
+          </datalist>
           <p className="text-xs text-neutral-500 px-1">* Prix du sujet utilisé seulement si la formule choisie n'a pas de prix. 0 = non affiché.</p>
         </div>
 

@@ -57,6 +57,16 @@ export default function CoachingPage() {
   const channels = cfg?.channels || []
   const slots = cfg?.timeSlots || []
   const topic = topics.find(t => t.id === topicId)
+  // Sujets regroupés par filière, dans l'ordre où elles apparaissent.
+  const topicGroups = useMemo(() => {
+    const groups = new Map()
+    for (const t of topics) {
+      const key = t.category || ''
+      if (!groups.has(key)) groups.set(key, [])
+      groups.get(key).push(t)
+    }
+    return [...groups.entries()]
+  }, [topics])
   const format = formats.find(f => f.id === formatId)
   const price = Number(format?.price) || Number(topic?.price) || 0
 
@@ -244,17 +254,24 @@ export default function CoachingPage() {
                 {/* 1. Sujet */}
                 {step === 0 && (
                   <section className={card}>
-                    <h2 className="font-bold text-lg mb-4">Sur quoi voulez-vous être coaché ?</h2>
-                    <div className="grid sm:grid-cols-2 gap-3">
-                      {topics.map(t => (
-                        <button type="button" key={t.id} onClick={() => { setTopicId(t.id); goTo(1) }}
-                                className={`${choice(topicId === t.id)} p-5 flex items-start gap-3`}>
-                          <span className={`mt-1 w-4 h-4 rounded-full border-2 shrink-0 ${topicId === t.id ? 'border-academy-primary bg-academy-primary shadow-[inset_0_0_0_3px_white]' : 'border-academy-textMain/30'}`} aria-hidden="true" />
-                          <span>
-                            <span className="font-bold text-base block">{t.label}</span>
-                            {t.description && <span className="text-sm text-academy-textMain/60 leading-snug">{t.description}</span>}
-                          </span>
-                        </button>
+                    <h2 className="font-bold text-lg mb-5">Sur quoi voulez-vous être coaché ?</h2>
+                    <div className="space-y-6">
+                      {topicGroups.map(([category, items]) => (
+                        <div key={category || 'autres'}>
+                          {category && <h3 className="text-xs font-black uppercase tracking-widest text-academy-primary mb-2.5">{category}</h3>}
+                          <div className="grid sm:grid-cols-2 gap-2.5">
+                            {items.map(t => (
+                              <button type="button" key={t.id} onClick={() => { setTopicId(t.id); goTo(1) }}
+                                      className={`${choice(topicId === t.id)} p-4 flex items-start gap-3`}>
+                                <span className={`mt-1 w-4 h-4 rounded-full border-2 shrink-0 ${topicId === t.id ? 'border-academy-primary bg-academy-primary shadow-[inset_0_0_0_3px_white]' : 'border-academy-textMain/30'}`} aria-hidden="true" />
+                                <span>
+                                  <span className="font-bold block">{t.label}</span>
+                                  {t.description && <span className="text-sm text-academy-textMain/60 leading-snug">{t.description}</span>}
+                                </span>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
                       ))}
                     </div>
                   </section>

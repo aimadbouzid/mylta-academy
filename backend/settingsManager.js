@@ -145,15 +145,24 @@ const defaultSettings = {
   // Coaching en ligne : tout est modifiable depuis l'admin (onglet Coaching).
   // weekdays : 0 = dimanche … 6 = samedi. timeSlots vide = date seule.
   coaching: {
-    version: 2,
+    version: 3,
     enabled: true,
     title: 'Coaching en ligne',
     subtitle: 'Intelligence artificielle et vibe coding : une séance individuelle en visio pour avancer concrètement.',
     whatsappNumber: '213795103743',
     currency: 'DA',
+    // Sujets regroupés par filière (category) : la page les affiche par groupe.
     topics: [
-      { id: 'ia', label: 'Intelligence artificielle', description: 'ChatGPT, outils IA, automatiser son travail', price: 0, duration: '' },
-      { id: 'vibe-coding', label: 'Vibe coding', description: 'Créer une application ou un site avec l\'IA, sans être développeur', price: 0, duration: '' },
+      { id: 'ia-outils', category: 'Intelligence artificielle', label: "Les outils de l'IA", description: 'ChatGPT, Claude, Gemini… choisir et maîtriser les bons outils', price: 0, duration: '' },
+      { id: 'ia-video', category: 'Intelligence artificielle', label: "Créer une vidéo avec l'IA", description: 'Vidéos, avatars et voix off générés par IA', price: 0, duration: '' },
+      { id: 'ia-script', category: 'Intelligence artificielle', label: "Écrire des scripts avec l'IA", description: 'Scripts vidéo, publicités et posts qui accrochent', price: 0, duration: '' },
+      { id: 'ia-images', category: 'Intelligence artificielle', label: "Créer des images avec l'IA", description: 'Visuels, affiches et photos de produits', price: 0, duration: '' },
+      { id: 'ia-reseaux', category: 'Intelligence artificielle', label: "Réseaux sociaux avec l'IA", description: 'Planifier et produire son contenu plus vite', price: 0, duration: '' },
+      { id: 'ia-automatisation', category: 'Intelligence artificielle', label: "Automatiser son travail avec l'IA", description: 'Gagner des heures chaque semaine', price: 0, duration: '' },
+      { id: 'vc-site', category: 'Vibe coding', label: 'Création de site web', description: "Site vitrine ou portfolio, construit avec l'IA", price: 0, duration: '' },
+      { id: 'vc-landing', category: 'Vibe coding', label: 'Création de landing page', description: 'Une page de vente qui convertit', price: 0, duration: '' },
+      { id: 'vc-systeme', category: 'Vibe coding', label: 'Création de système', description: 'Gestion, réservations, suivi clients… sur mesure', price: 0, duration: '' },
+      { id: 'vc-app', category: 'Vibe coding', label: "Création d'application", description: "Application web ou mobile, de l'idée au lancement", price: 0, duration: '' },
     ],
     // Formules proposées : le prix de la formule prime sur celui du sujet.
     formats: [
@@ -162,7 +171,7 @@ const defaultSettings = {
       { id: 'pack-3', label: 'Pack 3 séances', duration: '3 × 1 h', price: 0, description: 'Un vrai suivi sur plusieurs semaines' },
     ],
     channels: ['Google Meet', 'Zoom', 'Appel vidéo WhatsApp'],
-    weekdays: [0, 1, 2, 3, 4, 6],
+    weekdays: [0, 1, 2, 3, 4, 5, 6],
     timeSlots: ['10:00', '14:00', '18:00'],
     bookUntil: '2028-12-31', // dernière date réservable (AAAA-MM-JJ)
     blockedDates: [],
@@ -176,10 +185,11 @@ const defaultSettings = {
   }
 }
 
-// Réglages coaching enregistrés par une version antérieure (sans `version: 2`) :
-// on ne garde que les sujets par défaut (IA, vibe coding) avec les libellés et
-// prix déjà saisis, et la limite de réservation passe à `bookUntil`.
-// Ne s'applique qu'une fois : l'admin réenregistre ensuite avec `version: 2`.
+// Réglages coaching enregistrés par une version antérieure (`version` < 3) :
+// la liste des sujets passe aux filières par défaut (prix déjà saisis conservés
+// pour les sujets qui existent encore), la limite de réservation à `bookUntil`,
+// et les anciens réglages par défaut (vendredi fermé, sous-titre) sont mis à jour.
+// Ne s'applique qu'une fois : l'admin réenregistre ensuite avec la version courante.
 function upgradeCoaching(saved) {
   const def = defaultSettings.coaching
   const merged = { ...def, ...(saved || {}) }
@@ -187,8 +197,9 @@ function upgradeCoaching(saved) {
   const savedById = Object.fromEntries((saved.topics || []).map(({ icon, ...t }) => [t.id, t]))
   merged.topics = def.topics.map(d => ({ ...d, ...(savedById[d.id] || {}) }))
   merged.version = def.version
-  merged.bookUntil = def.bookUntil
+  if (!saved.bookUntil) merged.bookUntil = def.bookUntil
   delete merged.maxDaysAhead
+  if (JSON.stringify(saved.weekdays) === JSON.stringify([0, 1, 2, 3, 4, 6])) merged.weekdays = def.weekdays
   if (saved.subtitle === 'Une séance individuelle en visio avec un expert, sur le sujet de votre choix.') merged.subtitle = def.subtitle
   return merged
 }

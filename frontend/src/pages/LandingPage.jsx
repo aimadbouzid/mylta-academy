@@ -222,8 +222,8 @@ export default function LandingPage() {
                   <h2 className="font-display font-black text-2xl sm:text-3xl text-academy-textMain tracking-tight mb-2">{siteSettings.coaching.title}</h2>
                   <p className="text-academy-textMain/60 text-sm sm:text-base font-medium mb-3">{siteSettings.coaching.subtitle}</p>
                   <div className="flex flex-wrap gap-2">
-                    {(siteSettings.coaching.topics || []).map(tp => (
-                      <span key={tp.id} className="text-xs font-bold px-3 py-1 rounded-full border border-academy-border text-academy-textMain/70">{tp.label}</span>
+                    {[...new Set((siteSettings.coaching.topics || []).map(tp => tp.category || tp.label))].map(name => (
+                      <span key={name} className="text-xs font-bold px-3 py-1 rounded-full border border-academy-border text-academy-textMain/70">{name}</span>
                     ))}
                   </div>
                 </div>
