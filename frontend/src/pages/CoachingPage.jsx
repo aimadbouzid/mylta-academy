@@ -1,12 +1,17 @@
 import { useState, useEffect, useMemo, useRef } from 'react'
-import { ArrowLeft, ArrowRight, CheckCircle2, MessageCircle, CalendarPlus, Clock, ChevronLeft, ChevronRight, Video } from 'lucide-react'
+import { ArrowLeft, ArrowRight, CheckCircle2, MessageCircle, CalendarPlus, Clock, ChevronLeft, ChevronRight, Video, Bot, PenLine, Image, Share2, Zap, Globe, ShoppingBag, LayoutDashboard, Smartphone, Sparkles } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import SEOHead from '../components/SEOHead'
 import api from '../api/axios'
 import { useSiteSettings } from '../context/SiteSettingsContext'
 
-const STEPS = ['Le sujet', 'Le jour', 'Vos infos']
+const STEPS = ['Sujet', 'Date', 'Infos']
+// Icône de chaque sujet par défaut ; un sujet ajouté dans l'admin prend Sparkles.
+const TOPIC_ICONS = {
+  'ia-chatgpt': Bot, 'ia-video': Video, 'ia-textes': PenLine, 'ia-images': Image, 'ia-reseaux': Share2, 'ia-temps': Zap,
+  'creer-site': Globe, 'creer-page-vente': ShoppingBag, 'creer-outil': LayoutDashboard, 'creer-app': Smartphone,
+}
 const MONTHS = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre']
 const WEEKDAYS = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim']
 
@@ -238,25 +243,17 @@ export default function CoachingPage() {
             ) : (
               <>
                 <div className="text-center mb-6">
+                  <p className="text-xs font-black uppercase tracking-widest text-academy-primary mb-2">Coaching en ligne</p>
                   <h1 className="font-display font-black text-3xl sm:text-5xl tracking-tight mb-2">{cfg.title}</h1>
                   <p className="text-academy-textMain/60 sm:text-lg">{cfg.subtitle}</p>
-                  {settings?.inPerson?.enabled && (
-                    <p className="mt-2 text-sm">Vous préférez sur place, en groupe ? <Link to="/coaching-presentiel" className="font-bold text-academy-primary underline underline-offset-2">Coaching présentiel</Link></p>
-                  )}
-                  {(duration || price > 0) && (
-                    <p className="mt-3 inline-flex items-center gap-2 text-sm font-bold bg-white border border-academy-border rounded-full px-4 py-1.5">
-                      <Video size={15} /> {duration ? `Séance de ${duration}` : 'Séance'} en appel vidéo{price > 0 ? ` · ${money(price, cfg.currency)}` : ''}
-                    </p>
-                  )}
                 </div>
 
-                {/* Progression */}
                 <ol className="grid grid-cols-3 gap-2 mb-6">
                   {STEPS.map((label, i) => (
                     <li key={label}>
                       <button type="button" disabled={i > step} onClick={() => goTo(i)} className="w-full text-left disabled:cursor-default">
                         <span className={`block h-1.5 rounded-full mb-1.5 ${i <= step ? 'bg-academy-primary' : 'bg-academy-border'}`} />
-                        <span className={`text-xs font-bold ${i === step ? 'text-academy-textMain' : 'text-academy-textMain/45'}`}>{i + 1}. {label}</span>
+                        <span className={`text-[11px] sm:text-xs font-bold ${i === step ? 'text-academy-textMain' : 'text-academy-textMain/45'}`}>{i + 1}. {label}</span>
                       </button>
                     </li>
                   ))}
@@ -270,25 +267,57 @@ export default function CoachingPage() {
 
                 {/* 1. Sujet */}
                 {step === 0 && (
-                  <section className={card}>
-                    <h2 className="font-bold text-lg mb-1">Que voulez-vous apprendre ?</h2>
-                    <p className="text-sm text-academy-textMain/60 mb-5">Choisissez un sujet. Vous pourrez nous expliquer votre besoin juste après.</p>
-                    <div className="space-y-6">
+                  <section className={`${card} space-y-5`}>
+                    {(cfg.infos || []).length > 0 && (
+                      <div className="grid grid-cols-3 gap-1.5">
+                        {cfg.infos.map((info, i) => (
+                          <span key={i} className="flex items-center justify-center min-h-[34px] px-1.5 py-1 rounded-lg bg-academy-surface text-[11.5px] font-bold leading-tight text-center text-academy-textMain/80">
+                            {info}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+
+                    <div className="space-y-4">
+                      <h2 className="font-bold text-lg">Choisissez votre sujet</h2>
                       {topicGroups.map(([category, items]) => (
                         <div key={category || 'autres'}>
                           {category && <h3 className="font-bold text-sm text-academy-primary mb-2">{category}</h3>}
                           <div className="grid grid-cols-2 gap-2">
-                            {items.map(t => (
-                              <button type="button" key={t.id} onClick={() => { setTopicId(t.id); goTo(1) }}
-                                      className={`${choice(topicId === t.id)} p-3 flex flex-col justify-start min-h-[72px]`}>
-                                <span className="font-bold text-[13px] sm:text-sm leading-snug">{t.label}</span>
-                                {t.description && <span className="mt-1 text-[11px] sm:text-xs text-academy-textMain/55 leading-snug line-clamp-2">{t.description}</span>}
-                              </button>
-                            ))}
+                            {items.map(t => {
+                              const Icon = TOPIC_ICONS[t.id] || Sparkles
+                              const active = topicId === t.id
+                              return (
+                                <button type="button" key={t.id} onClick={() => setTopicId(t.id)}
+                                        className={`rounded-xl border px-2.5 py-2.5 flex items-center gap-2 text-left transition-colors ${active ? 'border-academy-primary bg-academy-primary/5 ring-1 ring-academy-primary' : 'border-academy-border hover:border-academy-primary/40'}`}>
+                                  <span className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${active ? 'bg-academy-primary text-academy-onPrimary' : 'bg-academy-primary/10 text-academy-primary'}`}>
+                                    <Icon size={16} />
+                                  </span>
+                                  <span className="text-[12.5px] font-bold leading-tight">{t.label}</span>
+                                </button>
+                              )
+                            })}
                           </div>
                         </div>
                       ))}
                     </div>
+
+                    <div className="rounded-xl border-2 border-academy-primary/30 bg-academy-primary/5 p-4">
+                      <p className="text-xs font-black uppercase tracking-wider text-academy-primary mb-1">Votre séance</p>
+                      <p className="text-xl font-black">{duration ? `${duration} en appel vidéo` : 'En appel vidéo'}</p>
+                      <p className="text-sm text-academy-textMain/60 mt-1">
+                        {price > 0 ? money(price, cfg.currency) : 'Le prix vous est donné sur WhatsApp après la réservation.'}
+                      </p>
+                    </div>
+
+                    <button type="button" disabled={!topicId} onClick={() => goTo(1)} className={primaryBtn}>
+                      {topicId ? 'Choisir ma date' : 'Choisissez un sujet'} <ArrowRight size={18} />
+                    </button>
+                    {settings?.inPerson?.enabled && (
+                      <p className="text-center text-sm">
+                        Vous préférez sur place, en groupe ? <Link to="/coaching-presentiel" className="font-bold text-academy-primary underline underline-offset-2">Coaching présentiel</Link>
+                      </p>
+                    )}
                   </section>
                 )}
 

@@ -150,6 +150,8 @@ const defaultSettings = {
     enabled: true,
     title: 'Coaching en ligne',
     subtitle: "Un coach rien que pour vous, pour apprendre l'IA ou créer votre site.",
+    // Étiquettes très courtes, en grille de 3 en haut de la page.
+    infos: ['2h30', 'En appel vidéo', 'Individuel', 'Débutants OK', '7 jours sur 7', 'Réponse rapide'],
     whatsappNumber: '213795103743',
     currency: 'DA',
     // Sujets regroupés par thème (category) : la page les affiche par groupe.
@@ -205,7 +207,7 @@ const defaultSettings = {
   },
   modules: {
     instructorEnabled: false,
-    resourcesEnabled: true,
+    resourcesEnabled: false,
     // Redirige les visiteurs venus d'Instagram/TikTok/Facebook (navigateur
     // intégré) vers Chrome/Safari — voir InAppBrowserGuard côté frontend.
     inAppBrowserGuardEnabled: true
@@ -268,7 +270,7 @@ function getSettings() {
 // les valeurs par défaut au premier démarrage, donc un simple changement de
 // défaut ne l'atteint pas). Appliqué une fois : le prochain enregistrement admin
 // écrit settingsVersion à jour.
-const SETTINGS_VERSION = 2
+const SETTINGS_VERSION = 3
 const OLD_BANNER_TEXTS = ["🚀 Promo exceptionnelle : -50% sur toutes les formations ! Inscrivez-vous vite."]
 
 function migrateSettings(parsed, merged) {
@@ -277,6 +279,9 @@ function migrateSettings(parsed, merged) {
       merged.topBanner = { ...defaultSettings.topBanner }
     }
     merged.modules = { ...merged.modules, instructorEnabled: false }
+  }
+  if ((parsed.settingsVersion || 1) < 3) {
+    merged.modules = { ...merged.modules, resourcesEnabled: false }
   }
   merged.settingsVersion = SETTINGS_VERSION
   return merged

@@ -55,7 +55,7 @@ export default function AdminCoachingTab() {
       .map(f => ({ ...f, id: f.id || slugify(f.label), price: Math.max(0, parseInt(f.price, 10) || 0) }))
     setSaving(true)
     try {
-      const coaching = { ...cfg, topics, formats }
+      const coaching = { ...cfg, topics, formats, infos: (cfg.infos || []).map(x => x.trim()).filter(Boolean) }
       const { data } = await api.put('/admin/config', { coaching })
       setCfg(data.config.coaching)
       window.dispatchEvent(new Event('configUpdated'))
@@ -245,6 +245,20 @@ export default function AdminCoachingTab() {
             </div>
           ))}
         </div>
+
+        <h3 className="font-bold mt-8">Étiquettes en haut de la page</h3>
+        <p className="text-xs text-neutral-500 mb-3">Textes très courts (ex : « 2h30 », « Débutants OK »), affichés en grille de 3.</p>
+        <div className="grid grid-cols-3 gap-2 max-w-xl mb-2">
+          {(cfg.infos || []).map((info, i) => (
+            <div key={i} className="flex gap-1">
+              <input className={input} maxLength={24} value={info} onChange={e => set({ infos: cfg.infos.map((x, j) => j === i ? e.target.value : x) })} />
+              <button type="button" onClick={() => set({ infos: cfg.infos.filter((_, j) => j !== i) })} className="px-2 rounded-lg text-red-400 hover:bg-red-500/10">×</button>
+            </div>
+          ))}
+        </div>
+        <button type="button" onClick={() => set({ infos: [...(cfg.infos || []), ''] })} className="flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/15">
+          <Plus size={14} /> Ajouter une étiquette
+        </button>
 
         <h3 className="font-bold mt-8">Moyen d'appel vidéo</h3>
         <p className="text-xs text-neutral-500 mb-3">Laisser vide : vous convenez du moyen (WhatsApp, Meet…) avec le client sur WhatsApp. Sinon, il choisit dans cette liste.</p>
