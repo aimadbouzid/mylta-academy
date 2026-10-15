@@ -203,7 +203,7 @@ export default function CoachingPage() {
       <div className="min-h-screen bg-transparent text-academy-textMain flex flex-col">
         <Navbar />
 
-        <main className="flex-1 pt-28 sm:pt-36 pb-16 px-4">
+        <main className="flex-1 pt-28 sm:pt-36 pb-28 sm:pb-16 px-4">
           <div ref={topRef} className="max-w-2xl mx-auto scroll-mt-28">
             {loadingSettings ? (
               <p className="text-center text-academy-textMain/60">Chargement…</p>

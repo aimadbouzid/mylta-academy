@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowLeft, ArrowRight, CheckCircle2, MessageCircle, MapPin, Clock, Users, Check, Copy } from 'lucide-react'
+import { ArrowLeft, ArrowRight, CheckCircle2, MessageCircle, MapPin, Clock, Users, Check, Copy, Video, Scissors, TrendingUp, Sparkles, Mic, Rocket } from 'lucide-react'
 import Navbar from '../components/Navbar'
 import SEOHead from '../components/SEOHead'
 import api from '../api/axios'
@@ -8,6 +8,7 @@ import { useSiteSettings } from '../context/SiteSettingsContext'
 import { PAYMENT_INFO } from '../config/paymentConfig'
 
 const STEPS = ['Formation', 'Date', 'Profil', 'Infos']
+const PROGRAM_ICONS = [Video, Scissors, TrendingUp, Sparkles, Mic, Rocket]
 
 // Mêmes clés que PROFILE_LABELS côté serveur (routes/inPerson.js).
 const QUESTIONS = [
@@ -127,8 +128,8 @@ export default function InPersonPage() {
         <p className="text-xs font-black uppercase tracking-wider text-academy-primary mb-1">Offre de lancement</p>
       )}
       <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
-        <span className="text-3xl font-black">{money(price, currency)}</span>
-        {oldPrice > 0 && <span className="text-base text-academy-textMain/45 line-through">{money(oldPrice, currency)}</span>}
+        <span className="text-2xl font-black">{money(price, currency)}</span>
+        {oldPrice > 0 && <span className="text-sm text-academy-textMain/45 line-through">{money(oldPrice, currency)}</span>}
         {discount > 0 && <span className="text-xs font-black text-white bg-emerald-600 rounded-full px-2 py-0.5">-{discount}%</span>}
       </div>
       {deposit > 0 && (
@@ -156,7 +157,7 @@ export default function InPersonPage() {
       <div className="min-h-screen bg-transparent text-academy-textMain flex flex-col">
         <Navbar />
 
-        <main className="flex-1 pt-28 sm:pt-36 pb-16 px-4">
+        <main className="flex-1 pt-28 sm:pt-36 pb-28 sm:pb-16 px-4">
           <div ref={topRef} className="max-w-2xl mx-auto scroll-mt-28">
             {loadingSettings ? (
               <p className="text-center text-academy-textMain/60">Chargement…</p>
@@ -233,27 +234,36 @@ export default function InPersonPage() {
 
                 {/* 1. La formation */}
                 {step === 0 && (
-                  <section className={`${card} space-y-6`}>
-                    {(cfg.program || []).length > 0 && (
-                      <div>
-                        <h2 className="font-bold text-lg mb-4">Ce que vous allez apprendre</h2>
-                        <ol className="space-y-3">
-                          {cfg.program.map((p, i) => (
-                            <li key={i} className="flex gap-3">
-                              <span className="w-7 h-7 rounded-full bg-academy-primary/10 text-academy-primary font-black text-sm flex items-center justify-center shrink-0">{i + 1}</span>
-                              <span className="pt-0.5">{p}</span>
-                            </li>
-                          ))}
-                        </ol>
+                  <section className={`${card} space-y-5`}>
+                    {(cfg.infos || []).length > 0 && (
+                      <div className="grid grid-cols-3 gap-1.5">
+                        {cfg.infos.map((info, i) => (
+                          <span key={i} className="flex items-center justify-center min-h-[34px] px-1.5 py-1 rounded-lg bg-academy-surface text-[11.5px] font-bold leading-tight text-center text-academy-textMain/80">
+                            {info}
+                          </span>
+                        ))}
                       </div>
                     )}
-                    {(cfg.infos || []).length > 0 && (
-                      <ul className="space-y-2">
-                        {cfg.infos.map((info, i) => (
-                          <li key={i} className="flex gap-2.5"><Check size={18} className="text-emerald-600 shrink-0 mt-0.5" /> {info}</li>
-                        ))}
-                      </ul>
+
+                    {(cfg.program || []).length > 0 && (
+                      <div>
+                        <h2 className="font-bold text-lg mb-3">Au programme</h2>
+                        <div className="grid grid-cols-2 gap-2">
+                          {cfg.program.map((p, i) => {
+                            const Icon = PROGRAM_ICONS[i % PROGRAM_ICONS.length]
+                            return (
+                              <div key={i} className="rounded-xl border border-academy-border px-2.5 py-2.5 flex items-center gap-2">
+                                <span className="w-8 h-8 rounded-lg bg-academy-primary/10 text-academy-primary flex items-center justify-center shrink-0">
+                                  <Icon size={16} />
+                                </span>
+                                <span className="text-[12.5px] font-bold leading-tight">{p}</span>
+                              </div>
+                            )
+                          })}
+                        </div>
+                      </div>
                     )}
+
                     {price > 0 && <PriceBox />}
                     <button type="button" onClick={() => goTo(1)} className={primaryBtn}>
                       Je réserve ma place <ArrowRight size={18} />

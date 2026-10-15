@@ -184,20 +184,23 @@ const defaultSettings = {
     price: 13000,   // prix de la formation (DA) — repris par défaut pour chaque session
     oldPrice: 18000, // prix barré affiché à côté (offre de lancement) ; 0 = pas de prix barré
     deposit: 3000,  // acompte obligatoire pour réserver sa place
+    // Titres courts : affichés en cartes compactes (2 par ligne sur téléphone).
     program: [
-      'Filmer comme un pro avec son smartphone : cadrage, lumière et son',
-      'Monter ses vidéos sur CapCut, de A à Z',
-      "Maîtriser l'UGC et les vidéos courtes qui vendent (publicités, Reels, TikTok)",
-      "Utiliser l'IA pour trouver ses idées, écrire ses scripts et aller 10x plus vite",
-      "Créer images, voix off et sous-titres avec l'IA",
-      'Repartir autonome, avec ses propres vidéos réalisées pendant la formation',
+      'Filmer au smartphone',
+      'Monter sur CapCut',
+      'UGC & vidéos courtes',
+      "Scripts avec l'IA",
+      'Images & voix off IA',
+      'Vos propres vidéos',
     ],
+    // Étiquettes très courtes, en grille de 3 en haut de la page.
     infos: [
-      '3 jours de formation en présentiel, en petit groupe',
-      "100 % au smartphone (iPhone ou Android) : pas besoin d'ordinateur",
-      'Que vous soyez débutant ou déjà à l’aise',
-      'Déjà plus de 100 personnes formées',
-      'Places très limitées',
+      '3 jours',
+      'Petit groupe',
+      '100 % mobile',
+      'Débutants OK',
+      '+100 formés',
+      'Places limitées',
     ],
   },
   modules: {
