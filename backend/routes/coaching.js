@@ -44,8 +44,13 @@ const bookingSchema = z.object({
   topicId: z.string().trim().min(1).max(50),
   date: z.string().trim(),
   timeSlot: z.string().trim().max(10).optional().default(''),
+  formatId: z.string().trim().max(50).optional().default(''),
+  channel: z.string().trim().max(50).optional().default(''),
+  level: z.string().trim().max(30).optional().default(''),
   message: z.string().trim().max(500).optional(),
 })
+
+const LEVELS = ['Débutant', 'Intermédiaire', 'Avancé']
 
 // POST /api/coaching/book — réservation publique (sans compte)
 router.post('/book', async (req, res, next) => {
@@ -57,10 +62,18 @@ router.post('/book', async (req, res, next) => {
     if (!parsed.success) {
       return res.status(400).json({ error: 'Vérifiez votre nom, votre numéro de téléphone et le sujet choisi.' })
     }
-    const { fullName, phone, topicId, date, timeSlot, message } = parsed.data
+    const { fullName, phone, topicId, date, timeSlot, formatId, channel, level, message } = parsed.data
 
     const topic = (cfg.topics || []).find(t => t.id === topicId)
     if (!topic) return res.status(400).json({ error: 'Sujet invalide.' })
+
+    const formats = cfg.formats || []
+    const format = formats.find(f => f.id === formatId)
+    if (formats.length > 0 && !format) return res.status(400).json({ error: 'Choisissez une formule.' })
+
+    const channels = cfg.channels || []
+    if (channels.length > 0 && !channels.includes(channel)) return res.status(400).json({ error: 'Choisissez comment se déroule la séance.' })
+    if (level && !LEVELS.includes(level)) return res.status(400).json({ error: 'Niveau invalide.' })
 
     const err = dateError(date, cfg)
     if (err) return res.status(400).json({ error: err })
@@ -83,7 +96,10 @@ router.post('/book', async (req, res, next) => {
         phone,
         topicId: topic.id,
         topicLabel: topic.label,
-        price: Number(topic.price) || 0,
+        formatLabel: format ? `${format.label}${format.duration ? ` (${format.duration})` : ''}` : '',
+        channel: channels.length > 0 ? channel : '',
+        level: level || '',
+        price: Number(format?.price) || Number(topic.price) || 0,
         date,
         timeSlot: slot,
         message: message || null,
@@ -91,7 +107,10 @@ router.post('/book', async (req, res, next) => {
       },
     })
 
-    res.status(201).json({ booking: { id: booking.id, date, timeSlot: slot, topicLabel: topic.label, price: booking.price } })
+    res.status(201).json({ booking: {
+      id: booking.id, date, timeSlot: slot, topicLabel: topic.label,
+      formatLabel: booking.formatLabel, channel: booking.channel, level: booking.level, price: booking.price,
+    } })
   } catch (err) { next(err) }
 })
 

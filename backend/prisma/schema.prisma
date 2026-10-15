@@ -50,22 +50,22 @@ model User {
   freeCoursesEarned Int     @default(0) // Number of free courses earned
 
   // ── Instructor / Marketplace Fields ──
-  instructorBio        String?
-  instructorApproved   Boolean   @default(false)
-  instructorAppliedAt  DateTime?
-  commissionRate       Float?    // Override du taux global (null = utiliser le taux par défaut)
-  instructorBalance    Float     @default(0) // Solde accumulé (revenus non retirés)
-  instructorPlan       String?   // Ex: Starter, Pro, Elite
+  instructorBio           String?
+  instructorApproved      Boolean   @default(false)
+  instructorAppliedAt     DateTime?
+  commissionRate          Float? // Override du taux global (null = utiliser le taux par défaut)
+  instructorBalance       Float     @default(0) // Solde accumulé (revenus non retirés)
+  instructorPlan          String? // Ex: Starter, Pro, Elite
   instructorPlanExpiresAt DateTime?
 
   // ── Vérification d'identité (obligatoire avant tout retrait) ──
-  identityStatus       String    @default("NONE") // NONE | PENDING | VERIFIED | REJECTED
-  identityDocPath      String?   // Chemin du document d'identité fourni
-  identityFullName     String?   // Nom légal figurant sur le document
-  identitySubmittedAt  DateTime?
-  identityVerifiedAt   DateTime?
-  identityVerifiedBy   String?   // Email de l'admin ayant validé (audit)
-  identityNotes        String?   // Motif de rejet / notes admin
+  identityStatus      String    @default("NONE") // NONE | PENDING | VERIFIED | REJECTED
+  identityDocPath     String? // Chemin du document d'identité fourni
+  identityFullName    String? // Nom légal figurant sur le document
+  identitySubmittedAt DateTime?
+  identityVerifiedAt  DateTime?
+  identityVerifiedBy  String? // Email de l'admin ayant validé (audit)
+  identityNotes       String? // Motif de rejet / notes admin
 
   receipts               Receipt[]
   notifications          Notification[]
@@ -100,8 +100,8 @@ model Course {
 
   // ── Marketplace Fields ──
   instructorId    Int?
-  approvedByAdmin Boolean  @default(true) // Admin courses are auto-approved
-  instructor      User?    @relation("InstructorCourses", fields: [instructorId], references: [id])
+  approvedByAdmin Boolean @default(true) // Admin courses are auto-approved
+  instructor      User?   @relation("InstructorCourses", fields: [instructorId], references: [id])
 
   lessons  Lesson[]
   receipts Receipt[]
@@ -120,7 +120,7 @@ model Lesson {
   externalVideoUrl String
   order            Int      @default(0)
   duration         String?
-  courseId          Int
+  courseId         Int
   course           Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
@@ -135,33 +135,33 @@ model Lesson {
 // paymentType: "CCP" | "BARIDIMOB" | "EDAHABIA" | "CIB" | "CHARGILY" | "STRIPE" | "PAYPAL" | "REFERRAL_REWARD"
 // ─────────────────────────────────────────────
 model Receipt {
-  id             Int      @id @default(autoincrement())
-  userId         Int
-  courseId        Int
-  amount         Float
-  status         String   @default("PENDING")
-  paymentType    String   @default("CCP")
-  receiptImage   String?
-  transactionId  String?
-  chargilyCheckoutId String? @unique
-  stripeCheckoutId   String? @unique
-  paypalOrderId      String? @unique
-  idempotencyKey String?  @unique
-  notes          String?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  id                 Int      @id @default(autoincrement())
+  userId             Int
+  courseId           Int
+  amount             Float
+  status             String   @default("PENDING")
+  paymentType        String   @default("CCP")
+  receiptImage       String?
+  transactionId      String?
+  chargilyCheckoutId String?  @unique
+  stripeCheckoutId   String?  @unique
+  paypalOrderId      String?  @unique
+  idempotencyKey     String?  @unique
+  notes              String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
 
   // ── Marketplace Commission Tracking ──
-  instructorEarnings  Float?  // Montant que le formateur gagne
-  platformCommission  Float?  // Montant que la plateforme gagne
+  instructorEarnings Float? // Montant que le formateur gagne
+  platformCommission Float? // Montant que la plateforme gagne
 
   // ── Refund System Fields ──
-  approvedAt          DateTime?
-  refundStatus        String    @default("NONE") // NONE, REQUESTED, REJECTED_BY_USER
-  refundAccount       String?   // Ex: Numéro BaridiMob
+  approvedAt    DateTime?
+  refundStatus  String    @default("NONE") // NONE, REQUESTED, REJECTED_BY_USER
+  refundAccount String? // Ex: Numéro BaridiMob
 
-  couponId            Int?
-  coupon              Coupon?   @relation(fields: [couponId], references: [id])
+  couponId Int?
+  coupon   Coupon? @relation(fields: [couponId], references: [id])
 
   user   User   @relation(fields: [userId], references: [id])
   course Course @relation(fields: [courseId], references: [id])
@@ -189,7 +189,7 @@ model Notification {
 model CourseReview {
   id        Int      @id @default(autoincrement())
   userId    Int
-  courseId   Int
+  courseId  Int
   rating    Int
   comment   String?
   createdAt DateTime @default(now())
@@ -223,16 +223,16 @@ model LessonProgress {
 // status: "PENDING" | "APPROVED" | "REJECTED"
 // ─────────────────────────────────────────────
 model InstructorApplication {
-  id          Int      @id @default(autoincrement())
-  userId      Int
-  status      String   @default("PENDING") // PENDING | APPROVED | REJECTED
-  message     String?  // Message/motivation du formateur
-  specialty   String?  // Spécialité du formateur
-  adminNotes  String?  // Notes de l'admin
-  receiptId   Int?     // Lien vers le paiement de la place (optionnel)
+  id           Int      @id @default(autoincrement())
+  userId       Int
+  status       String   @default("PENDING") // PENDING | APPROVED | REJECTED
+  message      String? // Message/motivation du formateur
+  specialty    String? // Spécialité du formateur
+  adminNotes   String? // Notes de l'admin
+  receiptId    Int? // Lien vers le paiement de la place (optionnel)
   receiptImage String? // Chemin de l'image du reçu de paiement
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
@@ -242,22 +242,22 @@ model InstructorApplication {
 // status: "PENDING" | "COMPLETED" | "REJECTED"
 // ─────────────────────────────────────────────
 model InstructorPayout {
-  id              Int      @id @default(autoincrement())
-  reference       String   @unique // Réf. de demande communicable (ex: RET-2026-000123)
-  instructorId    Int
-  amount          Float    // Montant du retrait
-  method          String   @default("CCP") // CCP | BARIDIMOB | EDAHABIA
-  accountInfo     String?  // Info compte (numéro CCP, etc.)
-  status          String   @default("PENDING") // PENDING | COMPLETED | REJECTED
-  notes           String?
+  id           Int     @id @default(autoincrement())
+  reference    String  @unique // Réf. de demande communicable (ex: RET-2026-000123)
+  instructorId Int
+  amount       Float // Montant du retrait
+  method       String  @default("CCP") // CCP | BARIDIMOB | EDAHABIA
+  accountInfo  String? // Info compte (numéro CCP, etc.)
+  status       String  @default("PENDING") // PENDING | COMPLETED | REJECTED
+  notes        String?
 
   // ── Traçabilité / audit du traitement ──
   identityFullName String? // Nom légal vérifié au moment de la demande (figé)
   processedAt      DateTime?
   processedBy      String? // Email de l'admin ayant traité la demande
 
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   instructor User @relation(fields: [instructorId], references: [id], onDelete: Cascade)
 
@@ -332,18 +332,17 @@ model Coupon {
 
   // ── Portée du coupon ──
   // courseId null = coupon global (admin). Sinon, valable uniquement sur cette formation.
-  courseId        Int?
-  course          Course?   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  courseId    Int?
+  course      Course? @relation(fields: [courseId], references: [id], onDelete: Cascade)
   // Formateur propriétaire du coupon (null = créé par l'admin)
-  createdById     Int?
-  createdBy       User?     @relation("CouponsCreated", fields: [createdById], references: [id])
+  createdById Int?
+  createdBy   User?   @relation("CouponsCreated", fields: [createdById], references: [id])
 
-  receipts        Receipt[]
+  receipts Receipt[]
 
   @@index([courseId])
   @@index([createdById])
 }
-
 
 // ─────────────────────────────────────────────
 // RESSOURCES TELECHARGEABLES (COURS)
@@ -381,19 +380,22 @@ model BlogPost {
 // status: "PENDING" | "CONFIRMED" | "CANCELLED"
 // ─────────────────────────────────────────────
 model CoachingBooking {
-  id         Int      @id @default(autoincrement())
-  fullName   String
-  phone      String
-  topicId    String
-  topicLabel String
-  price      Int      @default(0)
-  date       String
-  timeSlot   String   @default("")
-  message    String?
-  status     String   @default("PENDING")
-  ip         String?
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id          Int      @id @default(autoincrement())
+  fullName    String
+  phone       String
+  topicId     String
+  topicLabel  String
+  formatLabel String   @default("")
+  channel     String   @default("")
+  level       String   @default("")
+  price       Int      @default(0)
+  date        String
+  timeSlot    String   @default("")
+  message     String?
+  status      String   @default("PENDING")
+  ip          String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   @@index([date])
 }

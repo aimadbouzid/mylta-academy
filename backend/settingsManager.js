@@ -151,11 +151,23 @@ const defaultSettings = {
     whatsappNumber: '213795103743',
     currency: 'DA',
     topics: [
-      { id: 'ia', label: 'Intelligence artificielle', price: 0, duration: '' },
-      { id: 'vibe-coding', label: 'Vibe coding', price: 0, duration: '' },
-      { id: 'site-web', label: 'Création de site web / landing page', price: 0, duration: '' },
-      { id: 'autre', label: 'Autre sujet', price: 0, duration: '' },
+      { id: 'ia', icon: '🤖', label: 'Intelligence artificielle', description: 'ChatGPT, outils IA, automatiser son travail', price: 0, duration: '' },
+      { id: 'vibe-coding', icon: '⚡', label: 'Vibe coding', description: 'Créer une application avec l\'IA, sans être développeur', price: 0, duration: '' },
+      { id: 'site-web', icon: '🌐', label: 'Création de site web', description: 'Site vitrine ou portfolio, de A à Z', price: 0, duration: '' },
+      { id: 'landing-page', icon: '🚀', label: 'Landing page', description: 'Une page de vente qui convertit', price: 0, duration: '' },
+      { id: 'e-commerce', icon: '🛒', label: 'E-commerce', description: 'Lancer et vendre avec une boutique en ligne', price: 0, duration: '' },
+      { id: 'pub-facebook', icon: '📣', label: 'Publicité Facebook & Instagram', description: 'Campagnes, ciblage, budget', price: 0, duration: '' },
+      { id: 'contenu', icon: '🎬', label: 'Création de contenu', description: 'Vidéos, montage, réseaux sociaux', price: 0, duration: '' },
+      { id: 'freelance', icon: '💼', label: 'Freelance', description: 'Trouver des clients et fixer ses prix', price: 0, duration: '' },
+      { id: 'autre', icon: '✨', label: 'Autre sujet', description: 'Expliquez votre besoin, on s\'adapte', price: 0, duration: '' },
     ],
+    // Formules proposées : le prix de la formule prime sur celui du sujet.
+    formats: [
+      { id: 'decouverte', label: 'Découverte', duration: '30 min', price: 0, description: 'Faire le point sur votre projet' },
+      { id: 'seance', label: 'Séance complète', duration: '1 h', price: 0, description: 'Avancer concrètement, écran partagé' },
+      { id: 'pack-3', label: 'Pack 3 séances', duration: '3 × 1 h', price: 0, description: 'Un vrai suivi sur plusieurs semaines' },
+    ],
+    channels: ['Google Meet', 'Zoom', 'Appel vidéo WhatsApp'],
     weekdays: [0, 1, 2, 3, 4, 6],
     timeSlots: ['10:00', '14:00', '18:00'],
     maxDaysAhead: 30,
@@ -168,6 +180,28 @@ const defaultSettings = {
     // intégré) vers Chrome/Safari — voir InAppBrowserGuard côté frontend.
     inAppBrowserGuardEnabled: true
   }
+}
+
+// Réglages coaching enregistrés avant l'ajout des icônes/descriptions (sujets
+// sans `icon`) : on complète avec les nouveaux sujets par défaut, une seule
+// fois, en conservant les libellés et prix déjà saisis par l'admin.
+function upgradeCoaching(saved) {
+  const def = defaultSettings.coaching
+  const merged = { ...def, ...(saved || {}) }
+  const topics = saved?.topics
+  if (!Array.isArray(topics) || topics.some(t => t.icon !== undefined)) return merged
+  // Libellés par défaut d'avant l'ajout du sujet « Landing page » séparé
+  const OLD_DEFAULT_LABELS = { 'site-web': 'Création de site web / landing page' }
+  const savedById = Object.fromEntries(topics.map(t => {
+    const { label, ...rest } = t
+    return [t.id, label === OLD_DEFAULT_LABELS[t.id] ? rest : t]
+  }))
+  const defIds = new Set(def.topics.map(t => t.id))
+  merged.topics = [
+    ...def.topics.map(d => ({ ...d, ...(savedById[d.id] || {}) })),
+    ...topics.filter(t => !defIds.has(t.id)).map(t => ({ icon: '✨', description: '', ...t })),
+  ]
+  return merged
 }
 
 function getSettings() {
@@ -197,7 +231,7 @@ function getSettings() {
         },
       },
       modules: { ...defaultSettings.modules, ...(parsed.modules || {}) },
-      coaching: { ...defaultSettings.coaching, ...(parsed.coaching || {}) },
+      coaching: upgradeCoaching(parsed.coaching),
     }
   } catch (err) {
     console.error('Erreur lecture settings.json:', err)

@@ -24,6 +24,7 @@ export default function AdminCoachingTab() {
   const [saving, setSaving] = useState(false)
   const [newSlot, setNewSlot] = useState('')
   const [newBlocked, setNewBlocked] = useState('')
+  const [newChannel, setNewChannel] = useState('')
 
   const load = useCallback(async () => {
     try {
@@ -42,15 +43,19 @@ export default function AdminCoachingTab() {
 
   const set = (patch) => setCfg(c => ({ ...c, ...patch }))
   const setTopic = (i, patch) => set({ topics: cfg.topics.map((t, j) => j === i ? { ...t, ...patch } : t) })
+  const setFormat = (i, patch) => set({ formats: (cfg.formats || []).map((f, j) => j === i ? { ...f, ...patch } : f) })
 
   const save = async () => {
     const topics = cfg.topics
       .filter(t => t.label.trim())
-      .map(t => ({ ...t, id: t.id || slugify(t.label), price: Math.max(0, parseInt(t.price, 10) || 0) }))
+      .map(t => ({ ...t, icon: t.icon || '✨', id: t.id || slugify(t.label), price: Math.max(0, parseInt(t.price, 10) || 0) }))
     if (topics.length === 0) return toastError('Ajoutez au moins un sujet.')
+    const formats = (cfg.formats || [])
+      .filter(f => f.label.trim())
+      .map(f => ({ ...f, id: f.id || slugify(f.label), price: Math.max(0, parseInt(f.price, 10) || 0) }))
     setSaving(true)
     try {
-      const coaching = { ...cfg, topics, maxDaysAhead: Math.max(1, parseInt(cfg.maxDaysAhead, 10) || 30) }
+      const coaching = { ...cfg, topics, formats, maxDaysAhead: Math.max(1, parseInt(cfg.maxDaysAhead, 10) || 30) }
       const { data } = await api.put('/admin/config', { coaching })
       setCfg(data.config.coaching)
       window.dispatchEvent(new Event('configUpdated'))
@@ -189,25 +194,65 @@ export default function AdminCoachingTab() {
 
       <div className={panel}>
         <div className="flex items-center justify-between mb-4">
-          <h3 className="font-bold">Sujets et prix</h3>
-          <button type="button" onClick={() => set({ topics: [...cfg.topics, { id: '', label: '', price: 0, duration: '' }] })}
+          <h3 className="font-bold">Sujets</h3>
+          <button type="button" onClick={() => set({ topics: [...cfg.topics, { id: '', icon: '✨', label: '', description: '', price: 0, duration: '' }] })}
                   className="flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/15">
             <Plus size={14} /> Ajouter un sujet
           </button>
         </div>
         <div className="space-y-2">
           <div className="hidden sm:grid grid-cols-12 gap-2 text-xs font-bold text-neutral-500 px-1">
-            <span className="col-span-6">Sujet</span><span className="col-span-2">Prix (0 = non affiché)</span><span className="col-span-3">Durée (ex : 1h)</span>
+            <span className="col-span-1">Icône</span><span className="col-span-4">Sujet</span><span className="col-span-5">Description courte</span><span className="col-span-1">Prix*</span>
           </div>
           {cfg.topics.map((t, i) => (
             <div key={i} className="grid grid-cols-12 gap-2">
-              <input className={`${input} col-span-12 sm:col-span-6`} placeholder="Nom du sujet" value={t.label} onChange={e => setTopic(i, { label: e.target.value })} />
-              <input type="number" min="0" className={`${input} col-span-5 sm:col-span-2`} value={t.price} onChange={e => setTopic(i, { price: e.target.value })} />
-              <input className={`${input} col-span-5 sm:col-span-3`} placeholder="1h" value={t.duration} onChange={e => setTopic(i, { duration: e.target.value })} />
+              <input className={`${input} col-span-2 sm:col-span-1 text-center`} maxLength={4} value={t.icon || ''} onChange={e => setTopic(i, { icon: e.target.value })} />
+              <input className={`${input} col-span-10 sm:col-span-4`} placeholder="Nom du sujet" value={t.label} onChange={e => setTopic(i, { label: e.target.value })} />
+              <input className={`${input} col-span-12 sm:col-span-5`} placeholder="Ex : ChatGPT, outils IA…" value={t.description || ''} onChange={e => setTopic(i, { description: e.target.value })} />
+              <input type="number" min="0" className={`${input} col-span-10 sm:col-span-1`} value={t.price} onChange={e => setTopic(i, { price: e.target.value })} />
               <button type="button" onClick={() => set({ topics: cfg.topics.filter((_, j) => j !== i) })}
                       className="col-span-2 sm:col-span-1 flex items-center justify-center rounded-xl text-red-400 hover:bg-red-500/10"><Trash2 size={16} /></button>
             </div>
           ))}
+          <p className="text-xs text-neutral-500 px-1">* Prix du sujet utilisé seulement si la formule choisie n'a pas de prix. 0 = non affiché.</p>
+        </div>
+
+        <div className="flex items-center justify-between mt-8 mb-4">
+          <h3 className="font-bold">Formules (durée et prix)</h3>
+          <button type="button" onClick={() => set({ formats: [...(cfg.formats || []), { id: '', label: '', duration: '', price: 0, description: '' }] })}
+                  className="flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/15">
+            <Plus size={14} /> Ajouter une formule
+          </button>
+        </div>
+        <div className="space-y-2">
+          <div className="hidden sm:grid grid-cols-12 gap-2 text-xs font-bold text-neutral-500 px-1">
+            <span className="col-span-3">Formule</span><span className="col-span-2">Durée</span><span className="col-span-2">Prix (0 = sur WhatsApp)</span><span className="col-span-4">Description</span>
+          </div>
+          {(cfg.formats || []).map((f, i) => (
+            <div key={i} className="grid grid-cols-12 gap-2">
+              <input className={`${input} col-span-12 sm:col-span-3`} placeholder="Séance complète" value={f.label} onChange={e => setFormat(i, { label: e.target.value })} />
+              <input className={`${input} col-span-6 sm:col-span-2`} placeholder="1 h" value={f.duration} onChange={e => setFormat(i, { duration: e.target.value })} />
+              <input type="number" min="0" className={`${input} col-span-6 sm:col-span-2`} value={f.price} onChange={e => setFormat(i, { price: e.target.value })} />
+              <input className={`${input} col-span-10 sm:col-span-4`} placeholder="Ce que comprend la formule" value={f.description || ''} onChange={e => setFormat(i, { description: e.target.value })} />
+              <button type="button" onClick={() => set({ formats: cfg.formats.filter((_, j) => j !== i) })}
+                      className="col-span-2 sm:col-span-1 flex items-center justify-center rounded-xl text-red-400 hover:bg-red-500/10"><Trash2 size={16} /></button>
+            </div>
+          ))}
+        </div>
+
+        <h3 className="font-bold mt-8 mb-3">Où se passe la séance ?</h3>
+        <div className="flex flex-wrap gap-2 mb-2">
+          {(cfg.channels || []).map(c => (
+            <span key={c} className="inline-flex items-center gap-1.5 bg-white/5 border border-white/10 rounded-lg px-2.5 py-1 text-xs font-bold">
+              {c}
+              <button type="button" onClick={() => set({ channels: cfg.channels.filter(x => x !== c) })} className="text-red-400">×</button>
+            </span>
+          ))}
+        </div>
+        <div className="flex gap-2 max-w-sm">
+          <input className={input} placeholder="Ex : Google Meet" value={newChannel} onChange={e => setNewChannel(e.target.value)} />
+          <button type="button" onClick={() => { const c = newChannel.trim(); if (c && !(cfg.channels || []).includes(c)) set({ channels: [...(cfg.channels || []), c] }); setNewChannel('') }}
+                  className="px-3 rounded-xl bg-white/10 hover:bg-white/15"><Plus size={16} /></button>
         </div>
         <button type="button" onClick={save} disabled={saving}
                 className="mt-6 w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-emerald-600 hover:bg-emerald-500 rounded-xl font-bold transition-colors disabled:opacity-60">
@@ -240,7 +285,11 @@ export default function AdminCoachingTab() {
                       <div className="text-neutral-400">{b.phone}</div>
                       {b.message && <div className="text-neutral-500 text-xs mt-1 max-w-xs">{b.message}</div>}
                     </td>
-                    <td className="p-4 text-neutral-300">{b.topicLabel}{b.price > 0 ? ` · ${b.price.toLocaleString('fr-FR')} ${cfg.currency}` : ''}</td>
+                    <td className="p-4 text-neutral-300">
+                      <div className="font-bold text-white">{b.topicLabel}</div>
+                      <div className="text-xs text-neutral-400">{[b.formatLabel, b.channel, b.level].filter(Boolean).join(' · ')}</div>
+                      {b.price > 0 && <div className="text-xs text-emerald-400 font-bold">{b.price.toLocaleString('fr-FR')} {cfg.currency}</div>}
+                    </td>
                     <td className="p-4">
                       <select value={b.status} onChange={e => setStatus(b.id, e.target.value)}
                               className={`rounded-full px-2 py-1 text-[11px] font-bold border-0 outline-none ${STATUS[b.status]?.cls}`}>
