@@ -164,7 +164,7 @@ export default function CoachingPage() {
     <>
       <SEOHead
         title="Coaching en ligne | Mylta Academy"
-        description="Réservez une séance de coaching en ligne : IA, vibe coding, site web, landing page, e-commerce, publicité, freelance."
+        description="Réservez une séance de coaching en ligne en intelligence artificielle et vibe coding : outils IA, automatisation, créer une app ou un site avec l'IA."
         canonicalPath="/coaching"
       />
       <div className="min-h-screen bg-transparent text-academy-textMain flex flex-col">

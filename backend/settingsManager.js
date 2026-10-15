@@ -147,19 +147,12 @@ const defaultSettings = {
   coaching: {
     enabled: true,
     title: 'Coaching en ligne',
-    subtitle: 'Une séance individuelle en visio avec un expert, sur le sujet de votre choix.',
+    subtitle: 'Intelligence artificielle et vibe coding : une séance individuelle en visio pour avancer concrètement.',
     whatsappNumber: '213795103743',
     currency: 'DA',
     topics: [
       { id: 'ia', icon: '🤖', label: 'Intelligence artificielle', description: 'ChatGPT, outils IA, automatiser son travail', price: 0, duration: '' },
-      { id: 'vibe-coding', icon: '⚡', label: 'Vibe coding', description: 'Créer une application avec l\'IA, sans être développeur', price: 0, duration: '' },
-      { id: 'site-web', icon: '🌐', label: 'Création de site web', description: 'Site vitrine ou portfolio, de A à Z', price: 0, duration: '' },
-      { id: 'landing-page', icon: '🚀', label: 'Landing page', description: 'Une page de vente qui convertit', price: 0, duration: '' },
-      { id: 'e-commerce', icon: '🛒', label: 'E-commerce', description: 'Lancer et vendre avec une boutique en ligne', price: 0, duration: '' },
-      { id: 'pub-facebook', icon: '📣', label: 'Publicité Facebook & Instagram', description: 'Campagnes, ciblage, budget', price: 0, duration: '' },
-      { id: 'contenu', icon: '🎬', label: 'Création de contenu', description: 'Vidéos, montage, réseaux sociaux', price: 0, duration: '' },
-      { id: 'freelance', icon: '💼', label: 'Freelance', description: 'Trouver des clients et fixer ses prix', price: 0, duration: '' },
-      { id: 'autre', icon: '✨', label: 'Autre sujet', description: 'Expliquez votre besoin, on s\'adapte', price: 0, duration: '' },
+      { id: 'vibe-coding', icon: '⚡', label: 'Vibe coding', description: 'Créer une application ou un site avec l\'IA, sans être développeur', price: 0, duration: '' },
     ],
     // Formules proposées : le prix de la formule prime sur celui du sujet.
     formats: [
@@ -182,25 +175,18 @@ const defaultSettings = {
   }
 }
 
-// Réglages coaching enregistrés avant l'ajout des icônes/descriptions (sujets
-// sans `icon`) : on complète avec les nouveaux sujets par défaut, une seule
-// fois, en conservant les libellés et prix déjà saisis par l'admin.
+// Réglages coaching enregistrés avant l'ajout des icônes (sujets sans `icon`) :
+// on ne garde que les sujets par défaut (IA, vibe coding), avec les libellés et
+// prix déjà saisis par l'admin. Ne s'applique qu'une fois : le prochain
+// enregistrement depuis l'admin écrit des sujets avec icône.
 function upgradeCoaching(saved) {
   const def = defaultSettings.coaching
   const merged = { ...def, ...(saved || {}) }
   const topics = saved?.topics
   if (!Array.isArray(topics) || topics.some(t => t.icon !== undefined)) return merged
-  // Libellés par défaut d'avant l'ajout du sujet « Landing page » séparé
-  const OLD_DEFAULT_LABELS = { 'site-web': 'Création de site web / landing page' }
-  const savedById = Object.fromEntries(topics.map(t => {
-    const { label, ...rest } = t
-    return [t.id, label === OLD_DEFAULT_LABELS[t.id] ? rest : t]
-  }))
-  const defIds = new Set(def.topics.map(t => t.id))
-  merged.topics = [
-    ...def.topics.map(d => ({ ...d, ...(savedById[d.id] || {}) })),
-    ...topics.filter(t => !defIds.has(t.id)).map(t => ({ icon: '✨', description: '', ...t })),
-  ]
+  const savedById = Object.fromEntries(topics.map(t => [t.id, t]))
+  merged.topics = def.topics.map(d => ({ ...d, ...(savedById[d.id] || {}) }))
+  if (saved.subtitle === 'Une séance individuelle en visio avec un expert, sur le sujet de votre choix.') merged.subtitle = def.subtitle
   return merged
 }
 
