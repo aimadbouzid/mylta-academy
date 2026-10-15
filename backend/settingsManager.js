@@ -103,16 +103,16 @@ const defaultSettings = {
   ],
   topBanner: {
     isActive: true,
-    text: "🚀 Promo exceptionnelle : -50% sur toutes les formations ! Inscrivez-vous vite.",
-    text2: "🔥 Places limitées ! Sécurisez votre place et commencez à apprendre dès aujourd'hui.",
+    text: "Nouveau : coaching en ligne IA & vibe coding — réservez votre séance de 2h30",
+    text2: "Formation IA & Montage Vidéo en présentiel — offre de lancement, places limitées",
     animation: "marquee",
-    hasCountdown: true,
+    hasCountdown: false,
     countdownDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
     backgroundColor: "bg-gradient-to-r from-red-600 to-red-500",
     textColor: "text-white",
     icon: "sparkles",
-    linkUrl: "/courses",
-    linkText: "Voir l'offre"
+    linkUrl: "/coaching",
+    linkText: "Réserver"
   },
   weeklyResource: {
     isActive: true,
@@ -204,7 +204,7 @@ const defaultSettings = {
     ],
   },
   modules: {
-    instructorEnabled: true,
+    instructorEnabled: false,
     resourcesEnabled: true,
     // Redirige les visiteurs venus d'Instagram/TikTok/Facebook (navigateur
     // intégré) vers Chrome/Safari — voir InAppBrowserGuard côté frontend.
@@ -232,12 +232,13 @@ function getSettings() {
     if (!fs.existsSync(settingsPath)) {
       const dir = path.dirname(settingsPath)
       if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true })
-      fs.writeFileSync(settingsPath, JSON.stringify(defaultSettings, null, 2))
-      return defaultSettings
+      const initial = { ...defaultSettings, settingsVersion: SETTINGS_VERSION }
+      fs.writeFileSync(settingsPath, JSON.stringify(initial, null, 2))
+      return initial
     }
     const data = fs.readFileSync(settingsPath, 'utf8')
     const parsed = JSON.parse(data)
-    return {
+    return migrateSettings(parsed, {
       ...defaultSettings,
       ...parsed,
       hero: { ...defaultSettings.hero, ...(parsed.hero || {}) },
@@ -256,11 +257,29 @@ function getSettings() {
       modules: { ...defaultSettings.modules, ...(parsed.modules || {}) },
       coaching: upgradeCoaching(parsed.coaching),
       inPerson: { ...defaultSettings.inPerson, ...(parsed.inPerson || {}) },
-    }
+    })
   } catch (err) {
     console.error('Erreur lecture settings.json:', err)
     return defaultSettings
   }
+}
+
+// Réglages écrits par une version antérieure (le fichier est créé avec toutes
+// les valeurs par défaut au premier démarrage, donc un simple changement de
+// défaut ne l'atteint pas). Appliqué une fois : le prochain enregistrement admin
+// écrit settingsVersion à jour.
+const SETTINGS_VERSION = 2
+const OLD_BANNER_TEXTS = ["🚀 Promo exceptionnelle : -50% sur toutes les formations ! Inscrivez-vous vite."]
+
+function migrateSettings(parsed, merged) {
+  if ((parsed.settingsVersion || 1) < 2) {
+    if (!parsed.topBanner || OLD_BANNER_TEXTS.includes(parsed.topBanner.text)) {
+      merged.topBanner = { ...defaultSettings.topBanner }
+    }
+    merged.modules = { ...merged.modules, instructorEnabled: false }
+  }
+  merged.settingsVersion = SETTINGS_VERSION
+  return merged
 }
 
 const isPlainObject = (v) => v !== null && typeof v === 'object' && !Array.isArray(v)

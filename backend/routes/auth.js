@@ -185,15 +185,16 @@ router.post('/register', async (req, res, next) => {
     const { mailSent } = await issueVerificationEmail(user)
 
     // Sans SMTP configuré, aucun lien d'activation ne partira jamais et le compte
-    // resterait bloqué au login. Hors production, on active donc directement.
-    if (!mailSent && !isMailerConfigured() && process.env.NODE_ENV !== 'production') {
+    // resterait bloqué au login : on l'active directement. Dès que SMTP_USER /
+    // SMTP_PASS sont renseignés, la vérification par email reprend d'elle-même.
+    if (!mailSent && !isMailerConfigured()) {
       await prisma.user.update({
         where: { id: user.id },
         data: { emailVerified: true, verifyToken: null, verifyExpires: null }
       })
-      console.warn(`[DEV] SMTP non configuré — compte ${user.email} activé automatiquement.`)
+      console.warn(`[EMAIL] SMTP non configuré — compte ${user.email} activé sans vérification.`)
       return res.status(201).json({
-        message: 'Compte créé et activé (mode dev : SMTP non configuré). Vous pouvez vous connecter.',
+        message: 'Compte créé ! Vous pouvez vous connecter.',
         autoVerified: true
       })
     }
@@ -262,15 +263,15 @@ router.post('/resend-verification', async (req, res, next) => {
 
     const { mailSent } = await issueVerificationEmail(user)
 
-    // Même logique qu'à l'inscription : sans SMTP en dev, on débloque le compte.
-    if (!mailSent && !isMailerConfigured() && process.env.NODE_ENV !== 'production') {
+    // Même logique qu'à l'inscription : sans SMTP, on débloque le compte.
+    if (!mailSent && !isMailerConfigured()) {
       await prisma.user.update({
         where: { id: user.id },
         data: { emailVerified: true, verifyToken: null, verifyExpires: null }
       })
-      console.warn(`[DEV] SMTP non configuré — compte ${user.email} activé automatiquement.`)
+      console.warn(`[EMAIL] SMTP non configuré — compte ${user.email} activé sans vérification.`)
       return res.json({
-        message: 'Compte activé (mode dev : SMTP non configuré). Vous pouvez vous connecter.',
+        message: 'Compte activé. Vous pouvez vous connecter.',
         autoVerified: true
       })
     }
@@ -387,7 +388,13 @@ router.post('/login', async (req, res, next) => {
     }
 
     if (!user.emailVerified) {
-      return res.status(403).json({ error: 'Veuillez vérifier votre adresse email avant de vous connecter.', code: 'EMAIL_NOT_VERIFIED' })
+      // Sans SMTP, aucun lien d'activation n'a pu partir : un compte créé dans
+      // ces conditions ne doit pas rester bloqué. Le mot de passe vient d'être vérifié.
+      if (!isMailerConfigured()) {
+        await prisma.user.update({ where: { id: user.id }, data: { emailVerified: true, verifyToken: null, verifyExpires: null } })
+      } else {
+        return res.status(403).json({ error: 'Veuillez vérifier votre adresse email avant de vous connecter.', code: 'EMAIL_NOT_VERIFIED' })
+      }
     }
 
     // Rotate session version on login

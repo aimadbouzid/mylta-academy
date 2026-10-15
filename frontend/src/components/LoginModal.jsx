@@ -141,6 +141,15 @@ export default function LoginModal({ onClose, onSuccess }) {
         }
 
         const res = await register(form.email, form.password, form.name, 'human-verification-passed')
+        if (res.autoVerified) {
+          // Compte déjà actif (pas de vérification par email) : connexion directe.
+          await login(form.email, form.password)
+          await checkAuth()
+          success(t('login.welcome_back'))
+          onSuccess?.()
+          onClose?.()
+          return
+        }
         success(res.message || t('login.verification_wait'))
         // Ne pas fermer immédiatement, l'utilisateur doit vérifier son email
         setMode('login') // Switch to login mode but they still need to verify

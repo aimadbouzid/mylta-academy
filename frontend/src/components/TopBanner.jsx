@@ -8,11 +8,11 @@ export default function TopBanner() {
     const cached = localStorage.getItem('mylta_topBanner_cache')
     return cached ? JSON.parse(cached) : {
       isActive: true,
-      text: "🚀 Promo exceptionnelle : -50% sur toutes les formations ! Inscrivez-vous vite.",
+      text: "Nouveau : coaching en ligne IA & vibe coding — réservez votre séance de 2h30",
       icon: "sparkles",
       animation: "marquee",
-      linkUrl: "/courses",
-      linkText: "Voir l'offre"
+      linkUrl: "/coaching",
+      linkText: "Réserver"
     }
   })
   const [isLoaded, setIsLoaded] = useState(true) // Start true if we have initial state
@@ -21,7 +21,7 @@ export default function TopBanner() {
   // Messages array combining config text and a 2nd text message
   const messages = config ? [
     config.text,
-    config.text2 || "🔥 Places limitées ! Sécurisez votre place et commencez à apprendre dès aujourd'hui."
+    config.text2 || "Formation IA & Montage Vidéo en présentiel — offre de lancement, places limitées"
   ] : []
 
   // Les réglages viennent du contexte partagé : ce composant refaisait un appel

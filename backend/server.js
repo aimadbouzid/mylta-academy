@@ -188,7 +188,8 @@ app.use(helmet({
       // "Continuer avec Google/Facebook" — sans ça, CSP bloque silencieusement
       // ces logins en production alors qu'ils fonctionnent en dev (CSP désactivée).
       scriptSrc: ["'self'", 'https://accounts.google.com', 'https://connect.facebook.net'],
-      styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
+      // accounts.google.com/gsi/style : feuille de style du bouton « Se connecter avec Google »
+      styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com', 'https://accounts.google.com/gsi/style'],
       fontSrc: ["'self'", 'https://fonts.gstatic.com'],
       imgSrc: ["'self'", 'data:', 'https:'],
       // www.facebook.com : destination des évènements du pixel Meta (/tr).
