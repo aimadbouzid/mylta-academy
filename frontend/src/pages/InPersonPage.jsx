@@ -317,10 +317,10 @@ export default function InPersonPage() {
                     {QUESTIONS.map(q => (
                       <div key={q.key}>
                         <h2 className="font-bold text-[15px] mb-2">{q.title}</h2>
-                        <div className={`grid gap-2 ${q.options.length === 2 ? 'grid-cols-2' : 'grid-cols-3'}`}>
+                        <div className="flex flex-wrap gap-1.5">
                           {q.options.map(o => (
                             <button type="button" key={o} onClick={() => setProfile(p => ({ ...p, [q.key]: o }))}
-                                    className={`min-h-[44px] px-2 py-2 rounded-lg border-2 text-[13px] leading-tight font-semibold text-center transition-colors ${profile[q.key] === o ? 'border-academy-primary bg-academy-primary text-academy-onPrimary' : 'border-academy-border hover:border-academy-primary/40'}`}>
+                                    className={`h-9 px-3 rounded-full border text-xs font-semibold whitespace-nowrap transition-colors ${profile[q.key] === o ? 'border-academy-primary bg-academy-primary text-academy-onPrimary' : 'border-academy-border bg-white text-academy-textMain/80 hover:border-academy-primary/50'}`}>
                               {o}
                             </button>
                           ))}
