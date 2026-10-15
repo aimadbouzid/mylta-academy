@@ -430,6 +430,7 @@ model InPersonRegistration {
   fullName  String
   phone     String
   city      String           @default("")
+  profile   String           @default("")
   message   String?
   status    String           @default("PENDING")
   ip        String?

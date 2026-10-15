@@ -179,21 +179,24 @@ const defaultSettings = {
   // places) sont en base ; ici, uniquement les textes de la page.
   inPerson: {
     enabled: true,
-    title: 'Coaching présentiel',
-    subtitle: "Une formation en petit groupe, sur place, pour apprendre l'IA et créer avec l'IA, accompagné du début à la fin.",
+    title: 'Formation IA & Montage Vidéo',
+    subtitle: "Filmez, montez et utilisez l'IA comme un pro, depuis votre smartphone. 3 jours en présentiel, en petit groupe.",
+    price: 13000,   // prix de la formation (DA) — repris par défaut pour chaque session
+    deposit: 3000,  // acompte obligatoire pour réserver sa place
     program: [
-      "Comprendre l'IA et bien utiliser ChatGPT au quotidien",
-      "Écrire des textes, des publications et des publicités avec l'IA",
-      "Créer des images et des vidéos avec l'IA",
-      "Créer son site ou sa page de vente avec l'IA, sans savoir coder",
-      "Gagner du temps en confiant les tâches répétitives à l'IA",
-      'Repartir avec un projet concret, réalisé pendant la formation',
+      'Filmer comme un pro avec son smartphone : cadrage, lumière et son',
+      'Monter ses vidéos sur CapCut, de A à Z',
+      "Maîtriser l'UGC et les vidéos courtes qui vendent (publicités, Reels, TikTok)",
+      "Utiliser l'IA pour trouver ses idées, écrire ses scripts et aller 10x plus vite",
+      "Créer images, voix off et sous-titres avec l'IA",
+      'Repartir autonome, avec ses propres vidéos réalisées pendant la formation',
     ],
     infos: [
-      'Pour débutants : aucune connaissance nécessaire',
-      'Petit groupe pour que chacun soit aidé',
-      'À apporter : un ordinateur portable (ou votre téléphone)',
-      'Attestation de participation remise à la fin',
+      '3 jours de formation en présentiel, en petit groupe',
+      "100 % au smartphone (iPhone ou Android) : pas besoin d'ordinateur",
+      'Que vous soyez débutant ou déjà à l’aise',
+      'Déjà plus de 100 personnes formées',
+      'Places très limitées',
     ],
   },
   modules: {

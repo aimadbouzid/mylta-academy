@@ -1,10 +1,26 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
-import { CheckCircle2, MessageCircle, MapPin, Clock, Users, Check } from 'lucide-react'
+import { ArrowLeft, ArrowRight, CheckCircle2, MessageCircle, MapPin, Clock, Users, Check, Copy } from 'lucide-react'
 import Navbar from '../components/Navbar'
 import SEOHead from '../components/SEOHead'
 import api from '../api/axios'
 import { useSiteSettings } from '../context/SiteSettingsContext'
+import { PAYMENT_INFO } from '../config/paymentConfig'
+
+const STEPS = ['Formation', 'Date', 'Profil', 'Infos']
+
+// Mêmes clés que PROFILE_LABELS côté serveur (routes/inPerson.js).
+const QUESTIONS = [
+  { key: 'level', title: 'Quel est votre niveau actuel ?', options: ['Débutant total', 'Intermédiaire', 'Avancé'] },
+  { key: 'goal', title: 'Pourquoi souhaitez-vous suivre cette formation ?', options: ['Création de contenu perso', 'Pour mon business', 'Devenir monteur pro'] },
+  { key: 'phoneType', title: 'Quel smartphone utilisez-vous ?', options: ['iPhone (iOS)', 'Android'] },
+  { key: 'capcut', title: 'Avez-vous déjà utilisé CapCut ?', options: ['Oui, régulièrement', 'Juste essayé', 'Jamais'] },
+]
+const CONDITIONS = [
+  'Je suis disponible pendant toute la durée de la formation.',
+  "Je comprends que l'acompte est obligatoire pour réserver ma place.",
+  "Je m'engage à respecter les horaires.",
+]
 
 const formatDate = (s) => {
   const [y, m, d] = s.split('-').map(Number)
@@ -20,17 +36,21 @@ export default function InPersonPage() {
   const cfg = settings?.inPerson
   const currency = settings?.coaching?.currency || 'DA'
   const whatsappNumber = settings?.coaching?.whatsappNumber
-  const formRef = useRef(null)
+  const topRef = useRef(null)
 
+  const [step, setStep] = useState(0)
   const [sessions, setSessions] = useState(null)
   const [sessionId, setSessionId] = useState(null) // null = liste d'attente
+  const [profile, setProfile] = useState({})
   const [fullName, setFullName] = useState('')
   const [phone, setPhone] = useState('')
   const [city, setCity] = useState('')
   const [message, setMessage] = useState('')
+  const [accepted, setAccepted] = useState([])
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
   const [done, setDone] = useState(null)
+  const [copied, setCopied] = useState('')
 
   const loadSessions = () => {
     api.get('/in-person/sessions')
@@ -44,33 +64,48 @@ export default function InPersonPage() {
   useEffect(() => { if (cfg?.enabled) loadSessions() }, [cfg?.enabled])
 
   const selected = sessions?.find(s => s.id === sessionId)
+  const price = Number(selected?.price) || Number(cfg?.price) || 0
+  const deposit = Number(cfg?.deposit) || 0
+  const allAccepted = !selected || accepted.length === CONDITIONS.length
+  const profileReady = QUESTIONS.every(q => profile[q.key])
+
+  const goTo = (n) => {
+    setError('')
+    setStep(n)
+    requestAnimationFrame(() => topRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }))
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
     setSubmitting(true)
     try {
-      const { data } = await api.post('/in-person/register', { fullName, phone, city, message, sessionId })
+      const { data } = await api.post('/in-person/register', {
+        fullName, phone, city, message, sessionId, profile, accepted: accepted.length === CONDITIONS.length,
+      })
       setDone(data.registration)
-      requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: 'smooth' }))
+      requestAnimationFrame(() => topRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }))
     } catch (err) {
       setError(err.response?.data?.error || "L'inscription a échoué. Réessayez.")
-      if (err.response?.status === 409 || err.response?.status === 400) loadSessions()
+      if (err.response?.status === 409) { loadSessions(); goTo(1) }
     } finally {
       setSubmitting(false)
     }
   }
 
+  const copy = (key, value) => {
+    navigator.clipboard?.writeText(value).then(() => { setCopied(key); setTimeout(() => setCopied(''), 1500) }).catch(() => {})
+  }
+
   const doneSession = done?.session
   const whatsappUrl = done && whatsappNumber
     ? `https://wa.me/${whatsappNumber.replace(/\D/g, '')}?text=${encodeURIComponent(
-        `Bonjour Mylta Academy, je viens de m'inscrire au coaching présentiel :\n` +
+        (doneSession
+          ? `Bonjour Mylta Academy, je viens de réserver ma place pour la ${cfg.title} et je vous envoie le reçu de mon acompte de ${money(deposit, currency)}.\n`
+          : `Bonjour Mylta Academy, je souhaite être prévenu(e) des prochaines dates de la ${cfg.title}.\n`) +
         `• Nom : ${fullName}\n• Téléphone : ${phone}\n` +
         (city ? `• Ville : ${city}\n` : '') +
-        (doneSession
-          ? `• Session : ${formatDate(doneSession.date)}${doneSession.startTime ? ` à ${hour(doneSession.startTime)}` : ''}${doneSession.city ? ` — ${doneSession.city}` : ''}\n`
-          : `• Liste d'attente : prévenez-moi des prochaines dates\n`) +
-        (message ? `• Message : ${message}\n` : '') +
+        (doneSession ? `• Session : ${formatDate(doneSession.date)}${doneSession.city ? ` — ${doneSession.city}` : ''}\n` : '') +
         `Inscription n°${done.id}`
       )}`
     : null
@@ -81,148 +116,261 @@ export default function InPersonPage() {
     disabled ? 'border-academy-border opacity-50 cursor-not-allowed'
     : active ? 'border-academy-primary bg-academy-primary/5' : 'border-academy-border hover:border-academy-primary/40'}`
   const radio = (active) => `mt-1 w-4 h-4 rounded-full border-2 shrink-0 ${active ? 'border-academy-primary bg-academy-primary shadow-[inset_0_0_0_3px_white]' : 'border-academy-textMain/30'}`
+  const primaryBtn = 'w-full py-4 rounded-xl bg-academy-primary text-academy-onPrimary font-bold text-lg flex items-center justify-center gap-2 transition-opacity hover:opacity-90 disabled:opacity-40'
+
+  const PriceBox = () => (
+    <div className="rounded-xl border-2 border-academy-primary/30 bg-academy-primary/5 p-4 space-y-1">
+      <div className="flex justify-between gap-4"><span>Prix de la formation</span><span className="font-black">{money(price, currency)}</span></div>
+      {deposit > 0 && (
+        <>
+          <div className="flex justify-between gap-4 text-academy-primary"><span className="font-bold">Acompte pour réserver</span><span className="font-black">{money(deposit, currency)}</span></div>
+          <div className="flex justify-between gap-4 text-sm text-academy-textMain/60"><span>Reste à payer ensuite</span><span>{money(Math.max(0, price - deposit), currency)}</span></div>
+        </>
+      )}
+    </div>
+  )
+
+  const paymentLines = [
+    PAYMENT_INFO.ccp && ['CCP', PAYMENT_INFO.ccp],
+    PAYMENT_INFO.barid && ['BaridiMob (RIP)', PAYMENT_INFO.barid],
+    PAYMENT_INFO.redotpay && ['RedotPay', PAYMENT_INFO.redotpay],
+  ].filter(Boolean)
 
   return (
     <>
       <SEOHead
-        title="Coaching présentiel | Mylta Academy"
-        description="Formation en petit groupe, sur place : apprendre l'IA, écrire et créer des vidéos avec l'IA, créer son site sans savoir coder."
+        title={`${cfg?.title || 'Coaching présentiel'} | Mylta Academy`}
+        description="Formation en présentiel de 3 jours : filmer, monter sur CapCut et utiliser l'IA comme un pro depuis votre smartphone. Petit groupe, places limitées."
         canonicalPath="/coaching-presentiel"
       />
       <div className="min-h-screen bg-transparent text-academy-textMain flex flex-col">
         <Navbar />
 
         <main className="flex-1 pt-28 sm:pt-36 pb-16 px-4">
-          <div className="max-w-2xl mx-auto">
+          <div ref={topRef} className="max-w-2xl mx-auto scroll-mt-28">
             {loadingSettings ? (
               <p className="text-center text-academy-textMain/60">Chargement…</p>
             ) : !cfg?.enabled ? (
               <p className="text-center text-academy-textMain/60">Le coaching présentiel n'est pas disponible pour le moment.</p>
             ) : done ? (
-              <div className={`${card} text-center`}>
-                <CheckCircle2 size={52} className="mx-auto text-emerald-500 mb-3" />
-                <h1 className="font-display font-black text-2xl sm:text-3xl mb-1">
-                  {doneSession ? "Vous êtes inscrit !" : "C'est noté !"}
-                </h1>
-                <p className="text-academy-textMain/60 mb-5">Inscription n°{done.id}</p>
-                <div className="text-left bg-academy-surface rounded-xl p-4 mb-6 text-sm space-y-1.5">
-                  {doneSession ? (
-                    <>
-                      <p className="font-bold">{doneSession.title || cfg.title}</p>
-                      <p>{formatDate(doneSession.date)}{hours(doneSession) ? ` · ${hours(doneSession)}` : ''}</p>
-                      {(doneSession.city || doneSession.place) && <p>{[doneSession.place, doneSession.city].filter(Boolean).join(', ')}</p>}
-                      {doneSession.price > 0 && <p className="font-bold">{money(doneSession.price, currency)}</p>}
-                    </>
-                  ) : (
-                    <p>Vous êtes sur la liste d'attente : on vous prévient en premier dès que les prochaines dates sont fixées.</p>
-                  )}
+              <div className={`${card} space-y-5`}>
+                <div className="text-center">
+                  <CheckCircle2 size={52} className="mx-auto text-emerald-500 mb-3" />
+                  <h1 className="font-display font-black text-2xl sm:text-3xl mb-1">
+                    {doneSession ? 'Plus qu\'une étape !' : "C'est noté !"}
+                  </h1>
+                  <p className="text-academy-textMain/60">Inscription n°{done.id}</p>
                 </div>
-                {whatsappUrl && (
+
+                {doneSession ? (
                   <>
-                    <p className="text-sm text-academy-textMain/60 mb-3">Dernière étape : envoyez-nous ce message sur WhatsApp pour confirmer.</p>
-                    <a href={whatsappUrl} target="_blank" rel="noopener noreferrer"
-                       className="w-full inline-flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#1ebe5a] text-white font-bold px-6 py-4 rounded-xl transition-colors text-lg">
-                      <MessageCircle size={20} /> Confirmer sur WhatsApp
-                    </a>
+                    <div className="bg-academy-surface rounded-xl p-4 text-sm space-y-1">
+                      <p className="font-bold">{formatDate(doneSession.date)}{hours(doneSession) ? ` · ${hours(doneSession)}` : ''}</p>
+                      {(doneSession.city || doneSession.place) && <p>{[doneSession.place, doneSession.city].filter(Boolean).join(', ')}</p>}
+                    </div>
+                    {deposit > 0 && (
+                      <div>
+                        <h2 className="font-bold text-lg mb-1">Payez l'acompte de {money(deposit, currency)}</h2>
+                        <p className="text-sm text-academy-textMain/65 mb-3">Votre place est réservée dès réception de l'acompte. Envoyez-le sur l'un de ces comptes au nom de <strong>{PAYMENT_INFO.nom}</strong> :</p>
+                        <div className="space-y-2">
+                          {paymentLines.map(([label, value]) => (
+                            <button type="button" key={label} onClick={() => copy(label, value)}
+                                    className="w-full flex items-center justify-between gap-3 rounded-xl border border-academy-border p-3 text-left hover:border-academy-primary/40">
+                              <span><span className="block text-xs font-bold text-academy-textMain/55">{label}</span><span className="font-mono font-bold">{value}</span></span>
+                              <span className="text-xs font-bold text-academy-primary inline-flex items-center gap-1">{copied === label ? 'Copié ✓' : <><Copy size={14} /> Copier</>}</span>
+                            </button>
+                          ))}
+                        </div>
+                        <p className="text-sm text-academy-textMain/65 mt-3">Ensuite, envoyez la photo du reçu sur WhatsApp :</p>
+                      </div>
+                    )}
                   </>
+                ) : (
+                  <p className="text-center text-academy-textMain/70">Vous êtes sur la liste d'attente : on vous prévient en premier dès que la prochaine date est fixée. Aucun paiement pour l'instant.</p>
+                )}
+
+                {whatsappUrl && (
+                  <a href={whatsappUrl} target="_blank" rel="noopener noreferrer"
+                     className="w-full inline-flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#1ebe5a] text-white font-bold px-6 py-4 rounded-xl transition-colors text-lg">
+                    <MessageCircle size={20} /> {doneSession && deposit > 0 ? 'Envoyer mon reçu sur WhatsApp' : 'Confirmer sur WhatsApp'}
+                  </a>
                 )}
               </div>
             ) : (
-              <div className="space-y-5">
-                <div className="text-center mb-2">
+              <>
+                <div className="text-center mb-6">
+                  <p className="text-xs font-black uppercase tracking-widest text-academy-primary mb-2">Coaching présentiel</p>
                   <h1 className="font-display font-black text-3xl sm:text-5xl tracking-tight mb-2">{cfg.title}</h1>
                   <p className="text-academy-textMain/60 sm:text-lg">{cfg.subtitle}</p>
-                  <p className="mt-3 text-sm">
-                    Vous préférez à distance ? <Link to="/coaching" className="font-bold text-academy-primary underline underline-offset-2">Coaching en ligne</Link>
-                  </p>
                 </div>
 
-                {(cfg.program || []).length > 0 && (
-                  <section className={card}>
-                    <h2 className="font-bold text-lg mb-4">Ce que vous allez apprendre</h2>
-                    <ol className="space-y-3">
-                      {cfg.program.map((p, i) => (
-                        <li key={i} className="flex gap-3">
-                          <span className="w-7 h-7 rounded-full bg-academy-primary/10 text-academy-primary font-black text-sm flex items-center justify-center shrink-0">{i + 1}</span>
-                          <span className="pt-0.5">{p}</span>
-                        </li>
-                      ))}
-                    </ol>
+                <ol className="grid grid-cols-4 gap-2 mb-6">
+                  {STEPS.map((label, i) => (
+                    <li key={label}>
+                      <button type="button" disabled={i > step} onClick={() => goTo(i)} className="w-full text-left disabled:cursor-default">
+                        <span className={`block h-1.5 rounded-full mb-1.5 ${i <= step ? 'bg-academy-primary' : 'bg-academy-border'}`} />
+                        <span className={`text-[11px] sm:text-xs font-bold ${i === step ? 'text-academy-textMain' : 'text-academy-textMain/45'}`}>{i + 1}. {label}</span>
+                      </button>
+                    </li>
+                  ))}
+                </ol>
+
+                {step > 0 && (
+                  <button type="button" onClick={() => goTo(step - 1)} className="mb-4 inline-flex items-center gap-1.5 text-sm font-bold text-academy-textMain/60 hover:text-academy-textMain">
+                    <ArrowLeft size={16} /> Retour
+                  </button>
+                )}
+
+                {/* 1. La formation */}
+                {step === 0 && (
+                  <section className={`${card} space-y-6`}>
+                    {(cfg.program || []).length > 0 && (
+                      <div>
+                        <h2 className="font-bold text-lg mb-4">Ce que vous allez apprendre</h2>
+                        <ol className="space-y-3">
+                          {cfg.program.map((p, i) => (
+                            <li key={i} className="flex gap-3">
+                              <span className="w-7 h-7 rounded-full bg-academy-primary/10 text-academy-primary font-black text-sm flex items-center justify-center shrink-0">{i + 1}</span>
+                              <span className="pt-0.5">{p}</span>
+                            </li>
+                          ))}
+                        </ol>
+                      </div>
+                    )}
+                    {(cfg.infos || []).length > 0 && (
+                      <ul className="space-y-2">
+                        {cfg.infos.map((info, i) => (
+                          <li key={i} className="flex gap-2.5"><Check size={18} className="text-emerald-600 shrink-0 mt-0.5" /> {info}</li>
+                        ))}
+                      </ul>
+                    )}
+                    {price > 0 && <PriceBox />}
+                    <button type="button" onClick={() => goTo(1)} className={primaryBtn}>
+                      Je réserve ma place <ArrowRight size={18} />
+                    </button>
+                    <p className="text-center text-sm">
+                      Vous préférez à distance ? <Link to="/coaching" className="font-bold text-academy-primary underline underline-offset-2">Coaching en ligne</Link>
+                    </p>
                   </section>
                 )}
 
-                {(cfg.infos || []).length > 0 && (
-                  <section className={card}>
-                    <h2 className="font-bold text-lg mb-3">Bon à savoir</h2>
-                    <ul className="space-y-2">
-                      {cfg.infos.map((info, i) => (
-                        <li key={i} className="flex gap-2.5"><Check size={18} className="text-emerald-600 shrink-0 mt-0.5" /> {info}</li>
-                      ))}
-                    </ul>
-                  </section>
-                )}
-
-                <form ref={formRef} onSubmit={handleSubmit} className={`${card} space-y-4`}>
-                  <h2 className="font-bold text-lg">Choisissez votre session</h2>
-
-                  {sessions === null ? (
-                    <p className="text-sm text-academy-textMain/60">Chargement des dates…</p>
-                  ) : (
-                    <div className="space-y-2.5">
-                      {sessions.length === 0 && (
-                        <p className="text-sm text-academy-textMain/70 bg-academy-surface rounded-xl p-4">
-                          Les prochaines dates arrivent bientôt. Inscrivez-vous ci-dessous : on vous prévient en premier.
-                        </p>
-                      )}
-                      {sessions.map(s => {
-                        const full = s.seatsLeft <= 0
-                        return (
-                          <button type="button" key={s.id} disabled={full} onClick={() => setSessionId(s.id)} className={choice(sessionId === s.id, full)}>
-                            <span className={radio(sessionId === s.id)} aria-hidden="true" />
-                            <span className="flex-1 space-y-1">
-                              <span className="font-bold block">{formatDate(s.date)}</span>
-                              {s.title && <span className="block text-sm font-semibold">{s.title}</span>}
-                              <span className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-academy-textMain/65">
-                                {hours(s) && <span className="inline-flex items-center gap-1"><Clock size={14} /> {hours(s)}</span>}
-                                {(s.city || s.place) && <span className="inline-flex items-center gap-1"><MapPin size={14} /> {[s.place, s.city].filter(Boolean).join(', ')}</span>}
-                                <span className={`inline-flex items-center gap-1 font-bold ${full ? 'text-red-600' : s.seatsLeft <= 3 ? 'text-amber-600' : ''}`}>
-                                  <Users size={14} /> {full ? 'Complet' : s.seatsLeft === 1 ? 'Plus qu\'1 place' : `${s.seatsLeft} places restantes`}
+                {/* 2. La date */}
+                {step === 1 && (
+                  <section className={`${card} space-y-4`}>
+                    <h2 className="font-bold text-lg">Choisissez votre session</h2>
+                    {sessions === null ? (
+                      <p className="text-sm text-academy-textMain/60">Chargement des dates…</p>
+                    ) : (
+                      <div className="space-y-2.5">
+                        {sessions.length === 0 && (
+                          <p className="text-sm text-academy-textMain/70 bg-academy-surface rounded-xl p-4">
+                            Les prochaines dates arrivent bientôt. Inscrivez-vous : on vous prévient en premier.
+                          </p>
+                        )}
+                        {sessions.map(s => {
+                          const full = s.seatsLeft <= 0
+                          return (
+                            <button type="button" key={s.id} disabled={full} onClick={() => setSessionId(s.id)} className={choice(sessionId === s.id, full)}>
+                              <span className={radio(sessionId === s.id)} aria-hidden="true" />
+                              <span className="flex-1 space-y-1">
+                                <span className="font-bold block">{formatDate(s.date)}</span>
+                                {s.title && <span className="block text-sm font-semibold">{s.title}</span>}
+                                <span className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-academy-textMain/65">
+                                  {hours(s) && <span className="inline-flex items-center gap-1"><Clock size={14} /> {hours(s)}</span>}
+                                  {(s.city || s.place) && <span className="inline-flex items-center gap-1"><MapPin size={14} /> {[s.place, s.city].filter(Boolean).join(', ')}</span>}
+                                  <span className={`inline-flex items-center gap-1 font-bold ${full ? 'text-red-600' : s.seatsLeft <= 3 ? 'text-amber-600' : ''}`}>
+                                    <Users size={14} /> {full ? 'Complet' : s.seatsLeft === 1 ? 'Plus qu\'1 place' : `${s.seatsLeft} places restantes`}
+                                  </span>
                                 </span>
                               </span>
-                            </span>
-                            {s.price > 0 && <span className="font-black whitespace-nowrap">{money(s.price, currency)}</span>}
-                          </button>
-                        )
-                      })}
-                      <button type="button" onClick={() => setSessionId(null)} className={choice(sessionId === null, false)}>
-                        <span className={radio(sessionId === null)} aria-hidden="true" />
-                        <span>
-                          <span className="font-bold block">{sessions.length === 0 ? 'Me prévenir des prochaines dates' : 'Aucune date ne me convient'}</span>
-                          <span className="text-sm text-academy-textMain/60">Je m'inscris sur la liste d'attente, vous me contactez dès qu'une date est fixée.</span>
-                        </span>
-                      </button>
+                            </button>
+                          )
+                        })}
+                        <button type="button" onClick={() => setSessionId(null)} className={choice(sessionId === null, false)}>
+                          <span className={radio(sessionId === null)} aria-hidden="true" />
+                          <span>
+                            <span className="font-bold block">{sessions.length === 0 ? 'Me prévenir des prochaines dates' : 'Aucune date ne me convient'}</span>
+                            <span className="text-sm text-academy-textMain/60">Liste d'attente : on vous contacte dès qu'une date est fixée. Aucun paiement pour l'instant.</span>
+                          </span>
+                        </button>
+                      </div>
+                    )}
+                    <button type="button" disabled={sessions === null} onClick={() => goTo(2)} className={primaryBtn}>
+                      Continuer <ArrowRight size={18} />
+                    </button>
+                  </section>
+                )}
+
+                {/* 3. Votre profil */}
+                {step === 2 && (
+                  <section className={`${card} space-y-6`}>
+                    {QUESTIONS.map(q => (
+                      <div key={q.key}>
+                        <h2 className="font-bold mb-2.5">{q.title}</h2>
+                        <div className="grid gap-2">
+                          {q.options.map(o => (
+                            <button type="button" key={o} onClick={() => setProfile(p => ({ ...p, [q.key]: o }))} className={choice(profile[q.key] === o, false)}>
+                              <span className={radio(profile[q.key] === o)} aria-hidden="true" />
+                              <span className="font-semibold">{o}</span>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                    <button type="button" disabled={!profileReady} onClick={() => goTo(3)} className={primaryBtn}>
+                      Continuer <ArrowRight size={18} />
+                    </button>
+                  </section>
+                )}
+
+                {/* 4. Vos infos + conditions */}
+                {step === 3 && (
+                  <form onSubmit={handleSubmit} className={`${card} space-y-4`}>
+                    <div className="bg-academy-surface rounded-xl p-4 text-sm space-y-1">
+                      <p className="font-bold">{selected ? formatDate(selected.date) : "Liste d'attente — prochaines dates"}</p>
+                      {selected && (selected.city || hours(selected)) && <p className="text-academy-textMain/70">{[hours(selected), selected.city].filter(Boolean).join(' · ')}</p>}
                     </div>
-                  )}
+                    {selected && price > 0 && <PriceBox />}
 
-                  <h2 className="font-bold text-lg pt-2">Vos coordonnées</h2>
-                  <input className={input} required minLength={3} maxLength={80} autoComplete="name" placeholder="Votre nom et prénom"
-                         value={fullName} onChange={e => setFullName(e.target.value)} />
-                  <input className={input} required type="tel" inputMode="tel" autoComplete="tel" maxLength={20} pattern="\+?[0-9 ]{8,20}"
-                         title="Exemple : 0555 12 34 56" placeholder="Votre numéro WhatsApp (ex : 0555 12 34 56)"
-                         value={phone} onChange={e => setPhone(e.target.value)} />
-                  <input className={input} maxLength={60} autoComplete="address-level2" placeholder="Votre ville (facultatif)"
-                         value={city} onChange={e => setCity(e.target.value)} />
-                  <textarea className={input} rows={3} maxLength={500} placeholder="Une question ou un projet en tête ? (facultatif)"
-                            value={message} onChange={e => setMessage(e.target.value)} />
+                    <h2 className="font-bold text-lg">Vos coordonnées</h2>
+                    <input className={input} required minLength={3} maxLength={80} autoComplete="name" placeholder="Votre nom et prénom"
+                           value={fullName} onChange={e => setFullName(e.target.value)} />
+                    <input className={input} required type="tel" inputMode="tel" autoComplete="tel" maxLength={20} pattern="\+?[0-9 ]{8,20}"
+                           title="Exemple : 0555 12 34 56" placeholder="Votre numéro WhatsApp (ex : 0555 12 34 56)"
+                           value={phone} onChange={e => setPhone(e.target.value)} />
+                    <input className={input} maxLength={60} autoComplete="address-level2" placeholder="Votre ville (facultatif)"
+                           value={city} onChange={e => setCity(e.target.value)} />
+                    <textarea className={input} rows={2} maxLength={500} placeholder="Une question ? (facultatif)"
+                              value={message} onChange={e => setMessage(e.target.value)} />
 
-                  {error && <p className="text-center text-sm font-bold text-red-600">{error}</p>}
+                    {selected && (
+                      <div className="space-y-2">
+                        <h2 className="font-bold">Conditions de participation</h2>
+                        {CONDITIONS.map((c, i) => {
+                          const on = accepted.includes(i)
+                          return (
+                            <button type="button" key={i} onClick={() => setAccepted(a => on ? a.filter(x => x !== i) : [...a, i])}
+                                    className={`${choice(on, false)} items-center`}>
+                              <span className={`w-5 h-5 rounded-md border-2 shrink-0 flex items-center justify-center ${on ? 'bg-academy-primary border-academy-primary text-academy-onPrimary' : 'border-academy-textMain/30'}`}>
+                                {on && <Check size={14} strokeWidth={3} />}
+                              </span>
+                              <span className="text-sm font-semibold">{c}</span>
+                            </button>
+                          )
+                        })}
+                      </div>
+                    )}
 
-                  <button type="submit" disabled={submitting || sessions === null}
-                          className="w-full py-4 rounded-xl bg-academy-primary text-academy-onPrimary font-bold text-lg transition-opacity hover:opacity-90 disabled:opacity-40">
-                    {submitting ? 'Inscription…' : selected ? "Je m'inscris à cette session" : 'Je veux être prévenu'}
-                  </button>
-                </form>
-              </div>
+                    {error && <p className="text-center text-sm font-bold text-red-600">{error}</p>}
+
+                    <button type="submit" disabled={submitting || !allAccepted} className={primaryBtn}>
+                      {submitting ? 'Inscription…' : selected ? 'Réserver ma place' : 'Je veux être prévenu'}
+                    </button>
+                  </form>
+                )}
+
+                {error && step !== 3 && <p className="mt-4 text-center text-sm font-bold text-red-600">{error}</p>}
+              </>
             )}
           </div>
         </main>

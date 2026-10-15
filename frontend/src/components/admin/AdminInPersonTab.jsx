@@ -4,8 +4,8 @@ import api from '../../api/axios'
 import { useToast } from '../../hooks/useToast.jsx'
 
 const STATUS = {
-  PENDING: { label: 'En attente', cls: 'bg-amber-500/20 text-amber-400' },
-  CONFIRMED: { label: 'Confirmé', cls: 'bg-emerald-500/20 text-emerald-400' },
+  PENDING: { label: 'Acompte en attente', cls: 'bg-amber-500/20 text-amber-400' },
+  CONFIRMED: { label: 'Acompte reçu', cls: 'bg-emerald-500/20 text-emerald-400' },
   CANCELLED: { label: 'Annulé', cls: 'bg-red-500/20 text-red-400' },
 }
 const EMPTY_SESSION = { title: '', date: '', startTime: '09:00', endTime: '17:00', city: '', place: '', capacity: 10, price: 0, isOpen: true }
@@ -60,14 +60,23 @@ export default function AdminInPersonTab() {
   }, [toastError])
 
   useEffect(() => {
-    api.get('/admin/config').then(({ data }) => setCfg(data.inPerson)).catch(() => toastError('Erreur lors du chargement des réglages.'))
+    api.get('/admin/config').then(({ data }) => {
+      setCfg(data.inPerson)
+      setForm(f => ({ ...f, price: data.inPerson.price ?? f.price }))
+    }).catch(() => toastError('Erreur lors du chargement des réglages.'))
     loadData()
   }, [loadData, toastError])
 
   const saveTexts = async () => {
     setBusy(true)
     try {
-      const inPerson = { ...cfg, program: cfg.program.filter(p => p.trim()), infos: cfg.infos.filter(p => p.trim()) }
+      const inPerson = {
+        ...cfg,
+        price: Math.max(0, parseInt(cfg.price, 10) || 0),
+        deposit: Math.max(0, parseInt(cfg.deposit, 10) || 0),
+        program: cfg.program.filter(p => p.trim()),
+        infos: cfg.infos.filter(p => p.trim()),
+      }
       const { data } = await api.put('/admin/config', { inPerson })
       setCfg(data.config.inPerson)
       window.dispatchEvent(new Event('configUpdated'))
@@ -95,7 +104,7 @@ export default function AdminInPersonTab() {
       if (editingId) await api.put(`/admin/in-person/sessions/${editingId}`, payload)
       else await api.post('/admin/in-person/sessions', payload)
       toastSuccess(editingId ? 'Session modifiée.' : 'Session créée.')
-      setForm(EMPTY_SESSION)
+      setForm({ ...EMPTY_SESSION, price: cfg.price ?? 0 })
       setEditingId(null)
       loadData()
     } catch (err) {
@@ -150,6 +159,7 @@ export default function AdminInPersonTab() {
       <div className="flex-1 min-w-[180px]">
         <span className="font-bold text-white">{r.fullName}</span>
         <span className="text-neutral-400"> · {r.phone}{r.city ? ` · ${r.city}` : ''}</span>
+        {r.profile && <div className="text-xs text-neutral-400 mt-0.5">{r.profile}</div>}
         {r.message && <div className="text-xs text-neutral-500 mt-0.5">{r.message}</div>}
       </div>
       {extra}
@@ -180,7 +190,7 @@ export default function AdminInPersonTab() {
         <div className="flex items-center justify-between">
           <h3 className="font-bold">{editingId ? 'Modifier la session' : 'Nouvelle session'}</h3>
           {editingId && (
-            <button type="button" onClick={() => { setEditingId(null); setForm(EMPTY_SESSION) }} className="flex items-center gap-1 text-xs font-bold text-neutral-400 hover:text-white">
+            <button type="button" onClick={() => { setEditingId(null); setForm({ ...EMPTY_SESSION, price: cfg.price ?? 0 }) }} className="flex items-center gap-1 text-xs font-bold text-neutral-400 hover:text-white">
               <X size={14} /> Annuler la modification
             </button>
           )}
@@ -192,7 +202,7 @@ export default function AdminInPersonTab() {
           <div><label className={label}>Début</label><input type="time" className={input} value={form.startTime} onChange={e => setForm({ ...form, startTime: e.target.value })} /></div>
           <div><label className={label}>Fin</label><input type="time" className={input} value={form.endTime} onChange={e => setForm({ ...form, endTime: e.target.value })} /></div>
           <div><label className={label}>Ville</label><input className={input} placeholder="Alger" value={form.city} onChange={e => setForm({ ...form, city: e.target.value })} /></div>
-          <div><label className={label}>Prix (0 = sur WhatsApp)</label><input type="number" min="0" className={input} value={form.price} onChange={e => setForm({ ...form, price: e.target.value })} /></div>
+          <div><label className={label}>Prix (DA)</label><input type="number" min="0" className={input} value={form.price} onChange={e => setForm({ ...form, price: e.target.value })} /></div>
           <div className="col-span-2 sm:col-span-4"><label className={label}>Lieu / adresse</label><input className={input} placeholder="Nom de la salle, adresse" value={form.place} onChange={e => setForm({ ...form, place: e.target.value })} /></div>
         </div>
         <button type="submit" disabled={busy} className="flex items-center gap-2 px-6 py-3 bg-emerald-600 hover:bg-emerald-500 rounded-xl font-bold transition-colors disabled:opacity-60">
@@ -251,6 +261,11 @@ export default function AdminInPersonTab() {
         <h3 className="font-bold">Textes de la page</h3>
         <div><label className={label}>Titre</label><input className={input} value={cfg.title} onChange={e => setCfg({ ...cfg, title: e.target.value })} /></div>
         <div><label className={label}>Sous-titre</label><textarea className={input} rows={2} value={cfg.subtitle} onChange={e => setCfg({ ...cfg, subtitle: e.target.value })} /></div>
+        <div className="grid grid-cols-2 gap-3 max-w-md">
+          <div><label className={label}>Prix de la formation (DA)</label><input type="number" min="0" className={input} value={cfg.price ?? 0} onChange={e => setCfg({ ...cfg, price: e.target.value })} /></div>
+          <div><label className={label}>Acompte pour réserver (DA)</label><input type="number" min="0" className={input} value={cfg.deposit ?? 0} onChange={e => setCfg({ ...cfg, deposit: e.target.value })} /></div>
+        </div>
+        <p className="text-xs text-neutral-500 -mt-2">Le prix d'une session, s'il est renseigné, remplace ce prix par défaut. Pensez à indiquer « Acompte reçu » quand un inscrit vous envoie son reçu.</p>
         <ListEditor title="Ce que vous allez apprendre (programme)" items={cfg.program} placeholder="Un point du programme" onChange={program => setCfg({ ...cfg, program })} />
         <ListEditor title="Bon à savoir" items={cfg.infos} placeholder="Une information pratique" onChange={infos => setCfg({ ...cfg, infos })} />
         <button type="button" onClick={saveTexts} disabled={busy} className="flex items-center gap-2 px-6 py-3 bg-emerald-600 hover:bg-emerald-500 rounded-xl font-bold transition-colors disabled:opacity-60">

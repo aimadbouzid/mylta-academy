@@ -36,7 +36,12 @@ const registerSchema = z.object({
   city: z.string().trim().max(60).optional().default(''),
   message: z.string().trim().max(500).optional(),
   sessionId: z.number().int().positive().nullable().optional(),
+  profile: z.record(z.string().max(40), z.string().max(60)).optional().default({}),
+  accepted: z.boolean().optional(),
 })
+
+// Questions du profil, dans l'ordre d'affichage (même liste côté page).
+const PROFILE_LABELS = { level: 'Niveau', goal: 'Objectif', phoneType: 'Smartphone', capcut: 'CapCut' }
 
 class SessionError extends Error {
   constructor(status, message) { super(message); this.status = status }
@@ -51,8 +56,15 @@ router.post('/register', async (req, res, next) => {
     if (!parsed.success) {
       return res.status(400).json({ error: 'Vérifiez votre nom et votre numéro de téléphone.' })
     }
-    const { fullName, phone, city, message, sessionId } = parsed.data
-    const data = { fullName, phone, city, message: message || null, ip: String(req.ip || '').slice(0, 45) }
+    const { fullName, phone, city, message, sessionId, profile, accepted } = parsed.data
+    if (sessionId && accepted !== true) {
+      return res.status(400).json({ error: 'Merci d\'accepter les conditions de participation.' })
+    }
+    const profileText = Object.entries(PROFILE_LABELS)
+      .filter(([key]) => profile[key])
+      .map(([key, label]) => `${label} : ${profile[key]}`)
+      .join(' · ')
+    const data = { fullName, phone, city, profile: profileText, message: message || null, ip: String(req.ip || '').slice(0, 45) }
 
     if (!sessionId) {
       const registration = await prisma.inPersonRegistration.create({ data })
