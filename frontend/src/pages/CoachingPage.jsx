@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useRef } from 'react'
-import { ArrowLeft, ArrowRight, CheckCircle2, MessageCircle, CalendarPlus, Clock, Video } from 'lucide-react'
+import { ArrowLeft, ArrowRight, CheckCircle2, MessageCircle, CalendarPlus, Clock, Video, ChevronLeft, ChevronRight } from 'lucide-react'
 import Navbar from '../components/Navbar'
 import SEOHead from '../components/SEOHead'
 import api from '../api/axios'
@@ -7,6 +7,8 @@ import { useSiteSettings } from '../context/SiteSettingsContext'
 
 const STEPS = ['Sujet', 'Formule', 'Date', 'Vos infos']
 const LEVELS = ['Débutant', 'Intermédiaire', 'Avancé']
+const MONTHS = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre']
+const WEEKDAYS = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim']
 
 const pad = (n) => String(n).padStart(2, '0')
 const toYmd = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`
@@ -65,21 +67,25 @@ export default function CoachingPage() {
   }
   const isSlotFree = (d, s) => !isSlotTaken(d, s) && !isSlotPast(d, s)
 
-  // Les prochains jours réservables, prêts à afficher en bandeau.
-  const availableDays = useMemo(() => {
-    if (!cfg) return []
-    const days = []
-    const today = new Date(); today.setHours(0, 0, 0, 0)
-    for (let i = 0; i <= (cfg.maxDaysAhead || 30); i++) {
-      const d = new Date(today.getFullYear(), today.getMonth(), today.getDate() + i)
-      const s = toYmd(d)
-      if (!(cfg.weekdays || []).includes(d.getDay())) continue
-      if ((cfg.blockedDates || []).includes(s)) continue
-      const free = slots.length > 0 ? slots.some(sl => isSlotFree(s, sl)) : !isSlotTaken(s, '')
-      if (free) days.push({ s, d, i })
-    }
-    return days
-  }, [cfg, booked])
+  const today = useMemo(() => { const d = new Date(); d.setHours(0, 0, 0, 0); return d }, [])
+  const lastDay = cfg?.bookUntil ? fromYmd(cfg.bookUntil) : new Date(today.getFullYear() + 1, today.getMonth(), today.getDate())
+  const [month, setMonth] = useState(() => new Date(today.getFullYear(), today.getMonth(), 1))
+
+  const isDayAvailable = (d) => {
+    if (!cfg || d < today || d > lastDay) return false
+    if (!(cfg.weekdays || []).includes(d.getDay())) return false
+    const s = toYmd(d)
+    if ((cfg.blockedDates || []).includes(s)) return false
+    return slots.length > 0 ? slots.some(sl => isSlotFree(s, sl)) : !isSlotTaken(s, '')
+  }
+
+  const calendarDays = useMemo(() => {
+    const offset = (month.getDay() + 6) % 7
+    const count = new Date(month.getFullYear(), month.getMonth() + 1, 0).getDate()
+    return [...Array(offset).fill(null), ...Array.from({ length: count }, (_, i) => new Date(month.getFullYear(), month.getMonth(), i + 1))]
+  }, [month])
+  const canPrev = month > new Date(today.getFullYear(), today.getMonth(), 1)
+  const canNext = new Date(month.getFullYear(), month.getMonth() + 1, 1) <= lastDay
 
   const goTo = (n) => {
     setError('')
@@ -89,8 +95,16 @@ export default function CoachingPage() {
 
   // En arrivant sur l'étape Date, le premier jour libre est présélectionné.
   useEffect(() => {
-    if (step === 2 && !date && availableDays[0]) setDate(availableDays[0].s)
-  }, [step, availableDays, date])
+    if (step !== 2 || date || !cfg) return
+    for (let i = 0; i < 120; i++) {
+      const d = new Date(today.getFullYear(), today.getMonth(), today.getDate() + i)
+      if (isDayAvailable(d)) {
+        setDate(toYmd(d))
+        setMonth(new Date(d.getFullYear(), d.getMonth(), 1))
+        return
+      }
+    }
+  }, [step, date, cfg, booked])
 
   const step1Ready = (formats.length === 0 || formatId) && (channels.length === 0 || channel)
   const step2Ready = date && (slots.length === 0 || timeSlot)
@@ -234,11 +248,11 @@ export default function CoachingPage() {
                     <div className="grid sm:grid-cols-2 gap-3">
                       {topics.map(t => (
                         <button type="button" key={t.id} onClick={() => { setTopicId(t.id); goTo(1) }}
-                                className={`${choice(topicId === t.id)} p-4 flex items-start gap-3`}>
-                          <span className="text-2xl leading-none mt-0.5" aria-hidden="true">{t.icon || '✨'}</span>
+                                className={`${choice(topicId === t.id)} p-5 flex items-start gap-3`}>
+                          <span className={`mt-1 w-4 h-4 rounded-full border-2 shrink-0 ${topicId === t.id ? 'border-academy-primary bg-academy-primary shadow-[inset_0_0_0_3px_white]' : 'border-academy-textMain/30'}`} aria-hidden="true" />
                           <span>
-                            <span className="font-bold block">{t.label}</span>
-                            {t.description && <span className="text-sm text-academy-textMain/60">{t.description}</span>}
+                            <span className="font-bold text-base block">{t.label}</span>
+                            {t.description && <span className="text-sm text-academy-textMain/60 leading-snug">{t.description}</span>}
                           </span>
                         </button>
                       ))}
@@ -298,22 +312,36 @@ export default function CoachingPage() {
                   <section className={`${card} space-y-6`}>
                     <div>
                       <h2 className="font-bold text-lg mb-3">Quel jour ?</h2>
-                      {availableDays.length === 0 ? (
-                        <p className="text-academy-textMain/60">Aucune date libre pour le moment. Écrivez-nous sur WhatsApp.</p>
-                      ) : (
-                        <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1 snap-x [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-                          {availableDays.map(({ s, d, i }) => (
-                            <button type="button" key={s} onClick={() => { setDate(s); setTimeSlot('') }}
-                                    className={`snap-start shrink-0 w-[76px] py-3 rounded-xl border-2 text-center transition-colors ${date === s ? 'border-academy-primary bg-academy-primary text-academy-onPrimary' : 'border-academy-border hover:border-academy-primary/40'}`}>
-                              <span className="block text-[11px] font-bold uppercase opacity-70">
-                                {i === 0 ? 'Auj.' : i === 1 ? 'Demain' : d.toLocaleDateString('fr-FR', { weekday: 'short' }).replace('.', '')}
-                              </span>
-                              <span className="block text-2xl font-black leading-tight">{d.getDate()}</span>
-                              <span className="block text-[11px] font-bold opacity-70">{d.toLocaleDateString('fr-FR', { month: 'short' }).replace('.', '')}</span>
+                      <div className="flex items-center justify-between mb-3">
+                        <button type="button" disabled={!canPrev} onClick={() => setMonth(new Date(month.getFullYear(), month.getMonth() - 1, 1))}
+                                className="p-2 rounded-lg border border-academy-border disabled:opacity-30" aria-label="Mois précédent">
+                          <ChevronLeft size={18} />
+                        </button>
+                        <span className="font-bold">{MONTHS[month.getMonth()]} {month.getFullYear()}</span>
+                        <button type="button" disabled={!canNext} onClick={() => setMonth(new Date(month.getFullYear(), month.getMonth() + 1, 1))}
+                                className="p-2 rounded-lg border border-academy-border disabled:opacity-30" aria-label="Mois suivant">
+                          <ChevronRight size={18} />
+                        </button>
+                      </div>
+                      <div className="grid grid-cols-7 gap-1 text-center text-xs font-bold text-academy-textMain/45 mb-1">
+                        {WEEKDAYS.map(w => <span key={w}>{w}</span>)}
+                      </div>
+                      <div className="grid grid-cols-7 gap-1">
+                        {calendarDays.map((d, i) => {
+                          if (!d) return <span key={`e${i}`} />
+                          const s = toYmd(d)
+                          const available = isDayAvailable(d)
+                          return (
+                            <button type="button" key={s} disabled={!available} onClick={() => { setDate(s); setTimeSlot('') }}
+                                    className={`aspect-square rounded-lg text-sm font-bold transition-colors ${
+                                      date === s ? 'bg-academy-primary text-academy-onPrimary'
+                                      : available ? 'border border-academy-border hover:border-academy-primary'
+                                      : 'text-academy-textMain/20 cursor-not-allowed'}`}>
+                              {d.getDate()}
                             </button>
-                          ))}
-                        </div>
-                      )}
+                          )
+                        })}
+                      </div>
                     </div>
 
                     {date && slots.length > 0 && (
@@ -346,7 +374,7 @@ export default function CoachingPage() {
                 {step === 3 && (
                   <form onSubmit={handleSubmit} className={`${card} space-y-4`}>
                     <div className="bg-academy-surface rounded-xl p-4 text-sm space-y-1.5">
-                      <p className="font-bold">{topic?.icon} {topic?.label}</p>
+                      <p className="font-bold">{topic?.label}</p>
                       {format && <p className="text-academy-textMain/70">{format.label}{format.duration ? ` · ${format.duration}` : ''}{channel ? ` · ${channel}` : ''}</p>}
                       <p className="text-academy-textMain/70">{formatDate(date)}{timeSlot ? ` à ${timeSlot}` : ''}</p>
                       <p className="font-black">{price > 0 ? money(price, cfg.currency) : 'Tarif confirmé sur WhatsApp'}</p>

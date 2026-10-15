@@ -223,7 +223,7 @@ export default function LandingPage() {
                   <p className="text-academy-textMain/60 text-sm sm:text-base font-medium mb-3">{siteSettings.coaching.subtitle}</p>
                   <div className="flex flex-wrap gap-2">
                     {(siteSettings.coaching.topics || []).map(tp => (
-                      <span key={tp.id} className="text-xs font-bold px-3 py-1 rounded-full border border-academy-border text-academy-textMain/70">{tp.icon ? `${tp.icon} ` : ''}{tp.label}</span>
+                      <span key={tp.id} className="text-xs font-bold px-3 py-1 rounded-full border border-academy-border text-academy-textMain/70">{tp.label}</span>
                     ))}
                   </div>
                 </div>

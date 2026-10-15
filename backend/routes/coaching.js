@@ -16,7 +16,7 @@ const toUtcNoon = (s) => new Date(`${s}T12:00:00Z`)
 function dateError(date, cfg) {
   if (!DATE_RE.test(date) || Number.isNaN(toUtcNoon(date).getTime())) return 'Date invalide.'
   const today = ymd(new Date())
-  const last = ymd(new Date(Date.now() + (cfg.maxDaysAhead || 30) * 86400000))
+  const last = DATE_RE.test(cfg.bookUntil || '') ? cfg.bookUntil : ymd(new Date(Date.now() + 365 * 86400000))
   if (date < today || date > last) return 'Cette date n\'est pas disponible.'
   if (!(cfg.weekdays || []).includes(toUtcNoon(date).getUTCDay())) return 'Ce jour n\'est pas disponible.'
   if ((cfg.blockedDates || []).includes(date)) return 'Cette date n\'est pas disponible.'

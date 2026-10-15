@@ -48,14 +48,14 @@ export default function AdminCoachingTab() {
   const save = async () => {
     const topics = cfg.topics
       .filter(t => t.label.trim())
-      .map(t => ({ ...t, icon: t.icon || '✨', id: t.id || slugify(t.label), price: Math.max(0, parseInt(t.price, 10) || 0) }))
+      .map(t => ({ ...t, id: t.id || slugify(t.label), price: Math.max(0, parseInt(t.price, 10) || 0) }))
     if (topics.length === 0) return toastError('Ajoutez au moins un sujet.')
     const formats = (cfg.formats || [])
       .filter(f => f.label.trim())
       .map(f => ({ ...f, id: f.id || slugify(f.label), price: Math.max(0, parseInt(f.price, 10) || 0) }))
     setSaving(true)
     try {
-      const coaching = { ...cfg, topics, formats, maxDaysAhead: Math.max(1, parseInt(cfg.maxDaysAhead, 10) || 30) }
+      const coaching = { ...cfg, topics, formats }
       const { data } = await api.put('/admin/config', { coaching })
       setCfg(data.config.coaching)
       window.dispatchEvent(new Event('configUpdated'))
@@ -167,8 +167,8 @@ export default function AdminCoachingTab() {
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-xs font-bold text-neutral-400 mb-1.5 block">Réservable jusqu'à (jours)</label>
-              <input type="number" min="1" className={input} value={cfg.maxDaysAhead} onChange={e => set({ maxDaysAhead: e.target.value })} />
+              <label className="text-xs font-bold text-neutral-400 mb-1.5 block">Réservable jusqu'au</label>
+              <input type="date" className={input} value={cfg.bookUntil || ''} onChange={e => set({ bookUntil: e.target.value })} />
             </div>
             <div>
               <label className="text-xs font-bold text-neutral-400 mb-1.5 block">Bloquer une date</label>
@@ -195,21 +195,20 @@ export default function AdminCoachingTab() {
       <div className={panel}>
         <div className="flex items-center justify-between mb-4">
           <h3 className="font-bold">Sujets</h3>
-          <button type="button" onClick={() => set({ topics: [...cfg.topics, { id: '', icon: '✨', label: '', description: '', price: 0, duration: '' }] })}
+          <button type="button" onClick={() => set({ topics: [...cfg.topics, { id: '', label: '', description: '', price: 0, duration: '' }] })}
                   className="flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/15">
             <Plus size={14} /> Ajouter un sujet
           </button>
         </div>
         <div className="space-y-2">
           <div className="hidden sm:grid grid-cols-12 gap-2 text-xs font-bold text-neutral-500 px-1">
-            <span className="col-span-1">Icône</span><span className="col-span-4">Sujet</span><span className="col-span-5">Description courte</span><span className="col-span-1">Prix*</span>
+            <span className="col-span-4">Sujet</span><span className="col-span-5">Description courte</span><span className="col-span-2">Prix*</span>
           </div>
           {cfg.topics.map((t, i) => (
             <div key={i} className="grid grid-cols-12 gap-2">
-              <input className={`${input} col-span-2 sm:col-span-1 text-center`} maxLength={4} value={t.icon || ''} onChange={e => setTopic(i, { icon: e.target.value })} />
-              <input className={`${input} col-span-10 sm:col-span-4`} placeholder="Nom du sujet" value={t.label} onChange={e => setTopic(i, { label: e.target.value })} />
+              <input className={`${input} col-span-12 sm:col-span-4`} placeholder="Nom du sujet" value={t.label} onChange={e => setTopic(i, { label: e.target.value })} />
               <input className={`${input} col-span-12 sm:col-span-5`} placeholder="Ex : ChatGPT, outils IA…" value={t.description || ''} onChange={e => setTopic(i, { description: e.target.value })} />
-              <input type="number" min="0" className={`${input} col-span-10 sm:col-span-1`} value={t.price} onChange={e => setTopic(i, { price: e.target.value })} />
+              <input type="number" min="0" className={`${input} col-span-10 sm:col-span-2`} value={t.price} onChange={e => setTopic(i, { price: e.target.value })} />
               <button type="button" onClick={() => set({ topics: cfg.topics.filter((_, j) => j !== i) })}
                       className="col-span-2 sm:col-span-1 flex items-center justify-center rounded-xl text-red-400 hover:bg-red-500/10"><Trash2 size={16} /></button>
             </div>

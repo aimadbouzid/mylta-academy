@@ -145,14 +145,15 @@ const defaultSettings = {
   // Coaching en ligne : tout est modifiable depuis l'admin (onglet Coaching).
   // weekdays : 0 = dimanche … 6 = samedi. timeSlots vide = date seule.
   coaching: {
+    version: 2,
     enabled: true,
     title: 'Coaching en ligne',
     subtitle: 'Intelligence artificielle et vibe coding : une séance individuelle en visio pour avancer concrètement.',
     whatsappNumber: '213795103743',
     currency: 'DA',
     topics: [
-      { id: 'ia', icon: '🤖', label: 'Intelligence artificielle', description: 'ChatGPT, outils IA, automatiser son travail', price: 0, duration: '' },
-      { id: 'vibe-coding', icon: '⚡', label: 'Vibe coding', description: 'Créer une application ou un site avec l\'IA, sans être développeur', price: 0, duration: '' },
+      { id: 'ia', label: 'Intelligence artificielle', description: 'ChatGPT, outils IA, automatiser son travail', price: 0, duration: '' },
+      { id: 'vibe-coding', label: 'Vibe coding', description: 'Créer une application ou un site avec l\'IA, sans être développeur', price: 0, duration: '' },
     ],
     // Formules proposées : le prix de la formule prime sur celui du sujet.
     formats: [
@@ -163,7 +164,7 @@ const defaultSettings = {
     channels: ['Google Meet', 'Zoom', 'Appel vidéo WhatsApp'],
     weekdays: [0, 1, 2, 3, 4, 6],
     timeSlots: ['10:00', '14:00', '18:00'],
-    maxDaysAhead: 30,
+    bookUntil: '2028-12-31', // dernière date réservable (AAAA-MM-JJ)
     blockedDates: [],
   },
   modules: {
@@ -175,17 +176,19 @@ const defaultSettings = {
   }
 }
 
-// Réglages coaching enregistrés avant l'ajout des icônes (sujets sans `icon`) :
-// on ne garde que les sujets par défaut (IA, vibe coding), avec les libellés et
-// prix déjà saisis par l'admin. Ne s'applique qu'une fois : le prochain
-// enregistrement depuis l'admin écrit des sujets avec icône.
+// Réglages coaching enregistrés par une version antérieure (sans `version: 2`) :
+// on ne garde que les sujets par défaut (IA, vibe coding) avec les libellés et
+// prix déjà saisis, et la limite de réservation passe à `bookUntil`.
+// Ne s'applique qu'une fois : l'admin réenregistre ensuite avec `version: 2`.
 function upgradeCoaching(saved) {
   const def = defaultSettings.coaching
   const merged = { ...def, ...(saved || {}) }
-  const topics = saved?.topics
-  if (!Array.isArray(topics) || topics.some(t => t.icon !== undefined)) return merged
-  const savedById = Object.fromEntries(topics.map(t => [t.id, t]))
+  if (!saved || saved.version === def.version) return merged
+  const savedById = Object.fromEntries((saved.topics || []).map(({ icon, ...t }) => [t.id, t]))
   merged.topics = def.topics.map(d => ({ ...d, ...(savedById[d.id] || {}) }))
+  merged.version = def.version
+  merged.bookUntil = def.bookUntil
+  delete merged.maxDaysAhead
   if (saved.subtitle === 'Une séance individuelle en visio avec un expert, sur le sujet de votre choix.') merged.subtitle = def.subtitle
   return merged
 }
