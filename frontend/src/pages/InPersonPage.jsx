@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowLeft, ArrowRight, CheckCircle2, MessageCircle, MapPin, Clock, Users, Check, Copy } from 'lucide-react'
 import Navbar from '../components/Navbar'
+import TrainingLocation from '../components/TrainingLocation'
 import SEOHead from '../components/SEOHead'
 import api from '../api/axios'
 import { useSiteSettings } from '../context/SiteSettingsContext'
@@ -267,6 +268,7 @@ export default function InPersonPage() {
                     </p>
                   </section>
                 )}
+                {step === 0 && <div className="mt-4"><TrainingLocation /></div>}
 
                 {/* 2. La date */}
                 {step === 1 && (

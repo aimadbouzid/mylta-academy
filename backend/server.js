@@ -209,6 +209,7 @@ app.use(helmet({
         'https://accounts.google.com', 'https://www.facebook.com', 'https://web.facebook.com',
         'https://www.youtube.com', 'https://www.youtube-nocookie.com',
         'https://player.vimeo.com', 'https://www.loom.com', 'https://drive.google.com',
+        'https://www.google.com', // carte du lieu de la formation présentielle
       ],
     },
   } : false,
