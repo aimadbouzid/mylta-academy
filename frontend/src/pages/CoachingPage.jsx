@@ -142,8 +142,10 @@ export default function CoachingPage() {
     }
   }
 
-  const peopleLabel = (n) => (n > 1 ? `${n} personnes` : 'Seul(e)')
   const maxPeople = Math.max(1, Number(cfg?.maxParticipants) || 1)
+  // La dernière option, à partir de 4, représente un groupe (4 personnes et plus).
+  const isGroup = (n) => n >= 4 && n === maxPeople
+  const peopleLabel = (n) => (n <= 1 ? 'Individuel' : isGroup(n) ? `En groupe (${n} personnes et +)` : `${n} personnes`)
 
   const summaryLines = (b) => [
     ['Sujet', b.topicLabel],
@@ -305,16 +307,23 @@ export default function CoachingPage() {
 
                     {maxPeople > 1 && (
                       <div>
-                        <h2 className="font-bold text-[15px] mb-2">Pour combien de personnes ?</h2>
+                        <h2 className="font-bold text-[15px] mb-2">Comment voulez-vous travailler ?</h2>
                         <div className="flex flex-wrap gap-1.5">
                           {Array.from({ length: maxPeople }, (_, i) => i + 1).map(n => (
                             <button type="button" key={n} onClick={() => setParticipants(n)}
-                                    className={`h-9 px-4 rounded-full border text-[13px] font-semibold transition-colors ${participants === n ? 'border-academy-primary bg-academy-primary text-academy-onPrimary' : 'border-academy-border bg-white text-academy-textMain/80 hover:border-academy-primary/50'}`}>
-                              {n === 1 ? 'Seul(e)' : `À ${n}`}
+                                    className={`h-9 px-3.5 rounded-full border text-[13px] font-semibold inline-flex items-center gap-1.5 transition-colors ${participants === n ? 'border-academy-primary bg-academy-primary text-academy-onPrimary' : 'border-academy-border bg-white text-academy-textMain/80 hover:border-academy-primary/50'}`}>
+                              {n === 1 ? 'Individuel' : isGroup(n) ? 'En groupe' : `À ${n}`}
+                              {n === 1 && (
+                                <span className={`text-[10px] font-black uppercase tracking-wide rounded px-1 py-px ${participants === 1 ? 'bg-white/20' : 'bg-emerald-100 text-emerald-700'}`}>Recommandé</span>
+                              )}
                             </button>
                           ))}
                         </div>
-                        <p className="text-xs text-academy-textMain/55 mt-1.5">Avec des amis ou des collègues, dans le même appel vidéo.</p>
+                        <p className="text-xs text-academy-textMain/55 mt-1.5">
+                          {participants === 1
+                            ? 'Le coach se concentre à 100 % sur votre projet : c’est la formule la plus efficace.'
+                            : 'Avec des amis ou des collègues, dans le même appel vidéo.'}
+                        </p>
                       </div>
                     )}
 

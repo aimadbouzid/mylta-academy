@@ -197,8 +197,10 @@ const defaultSettings = {
     title: 'Coaching en ligne',
     subtitle: "Seul ou avec vos amis, un coach vous accompagne pour apprendre l'IA ou créer votre site.",
     // Étiquettes très courtes, en grille de 3 en haut de la page.
-    infos: ['2h30', 'En appel vidéo', 'Seul ou à 3', 'Débutants OK', '7 jours sur 7', 'Réponse rapide'],
-    maxParticipants: 3, // la séance peut se faire seul, à 2… jusqu'à ce nombre
+    infos: ['2h30', 'En appel vidéo', 'Seul ou en groupe', 'Débutants OK', '7 jours sur 7', 'Réponse rapide'],
+    // Choix proposés : Individuel, À 2, À 3… ; la dernière valeur (si ≥ 4) s'affiche
+    // « En groupe (4+) ». L'individuel reste présélectionné et recommandé.
+    maxParticipants: 4,
     whatsappNumber: '213795103743',
     currency: 'DA',
     // Sujets regroupés par thème (category) : la page les affiche par groupe.

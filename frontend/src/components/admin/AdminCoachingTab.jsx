@@ -247,7 +247,7 @@ export default function AdminCoachingTab() {
         </div>
 
         <h3 className="font-bold mt-8">Personnes par séance</h3>
-        <p className="text-xs text-neutral-500 mb-3">Le client choisit : seul, à 2… jusqu'à ce nombre (1 = séance individuelle uniquement).</p>
+        <p className="text-xs text-neutral-500 mb-3">Choix proposés : Individuel (recommandé), À 2, À 3… La dernière valeur, à partir de 4, s'affiche « En groupe ». 1 = individuel uniquement.</p>
         <input type="number" min="1" max="20" className={`${input} max-w-[120px]`} value={cfg.maxParticipants ?? 1}
                onChange={e => set({ maxParticipants: Math.max(1, Math.min(20, parseInt(e.target.value, 10) || 1)) })} />
 
@@ -313,7 +313,7 @@ export default function AdminCoachingTab() {
                     </td>
                     <td className="p-4 text-neutral-300">
                       <div className="font-bold text-white">{b.topicLabel}</div>
-                      <div className="text-xs text-neutral-400">{[b.participants > 1 ? `${b.participants} personnes` : 'Seul(e)', b.formatLabel, b.channel, b.level].filter(Boolean).join(' · ')}</div>
+                      <div className="text-xs text-neutral-400">{[b.participants > 1 ? (b.participants >= 4 && b.participants === (cfg.maxParticipants || 0) ? 'En groupe (4+)' : `${b.participants} personnes`) : 'Individuel', b.formatLabel, b.channel, b.level].filter(Boolean).join(' · ')}</div>
                       {b.price > 0 && <div className="text-xs text-emerald-400 font-bold">{b.price.toLocaleString('fr-FR')} {cfg.currency}</div>}
                     </td>
                     <td className="p-4">
