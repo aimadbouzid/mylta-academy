@@ -4,6 +4,7 @@ import { Link, useSearchParams } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import CourseCard from '../components/CourseCard'
 import UpcomingCourseCard from '../components/UpcomingCourseCard'
+import UpcomingCourseModal from '../components/UpcomingCourseModal'
 import { useSiteSettings } from '../context/SiteSettingsContext'
 import LoginModal from '../components/LoginModal'
 import PaymentModal from '../components/PaymentModal'
@@ -32,6 +33,7 @@ export default function CoursesPage() {
 
   const { settings } = useSiteSettings()
   const upcoming = settings?.upcomingCourses || []
+  const [upcomingOpen, setUpcomingOpen] = useState(null)
   const { courses, total, loading, error, refetch } = useCourses({
     category, level, search,
   })
@@ -175,13 +177,14 @@ export default function CoursesPage() {
             <div className={courses.length > 0 ? 'mt-10' : ''}>
               <h2 className="font-display font-bold text-lg sm:text-xl mb-4">Bientôt disponibles</h2>
               <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
-                {upcoming.map(c => <UpcomingCourseCard key={c.title} course={c} />)}
+                {upcoming.map(c => <UpcomingCourseCard key={c.id || c.title} course={c} onDetails={setUpcomingOpen} />)}
               </div>
             </div>
           )}
         </div>
       </div>
 
+      {upcomingOpen && <UpcomingCourseModal course={upcomingOpen} onClose={() => setUpcomingOpen(null)} />}
       {loginOpen && <LoginModal onClose={() => setLoginOpen(false)} onSuccess={() => setLoginOpen(false)} />}
       {payModal  && <PaymentModal course={payModal} onClose={() => setPayModal(null)} />}
     </>

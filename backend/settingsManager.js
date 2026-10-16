@@ -142,11 +142,51 @@ const defaultSettings = {
       Elite: 0,                     // illimité
     },
   },
-  // Formations annoncées (« Bientôt ») : affichées tant qu'elles ne sont pas en ligne.
+  // Formations annoncées (« Bientôt ») : affichées tant qu'elles ne sont pas en
+  // ligne, avec une fiche détaillée. Modifiables dans l'admin (Formations à venir).
   upcomingCourses: [
-    { title: 'Montage vidéo sur smartphone avec CapCut', category: 'Vidéo', description: 'Filmer, monter et publier des vidéos courtes de qualité, uniquement avec votre téléphone.' },
-    { title: "L'IA au quotidien : ChatGPT et les outils IA", category: 'IA', description: "Gagner du temps chaque jour : écrire, chercher, créer des images et automatiser avec l'IA." },
-    { title: "Créer son site avec l'IA, sans savoir coder", category: 'Vibe coding', description: "Construire un site ou une page de vente professionnelle grâce à l'IA, étape par étape." },
+    {
+      id: 'montage-capcut', title: 'Montage vidéo sur smartphone avec CapCut', category: 'Vidéo', level: 'Débutant', duration: '',
+      price: 3000, oldPrice: 5000,
+      description: 'Filmer, monter et publier des vidéos courtes de qualité, uniquement avec votre téléphone.',
+      program: [
+        'Bien filmer avec son smartphone : cadrage, lumière et son',
+        'Prendre en main CapCut',
+        'Monter une vidéo dynamique : coupes, transitions, rythme',
+        'Ajouter sous-titres, musique et effets',
+        'Créer des vidéos courtes qui vendent (UGC, publicités)',
+        'Exporter et publier sur TikTok, Reels et YouTube',
+      ],
+      included: ['Accès illimité', '100 % sur smartphone', 'Certificat de fin de formation'],
+    },
+    {
+      id: 'ia-quotidien', title: "L'IA au quotidien : ChatGPT et les outils IA", category: 'IA', level: 'Débutant', duration: '',
+      price: 3000, oldPrice: 5000,
+      description: "Gagner du temps chaque jour : écrire, chercher, créer des images et automatiser avec l'IA.",
+      program: [
+        "Comprendre l'IA simplement",
+        'Bien parler à ChatGPT : faire les bonnes demandes',
+        "Écrire textes, emails et publications avec l'IA",
+        "Créer des images avec l'IA",
+        "Gagner du temps en confiant les tâches répétitives à l'IA",
+        'Les meilleurs outils IA gratuits',
+      ],
+      included: ['Accès illimité', 'Exemples prêts à copier', 'Certificat de fin de formation'],
+    },
+    {
+      id: 'site-ia', title: "Créer son site avec l'IA, sans savoir coder", category: 'Vibe coding', level: 'Débutant', duration: '',
+      price: 3000, oldPrice: 5000,
+      description: "Construire un site ou une page de vente professionnelle grâce à l'IA, étape par étape.",
+      program: [
+        "Comprendre le vibe coding : créer avec l'IA",
+        'Préparer son projet et son contenu',
+        "Créer son site pas à pas avec l'IA",
+        'Créer une page de vente qui convertit',
+        'Mettre son site en ligne avec son nom de domaine',
+        'Modifier et améliorer son site sans développeur',
+      ],
+      included: ['Accès illimité', 'Aucune compétence technique requise', 'Certificat de fin de formation'],
+    },
   ],
   // Coaching en ligne : tout est modifiable depuis l'admin (onglet Coaching).
   // Textes volontairement simples : la page s'adresse à des débutants.
@@ -265,6 +305,10 @@ function getSettings() {
       modules: { ...defaultSettings.modules, ...(parsed.modules || {}) },
       coaching: upgradeCoaching(parsed.coaching),
       inPerson: { ...defaultSettings.inPerson, ...(parsed.inPerson || {}) },
+      // Liste vide = choix de l'admin ; liste sans id = ancien format, remplacé par les défauts
+      upcomingCourses: Array.isArray(parsed.upcomingCourses) && (parsed.upcomingCourses.length === 0 || parsed.upcomingCourses.some(c => c.id))
+        ? parsed.upcomingCourses
+        : defaultSettings.upcomingCourses,
     })
   } catch (err) {
     console.error('Erreur lecture settings.json:', err)

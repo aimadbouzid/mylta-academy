@@ -21,6 +21,7 @@ import AdminCouponsTab from '../components/admin/AdminCouponsTab'
 import AdminPayoutsTab from '../components/admin/AdminPayoutsTab'
 import AdminCoachingTab from '../components/admin/AdminCoachingTab'
 import AdminInPersonTab from '../components/admin/AdminInPersonTab'
+import AdminUpcomingTab from '../components/admin/AdminUpcomingTab'
 import api from '../api/axios'
 import { useLanguage } from '../context/LanguageContext'
 
@@ -1841,6 +1842,7 @@ export default function AdminDashboard() {
     { id: 'presence', icon: Radio, label: 'Présence & Clics', badge: 'Live' },
     { id: 'receipts', icon: ClipboardCheck, label: 'Validation paiements', badge: stats?.pendingReceipts > 0 ? stats.pendingReceipts : null },
     { id: 'courses',  icon: BookOpen, label: 'Gestion formations' },
+    { id: 'upcoming', icon: Clock, label: 'Formations à venir' },
     { id: 'instructors', icon: GraduationCap, label: 'Formateurs' },
     { id: 'instructor_apps', icon: GraduationCap, label: 'Candidatures' },
     { id: 'payouts', icon: CreditCard, label: 'Retraits Formateurs' },
@@ -2410,6 +2412,7 @@ export default function AdminDashboard() {
           {tab === 'payouts' && <AdminPayoutsTab />}
           {tab === 'coaching' && <AdminCoachingTab />}
           {tab === 'in_person' && <AdminInPersonTab />}
+          {tab === 'upcoming' && <AdminUpcomingTab />}
           {tab === 'settings' && <SettingsTab />}
         </div>
       </main>

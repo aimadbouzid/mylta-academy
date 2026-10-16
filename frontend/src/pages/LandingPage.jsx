@@ -9,6 +9,7 @@ import Navbar from '../components/Navbar'
 import SEOHead from '../components/SEOHead'
 import CourseCard from '../components/CourseCard'
 import UpcomingCourseCard from '../components/UpcomingCourseCard'
+import UpcomingCourseModal from '../components/UpcomingCourseModal'
 import LoginModal from '../components/LoginModal'
 import PaymentModal from '../components/PaymentModal'
 import IntroVideoModal from '../components/IntroVideoModal'
@@ -36,6 +37,7 @@ export default function LandingPage() {
   const [loginOpen,   setLoginOpen]   = useState(false)
   const [payModal,    setPayModal]    = useState(null)
   const [openFaq,     setOpenFaq]     = useState(null)
+  const [upcomingOpen, setUpcomingOpen] = useState(null)
   
   const landingData = t('landing_data') || {}
   const features = landingData.features || []
@@ -210,7 +212,7 @@ export default function LandingPage() {
                   <CourseCard key={c.id} course={c} onAccessClick={handleAccessClick} />
                 ))}
                 {(siteSettings.upcomingCourses || []).slice(0, Math.max(0, 3 - featuredCourses.length)).map(c => (
-                  <UpcomingCourseCard key={c.title} course={c} />
+                  <UpcomingCourseCard key={c.id || c.title} course={c} onDetails={setUpcomingOpen} />
                 ))}
               </div>
             )}
@@ -437,6 +439,7 @@ export default function LandingPage() {
       </div>
 
       {loginOpen  && <LoginModal   onClose={() => setLoginOpen(false)} onSuccess={() => setLoginOpen(false)} />}
+      {upcomingOpen && <UpcomingCourseModal course={upcomingOpen} onClose={() => setUpcomingOpen(null)} />}
       {payModal   && <PaymentModal course={payModal} onClose={() => setPayModal(null)} />}
       {introOpen  && <IntroVideoModal onClose={handleCloseIntro} />}
     </>
