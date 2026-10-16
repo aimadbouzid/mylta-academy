@@ -14,8 +14,8 @@ export default function UpcomingCourseCard({ course, onDetails }) {
       onClick={() => onDetails?.(course)}
       aria-label={`${course.title} — bientôt disponible`}
     >
-      <div className="relative h-24 xs:h-32 sm:h-48 overflow-hidden flex-shrink-0 bg-gradient-to-br from-rose-50 to-red-100">
-        <span className="absolute top-2 left-2 sm:top-3 sm:left-3 px-2 py-0.5 sm:px-2.5 sm:py-1 text-[9px] sm:text-xs font-black uppercase tracking-wider rounded-full bg-academy-primary text-white">
+      <div className="relative h-24 xs:h-32 sm:h-48 overflow-hidden flex-shrink-0 bg-gradient-to-br from-neutral-700 to-neutral-800">
+        <span className="absolute top-2 left-2 sm:top-3 sm:left-3 px-2 py-0.5 sm:px-2.5 sm:py-1 text-[9px] sm:text-xs font-black uppercase tracking-wider rounded-full bg-neutral-900 text-white">
           Bientôt
         </span>
         {course.category && (
@@ -24,7 +24,7 @@ export default function UpcomingCourseCard({ course, onDetails }) {
           </span>
         )}
         <div className="absolute inset-0 flex items-center justify-center">
-          <span className="w-9 h-9 sm:w-12 sm:h-12 rounded-full bg-white border border-red-200 flex items-center justify-center text-academy-primary">
+          <span className="w-9 h-9 sm:w-12 sm:h-12 rounded-full bg-white border border-neutral-300 flex items-center justify-center text-neutral-900">
             <Lock className="w-4 h-4 sm:w-5 sm:h-5" />
           </span>
         </div>
@@ -45,7 +45,7 @@ export default function UpcomingCourseCard({ course, onDetails }) {
             {Number(course.oldPrice) > Number(course.price) && (
               <div className="flex items-center gap-1.5">
                 <span className="text-[10px] sm:text-xs text-academy-textMain/40 line-through font-semibold">{formatPrice(course.oldPrice)}</span>
-                {discount > 0 && <span className="text-[9px] sm:text-[11px] font-black text-academy-primary bg-academy-primary/10 rounded px-1">-{discount}%</span>}
+                {discount > 0 && <span className="text-[9px] sm:text-[11px] font-black text-academy-textMain bg-academy-textMain/10 rounded px-1">-{discount}%</span>}
               </div>
             )}
             <span className="font-black text-sm sm:text-xl text-academy-textMain">{formatPrice(course.price)}</span>
@@ -53,7 +53,7 @@ export default function UpcomingCourseCard({ course, onDetails }) {
         )}
 
         <button type="button" onClick={(e) => { e.stopPropagation(); onDetails?.(course) }}
-                className={`${Number(course.price) > 0 ? '' : 'mt-auto '}w-full py-2 sm:py-2.5 rounded-lg border-2 border-academy-primary text-[10px] sm:text-sm font-bold text-academy-primary hover:bg-academy-primary/5 transition-colors`}>
+                className={`${Number(course.price) > 0 ? '' : 'mt-auto '}w-full py-2 sm:py-2.5 rounded-lg border-2 border-neutral-900 dark:border-white text-[10px] sm:text-sm font-bold text-neutral-900 dark:text-white hover:bg-neutral-900/5 dark:hover:bg-white/10 transition-colors`}>
           Détails
         </button>
       </div>
