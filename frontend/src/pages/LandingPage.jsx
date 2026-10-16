@@ -8,6 +8,7 @@ import {
 import Navbar from '../components/Navbar'
 import SEOHead from '../components/SEOHead'
 import CourseCard from '../components/CourseCard'
+import UpcomingCourseCard from '../components/UpcomingCourseCard'
 import LoginModal from '../components/LoginModal'
 import PaymentModal from '../components/PaymentModal'
 import IntroVideoModal from '../components/IntroVideoModal'
@@ -207,6 +208,9 @@ export default function LandingPage() {
               <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
                 {featuredCourses.map(c => (
                   <CourseCard key={c.id} course={c} onAccessClick={handleAccessClick} />
+                ))}
+                {(siteSettings.upcomingCourses || []).slice(0, Math.max(0, 3 - featuredCourses.length)).map(c => (
+                  <UpcomingCourseCard key={c.title} course={c} />
                 ))}
               </div>
             )}

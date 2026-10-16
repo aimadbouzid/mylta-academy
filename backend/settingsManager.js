@@ -142,6 +142,12 @@ const defaultSettings = {
       Elite: 0,                     // illimité
     },
   },
+  // Formations annoncées (« Bientôt ») : affichées tant qu'elles ne sont pas en ligne.
+  upcomingCourses: [
+    { title: 'Montage vidéo sur smartphone avec CapCut', category: 'Vidéo', description: 'Filmer, monter et publier des vidéos courtes de qualité, uniquement avec votre téléphone.' },
+    { title: "L'IA au quotidien : ChatGPT et les outils IA", category: 'IA', description: "Gagner du temps chaque jour : écrire, chercher, créer des images et automatiser avec l'IA." },
+    { title: "Créer son site avec l'IA, sans savoir coder", category: 'Vibe coding', description: "Construire un site ou une page de vente professionnelle grâce à l'IA, étape par étape." },
+  ],
   // Coaching en ligne : tout est modifiable depuis l'admin (onglet Coaching).
   // Textes volontairement simples : la page s'adresse à des débutants.
   // weekdays : 0 = dimanche … 6 = samedi. timeSlots vide = date seule.

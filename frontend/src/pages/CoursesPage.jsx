@@ -3,6 +3,8 @@ import { Search, SlidersHorizontal, BookOpen, X } from 'lucide-react'
 import { Link, useSearchParams } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import CourseCard from '../components/CourseCard'
+import UpcomingCourseCard from '../components/UpcomingCourseCard'
+import { useSiteSettings } from '../context/SiteSettingsContext'
 import LoginModal from '../components/LoginModal'
 import PaymentModal from '../components/PaymentModal'
 import { LoadingGrid, ErrorState } from '../components/LoadingSkeleton'
@@ -28,6 +30,8 @@ export default function CoursesPage() {
   const [loginOpen,   setLoginOpen]   = useState(false)
   const [payModal,    setPayModal]    = useState(null)
 
+  const { settings } = useSiteSettings()
+  const upcoming = settings?.upcomingCourses || []
   const { courses, total, loading, error, refetch } = useCourses({
     category, level, search,
   })
@@ -148,7 +152,7 @@ export default function CoursesPage() {
 
           {error && <ErrorState message={error} onRetry={refetch} />}
 
-          {!loading && !error && courses.length === 0 && (
+          {!loading && !error && courses.length === 0 && upcoming.length === 0 && (
             <div className="text-center py-20 bg-red-950/5 border-red-900/10 backdrop-blur-md rounded-[30px] border border-academy-border shadow-sm">
               <BookOpen className="w-16 h-16 text-academy-textMain/20 mx-auto mb-4" />
               <h3 className="font-display font-bold text-xl text-academy-textMain mb-2">{t('courses_page.empty')}</h3>
@@ -164,6 +168,15 @@ export default function CoursesPage() {
               {courses.map(c => (
                 <CourseCard key={c.id} course={c} onAccessClick={handleAccessClick} />
               ))}
+            </div>
+          )}
+
+          {!loading && !error && upcoming.length > 0 && (
+            <div className={courses.length > 0 ? 'mt-10' : ''}>
+              <h2 className="font-display font-bold text-lg sm:text-xl mb-4">Bientôt disponibles</h2>
+              <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
+                {upcoming.map(c => <UpcomingCourseCard key={c.title} course={c} />)}
+              </div>
             </div>
           )}
         </div>

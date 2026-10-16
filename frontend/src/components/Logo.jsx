@@ -1,8 +1,8 @@
 // Logo.jsx — Logo officiel ACADEMY (version horizontale)
 const heights = {
-  sm: 'h-4 sm:h-5',
-  md: 'h-5 sm:h-6',
-  lg: 'h-6 sm:h-7',
+  sm: 'h-3.5 sm:h-4',
+  md: 'h-4 sm:h-[18px]',
+  lg: 'h-5 sm:h-6',
 }
 
 // theme="dark" : logo blanc pour les fonds sombres (barre latérale admin).

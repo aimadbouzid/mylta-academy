@@ -624,6 +624,11 @@ export const translations = {
         { val: 'Edahabia / CIB', label: 'Paiement 100% sécurisé' }
       ],
       faq: [
+        { question: "Comment se passe une séance de coaching en ligne ?", answer: "La séance dure 2h30, en appel vidéo (WhatsApp, Google Meet ou Zoom), seul avec votre coach. Vous partagez votre écran et vous avancez concrètement sur votre projet : IA, vidéo, site ou application." },
+        { question: "Comment réserver un coaching en ligne ?", answer: "Sur la page Coaching en ligne, choisissez votre sujet, puis le jour et l'heure qui vous conviennent, et laissez votre numéro WhatsApp. Nous vous confirmons la séance et le prix directement sur WhatsApp." },
+        { question: "Faut-il un niveau particulier pour le coaching ?", answer: "Non. Le coaching s'adapte à votre niveau, même si vous débutez complètement. Il suffit d'avoir un téléphone ou un ordinateur avec une connexion internet." },
+        { question: "Comment fonctionne le coaching présentiel ?", answer: "C'est une formation de 3 jours en petit groupe, sur place. Vous choisissez une session, puis vous réservez votre place en payant un acompte. Le reste est réglé ensuite." },
+        { question: "Puis-je changer la date de ma réservation ?", answer: "Oui, écrivez-nous sur WhatsApp le plus tôt possible et nous trouverons ensemble une autre date." },
         { question: "Ai-je besoin d'expérience pour commencer ?", answer: "Non, aucun prérequis n'est nécessaire ! Nos formations sont conçues de manière progressive, adaptées aussi bien aux débutants complets qu'aux personnes souhaitant perfectionner leurs compétences." },
         { question: "Combien de temps faut-il pour voir des résultats ?", answer: "Vous commencerez à appliquer des compétences concrètes dès les premiers modules. La plupart de nos étudiants constatent des progrès significatifs et mettent en pratique leurs acquis au bout de 2 à 4 semaines." },
         { question: "Est-ce que j'obtiens un certificat ?", answer: "Oui, absolument ! Après avoir terminé l'ensemble des modules d'une formation, vous recevez un certificat de réussite nominatif Mylta Academy à valoriser sur votre CV et votre profil LinkedIn." },
@@ -1266,6 +1271,11 @@ export const translations = {
         { val: 'Edahabia / CIB', label: '100% Secure Payment' }
       ],
       faq: [
+        { question: "How does an online coaching session work?", answer: "The session lasts 2h30 over a video call (WhatsApp, Google Meet or Zoom), one-on-one with your coach. You share your screen and make real progress on your project: AI, video, website or app." },
+        { question: "How do I book online coaching?", answer: "On the Online Coaching page, choose your topic, then the day and time that suit you, and leave your WhatsApp number. We confirm the session and the price directly on WhatsApp." },
+        { question: "Do I need a specific level for coaching?", answer: "No. Coaching adapts to your level, even if you are a complete beginner. All you need is a phone or computer with an internet connection." },
+        { question: "How does in-person coaching work?", answer: "It is a 3-day training in a small group, on site. You pick a session, then book your seat by paying a deposit. The rest is paid afterwards." },
+        { question: "Can I change the date of my booking?", answer: "Yes, message us on WhatsApp as early as possible and we will find another date together." },
         { question: "Do I need experience to start?", answer: "No, no prerequisites are needed! Our courses are designed progressively, suitable for both complete beginners and those wishing to perfect their skills." },
         { question: "How long does it take to see results?", answer: "You will start applying concrete skills from the first modules. Most of our students see significant progress and put their learning into practice after 2 to 4 weeks." },
         { question: "Do I get a certificate?", answer: "Yes, absolutely! After completing all modules of a course, you receive a personalized Mylta Academy certificate of completion to showcase on your resume and LinkedIn profile." },
@@ -1899,6 +1909,11 @@ export const translations = {
         { val: 'الذهبية / CIB', label: 'دفع آمن 100%' }
       ],
       faq: [
+        { question: "كيف تتم جلسة التدريب عبر الإنترنت؟", answer: "تدوم الجلسة ساعتين ونصف عبر مكالمة فيديو (واتساب أو Google Meet أو Zoom)، بشكل فردي مع مدربك. تشارك شاشتك وتتقدم فعليًا في مشروعك: الذكاء الاصطناعي، الفيديو، الموقع أو التطبيق." },
+        { question: "كيف أحجز تدريبًا عبر الإنترنت؟", answer: "في صفحة التدريب عبر الإنترنت، اختر موضوعك ثم اليوم والساعة المناسبين، واترك رقم واتساب الخاص بك. نؤكد لك الجلسة والسعر مباشرة على واتساب." },
+        { question: "هل أحتاج إلى مستوى معين للتدريب؟", answer: "لا. يتكيف التدريب مع مستواك، حتى لو كنت مبتدئًا تمامًا. يكفي أن يكون لديك هاتف أو حاسوب متصل بالإنترنت." },
+        { question: "كيف يعمل التدريب الحضوري؟", answer: "هو تكوين لمدة 3 أيام في مجموعة صغيرة، في عين المكان. تختار دورة ثم تحجز مكانك بدفع عربون، ويُدفع الباقي لاحقًا." },
+        { question: "هل يمكنني تغيير تاريخ حجزي؟", answer: "نعم، راسلنا على واتساب في أقرب وقت وسنجد معًا تاريخًا آخر." },
         { question: "هل أحتاج إلى خبرة للبدء؟", answer: "لا، ليست هناك حاجة لأي شروط مسبقة! دوراتنا مصممة بشكل تدريجي لتناسب المبتدئين تمامًا وكذلك الأشخاص الذين يرغبون في تحسين مهاراتهم." },
         { question: "كم من الوقت يستغرق لرؤية النتائج؟", answer: "ستبدأ في تطبيق مهارات ملموسة منذ الوحدات الأولى. يلاحظ معظم طلابنا تقدمًا كبيرًا ويطبقون ما تعلموه بعد 2 إلى 4 أسابيع." },
         { question: "هل أحصل على شهادة؟", answer: "نعم، بالتأكيد! بعد إكمال جميع وحدات الدورة التدريبية، تحصل على شهادة إتمام شخصية من ميلتا أكاديمي لإضافتها إلى سيرتك الذاتية وملفك الشخصي على LinkedIn." },

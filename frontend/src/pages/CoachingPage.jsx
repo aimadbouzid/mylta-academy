@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useRef } from 'react'
-import { ArrowLeft, ArrowRight, CheckCircle2, MessageCircle, CalendarPlus, Clock, ChevronLeft, ChevronRight, Video, Bot, PenLine, Image, Share2, Zap, Globe, ShoppingBag, LayoutDashboard, Smartphone, Sparkles } from 'lucide-react'
+import { ArrowLeft, ArrowRight, CheckCircle2, MessageCircle, CalendarPlus, Clock, ChevronLeft, ChevronRight, Check } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import SEOHead from '../components/SEOHead'
@@ -7,11 +7,6 @@ import api from '../api/axios'
 import { useSiteSettings } from '../context/SiteSettingsContext'
 
 const STEPS = ['Sujet', 'Date', 'Infos']
-// Icône de chaque sujet par défaut ; un sujet ajouté dans l'admin prend Sparkles.
-const TOPIC_ICONS = {
-  'ia-chatgpt': Bot, 'ia-video': Video, 'ia-textes': PenLine, 'ia-images': Image, 'ia-reseaux': Share2, 'ia-temps': Zap,
-  'creer-site': Globe, 'creer-page-vente': ShoppingBag, 'creer-outil': LayoutDashboard, 'creer-app': Smartphone,
-}
 const MONTHS = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre']
 const WEEKDAYS = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim']
 
@@ -285,15 +280,16 @@ export default function CoachingPage() {
                           {category && <h3 className="font-bold text-sm text-academy-primary mb-2">{category}</h3>}
                           <div className="grid grid-cols-2 gap-2">
                             {items.map(t => {
-                              const Icon = TOPIC_ICONS[t.id] || Sparkles
                               const active = topicId === t.id
                               return (
                                 <button type="button" key={t.id} onClick={() => setTopicId(t.id)}
-                                        className={`rounded-xl border px-2.5 py-2.5 flex items-center gap-2 text-left transition-colors ${active ? 'border-academy-primary bg-academy-primary/5 ring-1 ring-academy-primary' : 'border-academy-border hover:border-academy-primary/40'}`}>
-                                  <span className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${active ? 'bg-academy-primary text-academy-onPrimary' : 'bg-academy-primary/10 text-academy-primary'}`}>
-                                    <Icon size={16} />
-                                  </span>
-                                  <span className="text-[12.5px] font-bold leading-tight">{t.label}</span>
+                                        className={`relative rounded-xl border px-3 py-3 min-h-[54px] text-left transition-colors ${active ? 'border-academy-primary bg-academy-primary/5 ring-1 ring-academy-primary' : 'border-academy-border bg-white hover:border-academy-primary/40'}`}>
+                                  <span className={`block text-[13.5px] font-semibold leading-snug ${active ? 'pr-5' : ''}`}>{t.label}</span>
+                                  {active && (
+                                    <span className="absolute top-2 right-2 w-4 h-4 rounded-full bg-academy-primary text-academy-onPrimary flex items-center justify-center">
+                                      <Check size={11} strokeWidth={3} />
+                                    </span>
+                                  )}
                                 </button>
                               )
                             })}

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowLeft, ArrowRight, CheckCircle2, MessageCircle, MapPin, Clock, Users, Check, Copy, Video, Scissors, TrendingUp, Sparkles, Mic, Rocket } from 'lucide-react'
+import { ArrowLeft, ArrowRight, CheckCircle2, MessageCircle, MapPin, Clock, Users, Check, Copy } from 'lucide-react'
 import Navbar from '../components/Navbar'
 import SEOHead from '../components/SEOHead'
 import api from '../api/axios'
@@ -8,7 +8,6 @@ import { useSiteSettings } from '../context/SiteSettingsContext'
 import { PAYMENT_INFO } from '../config/paymentConfig'
 
 const STEPS = ['Formation', 'Date', 'Profil', 'Infos']
-const PROGRAM_ICONS = [Video, Scissors, TrendingUp, Sparkles, Mic, Rocket]
 
 // Mêmes clés que PROFILE_LABELS côté serveur (routes/inPerson.js).
 const QUESTIONS = [
@@ -248,19 +247,14 @@ export default function InPersonPage() {
                     {(cfg.program || []).length > 0 && (
                       <div>
                         <h2 className="font-bold text-lg mb-3">Au programme</h2>
-                        <div className="grid grid-cols-2 gap-2">
-                          {cfg.program.map((p, i) => {
-                            const Icon = PROGRAM_ICONS[i % PROGRAM_ICONS.length]
-                            return (
-                              <div key={i} className="rounded-xl border border-academy-border px-2.5 py-2.5 flex items-center gap-2">
-                                <span className="w-8 h-8 rounded-lg bg-academy-primary/10 text-academy-primary flex items-center justify-center shrink-0">
-                                  <Icon size={16} />
-                                </span>
-                                <span className="text-[12.5px] font-bold leading-tight">{p}</span>
-                              </div>
-                            )
-                          })}
-                        </div>
+                        <ol className="grid grid-cols-2 gap-x-3 gap-y-2">
+                          {cfg.program.map((p, i) => (
+                            <li key={i} className="flex items-baseline gap-2 border-b border-academy-border pb-2">
+                              <span className="text-xs font-black text-academy-primary tabular-nums">{String(i + 1).padStart(2, '0')}</span>
+                              <span className="text-[13.5px] font-semibold leading-snug">{p}</span>
+                            </li>
+                          ))}
+                        </ol>
                       </div>
                     )}
 
