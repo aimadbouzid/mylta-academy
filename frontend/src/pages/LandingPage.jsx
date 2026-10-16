@@ -200,8 +200,8 @@ export default function LandingPage() {
           <section className="section-container pt-4">
             <Link to="/concours" className="group relative flex max-w-3xl mx-auto bg-white border border-academy-border rounded-xl overflow-hidden hover:border-academy-textMain/30 transition-colors">
               {/* Talon de ticket */}
-              <span className="shrink-0 flex items-center px-3 sm:px-4 bg-academy-primary text-academy-onPrimary">
-                <span className="[writing-mode:vertical-rl] rotate-180 text-[10px] font-black uppercase tracking-[0.25em]">Concours</span>
+              <span className="shrink-0 flex items-center px-1.5 sm:px-2 bg-academy-primary text-academy-onPrimary">
+                <span className="[writing-mode:vertical-rl] rotate-180 text-[8px] font-bold uppercase tracking-[0.12em]">Concours</span>
               </span>
               <span className="border-l-2 border-dashed border-academy-border" />
               <span className="flex-1 min-w-0 flex items-center justify-between gap-3 px-4 py-3.5">
@@ -241,9 +241,16 @@ export default function LandingPage() {
                 {featuredCourses.map(c => (
                   <CourseCard key={c.id} course={c} onAccessClick={handleAccessClick} />
                 ))}
-                {(siteSettings.upcomingCourses || []).slice(0, Math.max(0, 3 - featuredCourses.length)).map(c => (
-                  <UpcomingCourseCard key={c.id || c.title} course={c} onDetails={setUpcomingOpen} />
-                ))}
+              </div>
+            )}
+            {(siteSettings.upcomingCourses || []).length > 0 && (
+              <div className={featuredCourses.length ? 'mt-8' : ''}>
+                <h3 className="font-display font-bold text-lg sm:text-xl text-academy-textMain mb-3">Bientôt disponibles</h3>
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+                  {siteSettings.upcomingCourses.map(c => (
+                    <UpcomingCourseCard key={c.id || c.title} course={c} onDetails={setUpcomingOpen} />
+                  ))}
+                </div>
               </div>
             )}
           </div>
