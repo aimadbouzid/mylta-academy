@@ -233,7 +233,8 @@ const defaultSettings = {
     deposit: 3000,  // acompte obligatoire pour réserver sa place
     // Message affiché au-dessus des sessions (vide = rien) : utile tant que les dates ne sont pas définitives.
     datesNotice: "Inscriptions ouvertes ! Le calendrier exact des sessions vous sera communiqué d'ici 2 à 4 jours.",
-    showSeats: false, // afficher « il reste N places » sur les sessions (désactivé par défaut)
+    showSeats: false,
+    joinCode: '', // code secret du QR d'inscription sur place (vide = QR désactivé) // afficher « il reste N places » sur les sessions (désactivé par défaut)
     // Titres courts : affichés en cartes compactes (2 par ligne sur téléphone).
     program: [
       'Filmer au smartphone',

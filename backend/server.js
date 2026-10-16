@@ -375,6 +375,7 @@ const coachingBookLimiter = rateLimit({
 app.use('/api/coaching/book', coachingBookLimiter)
 app.use('/api/coaching', apiLimiter, coachingRoutes)
 app.use('/api/in-person/register', coachingBookLimiter)
+app.use('/api/in-person/join', coachingBookLimiter)
 app.use('/api/in-person', apiLimiter, inPersonRoutes)
 
 // ─── Analytics Public Track Click Route ──────────────────────
@@ -455,7 +456,10 @@ app.get('/api/config/mission', (req, res) => {
 })
 
 app.get('/api/config/site', (req, res) => {
-  const settings = getSettings()
+  const all = getSettings()
+  // Le code du QR d'inscription ne doit jamais être public.
+  const { joinCode, ...inPerson } = all.inPerson || {}
+  const settings = { ...all, inPerson }
   res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate')
   res.setHeader('Expires', '0')
   res.json({ settings })

@@ -47,10 +47,11 @@ export default function Navbar({ onLoginClick }) {
   // L'intercepteur 401 redirige vers "/?expired=true".
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
-    if (params.get('expired') === 'true') {
+    if (params.get('expired') === 'true' || params.get('login') === '1') {
       setLoginModalOpen(true)
       // Nettoyer l'URL pour que la modale ne se rouvre pas au rechargement
       params.delete('expired')
+      params.delete('login')
       const qs = params.toString()
       window.history.replaceState({}, '', window.location.pathname + (qs ? `?${qs}` : ''))
     }

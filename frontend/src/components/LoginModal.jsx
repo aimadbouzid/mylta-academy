@@ -323,7 +323,8 @@ export default function LoginModal({ onClose, onSuccess }) {
             <div className="relative">
               <Mail size={17} className="absolute start-4 top-1/2 -translate-y-1/2 text-academy-textMain/35" />
               <input
-                type="email" placeholder={t('login.email')} value={form.email}
+                type={mode === 'login' ? 'text' : 'email'} autoComplete="username"
+                placeholder={mode === 'login' ? t('login.email_or_phone') : t('login.email')} value={form.email}
                 onChange={set('email')} required
                 className={FIELD_CLASS}
               />

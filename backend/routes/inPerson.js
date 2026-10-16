@@ -3,6 +3,8 @@ const { z } = require('zod')
 const prisma = require('../prisma')
 const { getSettings } = require('../settingsManager')
 const { notifyOwner } = require('../utils/notifyOwner')
+const crypto = require('crypto')
+const { createPhoneAccount, AccountExistsError } = require('../utils/phoneAccount')
 
 const router = express.Router()
 
@@ -118,6 +120,45 @@ router.post('/register', async (req, res, next) => {
     res.status(201).json({ registration: result })
   } catch (err) {
     if (err instanceof SessionError) return res.status(err.status).json({ error: err.message })
+    next(err)
+  }
+})
+
+// ─── Inscription sur place par QR code ──────────────────────
+// Seul quelqu'un qui a scanné le QR (code secret gardé par l'admin) peut créer un compte ici.
+const validJoinCode = (code) => {
+  const expected = getSettings().inPerson.joinCode || ''
+  const given = String(code || '')
+  return expected.length >= 8 && given.length === expected.length &&
+    crypto.timingSafeEqual(Buffer.from(given), Buffer.from(expected))
+}
+
+router.get('/join/check', (req, res) => {
+  res.setHeader('Cache-Control', 'no-store')
+  res.json({ valid: validJoinCode(req.query.code) })
+})
+
+const joinSchema = z.object({
+  code: z.string().max(100),
+  fullName: z.string().trim().min(3).max(80),
+  phone: z.string().trim().regex(/^\+?[0-9 ]{8,20}$/),
+})
+
+router.post('/join', async (req, res, next) => {
+  try {
+    const parsed = joinSchema.safeParse(req.body)
+    if (!parsed.success) return res.status(400).json({ error: 'Vérifiez votre nom et votre numéro de téléphone.' })
+    const { code, fullName, phone } = parsed.data
+    if (!validJoinCode(code)) return res.status(403).json({ error: 'Ce QR code n\'est plus valide. Demandez le nouveau au formateur.' })
+
+    const account = await createPhoneAccount({ fullName, phone })
+    await prisma.inPersonRegistration.create({
+      data: { fullName, phone, message: 'Compte créé sur place (QR code)', ip: String(req.ip || '').slice(0, 45) },
+    })
+    notifyOwner(`📲 Nouveau compte via QR — ${fullName} (${phone})`)
+    res.status(201).json({ account })
+  } catch (err) {
+    if (err instanceof AccountExistsError) return res.status(409).json({ error: err.message })
     next(err)
   }
 })

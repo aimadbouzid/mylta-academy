@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
-import { Users, Plus, Trash2, Save, MessageCircle, Pencil, X } from 'lucide-react'
+import { Users, Plus, Trash2, Save, MessageCircle, Pencil, X, QrCode, KeyRound, Download } from 'lucide-react'
+import QRCode from 'qrcode'
 import api from '../../api/axios'
 import { useToast } from '../../hooks/useToast.jsx'
 
@@ -151,6 +152,31 @@ export default function AdminInPersonTab() {
     } catch { toastError('Erreur lors de la suppression.') }
   }
 
+  // ── QR d'inscription sur place + comptes des participants ──
+  const [qrImage, setQrImage] = useState('')
+  const [created, setCreated] = useState(null) // { r, login, password } : affiché une seule fois
+  const joinUrl = cfg?.joinCode ? `${window.location.origin}/rejoindre?code=${cfg.joinCode}` : ''
+  useEffect(() => {
+    if (!joinUrl) { setQrImage(''); return }
+    QRCode.toDataURL(joinUrl, { width: 512, margin: 2 }).then(setQrImage).catch(() => setQrImage(''))
+  }, [joinUrl])
+
+  const setJoinCode = async (disable) => {
+    if (!disable && cfg.joinCode && !window.confirm("Générer un nouveau QR ? L'ancien ne marchera plus.")) return
+    try {
+      const { data } = await api.post('/admin/in-person/join-code', { disable })
+      setCfg(c => ({ ...c, joinCode: data.joinCode }))
+      toastSuccess(disable ? 'QR code désactivé.' : 'Nouveau QR code prêt.')
+    } catch { toastError('Erreur lors de la génération du QR code.') }
+  }
+
+  const createAccount = async (r) => {
+    try {
+      const { data } = await api.post(`/admin/in-person/registrations/${r.id}/account`)
+      setCreated({ r, ...data.account })
+    } catch (err) { toastError(err.response?.data?.error || 'Erreur lors de la création du compte.') }
+  }
+
   const activeCount = (s) => s.registrations.filter(r => r.status !== 'CANCELLED').length
 
   if (!cfg) return <div className="p-8 text-center text-neutral-400">Chargement...</div>
@@ -164,6 +190,7 @@ export default function AdminInPersonTab() {
         {r.message && <div className="text-xs text-neutral-500 mt-0.5">{r.message}</div>}
       </div>
       {extra}
+      <button onClick={() => createAccount(r)} title="Créer son accès à la plateforme" className="px-2 py-1 rounded-lg text-[11px] font-bold text-sky-300 bg-sky-500/10 hover:bg-sky-500/20 inline-flex items-center gap-1"><KeyRound size={13} /> Créer son compte</button>
       <select value={r.status} onChange={e => updateRegistration(r.id, { status: e.target.value })}
               className={`rounded-full px-2 py-1 text-[11px] font-bold border-0 outline-none ${STATUS[r.status]?.cls}`}>
         {Object.entries(STATUS).map(([k, v]) => <option key={k} value={k} className="bg-neutral-900 text-white">{v.label}</option>)}
@@ -185,6 +212,38 @@ export default function AdminInPersonTab() {
           Section visible sur le site
         </label>
       </div>
+
+      {/* QR code d'inscription sur place */}
+      <div className={`${panel} space-y-3`}>
+        <h3 className="font-bold flex items-center gap-2"><QrCode size={18} /> QR code d'inscription sur place</h3>
+        <p className="text-sm text-neutral-400">Montrez ce QR aux participants : en le scannant, ils entrent leur nom et leur téléphone et reçoivent tout de suite leur identifiant et mot de passe. Sans ce QR, personne ne peut créer de compte par ce moyen. Générez-en un nouveau après chaque session.</p>
+        {qrImage ? (
+          <div className="flex flex-wrap items-start gap-4">
+            <img src={qrImage} alt="QR code d'inscription" className="w-40 h-40 rounded-xl bg-white p-1" />
+            <div className="space-y-2 text-sm">
+              <a href={qrImage} download="qr-inscription-mylta.png" className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white/10 hover:bg-white/15 font-bold"><Download size={15} /> Télécharger</a>
+              <div className="flex flex-wrap gap-2">
+                <button onClick={() => setJoinCode(false)} className="px-3 py-2 rounded-lg bg-white/10 hover:bg-white/15 font-bold">Nouveau QR</button>
+                <button onClick={() => setJoinCode(true)} className="px-3 py-2 rounded-lg text-red-400 hover:bg-red-500/10 font-bold">Désactiver</button>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <button onClick={() => setJoinCode(false)} className="px-4 py-2.5 rounded-lg bg-white text-black font-bold inline-flex items-center gap-2"><QrCode size={16} /> Générer le QR code</button>
+        )}
+      </div>
+
+      {created && (
+        <div className="rounded-2xl border border-sky-500/30 bg-sky-500/10 p-4 text-sm space-y-2">
+          <div className="flex justify-between items-start gap-3">
+            <p className="font-bold text-white">Compte créé pour {created.r.fullName} — notez le mot de passe, il ne sera plus affiché.</p>
+            <button onClick={() => setCreated(null)} className="text-neutral-400 hover:text-white"><X size={16} /></button>
+          </div>
+          <p>Identifiant : <b className="font-mono text-white">{created.login}</b> · Mot de passe : <b className="font-mono text-white">{created.password}</b></p>
+          <a href={waLink(created.r, `. Voici votre accès à la plateforme ${window.location.origin} — identifiant : ${created.login}, mot de passe : ${created.password}`)}
+             target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#25D366] text-white font-bold"><MessageCircle size={15} /> Lui envoyer sur WhatsApp</a>
+        </div>
+      )}
 
       {/* Sessions */}
       <form onSubmit={saveSession} className={`${panel} space-y-4`}>

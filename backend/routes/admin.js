@@ -779,6 +779,31 @@ router.delete('/in-person/registrations/:id', async (req, res, next) => {
   } catch (err) { next(err) }
 })
 
+// Crée l'accès plateforme d'un inscrit (identifiant = téléphone, mot de passe généré, montré une seule fois).
+router.post('/in-person/registrations/:id/account', async (req, res, next) => {
+  try {
+    const id = validateId(req.params.id)
+    if (!id) return res.status(400).json({ error: 'ID invalide.' })
+    const reg = await prisma.inPersonRegistration.findUnique({ where: { id } })
+    if (!reg) return res.status(404).json({ error: 'Inscription introuvable.' })
+    const { createPhoneAccount, AccountExistsError } = require('../utils/phoneAccount')
+    try {
+      res.status(201).json({ account: await createPhoneAccount({ fullName: reg.fullName, phone: reg.phone }) })
+    } catch (err) {
+      if (err instanceof AccountExistsError) return res.status(409).json({ error: 'Cette personne a déjà un compte (même numéro).' })
+      throw err
+    }
+  } catch (err) { next(err) }
+})
+
+// Nouveau code secret pour le QR d'inscription sur place (l'ancien QR cesse de marcher).
+router.post('/in-person/join-code', (req, res) => {
+  const { updateSettings } = require('../settingsManager')
+  const joinCode = req.body?.disable ? '' : require('crypto').randomBytes(12).toString('base64url')
+  updateSettings({ inPerson: { joinCode } })
+  res.json({ joinCode })
+})
+
 // ─── CONFIGURATION PLATEFORME ─────────────────────────────────
 const { getSettings, updateSettings } = require('../settingsManager')
 

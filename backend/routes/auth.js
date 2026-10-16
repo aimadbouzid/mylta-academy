@@ -14,6 +14,7 @@ const disposableDomains = require('disposable-email-domains')
 const { validateEmail } = require('../middleware/security')
 const { ensureCsrfToken, CSRF_HEADER_NAME } = require('../middleware/csrf')
 const prisma = require('../prisma')
+const { phoneToEmail } = require('../utils/phoneAccount')
 const { authenticate, checkAccountLock, recordFailedLogin, resetFailedLogin } = require('../middleware/auth')
 const { t } = require('../i18n')
 const { sendResetPasswordEmail, sendVerificationEmail, isMailerConfigured } = require('../utils/mailer')
@@ -366,7 +367,8 @@ router.post('/login', async (req, res, next) => {
     if (!email || !password)
       return res.status(400).json({ error: t('auth.email_password_required', req.lang) })
 
-    const normalizedEmail = email.toLowerCase().trim()
+    // Les participants du présentiel se connectent avec leur numéro de téléphone.
+    const normalizedEmail = email.includes('@') ? email.toLowerCase().trim() : phoneToEmail(email)
     const lockCheck = await checkAccountLock(normalizedEmail)
     if (lockCheck.locked) {
       return res.status(423).json({
