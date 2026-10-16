@@ -1,6 +1,13 @@
 import React, { Suspense, useEffect } from 'react'
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import ErrorBoundary from './components/ErrorBoundary'
+
+// Nouvelle page = on repart du haut (sinon le navigateur garde la position de la page précédente).
+function ScrollToTop() {
+  const { pathname, hash } = useLocation()
+  useEffect(() => { if (!hash) window.scrollTo({ top: 0, left: 0, behavior: 'instant' }) }, [pathname, hash])
+  return null
+}
 import Toast from './components/Toast'
 import InstallPWA from './components/InstallPWA'
 import ProtectedAdminRoute from './pages/ProtectedAdminRoute'
@@ -103,6 +110,7 @@ export default function App() {
       <InAppBrowserGuard enabled={inAppGuardEnabled}>
         <ClickTracker />
         <FacebookPixel />
+        <ScrollToTop />
         <div className="min-h-screen bg-academy-surface text-academy-textMain relative overflow-hidden">
         {/* Lightweight background — GPU-accelerated, no blur filter */}
         <div className="absolute inset-0 z-0 pointer-events-none select-none" style={{ background: 'radial-gradient(ellipse 80% 60% at 20% 10%, rgba(59,130,246,0.06) 0%, transparent 70%), radial-gradient(ellipse 70% 50% at 80% 70%, rgba(99,102,241,0.05) 0%, transparent 70%)', willChange: 'auto' }} />
