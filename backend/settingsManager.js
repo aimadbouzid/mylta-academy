@@ -146,6 +146,34 @@ const defaultSettings = {
   // ligne, avec une fiche détaillée. Modifiables dans l'admin (Formations à venir).
   upcomingCourses: [
     {
+      id: 'prompt-engineering', title: "Prompt engineering : les bases pour bien travailler avec l'IA", category: 'IA', level: 'Débutant', duration: '',
+      price: 3000, oldPrice: 5000,
+      description: "Apprendre à parler à l'IA pour obtenir exactement ce que vous voulez, du premier coup.",
+      program: [
+        "Comprendre comment l'IA « pense » et ses limites",
+        "La structure d'un bon prompt : rôle, contexte, tâche, format",
+        'Donner des exemples pour guider la réponse',
+        'Améliorer une réponse étape par étape',
+        "Prompts pour écrire, résumer, traduire et analyser",
+        'Créer sa bibliothèque de prompts réutilisables',
+      ],
+      included: ['Accès illimité', 'Modèles de prompts prêts à copier', 'Certificat de fin de formation'],
+    },
+    {
+      id: 'ia-quotidien', title: "L'IA au quotidien : les outils à utiliser chaque jour", category: 'IA', level: 'Débutant', duration: '',
+      price: 3000, oldPrice: 5000,
+      description: "Les meilleurs outils IA, gratuits pour la plupart, pour gagner du temps chaque jour : écrire, chercher, créer, traduire, s'organiser.",
+      program: [
+        'ChatGPT, Gemini et Claude : les assistants pour tout faire',
+        'Perplexity : chercher une information fiable en quelques secondes',
+        "Canva IA et générateurs d'images : créer des visuels sans être designer",
+        'Traduire, résumer et écrire ses messages avec l\'IA',
+        "S'organiser : emails, planning et notes avec l'IA",
+        "L'IA sur votre smartphone : les applications à installer",
+      ],
+      included: ['Accès illimité', 'Liste des outils avec les liens', 'Certificat de fin de formation'],
+    },
+    {
       id: 'montage-capcut', title: 'Montage vidéo sur smartphone avec CapCut', category: 'Vidéo', level: 'Débutant', duration: '',
       price: 3000, oldPrice: 5000,
       description: 'Filmer, monter et publier des vidéos courtes de qualité, uniquement avec votre téléphone.',
@@ -158,20 +186,6 @@ const defaultSettings = {
         'Exporter et publier sur TikTok, Reels et YouTube',
       ],
       included: ['Accès illimité', '100 % sur smartphone', 'Certificat de fin de formation'],
-    },
-    {
-      id: 'ia-quotidien', title: "L'IA au quotidien : ChatGPT et les outils IA", category: 'IA', level: 'Débutant', duration: '',
-      price: 3000, oldPrice: 5000,
-      description: "Gagner du temps chaque jour : écrire, chercher, créer des images et automatiser avec l'IA.",
-      program: [
-        "Comprendre l'IA simplement",
-        'Bien parler à ChatGPT : faire les bonnes demandes',
-        "Écrire textes, emails et publications avec l'IA",
-        "Créer des images avec l'IA",
-        "Gagner du temps en confiant les tâches répétitives à l'IA",
-        'Les meilleurs outils IA gratuits',
-      ],
-      included: ['Accès illimité', 'Exemples prêts à copier', 'Certificat de fin de formation'],
     },
     {
       id: 'site-ia', title: "Créer son site avec l'IA, sans savoir coder", category: 'Vibe coding', level: 'Débutant', duration: '',
@@ -192,7 +206,7 @@ const defaultSettings = {
   // Textes volontairement simples : la page s'adresse à des débutants.
   // weekdays : 0 = dimanche … 6 = samedi. timeSlots vide = date seule.
   coaching: {
-    version: 6,
+    version: 7,
     enabled: true,
     title: 'Coaching en ligne',
     subtitle: "Seul ou avec vos amis, un coach vous accompagne pour apprendre l'IA ou créer votre site.",
@@ -205,12 +219,10 @@ const defaultSettings = {
     currency: 'DA',
     // Sujets regroupés par thème (category) : la page les affiche par groupe.
     topics: [
-      { id: 'pack-createur', category: "L'intelligence artificielle (IA)", label: 'Pack Vidéos & Photos IA', description: 'Faire des vidéos, des photos et des voix avec l\'IA, sans caméra', price: 0, duration: '' },
-      { id: 'pack-avatar', category: "L'intelligence artificielle (IA)", label: 'Pack Avatar IA', description: 'Un personnage qui vous ressemble et parle à votre place en vidéo', price: 0, duration: '' },
-      { id: 'pack-productivite', category: "L'intelligence artificielle (IA)", label: 'Pack ChatGPT au travail', description: 'Écrire, chercher et organiser votre travail deux fois plus vite', price: 0, duration: '' },
-      { id: 'pack-site', category: "Créer avec l'IA, sans savoir coder", label: 'Pack Site internet', description: 'Votre propre site pour présenter votre activité', price: 0, duration: '' },
-      { id: 'pack-app', category: "Créer avec l'IA, sans savoir coder", label: 'Pack Application', description: 'Votre propre application pour téléphone ou ordinateur', price: 0, duration: '' },
-      { id: 'pack-agents', category: "Créer avec l'IA, sans savoir coder", label: 'Pack Assistant IA', description: 'Un assistant qui répond à vos clients sur WhatsApp, jour et nuit', price: 0, duration: '' },
+      { id: 'vibe-coding', category: 'Débutant', label: 'Vibe Coding & Web Design', description: "Lovable · Bolt · Cursor — Créer des sites web professionnels, des landing pages, des portfolios et des interfaces modernes avec l'IA.", price: 0, duration: '' },
+      { id: 'saas-dev', category: 'Débutant', label: 'SaaS & Application Development', description: 'Claude Code · Cursor · Lovable — Créer un véritable SaaS avec comptes utilisateurs, base de données, abonnement, paiement et tableau de bord.', price: 0, duration: '' },
+      { id: 'ai-automation', category: 'Débutant', label: 'AI Automation & AI Agents', description: 'n8n · Make · APIs — Automatiser les tâches répétitives, connecter les outils, créer des agents IA et mettre en place des workflows intelligents.', price: 0, duration: '' },
+      { id: 'mobile-apps', category: 'Débutant', label: 'Mobile Apps & Personal Software', description: "FlutterFlow · React Native · outils IA — Créer des applications mobiles, des outils personnels, des systèmes de gestion, des CRM et des applications pour organiser son travail.", price: 0, duration: '' },
     ],
     // Une seule formule = aucune question posée au client. Plusieurs = il choisit.
     formats: [
@@ -281,11 +293,19 @@ const defaultSettings = {
 // formules, horaires, textes) repart des valeurs par défaut actuelles ; seuls les
 // réglages propres à l'admin hors contenu sont conservés. Une seule fois : l'admin
 // réenregistre ensuite avec la version courante.
+const V6_TOPIC_IDS = ['pack-createur', 'pack-avatar', 'pack-productivite', 'pack-site', 'pack-app', 'pack-agents']
 const OLD_TOPIC_IDS = ['ia-chatgpt', 'ia-video', 'ia-textes', 'ia-images', 'ia-reseaux', 'ia-temps', 'creer-site', 'creer-page-vente', 'creer-outil', 'creer-app']
 function upgradeCoaching(saved) {
   const def = defaultSettings.coaching
   if (!saved) return { ...def }
   if (saved.version === def.version) return { ...def, ...saved }
+  // v6 → v7 : les packs laissent place aux quatre formations. Les sujets ne sont
+  // remplacés que si l'admin ne les a pas personnalisés.
+  if (saved.version === 6) {
+    const merged = { ...def, ...saved, version: def.version }
+    if ((saved.topics || []).every(t => V6_TOPIC_IDS.includes(t.id))) merged.topics = def.topics
+    return merged
+  }
   // v5 → v6 : sujets remplacés par des packs. Le reste est conservé, et les
   // sujets ne sont remplacés que s'ils n'ont pas été personnalisés par l'admin.
   if (saved.version === 5) {
@@ -354,7 +374,7 @@ function getSettings() {
 // les valeurs par défaut au premier démarrage, donc un simple changement de
 // défaut ne l'atteint pas). Appliqué une fois : le prochain enregistrement admin
 // écrit settingsVersion à jour.
-const SETTINGS_VERSION = 5
+const SETTINGS_VERSION = 6
 const OLD_BANNER_TEXTS = ["🚀 Promo exceptionnelle : -50% sur toutes les formations ! Inscrivez-vous vite."]
 
 function migrateSettings(parsed, merged) {
@@ -372,6 +392,15 @@ function migrateSettings(parsed, merged) {
   }
   if ((parsed.settingsVersion || 1) < 5) {
     merged.inPerson = { ...merged.inPerson, price: 13000, oldPrice: 14000, studentPrice: 10000 }
+  }
+  if ((parsed.settingsVersion || 1) < 6 && Array.isArray(merged.upcomingCourses)) {
+    // Nouvelle formation « prompt engineering » + « IA au quotidien » recentrée sur les outils
+    // (remplacée seulement si l'admin ne l'avait pas modifiée).
+    const byId = Object.fromEntries(defaultSettings.upcomingCourses.map(c => [c.id, c]))
+    let list = merged.upcomingCourses.map(c =>
+      c.id === 'ia-quotidien' && c.title === "L'IA au quotidien : ChatGPT et les outils IA" ? byId['ia-quotidien'] : c)
+    if (!list.some(c => c.id === 'prompt-engineering')) list = [byId['prompt-engineering'], ...list]
+    merged.upcomingCourses = list
   }
   merged.settingsVersion = SETTINGS_VERSION
   return merged
