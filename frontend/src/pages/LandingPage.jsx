@@ -257,12 +257,12 @@ export default function LandingPage() {
         )}
 
         {/* FEATURES */}
-        <section id="mission" className="pt-4 lg:pt-6 pb-12 lg:pb-16 bg-academy-surfaceDark/40 relative border-t border-academy-border overflow-hidden">
+        <section id="mission" className="pt-4 lg:pt-6 pb-10 lg:pb-12 bg-academy-surfaceDark/40 relative border-t border-academy-border overflow-hidden">
           <div className="absolute top-[20%] left-[-15%] w-[45vw] h-[45vw] rounded-full bg-purple-300/20 dark:bg-purple-300/[0.05] pointer-events-none select-none z-0" style={{ filter: 'blur(120px)', WebkitFilter: 'blur(120px)' }} />
           <div className="absolute bottom-[20%] right-[-15%] w-[45vw] h-[45vw] rounded-full bg-red-300/20 dark:bg-red-300/[0.05] pointer-events-none select-none z-0" style={{ filter: 'blur(120px)', WebkitFilter: 'blur(120px)' }} />
           <div className="section-container relative z-10">
-            <div className="text-center mb-8 lg:mb-10">
-              <h2 className="font-display font-bold text-3xl text-academy-textMain mb-3">
+            <div className="text-center mb-6">
+              <h2 className="font-display font-bold text-2xl text-academy-textMain mb-2">
                 {t('landing.why_choose')} <span className="text-academy-primary">{t('landing.academy')}</span>
               </h2>
               <p className="text-academy-textMain/60 font-medium max-w-lg mx-auto text-sm">
@@ -270,17 +270,19 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 max-w-5xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 lg:gap-4 max-w-4xl mx-auto">
               {features.map((f, i) => {
                 const style = FEATURE_STYLES[i] || FEATURE_STYLES[0]
                 const Icon = style.icon
                 return (
-                  <div key={f.title} className="card-academy p-6 lg:p-8 hover:-translate-y-2 flex flex-col justify-start transition-transform duration-300">
-                    <div className={`w-12 h-12 rounded-xl ${style.bg} border ${style.border} flex items-center justify-center mb-4`}>
-                      <Icon className={`w-6 h-6 ${style.color}`} />
+                  <div key={f.title} className="card-academy p-4 lg:p-5 flex flex-col justify-start">
+                    <div className="flex items-center gap-2.5 mb-2">
+                      <div className={`w-8 h-8 shrink-0 rounded-lg ${style.bg} border ${style.border} flex items-center justify-center`}>
+                        <Icon className={`w-4 h-4 ${style.color}`} />
+                      </div>
+                      <h3 className="font-display font-bold text-base text-academy-textMain leading-tight">{f.title}</h3>
                     </div>
-                    <h3 className="font-display font-bold text-lg lg:text-xl text-academy-textMain mb-2 leading-tight">{f.title}</h3>
-                    <p className="text-academy-textMain/70 leading-relaxed text-sm font-medium">{f.desc}</p>
+                    <p className="text-academy-textMain/70 leading-relaxed text-[13px] font-medium">{f.desc}</p>
                   </div>
                 )
               })}
