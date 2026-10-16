@@ -231,6 +231,7 @@ const defaultSettings = {
     price: 13000,   // prix de la formation (DA) — repris par défaut pour chaque session
     oldPrice: 18000, // prix barré affiché à côté (offre de lancement) ; 0 = pas de prix barré
     deposit: 3000,  // acompte obligatoire pour réserver sa place
+    showSeats: false, // afficher « il reste N places » sur les sessions (désactivé par défaut)
     // Titres courts : affichés en cartes compactes (2 par ligne sur téléphone).
     program: [
       'Filmer au smartphone',

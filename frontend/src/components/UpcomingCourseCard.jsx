@@ -14,24 +14,24 @@ export default function UpcomingCourseCard({ course, onDetails }) {
       onClick={() => onDetails?.(course)}
       aria-label={`${course.title} — bientôt disponible`}
     >
-      <div className="relative h-24 xs:h-32 sm:h-48 overflow-hidden flex-shrink-0 bg-gradient-to-br from-neutral-700 to-neutral-800">
-        <span className="absolute top-2 left-2 sm:top-3 sm:left-3 px-2 py-0.5 sm:px-2.5 sm:py-1 text-[9px] sm:text-xs font-black uppercase tracking-wider rounded-full bg-neutral-900 text-white">
+      <div className="relative h-20 sm:h-28 overflow-hidden flex-shrink-0 bg-academy-surfaceDark">
+        <img src={course.image || '/logo-128.png'} alt="" loading="lazy"
+             className={course.image ? 'w-full h-full object-cover' : 'absolute inset-0 m-auto h-10 w-10 sm:h-14 sm:w-14 rounded-xl object-contain'} />
+        <span className="absolute top-2 left-2 px-2 py-0.5 text-[9px] sm:text-[11px] font-black uppercase tracking-wider rounded-full bg-neutral-900 text-white">
           Bientôt
         </span>
         {course.category && (
-          <span className="absolute top-2 right-2 sm:top-3 sm:right-3 px-2 py-0.5 sm:px-2.5 sm:py-1 text-[9px] sm:text-xs font-bold rounded-full bg-white text-academy-textMain/70">
+          <span className="absolute top-2 right-2 px-2 py-0.5 text-[9px] sm:text-[11px] font-bold rounded-full bg-white text-neutral-700">
             {course.category}
           </span>
         )}
-        <div className="absolute inset-0 flex items-center justify-center">
-          <span className="w-9 h-9 sm:w-12 sm:h-12 rounded-full bg-white border border-neutral-300 flex items-center justify-center text-neutral-900">
-            <Lock className="w-4 h-4 sm:w-5 sm:h-5" />
-          </span>
-        </div>
+        <span className="absolute bottom-2 right-2 w-6 h-6 rounded-full bg-white border border-neutral-300 flex items-center justify-center text-neutral-900">
+          <Lock className="w-3 h-3" />
+        </span>
       </div>
 
-      <div className="flex flex-col flex-1 p-3 sm:p-5">
-        <h3 className="font-display font-bold text-xs xs:text-sm sm:text-lg leading-snug mb-1 sm:mb-2 line-clamp-2 text-academy-textMain">
+      <div className="flex flex-col flex-1 p-3 sm:p-4">
+        <h3 className="font-display font-bold text-xs xs:text-sm sm:text-base leading-snug mb-1 sm:mb-2 line-clamp-2 text-academy-textMain">
           {course.title}
         </h3>
         {course.description && (
@@ -48,7 +48,7 @@ export default function UpcomingCourseCard({ course, onDetails }) {
                 {discount > 0 && <span className="text-[9px] sm:text-[11px] font-black text-academy-textMain bg-academy-textMain/10 rounded px-1">-{discount}%</span>}
               </div>
             )}
-            <span className="font-black text-sm sm:text-xl text-academy-textMain">{formatPrice(course.price)}</span>
+            <span className="font-black text-sm sm:text-lg text-academy-textMain">{formatPrice(course.price)}</span>
           </div>
         )}
 

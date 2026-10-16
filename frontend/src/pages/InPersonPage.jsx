@@ -6,6 +6,7 @@ import TrainingLocation from '../components/TrainingLocation'
 import SEOHead from '../components/SEOHead'
 import api from '../api/axios'
 import { useSiteSettings } from '../context/SiteSettingsContext'
+import { formatDate } from '../utils/sessionDates'
 import { PAYMENT_INFO } from '../config/paymentConfig'
 
 const STEPS = ['Formation', 'Date', 'Profil', 'Infos']
@@ -23,11 +24,6 @@ const CONDITIONS = [
   "Je m'engage à respecter les horaires.",
 ]
 
-const formatDate = (s) => {
-  const [y, m, d] = s.split('-').map(Number)
-  const label = new Date(y, m - 1, d).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
-  return label.charAt(0).toUpperCase() + label.slice(1)
-}
 const hour = (t) => (t ? t.replace(':', 'h') : '')
 const hours = (s) => (s.startTime ? `${hour(s.startTime)}${s.endTime ? ` – ${hour(s.endTime)}` : ''}` : '')
 const money = (n, cur) => `${Number(n).toLocaleString('fr-FR')} ${cur || 'DA'}`
@@ -295,7 +291,7 @@ export default function InPersonPage() {
                                   {hours(s) && <span className="inline-flex items-center gap-1"><Clock size={14} /> {hours(s)}</span>}
                                   {(s.city || s.place) && <span className="inline-flex items-center gap-1"><MapPin size={14} /> {[s.place, s.city].filter(Boolean).join(', ')}</span>}
                                   <span className={`inline-flex items-center gap-1 font-bold ${full ? 'text-red-600' : s.seatsLeft <= 3 ? 'text-amber-600' : ''}`}>
-                                    <Users size={14} /> {full ? 'Complet' : s.seatsLeft === 1 ? 'Plus qu\'1 place' : `${s.seatsLeft} places restantes`}
+                                    <Users size={14} /> {full ? 'Complet' : !cfg.showSeats ? 'Places limitées' : s.seatsLeft === 1 ? 'Plus qu\'1 place' : `${s.seatsLeft} places restantes`}
                                   </span>
                                 </span>
                               </span>

@@ -158,7 +158,7 @@ export default function InAppBrowserGuard({ children, enabled = true }) {
         <div style={styles.stepsContainer}>
           <div style={styles.step}>
             <div style={styles.stepIcon}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="12" cy="12" r="1"/>
                 <circle cx="19" cy="12" r="1"/>
                 <circle cx="5" cy="12" r="1"/>
@@ -171,7 +171,7 @@ export default function InAppBrowserGuard({ children, enabled = true }) {
 
           <div style={styles.step}>
             <div style={styles.stepIcon}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
                 <polyline points="15 3 21 3 21 9"/>
                 <line x1="10" y1="14" x2="21" y2="3"/>
@@ -243,7 +243,9 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%)',
-    padding: '20px',
+    padding: '12px',
+    overflowY: 'auto',
+    WebkitOverflowScrolling: 'touch',
     fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
   },
   loader: {
@@ -268,55 +270,57 @@ const styles = {
   card: {
     background: 'rgba(30, 41, 59, 0.95)',
     backdropFilter: 'blur(20px)',
-    borderRadius: '24px',
+    borderRadius: '18px',
     border: '1px solid rgba(99, 102, 241, 0.2)',
-    padding: '32px 24px',
-    maxWidth: '400px',
+    padding: '18px 16px',
+    maxWidth: '320px',
+    margin: 'auto',
     width: '100%',
     textAlign: 'center',
     animation: 'inapp-fadeIn 0.5s ease-out',
     boxShadow: '0 25px 50px rgba(0,0,0,0.5), 0 0 100px rgba(37, 99, 235, 0.1)',
   },
   logo: {
-    width: '72px',
-    height: '72px',
-    borderRadius: '16px',
-    marginBottom: '16px',
+    width: '44px',
+    height: '44px',
+    borderRadius: '12px',
+    display: 'block',
+    margin: '0 auto 10px',
     objectFit: 'contain',
   },
   title: {
     color: '#f1f5f9',
-    fontSize: '22px',
+    fontSize: '16px',
     fontWeight: 700,
-    margin: '0 0 12px 0',
+    margin: '0 0 8px 0',
     lineHeight: 1.3,
   },
   description: {
     color: '#94a3b8',
-    fontSize: '14px',
-    lineHeight: 1.6,
-    margin: '0 0 24px 0',
+    fontSize: '12px',
+    lineHeight: 1.5,
+    margin: '0 0 14px 0',
   },
   stepsContainer: {
     display: 'flex',
     flexDirection: 'column',
-    gap: '12px',
-    marginBottom: '24px',
+    gap: '8px',
+    marginBottom: '14px',
   },
   step: {
     display: 'flex',
     alignItems: 'center',
     gap: '12px',
     background: 'rgba(15, 23, 42, 0.6)',
-    borderRadius: '12px',
-    padding: '12px 16px',
+    borderRadius: '10px',
+    padding: '8px 10px',
     border: '1px solid rgba(99, 102, 241, 0.1)',
   },
   stepIcon: {
     flexShrink: 0,
-    width: '36px',
-    height: '36px',
-    borderRadius: '10px',
+    width: '28px',
+    height: '28px',
+    borderRadius: '8px',
     background: 'linear-gradient(135deg, rgba(37, 99, 235, 0.2), rgba(99, 102, 241, 0.2))',
     display: 'flex',
     alignItems: 'center',
@@ -325,19 +329,19 @@ const styles = {
   },
   stepText: {
     color: '#cbd5e1',
-    fontSize: '13px',
-    lineHeight: 1.5,
+    fontSize: '12px',
+    lineHeight: 1.4,
     margin: 0,
     textAlign: 'left',
   },
   copyButton: {
     width: '100%',
-    padding: '14px 24px',
+    padding: '10px 16px',
     background: 'linear-gradient(135deg, #2563EB, #6366f1)',
     color: '#fff',
     border: 'none',
-    borderRadius: '14px',
-    fontSize: '16px',
+    borderRadius: '10px',
+    fontSize: '14px',
     fontWeight: 600,
     cursor: 'pointer',
     transition: 'all 0.2s ease',
@@ -345,16 +349,16 @@ const styles = {
   },
   hint: {
     color: '#64748b',
-    fontSize: '12px',
-    margin: '0 0 16px 0',
+    fontSize: '11px',
+    margin: '0 0 8px 0',
   },
   skipButton: {
     background: 'none',
     border: 'none',
-    color: '#64748b',
+    color: '#94a3b8',
     fontSize: '13px',
     cursor: 'pointer',
-    padding: '8px',
+    padding: '10px',
     textDecoration: 'underline',
     textUnderlineOffset: '3px',
   },

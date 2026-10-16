@@ -12,6 +12,7 @@ import UpcomingCourseCard from '../components/UpcomingCourseCard'
 import UpcomingCourseModal from '../components/UpcomingCourseModal'
 import LoginModal from '../components/LoginModal'
 import PaymentModal from '../components/PaymentModal'
+import NextSessionAd from '../components/NextSessionAd'
 import IntroVideoModal from '../components/IntroVideoModal'
 import UniversalVideoPlayer from '../components/UniversalVideoPlayer'
 import Logo from '../components/Logo'
@@ -195,6 +196,8 @@ export default function LandingPage() {
           </div>
         </section>
 
+        <NextSessionAd enabled={!!siteSettings.inPerson?.enabled} />
+
         {/* FORMATIONS */}
         <section className="pt-2 lg:pt-4 pb-8 lg:pb-12 border-t border-academy-border relative overflow-hidden">
           <div className="absolute top-[10%] left-[-10%] w-[45vw] h-[45vw] rounded-full bg-academy-primary/15 dark:bg-academy-primary/[0.06] pointer-events-none select-none z-0" style={{ filter: 'blur(120px)', WebkitFilter: 'blur(120px)' }} />
@@ -291,7 +294,7 @@ export default function LandingPage() {
         </section>
 
         {/* TESTIMONIALS */}
-        <section id="testimonials" className="py-12 lg:py-20 bg-academy-surfaceDark/40 border-t border-academy-border overflow-hidden relative">
+        <section id="testimonials" className="py-8 lg:py-12 bg-academy-surfaceDark/40 border-t border-academy-border overflow-hidden relative">
           <div className="absolute top-[10%] right-[-10%] w-[50vw] h-[50vw] rounded-full bg-indigo-400/20 dark:bg-indigo-400/[0.05] pointer-events-none select-none z-0" style={{ filter: 'blur(130px)', WebkitFilter: 'blur(130px)' }} />
           <div className="section-container text-center mb-12 relative z-10">
             <h2 className="font-display font-black text-3xl sm:text-4xl text-academy-textMain mb-3">
@@ -306,30 +309,30 @@ export default function LandingPage() {
             <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-24 sm:w-40 bg-gradient-to-r from-academy-surfaceDark to-transparent z-10" />
             <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-24 sm:w-40 bg-gradient-to-l from-academy-surfaceDark to-transparent z-10" />
 
-            <div className="animate-marquee-track flex gap-6 px-4">
+            <div className="animate-marquee-track flex gap-3 px-4">
               {[...randomTestimonials, ...randomTestimonials].map((testimonial, idx) => (
-                <div key={idx} className="card-academy p-6 w-[320px] sm:w-[380px] flex-shrink-0 group">
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="text-xs font-bold text-academy-primary tracking-wide uppercase">
+                <div key={idx} className="card-academy p-3 w-[210px] sm:w-[260px] flex-shrink-0 group">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-[9px] font-bold text-academy-primary tracking-wide uppercase">
                       {t('landing.student_review')}
                     </span>
-                    <span className="text-[10px] font-bold text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-500/15 px-2 py-0.5 rounded-full border border-green-200 dark:border-green-500/25">
+                    <span className="text-[8px] font-bold text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-500/15 px-1.5 py-0.5 rounded-full border border-green-200 dark:border-green-500/25">
                       {t('landing.verified')}
                     </span>
                   </div>
 
-                  <p className="text-academy-textMain/80 text-sm font-medium leading-relaxed mb-6 italic min-h-[60px]">
+                  <p className="text-academy-textMain/80 text-[11px] font-medium leading-snug mb-3 italic">
                     &quot;{testimonial.text}&quot;
                   </p>
 
-                  <div className="pt-4 border-t border-academy-border flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-academy-primary/10 border border-academy-primary/20 flex items-center justify-center text-academy-primary font-bold text-sm">
+                  <div className="pt-2.5 border-t border-academy-border flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="w-7 h-7 rounded-full bg-academy-primary/10 border border-academy-primary/20 flex items-center justify-center text-academy-primary font-bold text-[11px]">
                         {testimonial.avatar}
                       </div>
                       <div>
-                        <p className="text-academy-textMain font-bold text-sm">{testimonial.name}</p>
-                        <p className="text-academy-textMain/50 font-medium text-xs">{testimonial.role}</p>
+                        <p className="text-academy-textMain font-bold text-xs">{testimonial.name}</p>
+                        <p className="text-academy-textMain/50 font-medium text-[10px]">{testimonial.role}</p>
                       </div>
                     </div>
                   </div>

@@ -267,6 +267,10 @@ export default function AdminInPersonTab() {
           <div><label className={label}>Prix de la formation (DA)</label><input type="number" min="0" className={input} value={cfg.price ?? 0} onChange={e => setCfg({ ...cfg, price: e.target.value })} /></div>
           <div><label className={label}>Acompte pour réserver (DA)</label><input type="number" min="0" className={input} value={cfg.deposit ?? 0} onChange={e => setCfg({ ...cfg, deposit: e.target.value })} /></div>
         </div>
+        <label className="flex items-center gap-2 text-sm font-bold cursor-pointer">
+          <input type="checkbox" checked={!!cfg.showSeats} onChange={e => setCfg({ ...cfg, showSeats: e.target.checked })} className="w-4 h-4" />
+          Afficher le nombre de places restantes (« il reste 7 places »)
+        </label>
         <p className="text-xs text-neutral-500 -mt-2">Le prix d'une session, s'il est renseigné, remplace ce prix par défaut. Pensez à indiquer « Acompte reçu » quand un inscrit vous envoie son reçu.</p>
         <ListEditor title="Ce que vous allez apprendre (programme)" items={cfg.program} placeholder="Un point du programme" onChange={program => setCfg({ ...cfg, program })} />
         <ListEditor title="Bon à savoir" items={cfg.infos} placeholder="Une information pratique" onChange={infos => setCfg({ ...cfg, infos })} />

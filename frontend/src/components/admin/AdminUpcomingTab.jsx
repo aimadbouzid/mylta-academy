@@ -89,7 +89,7 @@ export default function AdminUpcomingTab() {
             <div><label className={label}>Catégorie</label><input className={input} placeholder="IA" value={c.category} onChange={e => update(i, { category: e.target.value })} /></div>
             <div><label className={label}>Niveau</label><input className={input} placeholder="Débutant" value={c.level} onChange={e => update(i, { level: e.target.value })} /></div>
             <div><label className={label}>Durée (facultatif)</label><input className={input} placeholder="6 h de vidéo" value={c.duration} onChange={e => update(i, { duration: e.target.value })} /></div>
-            <div />
+            <div><label className={label}>Image (URL, facultatif)</label><input className={input} placeholder="/logo-128.png" value={c.image || ''} onChange={e => update(i, { image: e.target.value })} /></div>
             <div><label className={label}>Prix barré (DA)</label><input type="number" min="0" className={input} value={c.oldPrice} onChange={e => update(i, { oldPrice: e.target.value })} /></div>
             <div><label className={label}>Prix (DA)</label><input type="number" min="0" className={input} value={c.price} onChange={e => update(i, { price: e.target.value })} /></div>
             <div className="col-span-2 sm:col-span-4"><label className={label}>Description courte</label><textarea className={input} rows={2} value={c.description} onChange={e => update(i, { description: e.target.value })} /></div>

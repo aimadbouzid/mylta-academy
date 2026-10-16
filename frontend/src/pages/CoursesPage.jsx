@@ -176,7 +176,7 @@ export default function CoursesPage() {
           {!loading && !error && upcoming.length > 0 && (
             <div className={courses.length > 0 ? 'mt-10' : ''}>
               <h2 className="font-display font-bold text-lg sm:text-xl mb-4">Bientôt disponibles</h2>
-              <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                 {upcoming.map(c => <UpcomingCourseCard key={c.id || c.title} course={c} onDetails={setUpcomingOpen} />)}
               </div>
             </div>
