@@ -14,17 +14,17 @@ export default function UpcomingCourseCard({ course, onDetails }) {
       onClick={() => onDetails?.(course)}
       aria-label={`${course.title} — bientôt disponible`}
     >
-      <div className="relative h-24 xs:h-32 sm:h-48 overflow-hidden flex-shrink-0 bg-gradient-to-br from-[#2a0a0a] via-[#5c0d0d] to-[#8b0000]">
-        <span className="absolute top-2 left-2 sm:top-3 sm:left-3 px-2 py-0.5 sm:px-2.5 sm:py-1 text-[9px] sm:text-xs font-black uppercase tracking-wider rounded-full bg-white text-[#8b0000]">
+      <div className="relative h-24 xs:h-32 sm:h-48 overflow-hidden flex-shrink-0 bg-gradient-to-br from-rose-50 to-red-100">
+        <span className="absolute top-2 left-2 sm:top-3 sm:left-3 px-2 py-0.5 sm:px-2.5 sm:py-1 text-[9px] sm:text-xs font-black uppercase tracking-wider rounded-full bg-academy-primary text-white">
           Bientôt
         </span>
         {course.category && (
-          <span className="absolute top-2 right-2 sm:top-3 sm:right-3 px-2 py-0.5 sm:px-2.5 sm:py-1 text-[9px] sm:text-xs font-bold rounded-full bg-white/15 text-white">
+          <span className="absolute top-2 right-2 sm:top-3 sm:right-3 px-2 py-0.5 sm:px-2.5 sm:py-1 text-[9px] sm:text-xs font-bold rounded-full bg-white text-academy-textMain/70">
             {course.category}
           </span>
         )}
         <div className="absolute inset-0 flex items-center justify-center">
-          <span className="w-9 h-9 sm:w-12 sm:h-12 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-white">
+          <span className="w-9 h-9 sm:w-12 sm:h-12 rounded-full bg-white border border-red-200 flex items-center justify-center text-academy-primary">
             <Lock className="w-4 h-4 sm:w-5 sm:h-5" />
           </span>
         </div>

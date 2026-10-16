@@ -27,13 +27,13 @@ export default function UpcomingCourseModal({ course, onClose }) {
     <div className="fixed inset-0 z-[200] flex items-end sm:items-center justify-center" role="dialog" aria-modal="true" aria-label={course.title}>
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
       <div className="relative w-full sm:max-w-lg max-h-[92vh] overflow-y-auto bg-white rounded-t-2xl sm:rounded-2xl shadow-xl">
-        <div className="relative h-28 bg-gradient-to-br from-[#2a0a0a] via-[#5c0d0d] to-[#8b0000] flex items-center justify-center">
-          <span className="absolute top-3 left-3 px-2.5 py-1 text-xs font-black uppercase tracking-wider rounded-full bg-white text-[#8b0000]">Bientôt</span>
+        <div className="relative h-28 bg-gradient-to-br from-rose-50 to-red-100 flex items-center justify-center">
+          <span className="absolute top-3 left-3 px-2.5 py-1 text-xs font-black uppercase tracking-wider rounded-full bg-academy-primary text-white">Bientôt</span>
           <button type="button" onClick={onClose} aria-label="Fermer"
-                  className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/15 text-white flex items-center justify-center hover:bg-white/25">
+                  className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white text-academy-textMain flex items-center justify-center hover:bg-white/70">
             <X size={18} />
           </button>
-          <span className="w-12 h-12 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-white"><Lock size={20} /></span>
+          <span className="w-12 h-12 rounded-full bg-white border border-red-200 flex items-center justify-center text-academy-primary"><Lock size={20} /></span>
         </div>
 
         <div className="p-5 sm:p-6 space-y-5">
