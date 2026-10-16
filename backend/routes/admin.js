@@ -796,6 +796,22 @@ router.post('/in-person/registrations/:id/account', async (req, res, next) => {
   } catch (err) { next(err) }
 })
 
+// ─── Concours ─────────────────────────────────────────────────
+router.get('/contest/entries', async (req, res, next) => {
+  try {
+    res.json({ entries: await prisma.contestEntry.findMany({ orderBy: { createdAt: 'desc' } }) })
+  } catch (err) { next(err) }
+})
+
+router.delete('/contest/entries/:id', async (req, res, next) => {
+  try {
+    const id = validateId(req.params.id)
+    if (!id) return res.status(400).json({ error: 'ID invalide.' })
+    await prisma.contestEntry.delete({ where: { id } })
+    res.json({ success: true })
+  } catch (err) { next(err) }
+})
+
 // Nouveau code secret pour le QR d'inscription sur place (l'ancien QR cesse de marcher).
 router.post('/in-person/join-code', (req, res) => {
   const { updateSettings } = require('../settingsManager')

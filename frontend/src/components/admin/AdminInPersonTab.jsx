@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Users, Plus, Trash2, Save, MessageCircle, Pencil, X, QrCode, KeyRound, Download } from 'lucide-react'
 import QRCode from 'qrcode'
+import AdminContestPanel from './AdminContestPanel'
 import api from '../../api/axios'
 import { useToast } from '../../hooks/useToast.jsx'
 
@@ -75,6 +76,7 @@ export default function AdminInPersonTab() {
         ...cfg,
         price: Math.max(0, parseInt(cfg.price, 10) || 0),
         deposit: Math.max(0, parseInt(cfg.deposit, 10) || 0),
+        studentPrice: Math.max(0, parseInt(cfg.studentPrice, 10) || 0),
         oldPrice: Math.max(0, parseInt(cfg.oldPrice, 10) || 0),
         program: cfg.program.filter(p => p.trim()),
         infos: cfg.infos.filter(p => p.trim()),
@@ -186,6 +188,8 @@ export default function AdminInPersonTab() {
       <div className="flex-1 min-w-[180px]">
         <span className="font-bold text-white">{r.fullName}</span>
         <span className="text-neutral-400"> · {r.phone}{r.city ? ` · ${r.city}` : ''}</span>
+        {r.isStudent && <span className="ml-2 text-[11px] font-bold px-1.5 py-0.5 rounded bg-sky-500/20 text-sky-300">🎓 Étudiant</span>}
+        {r.studentCard && <a href={r.studentCard} target="_blank" rel="noopener noreferrer" className="ml-2 text-[11px] font-bold text-sky-300 underline">Voir la carte</a>}
         {r.profile && <div className="text-xs text-neutral-400 mt-0.5">{r.profile}</div>}
         {r.message && <div className="text-xs text-neutral-500 mt-0.5">{r.message}</div>}
       </div>
@@ -321,9 +325,10 @@ export default function AdminInPersonTab() {
         <h3 className="font-bold">Textes de la page</h3>
         <div><label className={label}>Titre</label><input className={input} value={cfg.title} onChange={e => setCfg({ ...cfg, title: e.target.value })} /></div>
         <div><label className={label}>Sous-titre</label><textarea className={input} rows={2} value={cfg.subtitle} onChange={e => setCfg({ ...cfg, subtitle: e.target.value })} /></div>
-        <div className="grid grid-cols-3 gap-3 max-w-xl">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-2xl">
           <div><label className={label}>Prix barré (0 = aucun)</label><input type="number" min="0" className={input} value={cfg.oldPrice ?? 0} onChange={e => setCfg({ ...cfg, oldPrice: e.target.value })} /></div>
           <div><label className={label}>Prix de la formation (DA)</label><input type="number" min="0" className={input} value={cfg.price ?? 0} onChange={e => setCfg({ ...cfg, price: e.target.value })} /></div>
+          <div><label className={label}>Tarif étudiant (0 = aucun)</label><input type="number" min="0" className={input} value={cfg.studentPrice ?? 0} onChange={e => setCfg({ ...cfg, studentPrice: e.target.value })} /></div>
           <div><label className={label}>Acompte pour réserver (DA)</label><input type="number" min="0" className={input} value={cfg.deposit ?? 0} onChange={e => setCfg({ ...cfg, deposit: e.target.value })} /></div>
         </div>
         <div><label className={label}>Message sur les dates (vide = aucun)</label><textarea className={input} rows={2} value={cfg.datesNotice || ''} onChange={e => setCfg({ ...cfg, datesNotice: e.target.value })} /></div>
@@ -338,6 +343,8 @@ export default function AdminInPersonTab() {
           <Save size={16} /> Enregistrer la page
         </button>
       </div>
+
+      <AdminContestPanel />
     </div>
   )
 }

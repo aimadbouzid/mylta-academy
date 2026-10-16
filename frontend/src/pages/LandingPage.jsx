@@ -196,6 +196,21 @@ export default function LandingPage() {
           </div>
         </section>
 
+        {siteSettings.contest?.enabled && !(siteSettings.contest.endDate && siteSettings.contest.endDate < new Date().toISOString().slice(0, 10)) && (
+          <section className="section-container pt-4">
+            <Link to="/concours" className="block max-w-3xl mx-auto rounded-xl bg-neutral-900 text-white p-3 sm:p-4 hover:bg-neutral-800 transition-colors">
+              <div className="flex items-center gap-3">
+                <span className="shrink-0 w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center text-lg">🎁</span>
+                <div className="min-w-0 flex-1">
+                  <p className="text-[10px] font-black uppercase tracking-wider text-white/60">Concours</p>
+                  <p className="text-sm sm:text-base font-bold leading-snug">{siteSettings.contest.title}</p>
+                </div>
+                <span className="shrink-0 text-xs font-bold bg-white text-neutral-900 rounded-lg px-3 py-1.5">Participer</span>
+              </div>
+            </Link>
+          </section>
+        )}
+
         <NextSessionAd enabled={!!siteSettings.inPerson?.enabled} notice={siteSettings.inPerson?.datesNotice} />
 
         {/* FORMATIONS */}

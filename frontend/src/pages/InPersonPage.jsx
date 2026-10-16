@@ -24,6 +24,23 @@ const CONDITIONS = [
   "Je m'engage à respecter les horaires.",
 ]
 
+// Photo de carte étudiante : réduite à 1200 px en JPEG (léger, compatible iPhone) avant l'envoi.
+const compressPhoto = (file) => new Promise((resolve, reject) => {
+  const url = URL.createObjectURL(file)
+  const img = new Image()
+  img.onload = () => {
+    const scale = Math.min(1, 1200 / Math.max(img.width, img.height))
+    const canvas = document.createElement('canvas')
+    canvas.width = Math.round(img.width * scale)
+    canvas.height = Math.round(img.height * scale)
+    canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height)
+    URL.revokeObjectURL(url)
+    resolve(canvas.toDataURL('image/jpeg', 0.7))
+  }
+  img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('image')) }
+  img.src = url
+})
+
 const hour = (t) => (t ? t.replace(':', 'h') : '')
 const hours = (s) => (s.startTime ? `${hour(s.startTime)}${s.endTime ? ` – ${hour(s.endTime)}` : ''}` : '')
 const money = (n, cur) => `${Number(n).toLocaleString('fr-FR')} ${cur || 'DA'}`
@@ -61,12 +78,16 @@ export default function InPersonPage() {
   useEffect(() => { if (cfg?.enabled) loadSessions() }, [cfg?.enabled])
 
   const selected = sessions?.find(s => s.id === sessionId)
-  const price = Number(selected?.price) || Number(cfg?.price) || 0
+  const [isStudent, setIsStudent] = useState(false)
+  const [studentCard, setStudentCard] = useState('')
+  const studentPrice = Number(cfg?.studentPrice) || 0
+  const studentRate = isStudent && studentPrice > 0
+  const price = studentRate ? studentPrice : (Number(selected?.price) || Number(cfg?.price) || 0)
   const deposit = Number(cfg?.deposit) || 0
   const oldPrice = Number(cfg?.oldPrice) > price ? Number(cfg.oldPrice) : 0
   const discount = oldPrice ? Math.round((1 - price / oldPrice) * 100) : 0
   const [website, setWebsite] = useState('') // piège à robots
-  const allAccepted = !selected || accepted.length === CONDITIONS.length
+  const allAccepted = (!selected || accepted.length === CONDITIONS.length) && (!studentRate || !!studentCard)
   const profileReady = QUESTIONS.every(q => profile[q.key])
 
   const goTo = (n) => {
@@ -82,6 +103,7 @@ export default function InPersonPage() {
     try {
       const { data } = await api.post('/in-person/register', {
         fullName, phone, city, message, sessionId, profile, accepted: accepted.length === CONDITIONS.length, website,
+        isStudent: studentRate, studentCard: studentRate ? studentCard : undefined,
       })
       setDone(data.registration)
       requestAnimationFrame(() => topRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }))
@@ -104,6 +126,7 @@ export default function InPersonPage() {
           ? `Bonjour Mylta Academy, je viens de réserver ma place pour la ${cfg.title} et je vous envoie le reçu de mon acompte de ${money(deposit, currency)}.\n`
           : `Bonjour Mylta Academy, je souhaite être prévenu(e) des prochaines dates de la ${cfg.title}.\n`) +
         `• Nom : ${fullName}\n• Téléphone : ${phone}\n` +
+        (studentRate ? `• Tarif étudiant : ${money(studentPrice, currency)} (carte étudiante envoyée sur le site)\n` : '') +
         (city ? `• Ville : ${city}\n` : '') +
         (doneSession ? `• Session : ${formatDate(doneSession.date)}${doneSession.city ? ` — ${doneSession.city}` : ''}\n` : '') +
         `Inscription n°${done.id}`
@@ -128,6 +151,10 @@ export default function InPersonPage() {
         {oldPrice > 0 && <span className="text-sm text-academy-textMain/45 line-through">{money(oldPrice, currency)}</span>}
         {discount > 0 && <span className="text-xs font-black text-white bg-emerald-600 rounded-full px-2 py-0.5">-{discount}%</span>}
       </div>
+      {studentPrice > 0 && !studentRate && (
+        <p className="mt-1 text-sm font-bold">🎓 Étudiants : {money(studentPrice, currency)} <span className="font-normal text-academy-textMain/60">(avec carte étudiante)</span></p>
+      )}
+      {studentRate && <p className="mt-1 text-xs font-black uppercase tracking-wider text-academy-textMain/60">Tarif étudiant</p>}
       {deposit > 0 && (
         <div className="mt-3 pt-3 border-t border-academy-primary/15 space-y-1 text-sm">
           <div className="flex justify-between gap-4"><span className="font-bold text-academy-primary">Acompte pour réserver</span><span className="font-black">{money(deposit, currency)}</span></div>
@@ -345,6 +372,33 @@ export default function InPersonPage() {
                       <p className="font-bold">{selected ? formatDate(selected.date) : "Liste d'attente — prochaines dates"}</p>
                       {selected && (selected.city || hours(selected)) && <p className="text-academy-textMain/70">{[hours(selected), selected.city].filter(Boolean).join(' · ')}</p>}
                     </div>
+                    {selected && studentPrice > 0 && (
+                      <div className="space-y-2">
+                        <h2 className="font-bold">Votre tarif</h2>
+                        <div className="grid grid-cols-2 gap-2">
+                          {[[false, 'Normal', Number(selected?.price) || Number(cfg?.price) || 0], [true, 'Étudiant', studentPrice]].map(([student, label, amount]) => (
+                            <button type="button" key={label} onClick={() => setIsStudent(student)}
+                                    className={`rounded-xl border-2 p-2.5 text-left transition-colors ${isStudent === student ? 'border-academy-primary bg-academy-primary/5' : 'border-academy-border'}`}>
+                              <span className="block text-xs font-bold text-academy-textMain/60">{label}</span>
+                              <span className="block font-black">{money(amount, currency)}</span>
+                            </button>
+                          ))}
+                        </div>
+                        {isStudent && (
+                          <label className="flex items-center gap-3 rounded-xl border border-dashed border-academy-border p-3 cursor-pointer">
+                            {studentCard
+                              ? <img src={studentCard} alt="Carte étudiante" className="w-16 h-12 object-cover rounded-md" />
+                              : <span className="w-16 h-12 rounded-md bg-academy-surface flex items-center justify-center text-xl">🎓</span>}
+                            <span className="text-sm">
+                              <span className="font-bold block">{studentCard ? 'Carte ajoutée ✓ (toucher pour changer)' : 'Photo de votre carte étudiante *'}</span>
+                              <span className="text-xs text-academy-textMain/60">Obligatoire pour le tarif étudiant. Prenez-la en photo.</span>
+                            </span>
+                            <input type="file" accept="image/*" capture="environment" className="hidden"
+                                   onChange={e => { const f = e.target.files?.[0]; if (f) compressPhoto(f).then(setStudentCard).catch(() => setError('Photo illisible, réessayez.')) }} />
+                          </label>
+                        )}
+                      </div>
+                    )}
                     {selected && price > 0 && <PriceBox />}
 
                     <input type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" value={website}

@@ -224,12 +224,26 @@ const defaultSettings = {
   },
   // Coaching présentiel (formation en petit groupe). Les sessions (dates, lieux,
   // places) sont en base ; ici, uniquement les textes de la page.
+  // Concours « gagnez une formation gratuite » : inscription sur /concours, tirage au sort dans l'admin.
+  contest: {
+    enabled: true,
+    title: 'Gagnez une formation gratuite !',
+    text: "Tentez votre chance : une formation offerte, en présentiel ou en ligne. Tirage au sort parmi les inscrits.",
+    prizes: ['Formation en présentiel', 'Coaching en ligne'],
+    rules: [
+      'Inscrivez-vous avec votre vrai numéro (une seule participation par numéro).',
+      'Suivez Mylta Academy sur Instagram et partagez le concours en story.',
+      'Le gagnant est tiré au sort et contacté sur WhatsApp.',
+    ],
+    endDate: '', // AAAA-MM-JJ : date du tirage (vide = non précisée)
+  },
   inPerson: {
     enabled: true,
     title: 'Formation IA & Montage Vidéo',
     subtitle: "Filmez, montez et utilisez l'IA comme un pro, depuis votre smartphone. 3 jours en présentiel, en petit groupe.",
     price: 13000,   // prix de la formation (DA) — repris par défaut pour chaque session
-    oldPrice: 18000, // prix barré affiché à côté (offre de lancement) ; 0 = pas de prix barré
+    studentPrice: 10000, // tarif étudiant (carte étudiante obligatoire) ; 0 = pas de tarif étudiant
+    oldPrice: 14000, // prix barré affiché à côté (offre de lancement) ; 0 = pas de prix barré
     deposit: 3000,  // acompte obligatoire pour réserver sa place
     // Message affiché au-dessus des sessions (vide = rien) : utile tant que les dates ne sont pas définitives.
     datesNotice: "Inscriptions ouvertes ! Le calendrier exact des sessions vous sera communiqué d'ici 2 à 4 jours.",
@@ -324,6 +338,7 @@ function getSettings() {
       modules: { ...defaultSettings.modules, ...(parsed.modules || {}) },
       coaching: upgradeCoaching(parsed.coaching),
       inPerson: { ...defaultSettings.inPerson, ...(parsed.inPerson || {}) },
+      contest: { ...defaultSettings.contest, ...(parsed.contest || {}) },
       // Liste vide = choix de l'admin ; liste sans id = ancien format, remplacé par les défauts
       upcomingCourses: Array.isArray(parsed.upcomingCourses) && (parsed.upcomingCourses.length === 0 || parsed.upcomingCourses.some(c => c.id))
         ? parsed.upcomingCourses
@@ -339,7 +354,7 @@ function getSettings() {
 // les valeurs par défaut au premier démarrage, donc un simple changement de
 // défaut ne l'atteint pas). Appliqué une fois : le prochain enregistrement admin
 // écrit settingsVersion à jour.
-const SETTINGS_VERSION = 4
+const SETTINGS_VERSION = 5
 const OLD_BANNER_TEXTS = ["🚀 Promo exceptionnelle : -50% sur toutes les formations ! Inscrivez-vous vite."]
 
 function migrateSettings(parsed, merged) {
@@ -354,6 +369,9 @@ function migrateSettings(parsed, merged) {
   }
   if ((parsed.settingsVersion || 1) < 4 && /youtu\.?be/i.test(parsed.introVideoUrl || '')) {
     merged.introVideoUrl = defaultSettings.introVideoUrl
+  }
+  if ((parsed.settingsVersion || 1) < 5) {
+    merged.inPerson = { ...merged.inPerson, price: 13000, oldPrice: 14000, studentPrice: 10000 }
   }
   merged.settingsVersion = SETTINGS_VERSION
   return merged

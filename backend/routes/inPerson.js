@@ -4,6 +4,26 @@ const prisma = require('../prisma')
 const { getSettings } = require('../settingsManager')
 const { notifyOwner } = require('../utils/notifyOwner')
 const crypto = require('crypto')
+const fs = require('fs')
+const path = require('path')
+
+// Carte étudiante : image déjà compressée par le navigateur, envoyée en data URL.
+// Rangée avec les pièces d'identité (dossier réservé à l'admin).
+const CARD_DIR = path.join(__dirname, '../uploads/identities')
+const CARD_TYPES = { 'image/webp': '.webp', 'image/jpeg': '.jpg', 'image/png': '.png' }
+function saveStudentCard(dataUrl) {
+  const m = /^data:(image\/(?:webp|jpeg|png));base64,([A-Za-z0-9+/=]+)$/.exec(dataUrl || '')
+  if (!m) return null
+  const buf = Buffer.from(m[2], 'base64')
+  const magicOk = (m[1] === 'image/png' && buf.subarray(0, 4).toString('hex') === '89504e47')
+    || (m[1] === 'image/jpeg' && buf[0] === 0xff && buf[1] === 0xd8)
+    || (m[1] === 'image/webp' && buf.subarray(8, 12).toString() === 'WEBP')
+  if (!magicOk || buf.length > 700 * 1024) return null
+  if (!fs.existsSync(CARD_DIR)) fs.mkdirSync(CARD_DIR, { recursive: true })
+  const name = `student-${Date.now()}-${crypto.randomBytes(6).toString('hex')}${CARD_TYPES[m[1]]}`
+  fs.writeFileSync(path.join(CARD_DIR, name), buf)
+  return `/uploads/identities/${name}`
+}
 const { createPhoneAccount, AccountExistsError } = require('../utils/phoneAccount')
 
 const router = express.Router()
@@ -42,6 +62,8 @@ const registerSchema = z.object({
   profile: z.record(z.string().max(40), z.string().max(60)).optional().default({}),
   accepted: z.boolean().optional(),
   website: z.string().optional(), // piège à robots : toujours vide pour un humain
+  isStudent: z.boolean().optional().default(false),
+  studentCard: z.string().max(950000).optional(),
 })
 
 // Questions du profil, dans l'ordre d'affichage (même liste côté page).
@@ -60,7 +82,7 @@ router.post('/register', async (req, res, next) => {
     if (!parsed.success) {
       return res.status(400).json({ error: 'Vérifiez votre nom et votre numéro de téléphone.' })
     }
-    const { fullName, phone, city, message, sessionId, profile, accepted, website } = parsed.data
+    const { fullName, phone, city, message, sessionId, profile, accepted, website, isStudent } = parsed.data
     if (website) return res.status(201).json({ registration: { id: 0, session: null } })
     if (sessionId && accepted !== true) {
       return res.status(400).json({ error: 'Merci d\'accepter les conditions de participation.' })
@@ -69,7 +91,14 @@ router.post('/register', async (req, res, next) => {
       .filter(([key]) => profile[key])
       .map(([key, label]) => `${label} : ${profile[key]}`)
       .join(' · ')
-    const data = { fullName, phone, city, profile: profileText, message: message || null, ip: String(req.ip || '').slice(0, 45) }
+    const settings = getSettings()
+    const studentRate = isStudent && Number(settings.inPerson.studentPrice) > 0
+    let studentCard = null
+    if (studentRate) {
+      studentCard = saveStudentCard(parsed.data.studentCard)
+      if (!studentCard) return res.status(400).json({ error: 'Ajoutez une photo lisible de votre carte étudiante.' })
+    }
+    const data = { fullName, phone, city, profile: profileText, message: message || null, ip: String(req.ip || '').slice(0, 45), isStudent: !!studentRate, studentCard }
 
     // Une même personne (même numéro) ne s'inscrit qu'une fois par session / liste d'attente.
     const normalizedPhone = phone.replace(/\D/g, '')
@@ -86,6 +115,7 @@ router.post('/register', async (req, res, next) => {
     const notify = (id, session) => notifyOwner(
       `📍 ${session ? 'Nouvelle inscription' : "Nouvelle demande (liste d'attente)"} — coaching présentiel n°${id}\n` +
       `Nom : ${fullName}\nTél : ${phone}${city ? `\nVille : ${city}` : ''}` +
+      (studentRate ? `\n🎓 Tarif étudiant (${settings.inPerson.studentPrice} DA) — carte : ${process.env.SITE_URL || ''}${studentCard}` : '') +
       (session ? `\nSession : ${session.date}${session.city ? ` — ${session.city}` : ''}\nAcompte : en attente` : '') +
       (profileText ? `\n${profileText}` : '') +
       (message ? `\nMessage : ${message}` : '')
