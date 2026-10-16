@@ -275,17 +275,18 @@ export default function CoachingPage() {
                 {step === 0 && (
                   <section className={`${card} space-y-5`}>
                     {(cfg.infos || []).length > 0 && (
-                      <div className="grid grid-cols-3 gap-1.5">
+                      <ul className="flex flex-wrap gap-x-3 gap-y-1 text-[12.5px] font-semibold text-academy-textMain/70">
                         {cfg.infos.map((info, i) => (
-                          <span key={i} className="flex items-center justify-center min-h-[34px] px-1.5 py-1 rounded-lg bg-academy-surface text-[11.5px] font-bold leading-tight text-center text-academy-textMain/80">
-                            {info}
-                          </span>
+                          <li key={i} className="inline-flex items-center gap-1"><Check size={13} className="text-emerald-600 shrink-0" /> {info}</li>
                         ))}
-                      </div>
+                      </ul>
                     )}
 
                     <div className="space-y-4">
-                      <h2 className="font-bold text-lg">Choisissez votre pack</h2>
+                      <div>
+                        <h2 className="font-bold text-lg">Choisissez votre pack</h2>
+                        <p className="text-[13px] text-academy-textMain/60">Touchez le pack qui vous intéresse pour le sélectionner.</p>
+                      </div>
                       {topicGroups.map(([category, items]) => (
                         <div key={category || 'autres'}>
                           {category && <h3 className="font-bold text-sm text-academy-primary mb-2">{category}</h3>}
@@ -294,14 +295,12 @@ export default function CoachingPage() {
                               const active = topicId === t.id
                               return (
                                 <button type="button" key={t.id} onClick={() => setTopicId(t.id)}
-                                        className={`relative rounded-xl border px-2.5 py-2 min-h-[48px] text-left transition-colors ${active ? 'border-academy-primary bg-academy-primary/5 ring-1 ring-academy-primary' : 'border-academy-border bg-white hover:border-academy-primary/40'}`}>
-                                  <span className={`block text-[12px] sm:text-[13px] font-bold leading-snug ${active ? 'pr-5' : ''}`}>{t.label}</span>
+                                        className={`relative rounded-xl border px-2.5 py-2 min-h-[48px] text-left shadow-sm transition-colors ${active ? 'border-academy-primary bg-academy-primary/5 ring-1 ring-academy-primary' : 'border-academy-border bg-white hover:border-academy-primary/40'}`}>
+                                  <span className="block text-[12px] sm:text-[13px] font-bold leading-snug pr-5">{t.label}</span>
                                   {t.description && <span className="block mt-0.5 text-[10.5px] sm:text-xs text-academy-textMain/60 leading-snug">{t.description}</span>}
-                                  {active && (
-                                    <span className="absolute top-2 right-2 w-4 h-4 rounded-full bg-academy-primary text-academy-onPrimary flex items-center justify-center">
-                                      <Check size={11} strokeWidth={3} />
-                                    </span>
-                                  )}
+                                  <span className={`absolute top-2 right-2 w-4 h-4 rounded-full flex items-center justify-center ${active ? 'bg-academy-primary text-academy-onPrimary' : 'border-2 border-academy-border bg-white'}`}>
+                                    {active && <Check size={11} strokeWidth={3} />}
+                                  </span>
                                 </button>
                               )
                             })}

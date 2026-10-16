@@ -259,13 +259,11 @@ export default function InPersonPage() {
                 {step === 0 && (
                   <section className={`${card} space-y-5`}>
                     {(cfg.infos || []).length > 0 && (
-                      <div className="grid grid-cols-3 gap-1.5">
+                      <ul className="flex flex-wrap gap-x-3 gap-y-1 text-[12.5px] font-semibold text-academy-textMain/70">
                         {cfg.infos.map((info, i) => (
-                          <span key={i} className="flex items-center justify-center min-h-[34px] px-1.5 py-1 rounded-lg bg-academy-surface text-[11.5px] font-bold leading-tight text-center text-academy-textMain/80">
-                            {info}
-                          </span>
+                          <li key={i} className="inline-flex items-center gap-1"><Check size={13} className="text-emerald-600 shrink-0" /> {info}</li>
                         ))}
-                      </div>
+                      </ul>
                     )}
 
                     {(cfg.program || []).length > 0 && (
