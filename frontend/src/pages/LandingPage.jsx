@@ -13,6 +13,7 @@ import UpcomingCourseModal from '../components/UpcomingCourseModal'
 import LoginModal from '../components/LoginModal'
 import PaymentModal from '../components/PaymentModal'
 import NextSessionAd from '../components/NextSessionAd'
+import CamdenPartner from '../components/CamdenPartner'
 import IntroVideoModal from '../components/IntroVideoModal'
 import UniversalVideoPlayer from '../components/UniversalVideoPlayer'
 import Logo from '../components/Logo'
@@ -216,6 +217,8 @@ export default function LandingPage() {
         )}
 
         <NextSessionAd enabled={!!siteSettings.inPerson?.enabled} notice={siteSettings.inPerson?.datesNotice} />
+
+        <CamdenPartner />
 
         {/* FORMATIONS */}
         <section className="pt-2 lg:pt-4 pb-8 lg:pb-12 border-t border-academy-border relative overflow-hidden">
