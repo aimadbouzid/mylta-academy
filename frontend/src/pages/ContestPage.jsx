@@ -60,7 +60,7 @@ export default function ContestPage() {
               <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-academy-primary">
                 Concours Mylta Academy{c.endDate ? ` · tirage le ${formatDay(c.endDate)}` : ''}
               </p>
-              <h1 className="mt-2 font-display font-black text-[2.1rem] leading-[1.02] tracking-tight">
+              <h1 className="mt-2 font-display font-black text-2xl leading-tight tracking-tight">
                 {c.title}
               </h1>
               <p className="mt-3 text-[15px] leading-relaxed text-academy-textMain/65">{c.text}</p>

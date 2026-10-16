@@ -206,7 +206,7 @@ export default function LandingPage() {
               <span className="border-l-2 border-dashed border-academy-border" />
               <span className="flex-1 min-w-0 flex items-center justify-between gap-3 px-4 py-3.5">
                 <span className="min-w-0">
-                  <span className="block font-display font-black text-[15px] sm:text-lg leading-tight text-academy-textMain">{siteSettings.contest.title}</span>
+                  <span className="block font-display font-black text-sm sm:text-base leading-tight text-academy-textMain">{siteSettings.contest.title}</span>
                   <span className="block text-xs text-academy-textMain/55 mt-0.5">Présentiel ou en ligne · tirage au sort</span>
                 </span>
                 <span className="shrink-0 text-sm font-bold text-academy-textMain border-b-2 border-academy-textMain group-hover:border-academy-primary group-hover:text-academy-primary transition-colors">Participer</span>
