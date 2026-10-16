@@ -255,7 +255,7 @@ const defaultSettings = {
     subtitle: "Filmez, montez et utilisez l'IA comme un pro, depuis votre smartphone. 3 jours en présentiel, en petit groupe.",
     price: 13000,   // prix de la formation (DA) — repris par défaut pour chaque session
     studentPrice: 10000, // tarif étudiant (carte étudiante obligatoire) ; 0 = pas de tarif étudiant
-    oldPrice: 14000, // prix barré affiché à côté (offre de lancement) ; 0 = pas de prix barré
+    oldPrice: 16000, // prix barré affiché à côté (offre de lancement) ; 0 = pas de prix barré
     deposit: 3000,  // acompte obligatoire pour réserver sa place
     // Message affiché au-dessus des sessions (vide = rien) : utile tant que les dates ne sont pas définitives.
     datesNotice: "Inscriptions ouvertes ! Le calendrier exact des sessions vous sera communiqué d'ici 2 à 4 jours.",
@@ -374,7 +374,7 @@ function getSettings() {
 // les valeurs par défaut au premier démarrage, donc un simple changement de
 // défaut ne l'atteint pas). Appliqué une fois : le prochain enregistrement admin
 // écrit settingsVersion à jour.
-const SETTINGS_VERSION = 6
+const SETTINGS_VERSION = 7
 const OLD_BANNER_TEXTS = ["🚀 Promo exceptionnelle : -50% sur toutes les formations ! Inscrivez-vous vite."]
 
 function migrateSettings(parsed, merged) {
@@ -401,6 +401,9 @@ function migrateSettings(parsed, merged) {
       c.id === 'ia-quotidien' && c.title === "L'IA au quotidien : ChatGPT et les outils IA" ? byId['ia-quotidien'] : c)
     if (!list.some(c => c.id === 'prompt-engineering')) list = [byId['prompt-engineering'], ...list]
     merged.upcomingCourses = list
+  }
+  if ((parsed.settingsVersion || 1) < 7 && Number(merged.inPerson?.oldPrice) === 14000) {
+    merged.inPerson = { ...merged.inPerson, oldPrice: 16000 }
   }
   merged.settingsVersion = SETTINGS_VERSION
   return merged
