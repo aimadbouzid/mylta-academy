@@ -198,15 +198,19 @@ export default function LandingPage() {
 
         {siteSettings.contest?.enabled && !(siteSettings.contest.endDate && siteSettings.contest.endDate < new Date().toISOString().slice(0, 10)) && (
           <section className="section-container pt-4">
-            <Link to="/concours" className="block max-w-3xl mx-auto rounded-xl bg-neutral-900 text-white p-3 sm:p-4 hover:bg-neutral-800 transition-colors">
-              <div className="flex items-center gap-3">
-                <span className="shrink-0 w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center text-lg">🎁</span>
-                <div className="min-w-0 flex-1">
-                  <p className="text-[10px] font-black uppercase tracking-wider text-white/60">Concours</p>
-                  <p className="text-sm sm:text-base font-bold leading-snug">{siteSettings.contest.title}</p>
-                </div>
-                <span className="shrink-0 text-xs font-bold bg-white text-neutral-900 rounded-lg px-3 py-1.5">Participer</span>
-              </div>
+            <Link to="/concours" className="group relative flex max-w-3xl mx-auto bg-white border border-academy-border rounded-xl overflow-hidden hover:border-academy-textMain/30 transition-colors">
+              {/* Talon de ticket */}
+              <span className="shrink-0 flex items-center px-3 sm:px-4 bg-academy-primary text-academy-onPrimary">
+                <span className="[writing-mode:vertical-rl] rotate-180 text-[10px] font-black uppercase tracking-[0.25em]">Concours</span>
+              </span>
+              <span className="border-l-2 border-dashed border-academy-border" />
+              <span className="flex-1 min-w-0 flex items-center justify-between gap-3 px-4 py-3.5">
+                <span className="min-w-0">
+                  <span className="block font-display font-black text-[15px] sm:text-lg leading-tight text-academy-textMain">{siteSettings.contest.title}</span>
+                  <span className="block text-xs text-academy-textMain/55 mt-0.5">Présentiel ou en ligne · tirage au sort</span>
+                </span>
+                <span className="shrink-0 text-sm font-bold text-academy-textMain border-b-2 border-academy-textMain group-hover:border-academy-primary group-hover:text-academy-primary transition-colors">Participer</span>
+              </span>
             </Link>
           </section>
         )}

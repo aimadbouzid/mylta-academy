@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { CalendarDays, ArrowRight } from 'lucide-react'
 import api from '../api/axios'
 import { formatDate } from '../utils/sessionDates'
 
@@ -19,18 +18,17 @@ export default function NextSessionAd({ enabled, notice }) {
   return (
     <section className="section-container py-4">
       <Link to="/coaching-presentiel"
-            className="block max-w-3xl mx-auto rounded-xl border border-academy-border bg-academy-surfaceDark/50 p-3 sm:p-4 hover:border-academy-textMain/30 transition-colors">
-        <div className="flex items-center gap-3">
-          <span className="shrink-0 w-9 h-9 rounded-lg bg-neutral-900 text-white flex items-center justify-center"><CalendarDays size={18} /></span>
-          <div className="min-w-0 flex-1">
-            <p className="text-[10px] font-black uppercase tracking-wider text-academy-textMain/50">Prochaines formations · 3 jours en présentiel</p>
-            <ul className="text-xs sm:text-sm font-bold text-academy-textMain space-y-0.5 mt-0.5">
-              {sessions.map(s => <li key={s.id} className="truncate">{formatDate(s.date)}</li>)}
-            </ul>
-            {notice && <p className="text-[10px] sm:text-xs text-academy-textMain/60 mt-1">{notice}</p>}
-          </div>
-          <ArrowRight size={16} className="shrink-0 text-academy-textMain/50" />
+            className="group block max-w-3xl mx-auto bg-white border border-academy-border rounded-xl px-4 py-3.5 hover:border-academy-textMain/30 transition-colors">
+        <div className="flex items-baseline justify-between gap-3">
+          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-academy-primary">Présentiel · 3 jours</p>
+          <span className="text-sm font-bold text-academy-textMain border-b-2 border-academy-textMain group-hover:border-academy-primary group-hover:text-academy-primary transition-colors">S'inscrire</span>
         </div>
+        <ul className="mt-2 divide-y divide-academy-border">
+          {sessions.map(s => (
+            <li key={s.id} className="py-1.5 text-[13px] sm:text-sm font-bold text-academy-textMain truncate">{formatDate(s.date)}</li>
+          ))}
+        </ul>
+        {notice && <p className="mt-1.5 text-[11px] sm:text-xs text-academy-textMain/55 leading-snug">{notice}</p>}
       </Link>
     </section>
   )
