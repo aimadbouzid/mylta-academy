@@ -624,7 +624,8 @@ export const translations = {
         { val: 'Edahabia / CIB', label: 'Paiement 100% sécurisé' }
       ],
       faq: [
-        { question: "Comment se passe une séance de coaching en ligne ?", answer: "La séance dure 2h30, en appel vidéo (WhatsApp, Google Meet ou Zoom), seul avec votre coach. Vous partagez votre écran et vous avancez concrètement sur votre projet : IA, vidéo, site ou application." },
+        { question: "Comment se passe une séance de coaching en ligne ?", answer: "La séance dure 2h30, en appel vidéo (WhatsApp, Google Meet ou Zoom), seul ou jusqu'à 3 personnes avec votre coach. Vous partagez votre écran et vous avancez concrètement sur votre projet : IA, vidéo, site ou application." },
+        { question: "Peut-on faire le coaching en ligne à plusieurs ?", answer: "Oui. Vous pouvez réserver seul, à 2 ou à 3, avec des amis ou des collègues : tout le monde rejoint le même appel vidéo. Indiquez simplement le nombre de personnes au moment de la réservation." },
         { question: "Comment réserver un coaching en ligne ?", answer: "Sur la page Coaching en ligne, choisissez votre sujet, puis le jour et l'heure qui vous conviennent, et laissez votre numéro WhatsApp. Nous vous confirmons la séance et le prix directement sur WhatsApp." },
         { question: "Faut-il un niveau particulier pour le coaching ?", answer: "Non. Le coaching s'adapte à votre niveau, même si vous débutez complètement. Il suffit d'avoir un téléphone ou un ordinateur avec une connexion internet." },
         { question: "Comment fonctionne le coaching présentiel ?", answer: "C'est une formation de 3 jours en petit groupe, sur place. Vous choisissez une session, puis vous réservez votre place en payant un acompte. Le reste est réglé ensuite." },
@@ -1271,7 +1272,8 @@ export const translations = {
         { val: 'Edahabia / CIB', label: '100% Secure Payment' }
       ],
       faq: [
-        { question: "How does an online coaching session work?", answer: "The session lasts 2h30 over a video call (WhatsApp, Google Meet or Zoom), one-on-one with your coach. You share your screen and make real progress on your project: AI, video, website or app." },
+        { question: "How does an online coaching session work?", answer: "The session lasts 2h30 over a video call (WhatsApp, Google Meet or Zoom), alone or up to 3 people with your coach. You share your screen and make real progress on your project: AI, video, website or app." },
+        { question: "Can we do online coaching together?", answer: "Yes. You can book alone, as 2 or as 3, with friends or colleagues: everyone joins the same video call. Just choose the number of people when booking." },
         { question: "How do I book online coaching?", answer: "On the Online Coaching page, choose your topic, then the day and time that suit you, and leave your WhatsApp number. We confirm the session and the price directly on WhatsApp." },
         { question: "Do I need a specific level for coaching?", answer: "No. Coaching adapts to your level, even if you are a complete beginner. All you need is a phone or computer with an internet connection." },
         { question: "How does in-person coaching work?", answer: "It is a 3-day training in a small group, on site. You pick a session, then book your seat by paying a deposit. The rest is paid afterwards." },
@@ -1909,7 +1911,8 @@ export const translations = {
         { val: 'الذهبية / CIB', label: 'دفع آمن 100%' }
       ],
       faq: [
-        { question: "كيف تتم جلسة التدريب عبر الإنترنت؟", answer: "تدوم الجلسة ساعتين ونصف عبر مكالمة فيديو (واتساب أو Google Meet أو Zoom)، بشكل فردي مع مدربك. تشارك شاشتك وتتقدم فعليًا في مشروعك: الذكاء الاصطناعي، الفيديو، الموقع أو التطبيق." },
+        { question: "كيف تتم جلسة التدريب عبر الإنترنت؟", answer: "تدوم الجلسة ساعتين ونصف عبر مكالمة فيديو (واتساب أو Google Meet أو Zoom)، بمفردك أو حتى 3 أشخاص مع مدربك. تشارك شاشتك وتتقدم فعليًا في مشروعك: الذكاء الاصطناعي، الفيديو، الموقع أو التطبيق." },
+        { question: "هل يمكن القيام بالتدريب عبر الإنترنت مع آخرين؟", answer: "نعم. يمكنك الحجز بمفردك أو مع شخص أو شخصين من أصدقائك أو زملائك: ينضم الجميع إلى نفس مكالمة الفيديو. فقط اختر عدد الأشخاص عند الحجز." },
         { question: "كيف أحجز تدريبًا عبر الإنترنت؟", answer: "في صفحة التدريب عبر الإنترنت، اختر موضوعك ثم اليوم والساعة المناسبين، واترك رقم واتساب الخاص بك. نؤكد لك الجلسة والسعر مباشرة على واتساب." },
         { question: "هل أحتاج إلى مستوى معين للتدريب؟", answer: "لا. يتكيف التدريب مع مستواك، حتى لو كنت مبتدئًا تمامًا. يكفي أن يكون لديك هاتف أو حاسوب متصل بالإنترنت." },
         { question: "كيف يعمل التدريب الحضوري؟", answer: "هو تكوين لمدة 3 أيام في مجموعة صغيرة، في عين المكان. تختار دورة ثم تحجز مكانك بدفع عربون، ويُدفع الباقي لاحقًا." },

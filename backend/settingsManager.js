@@ -192,12 +192,13 @@ const defaultSettings = {
   // Textes volontairement simples : la page s'adresse à des débutants.
   // weekdays : 0 = dimanche … 6 = samedi. timeSlots vide = date seule.
   coaching: {
-    version: 4,
+    version: 5,
     enabled: true,
     title: 'Coaching en ligne',
-    subtitle: "Un coach rien que pour vous, pour apprendre l'IA ou créer votre site.",
+    subtitle: "Seul ou avec vos amis, un coach vous accompagne pour apprendre l'IA ou créer votre site.",
     // Étiquettes très courtes, en grille de 3 en haut de la page.
-    infos: ['2h30', 'En appel vidéo', 'Individuel', 'Débutants OK', '7 jours sur 7', 'Réponse rapide'],
+    infos: ['2h30', 'En appel vidéo', 'Seul ou à 3', 'Débutants OK', '7 jours sur 7', 'Réponse rapide'],
+    maxParticipants: 3, // la séance peut se faire seul, à 2… jusqu'à ce nombre
     whatsappNumber: '213795103743',
     currency: 'DA',
     // Sujets regroupés par thème (category) : la page les affiche par groupe.
@@ -268,6 +269,14 @@ function upgradeCoaching(saved) {
   const def = defaultSettings.coaching
   if (!saved) return { ...def }
   if (saved.version === def.version) return { ...def, ...saved }
+  // v4 → v5 : séance possible à plusieurs. On garde tout ce que l'admin a saisi,
+  // seuls les anciens textes par défaut (« individuel ») sont remplacés.
+  if (saved.version === 4) {
+    const merged = { ...def, ...saved, version: def.version }
+    if (saved.subtitle === "Un coach rien que pour vous, pour apprendre l'IA ou créer votre site.") merged.subtitle = def.subtitle
+    if (JSON.stringify(saved.infos) === JSON.stringify(['2h30', 'En appel vidéo', 'Individuel', 'Débutants OK', '7 jours sur 7', 'Réponse rapide'])) merged.infos = def.infos
+    return merged
+  }
   const merged = { ...def }
   for (const k of ['enabled', 'whatsappNumber', 'currency', 'blockedDates']) {
     if (saved[k] !== undefined) merged[k] = saved[k]

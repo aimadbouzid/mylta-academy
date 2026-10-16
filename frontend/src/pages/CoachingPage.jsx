@@ -34,6 +34,7 @@ export default function CoachingPage() {
 
   const [step, setStep] = useState(0)
   const [topicId, setTopicId] = useState('')
+  const [participants, setParticipants] = useState(1)
   const [formatId, setFormatId] = useState('')
   const [channel, setChannel] = useState('')
   const [date, setDate] = useState('')
@@ -130,7 +131,7 @@ export default function CoachingPage() {
     if (channels.length > 0 && !channel) return setError('Choisissez comment faire l\'appel vidéo.')
     setSubmitting(true)
     try {
-      const { data } = await api.post('/coaching/book', { fullName, phone, topicId, formatId, channel, date, timeSlot, message, website })
+      const { data } = await api.post('/coaching/book', { fullName, phone, topicId, formatId, channel, date, timeSlot, message, website, participants })
       setDone(data.booking)
       requestAnimationFrame(() => topRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }))
     } catch (err) {
@@ -141,8 +142,12 @@ export default function CoachingPage() {
     }
   }
 
+  const peopleLabel = (n) => (n > 1 ? `${n} personnes` : 'Seul(e)')
+  const maxPeople = Math.max(1, Number(cfg?.maxParticipants) || 1)
+
   const summaryLines = (b) => [
     ['Sujet', b.topicLabel],
+    ['Participants', peopleLabel(b.participants || 1)],
     ['Jour', `${formatDate(b.date)}${b.timeSlot ? ` à ${b.timeSlot.replace(':', 'h')}` : ''}`],
     duration && ['Durée', duration],
     b.channel && ['Appel vidéo', b.channel],
@@ -298,9 +303,25 @@ export default function CoachingPage() {
                       ))}
                     </div>
 
+                    {maxPeople > 1 && (
+                      <div>
+                        <h2 className="font-bold text-[15px] mb-2">Pour combien de personnes ?</h2>
+                        <div className="flex flex-wrap gap-1.5">
+                          {Array.from({ length: maxPeople }, (_, i) => i + 1).map(n => (
+                            <button type="button" key={n} onClick={() => setParticipants(n)}
+                                    className={`h-9 px-4 rounded-full border text-[13px] font-semibold transition-colors ${participants === n ? 'border-academy-primary bg-academy-primary text-academy-onPrimary' : 'border-academy-border bg-white text-academy-textMain/80 hover:border-academy-primary/50'}`}>
+                              {n === 1 ? 'Seul(e)' : `À ${n}`}
+                            </button>
+                          ))}
+                        </div>
+                        <p className="text-xs text-academy-textMain/55 mt-1.5">Avec des amis ou des collègues, dans le même appel vidéo.</p>
+                      </div>
+                    )}
+
                     <div className="rounded-xl border-2 border-academy-primary/30 bg-academy-primary/5 p-4">
                       <p className="text-xs font-black uppercase tracking-wider text-academy-primary mb-1">Votre séance</p>
                       <p className="text-xl font-black">{duration ? `${duration} en appel vidéo` : 'En appel vidéo'}</p>
+                      <p className="text-sm font-semibold mt-0.5">{peopleLabel(participants)}</p>
                       <p className="text-sm text-academy-textMain/60 mt-1">
                         {price > 0 ? money(price, cfg.currency) : 'Le prix vous est donné sur WhatsApp après la réservation.'}
                       </p>
@@ -386,6 +407,7 @@ export default function CoachingPage() {
                   <form onSubmit={handleSubmit} className={`${card} space-y-4 relative`}>
                     <div className="bg-academy-surface rounded-xl p-4 text-sm space-y-1.5">
                       <p className="font-bold">{topic?.label}</p>
+                      <p className="text-academy-textMain/70">{peopleLabel(participants)}</p>
                       <p className="text-academy-textMain/70">{formatDate(date)}{timeSlot ? ` à ${timeSlot.replace(':', 'h')}` : ''}{duration ? ` · ${duration}` : ''}</p>
                       <p className="font-black">{price > 0 ? money(price, cfg.currency) : 'Le prix vous sera donné sur WhatsApp'}</p>
                     </div>
