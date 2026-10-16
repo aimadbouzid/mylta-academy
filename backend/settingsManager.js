@@ -205,12 +205,12 @@ const defaultSettings = {
     currency: 'DA',
     // Sujets regroupés par thème (category) : la page les affiche par groupe.
     topics: [
-      { id: 'pack-createur', category: "L'intelligence artificielle (IA)", label: 'Pack Créateur de contenu IA', description: 'Vidéos, images et voix off avec Veo, Kling, Midjourney et ElevenLabs', price: 0, duration: '' },
-      { id: 'pack-avatar', category: "L'intelligence artificielle (IA)", label: 'Pack Avatar & Influenceur IA', description: 'Votre clone vidéo qui parle à votre place, avec HeyGen et Higgsfield', price: 0, duration: '' },
-      { id: 'pack-productivite', category: "L'intelligence artificielle (IA)", label: 'Pack Productivité IA', description: 'ChatGPT, Claude et Gemini pour travailler deux fois plus vite', price: 0, duration: '' },
-      { id: 'pack-site', category: "Créer avec l'IA, sans savoir coder", label: 'Pack Site web & Landing page', description: 'Votre site pro en ligne, avec Lovable, Bolt ou Framer', price: 0, duration: '' },
-      { id: 'pack-app', category: "Créer avec l'IA, sans savoir coder", label: 'Pack Application & SaaS', description: 'Votre application web ou mobile, avec Lovable, Replit et Claude', price: 0, duration: '' },
-      { id: 'pack-agents', category: "Créer avec l'IA, sans savoir coder", label: 'Pack Agents IA & Automatisation', description: 'Un assistant qui répond à vos clients et fait vos tâches, avec n8n et Make', price: 0, duration: '' },
+      { id: 'pack-createur', category: "L'intelligence artificielle (IA)", label: 'Pack Vidéos & Photos IA', description: 'Faire des vidéos, des photos et des voix avec l\'IA, sans caméra', price: 0, duration: '' },
+      { id: 'pack-avatar', category: "L'intelligence artificielle (IA)", label: 'Pack Avatar IA', description: 'Un personnage qui vous ressemble et parle à votre place en vidéo', price: 0, duration: '' },
+      { id: 'pack-productivite', category: "L'intelligence artificielle (IA)", label: 'Pack ChatGPT au travail', description: 'Écrire, chercher et organiser votre travail deux fois plus vite', price: 0, duration: '' },
+      { id: 'pack-site', category: "Créer avec l'IA, sans savoir coder", label: 'Pack Site internet', description: 'Votre propre site pour présenter votre activité', price: 0, duration: '' },
+      { id: 'pack-app', category: "Créer avec l'IA, sans savoir coder", label: 'Pack Application', description: 'Votre propre application pour téléphone ou ordinateur', price: 0, duration: '' },
+      { id: 'pack-agents', category: "Créer avec l'IA, sans savoir coder", label: 'Pack Assistant IA', description: 'Un assistant qui répond à vos clients sur WhatsApp, jour et nuit', price: 0, duration: '' },
     ],
     // Une seule formule = aucune question posée au client. Plusieurs = il choisit.
     formats: [
