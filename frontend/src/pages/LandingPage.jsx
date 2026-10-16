@@ -160,7 +160,15 @@ export default function LandingPage() {
                   (dont le texte s'adresse à l'admin, pas au visiteur). */}
               <div className="relative max-w-xl mx-auto lg:mr-0">
                 <div className="absolute -inset-8 rounded-full bg-academy-primary/20 dark:bg-academy-primary/[0.07] pointer-events-none select-none z-0" style={{ filter: 'blur(60px)', WebkitFilter: 'blur(60px)' }} />
-                {siteSettings.introVideoUrl && (
+                {/^\/[^/].*\.(mp4|webm)$/i.test(siteSettings.introVideoUrl || '') ? (
+                  <video
+                    src={siteSettings.introVideoUrl}
+                    poster={siteSettings.introVideoUrl.replace(/\.(mp4|webm)$/i, '-poster.jpg')}
+                    autoPlay muted loop playsInline
+                    aria-label="Vidéo de présentation Mylta Academy"
+                    className="relative z-10 w-full aspect-video rounded-2xl shadow-soft-lg bg-black object-cover"
+                  />
+                ) : siteSettings.introVideoUrl && (
                   <div className="relative z-10">
                     <UniversalVideoPlayer
                       url={siteSettings.introVideoUrl}

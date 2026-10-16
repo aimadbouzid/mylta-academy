@@ -4,7 +4,7 @@ const path = require('path')
 const settingsPath = path.join(__dirname, 'uploads', 'settings.json')
 
 const defaultSettings = {
-  introVideoUrl: 'https://www.youtube.com/watch?v=M7lc1UVf-VE',
+  introVideoUrl: '/intro-logo.mp4',
   hero: {
     phrases: [
       'Formations Pratiques',
@@ -331,7 +331,7 @@ function getSettings() {
 // les valeurs par défaut au premier démarrage, donc un simple changement de
 // défaut ne l'atteint pas). Appliqué une fois : le prochain enregistrement admin
 // écrit settingsVersion à jour.
-const SETTINGS_VERSION = 3
+const SETTINGS_VERSION = 4
 const OLD_BANNER_TEXTS = ["🚀 Promo exceptionnelle : -50% sur toutes les formations ! Inscrivez-vous vite."]
 
 function migrateSettings(parsed, merged) {
@@ -343,6 +343,9 @@ function migrateSettings(parsed, merged) {
   }
   if ((parsed.settingsVersion || 1) < 3) {
     merged.modules = { ...merged.modules, resourcesEnabled: false }
+  }
+  if ((parsed.settingsVersion || 1) < 4 && /youtu\.?be/i.test(parsed.introVideoUrl || '')) {
+    merged.introVideoUrl = defaultSettings.introVideoUrl
   }
   merged.settingsVersion = SETTINGS_VERSION
   return merged
