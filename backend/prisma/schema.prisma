@@ -387,6 +387,7 @@ model CoachingBooking {
   topicLabel   String
   formatLabel  String   @default("")
   participants Int      @default(1)
+  companions   Json?
   channel      String   @default("")
   level        String   @default("")
   price        Int      @default(0)

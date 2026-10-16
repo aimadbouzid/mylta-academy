@@ -49,6 +49,10 @@ const bookingSchema = z.object({
   channel: z.string().trim().max(50).optional().default(''),
   level: z.string().trim().max(30).optional().default(''),
   participants: z.coerce.number().int().min(1).max(20).optional().default(1),
+  companions: z.array(z.object({
+    fullName: z.string().trim().min(3).max(80),
+    phone: z.string().trim().regex(/^\+?[0-9 ]{8,20}$/),
+  })).max(19).optional().default([]),
   message: z.string().trim().max(500).optional(),
   website: z.string().optional(), // piège à robots : toujours vide pour un humain
 })
@@ -65,7 +69,7 @@ router.post('/book', async (req, res, next) => {
     if (!parsed.success) {
       return res.status(400).json({ error: 'Vérifiez votre nom, votre numéro de téléphone et le sujet choisi.' })
     }
-    const { fullName, phone, topicId, date, timeSlot, formatId, channel, level, message, website, participants } = parsed.data
+    const { fullName, phone, topicId, date, timeSlot, formatId, channel, level, message, website, participants, companions } = parsed.data
     // Robot : réponse normale pour ne pas lui signaler le piège, mais rien n'est enregistré.
     if (website) return res.status(201).json({ booking: { id: 0, date, timeSlot, topicLabel: '', formatLabel: '', channel: '', level: '', price: 0 } })
 
@@ -82,6 +86,10 @@ router.post('/book', async (req, res, next) => {
     if (participants > (Number(cfg.maxParticipants) || 1)) {
       return res.status(400).json({ error: `Une séance accueille ${Number(cfg.maxParticipants) || 1} personne(s) au maximum.` })
     }
+    if (companions.length < participants - 1) {
+      return res.status(400).json({ error: 'Indiquez le nom et le numéro de chaque personne qui vous accompagne.' })
+    }
+    const friends = companions.slice(0, participants - 1)
 
     const err = dateError(date, cfg)
     if (err) return res.status(400).json({ error: err })
@@ -115,6 +123,7 @@ router.post('/book', async (req, res, next) => {
         topicLabel: topic.label,
         formatLabel: format ? `${format.label}${format.duration ? ` (${format.duration})` : ''}` : '',
         participants,
+        companions: friends.length > 0 ? friends : undefined,
         channel: channels.length > 0 ? channel : '',
         level: level || '',
         price: Number(format?.price) || Number(topic.price) || 0,
@@ -129,6 +138,7 @@ router.post('/book', async (req, res, next) => {
       `🎓 Nouvelle réservation coaching en ligne n°${booking.id}\n` +
       `Nom : ${fullName}\nTél : ${phone}\nSujet : ${topic.label}\n` +
       `Personnes : ${participants}\n` +
+      friends.map((f, i) => `Ami ${i + 1} : ${f.fullName} — ${f.phone}\n`).join('') +
       `Date : ${date}${slot ? ` à ${slot}` : ''}` +
       (message ? `\nMessage : ${message}` : '')
     )
@@ -136,7 +146,7 @@ router.post('/book', async (req, res, next) => {
     res.status(201).json({ booking: {
       id: booking.id, date, timeSlot: slot, topicLabel: topic.label,
       formatLabel: booking.formatLabel, channel: booking.channel, level: booking.level, price: booking.price,
-      participants: booking.participants,
+      participants: booking.participants, companions: friends,
     } })
   } catch (err) { next(err) }
 })

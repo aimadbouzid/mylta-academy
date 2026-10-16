@@ -41,6 +41,7 @@ export default function CoachingPage() {
   const [timeSlot, setTimeSlot] = useState('')
   const [fullName, setFullName] = useState('')
   const [phone, setPhone] = useState('')
+  const [companions, setCompanions] = useState([]) // amis inscrits avec le client
   const [message, setMessage] = useState('')
   const [booked, setBooked] = useState([])
   const [submitting, setSubmitting] = useState(false)
@@ -131,7 +132,7 @@ export default function CoachingPage() {
     if (channels.length > 0 && !channel) return setError('Choisissez comment faire l\'appel vidéo.')
     setSubmitting(true)
     try {
-      const { data } = await api.post('/coaching/book', { fullName, phone, topicId, formatId, channel, date, timeSlot, message, website, participants: people })
+      const { data } = await api.post('/coaching/book', { fullName, phone, topicId, formatId, channel, date, timeSlot, message, website, participants: people, companions: companions.slice(0, (people || 1) - 1) })
       setDone(data.booking)
       requestAnimationFrame(() => topRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }))
     } catch (err) {
@@ -162,6 +163,7 @@ export default function CoachingPage() {
     ? `https://wa.me/${cfg.whatsappNumber.replace(/\D/g, '')}?text=${encodeURIComponent(
         `Bonjour Mylta Academy, je viens de réserver une séance de coaching :\n` +
         `• Nom : ${fullName}\n• Téléphone : ${phone}\n` +
+        (done.companions || []).map((f, i) => `• Ami ${i + 1} : ${f.fullName} — ${f.phone}\n`).join('') +
         summaryLines(done).map(([k, v]) => `• ${k} : ${v}`).join('\n') + '\n' +
         (message ? `• Message : ${message}\n` : '') +
         `Réservation n°${done.id}`
@@ -461,6 +463,20 @@ export default function CoachingPage() {
                     <input className={input} required type="tel" inputMode="tel" autoComplete="tel" maxLength={20} pattern="\+?[0-9 ]{8,20}"
                            title="Exemple : 0555 12 34 56" placeholder="Votre numéro WhatsApp (ex : 0555 12 34 56)"
                            value={phone} onChange={e => setPhone(e.target.value)} />
+                    {Array.from({ length: (people || 1) - 1 }, (_, i) => {
+                      const f = companions[i] || { fullName: '', phone: '' }
+                      const set = (patch) => setCompanions(cs => { const next = [...cs]; next[i] = { ...f, ...patch }; return next })
+                      return (
+                        <div key={i} className="space-y-2 pt-1">
+                          <h3 className="font-bold">{people === 2 ? 'Votre ami(e)' : `Ami(e) n°${i + 1}`}</h3>
+                          <input className={input} required minLength={3} maxLength={80} placeholder="Nom et prénom de votre ami(e)"
+                                 value={f.fullName} onChange={e => set({ fullName: e.target.value })} />
+                          <input className={input} required type="tel" inputMode="tel" maxLength={20} pattern="\+?[0-9 ]{8,20}"
+                                 title="Exemple : 0555 12 34 56" placeholder="Son numéro WhatsApp"
+                                 value={f.phone} onChange={e => set({ phone: e.target.value })} />
+                        </div>
+                      )
+                    })}
                     <textarea className={input} rows={3} maxLength={500} placeholder="Expliquez-nous en quelques mots ce que vous voulez faire (facultatif)"
                               value={message} onChange={e => setMessage(e.target.value)} />
 

@@ -309,6 +309,9 @@ export default function AdminCoachingTab() {
                     <td className="p-4">
                       <div className="font-bold text-white">{b.fullName}</div>
                       <div className="text-neutral-400">{b.phone}</div>
+                      {(b.companions || []).map((f, i) => (
+                        <div key={i} className="text-xs text-neutral-400 mt-1">+ {f.fullName} · {f.phone}</div>
+                      ))}
                       {b.message && <div className="text-neutral-500 text-xs mt-1 max-w-xs">{b.message}</div>}
                     </td>
                     <td className="p-4 text-neutral-300">
