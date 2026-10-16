@@ -196,7 +196,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <NextSessionAd enabled={!!siteSettings.inPerson?.enabled} />
+        <NextSessionAd enabled={!!siteSettings.inPerson?.enabled} notice={siteSettings.inPerson?.datesNotice} />
 
         {/* FORMATIONS */}
         <section className="pt-2 lg:pt-4 pb-8 lg:pb-12 border-t border-academy-border relative overflow-hidden">

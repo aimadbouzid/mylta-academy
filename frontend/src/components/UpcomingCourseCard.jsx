@@ -17,7 +17,7 @@ export default function UpcomingCourseCard({ course, onDetails }) {
       <div className="relative h-20 sm:h-28 overflow-hidden flex-shrink-0 bg-academy-surfaceDark">
         <img src={course.image || '/logo-128.png'} alt="" loading="lazy"
              className={course.image ? 'w-full h-full object-cover' : 'absolute inset-0 m-auto h-10 w-10 sm:h-14 sm:w-14 rounded-xl object-contain'} />
-        <span className="absolute top-2 left-2 px-2 py-0.5 text-[9px] sm:text-[11px] font-black uppercase tracking-wider rounded-full bg-neutral-900 text-white">
+        <span className="absolute top-2 left-2 px-2 py-0.5 text-[9px] sm:text-[11px] font-black uppercase tracking-wider rounded-full bg-neutral-700 text-white">
           Bientôt
         </span>
         {course.category && (
@@ -53,7 +53,7 @@ export default function UpcomingCourseCard({ course, onDetails }) {
         )}
 
         <button type="button" onClick={(e) => { e.stopPropagation(); onDetails?.(course) }}
-                className={`${Number(course.price) > 0 ? '' : 'mt-auto '}w-full py-2 sm:py-2.5 rounded-lg border-2 border-neutral-900 dark:border-white text-[10px] sm:text-sm font-bold text-neutral-900 dark:text-white hover:bg-neutral-900/5 dark:hover:bg-white/10 transition-colors`}>
+                className={`${Number(course.price) > 0 ? '' : 'mt-auto '}w-full py-1.5 sm:py-2 rounded-lg border border-neutral-500 dark:border-white/60 text-[10px] sm:text-xs font-semibold text-neutral-700 dark:text-white hover:bg-neutral-900/5 dark:hover:bg-white/10 transition-colors`}>
           Détails
         </button>
       </div>

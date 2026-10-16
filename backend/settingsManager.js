@@ -231,6 +231,8 @@ const defaultSettings = {
     price: 13000,   // prix de la formation (DA) — repris par défaut pour chaque session
     oldPrice: 18000, // prix barré affiché à côté (offre de lancement) ; 0 = pas de prix barré
     deposit: 3000,  // acompte obligatoire pour réserver sa place
+    // Message affiché au-dessus des sessions (vide = rien) : utile tant que les dates ne sont pas définitives.
+    datesNotice: "Inscriptions ouvertes ! Le calendrier exact des sessions vous sera communiqué d'ici 2 à 4 jours.",
     showSeats: false, // afficher « il reste N places » sur les sessions (désactivé par défaut)
     // Titres courts : affichés en cartes compactes (2 par ligne sur téléphone).
     program: [

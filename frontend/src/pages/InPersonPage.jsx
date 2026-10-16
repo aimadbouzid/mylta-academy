@@ -270,35 +270,38 @@ export default function InPersonPage() {
                 {step === 1 && (
                   <section className={`${card} space-y-4`}>
                     <h2 className="font-bold text-lg">Choisissez votre session</h2>
+                    {cfg.datesNotice && (
+                      <p className="text-[13px] font-semibold leading-snug rounded-xl bg-amber-50 border border-amber-200 text-amber-900 p-3">📅 {cfg.datesNotice}</p>
+                    )}
                     {sessions === null ? (
                       <p className="text-sm text-academy-textMain/60">Chargement des dates…</p>
                     ) : (
-                      <div className="space-y-2.5">
+                      <div className="grid grid-cols-2 gap-2">
                         {sessions.length === 0 && (
-                          <p className="text-sm text-academy-textMain/70 bg-academy-surface rounded-xl p-4">
+                          <p className="col-span-2 text-sm text-academy-textMain/70 bg-academy-surface rounded-xl p-4">
                             Les prochaines dates arrivent bientôt. Inscrivez-vous : on vous prévient en premier.
                           </p>
                         )}
                         {sessions.map(s => {
                           const full = s.seatsLeft <= 0
                           return (
-                            <button type="button" key={s.id} disabled={full} onClick={() => setSessionId(s.id)} className={`${choice(sessionId === s.id, full)} !p-3`}>
+                            <button type="button" key={s.id} disabled={full} onClick={() => setSessionId(s.id)} className={`${choice(sessionId === s.id, full)} !p-2.5 !gap-2`}>
                               <span className={radio(sessionId === s.id)} aria-hidden="true" />
-                              <span className="flex-1 space-y-1">
-                                <span className="font-bold block text-[15px]">{formatDate(s.date)}</span>
-                                {s.title && <span className="block text-sm font-semibold">{s.title}</span>}
-                                <span className="flex flex-wrap gap-x-3 gap-y-0.5 text-[13px] text-academy-textMain/65">
-                                  {hours(s) && <span className="inline-flex items-center gap-1"><Clock size={14} /> {hours(s)}</span>}
-                                  {(s.city || s.place) && <span className="inline-flex items-center gap-1"><MapPin size={14} /> {[s.place, s.city].filter(Boolean).join(', ')}</span>}
+                              <span className="flex-1 min-w-0 space-y-0.5">
+                                <span className="font-bold block text-[12.5px] leading-snug">{formatDate(s.date)}</span>
+                                {s.title && <span className="block text-[11px] font-semibold leading-snug text-academy-textMain/80">{s.title}</span>}
+                                <span className="flex flex-col gap-0.5 text-[11px] text-academy-textMain/65">
+                                  {hours(s) && <span className="inline-flex items-center gap-1"><Clock size={11} /> {hours(s)}</span>}
+                                  {(s.city || s.place) && <span className="inline-flex items-center gap-1"><MapPin size={11} className="shrink-0" /> <span className="truncate">{[s.place, s.city].filter(Boolean).join(', ')}</span></span>}
                                   <span className={`inline-flex items-center gap-1 font-bold ${full ? 'text-red-600' : s.seatsLeft <= 3 ? 'text-amber-600' : ''}`}>
-                                    <Users size={14} /> {full ? 'Complet' : !cfg.showSeats ? 'Places limitées' : s.seatsLeft === 1 ? 'Plus qu\'1 place' : `${s.seatsLeft} places restantes`}
+                                    <Users size={11} /> {full ? 'Complet' : !cfg.showSeats ? 'Places limitées' : s.seatsLeft === 1 ? 'Plus qu\'1 place' : `${s.seatsLeft} places restantes`}
                                   </span>
                                 </span>
                               </span>
                             </button>
                           )
                         })}
-                        <button type="button" onClick={() => setSessionId(null)} className={`${choice(sessionId === null, false)} !p-3`}>
+                        <button type="button" onClick={() => setSessionId(null)} className={`${choice(sessionId === null, false)} col-span-2 !p-3`}>
                           <span className={radio(sessionId === null)} aria-hidden="true" />
                           <span>
                             <span className="font-bold block text-[15px]">{sessions.length === 0 ? 'Me prévenir des prochaines dates' : 'Aucune date ne me convient'}</span>

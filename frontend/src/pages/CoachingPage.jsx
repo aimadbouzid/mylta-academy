@@ -289,14 +289,14 @@ export default function CoachingPage() {
                       {topicGroups.map(([category, items]) => (
                         <div key={category || 'autres'}>
                           {category && <h3 className="font-bold text-sm text-academy-primary mb-2">{category}</h3>}
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                             {items.map(t => {
                               const active = topicId === t.id
                               return (
                                 <button type="button" key={t.id} onClick={() => setTopicId(t.id)}
-                                        className={`relative rounded-xl border px-3 py-3 min-h-[54px] text-left transition-colors ${active ? 'border-academy-primary bg-academy-primary/5 ring-1 ring-academy-primary' : 'border-academy-border bg-white hover:border-academy-primary/40'}`}>
-                                  <span className={`block text-[13.5px] font-bold leading-snug ${active ? 'pr-5' : ''}`}>{t.label}</span>
-                                  {t.description && <span className="block mt-0.5 text-xs text-academy-textMain/60 leading-snug">{t.description}</span>}
+                                        className={`relative rounded-xl border px-2.5 py-2 min-h-[48px] text-left transition-colors ${active ? 'border-academy-primary bg-academy-primary/5 ring-1 ring-academy-primary' : 'border-academy-border bg-white hover:border-academy-primary/40'}`}>
+                                  <span className={`block text-[12px] sm:text-[13px] font-bold leading-snug ${active ? 'pr-5' : ''}`}>{t.label}</span>
+                                  {t.description && <span className="block mt-0.5 text-[10.5px] sm:text-xs text-academy-textMain/60 leading-snug">{t.description}</span>}
                                   {active && (
                                     <span className="absolute top-2 right-2 w-4 h-4 rounded-full bg-academy-primary text-academy-onPrimary flex items-center justify-center">
                                       <Check size={11} strokeWidth={3} />

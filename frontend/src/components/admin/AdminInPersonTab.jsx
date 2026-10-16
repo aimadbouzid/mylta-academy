@@ -267,6 +267,7 @@ export default function AdminInPersonTab() {
           <div><label className={label}>Prix de la formation (DA)</label><input type="number" min="0" className={input} value={cfg.price ?? 0} onChange={e => setCfg({ ...cfg, price: e.target.value })} /></div>
           <div><label className={label}>Acompte pour réserver (DA)</label><input type="number" min="0" className={input} value={cfg.deposit ?? 0} onChange={e => setCfg({ ...cfg, deposit: e.target.value })} /></div>
         </div>
+        <div><label className={label}>Message sur les dates (vide = aucun)</label><textarea className={input} rows={2} value={cfg.datesNotice || ''} onChange={e => setCfg({ ...cfg, datesNotice: e.target.value })} /></div>
         <label className="flex items-center gap-2 text-sm font-bold cursor-pointer">
           <input type="checkbox" checked={!!cfg.showSeats} onChange={e => setCfg({ ...cfg, showSeats: e.target.checked })} className="w-4 h-4" />
           Afficher le nombre de places restantes (« il reste 7 places »)

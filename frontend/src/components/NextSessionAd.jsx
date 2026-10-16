@@ -4,7 +4,7 @@ import { CalendarDays, ArrowRight } from 'lucide-react'
 import api from '../api/axios'
 import { formatDate } from '../utils/sessionDates'
 
-export default function NextSessionAd({ enabled }) {
+export default function NextSessionAd({ enabled, notice }) {
   const [sessions, setSessions] = useState([])
 
   useEffect(() => {
@@ -27,6 +27,7 @@ export default function NextSessionAd({ enabled }) {
             <ul className="text-xs sm:text-sm font-bold text-academy-textMain space-y-0.5 mt-0.5">
               {sessions.map(s => <li key={s.id} className="truncate">{formatDate(s.date)}</li>)}
             </ul>
+            {notice && <p className="text-[10px] sm:text-xs text-academy-textMain/60 mt-1">{notice}</p>}
           </div>
           <ArrowRight size={16} className="shrink-0 text-academy-textMain/50" />
         </div>
