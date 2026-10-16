@@ -151,7 +151,7 @@ export default function CoachingPage() {
   const peopleLabel = (n) => (n <= 1 ? 'Individuel' : isGroup(n) ? `En groupe (${n} personnes et +)` : `${n} personnes`)
 
   const summaryLines = (b) => [
-    ['Sujet', b.topicLabel],
+    ['Pack', b.topicLabel],
     ['Participants', peopleLabel(b.participants || 1)],
     ['Jour', `${formatDate(b.date)}${b.timeSlot ? ` à ${b.timeSlot.replace(':', 'h')}` : ''}`],
     duration && ['Durée', duration],
@@ -285,17 +285,18 @@ export default function CoachingPage() {
                     )}
 
                     <div className="space-y-4">
-                      <h2 className="font-bold text-lg">Choisissez votre sujet</h2>
+                      <h2 className="font-bold text-lg">Choisissez votre pack</h2>
                       {topicGroups.map(([category, items]) => (
                         <div key={category || 'autres'}>
                           {category && <h3 className="font-bold text-sm text-academy-primary mb-2">{category}</h3>}
-                          <div className="grid grid-cols-2 gap-2">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                             {items.map(t => {
                               const active = topicId === t.id
                               return (
                                 <button type="button" key={t.id} onClick={() => setTopicId(t.id)}
                                         className={`relative rounded-xl border px-3 py-3 min-h-[54px] text-left transition-colors ${active ? 'border-academy-primary bg-academy-primary/5 ring-1 ring-academy-primary' : 'border-academy-border bg-white hover:border-academy-primary/40'}`}>
-                                  <span className={`block text-[13.5px] font-semibold leading-snug ${active ? 'pr-5' : ''}`}>{t.label}</span>
+                                  <span className={`block text-[13.5px] font-bold leading-snug ${active ? 'pr-5' : ''}`}>{t.label}</span>
+                                  {t.description && <span className="block mt-0.5 text-xs text-academy-textMain/60 leading-snug">{t.description}</span>}
                                   {active && (
                                     <span className="absolute top-2 right-2 w-4 h-4 rounded-full bg-academy-primary text-academy-onPrimary flex items-center justify-center">
                                       <Check size={11} strokeWidth={3} />
@@ -343,7 +344,7 @@ export default function CoachingPage() {
                     </div>
 
                     <button type="button" disabled={!topicId || !people} onClick={() => goTo(1)} className={primaryBtn}>
-                      {!topicId ? 'Choisissez un sujet' : !people ? 'Choisissez votre formule' : 'Choisir ma date'} <ArrowRight size={18} />
+                      {!topicId ? 'Choisissez un pack' : !people ? 'Choisissez votre formule' : 'Choisir ma date'} <ArrowRight size={18} />
                     </button>
                     {settings?.inPerson?.enabled && (
                       <p className="text-center text-sm">

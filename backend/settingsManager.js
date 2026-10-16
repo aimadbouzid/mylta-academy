@@ -192,7 +192,7 @@ const defaultSettings = {
   // Textes volontairement simples : la page s'adresse à des débutants.
   // weekdays : 0 = dimanche … 6 = samedi. timeSlots vide = date seule.
   coaching: {
-    version: 5,
+    version: 6,
     enabled: true,
     title: 'Coaching en ligne',
     subtitle: "Seul ou avec vos amis, un coach vous accompagne pour apprendre l'IA ou créer votre site.",
@@ -205,16 +205,12 @@ const defaultSettings = {
     currency: 'DA',
     // Sujets regroupés par thème (category) : la page les affiche par groupe.
     topics: [
-      { id: 'ia-chatgpt', category: "L'intelligence artificielle (IA)", label: "Bien utiliser ChatGPT et l'IA", description: 'Poser les bonnes questions et gagner du temps chaque jour', price: 0, duration: '' },
-      { id: 'ia-video', category: "L'intelligence artificielle (IA)", label: "Faire des vidéos avec l'IA", description: 'Sans caméra ni montage compliqué', price: 0, duration: '' },
-      { id: 'ia-textes', category: "L'intelligence artificielle (IA)", label: "Écrire des textes avec l'IA", description: 'Publications, textes de vidéos, publicités', price: 0, duration: '' },
-      { id: 'ia-images', category: "L'intelligence artificielle (IA)", label: "Créer des images avec l'IA", description: 'Affiches, visuels et photos de produits', price: 0, duration: '' },
-      { id: 'ia-reseaux', category: "L'intelligence artificielle (IA)", label: "Publier sur les réseaux sociaux avec l'IA", description: 'Trouver des idées et publier régulièrement', price: 0, duration: '' },
-      { id: 'ia-temps', category: "L'intelligence artificielle (IA)", label: "Gagner du temps avec l'IA", description: "Laisser l'IA faire les tâches qui se répètent", price: 0, duration: '' },
-      { id: 'creer-site', category: "Créer avec l'IA, sans savoir coder", label: 'Créer un site internet', description: 'Pour présenter votre activité ou votre travail', price: 0, duration: '' },
-      { id: 'creer-page-vente', category: "Créer avec l'IA, sans savoir coder", label: 'Créer une page de vente', description: 'Une page simple pour vendre un produit ou un service', price: 0, duration: '' },
-      { id: 'creer-outil', category: "Créer avec l'IA, sans savoir coder", label: 'Créer un outil pour votre entreprise', description: 'Suivre vos clients, vos rendez-vous ou votre stock', price: 0, duration: '' },
-      { id: 'creer-app', category: "Créer avec l'IA, sans savoir coder", label: 'Créer une application', description: "Pour téléphone ou ordinateur, de l'idée au lancement", price: 0, duration: '' },
+      { id: 'pack-createur', category: "L'intelligence artificielle (IA)", label: 'Pack Créateur de contenu IA', description: 'Vidéos, images et voix off avec Veo, Kling, Midjourney et ElevenLabs', price: 0, duration: '' },
+      { id: 'pack-avatar', category: "L'intelligence artificielle (IA)", label: 'Pack Avatar & Influenceur IA', description: 'Votre clone vidéo qui parle à votre place, avec HeyGen et Higgsfield', price: 0, duration: '' },
+      { id: 'pack-productivite', category: "L'intelligence artificielle (IA)", label: 'Pack Productivité IA', description: 'ChatGPT, Claude et Gemini pour travailler deux fois plus vite', price: 0, duration: '' },
+      { id: 'pack-site', category: "Créer avec l'IA, sans savoir coder", label: 'Pack Site web & Landing page', description: 'Votre site pro en ligne, avec Lovable, Bolt ou Framer', price: 0, duration: '' },
+      { id: 'pack-app', category: "Créer avec l'IA, sans savoir coder", label: 'Pack Application & SaaS', description: 'Votre application web ou mobile, avec Lovable, Replit et Claude', price: 0, duration: '' },
+      { id: 'pack-agents', category: "Créer avec l'IA, sans savoir coder", label: 'Pack Agents IA & Automatisation', description: 'Un assistant qui répond à vos clients et fait vos tâches, avec n8n et Make', price: 0, duration: '' },
     ],
     // Une seule formule = aucune question posée au client. Plusieurs = il choisit.
     formats: [
@@ -267,10 +263,18 @@ const defaultSettings = {
 // formules, horaires, textes) repart des valeurs par défaut actuelles ; seuls les
 // réglages propres à l'admin hors contenu sont conservés. Une seule fois : l'admin
 // réenregistre ensuite avec la version courante.
+const OLD_TOPIC_IDS = ['ia-chatgpt', 'ia-video', 'ia-textes', 'ia-images', 'ia-reseaux', 'ia-temps', 'creer-site', 'creer-page-vente', 'creer-outil', 'creer-app']
 function upgradeCoaching(saved) {
   const def = defaultSettings.coaching
   if (!saved) return { ...def }
   if (saved.version === def.version) return { ...def, ...saved }
+  // v5 → v6 : sujets remplacés par des packs. Le reste est conservé, et les
+  // sujets ne sont remplacés que s'ils n'ont pas été personnalisés par l'admin.
+  if (saved.version === 5) {
+    const merged = { ...def, ...saved, version: def.version }
+    if ((saved.topics || []).every(t => OLD_TOPIC_IDS.includes(t.id))) merged.topics = def.topics
+    return merged
+  }
   // v4 → v5 : séance possible à plusieurs. On garde tout ce que l'admin a saisi,
   // seuls les anciens textes par défaut (« individuel ») sont remplacés.
   if (saved.version === 4) {
