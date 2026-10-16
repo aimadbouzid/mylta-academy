@@ -34,7 +34,7 @@ export default function CoachingPage() {
 
   const [step, setStep] = useState(0)
   const [topicId, setTopicId] = useState('')
-  const [participants, setParticipants] = useState(1)
+  const [participants, setParticipants] = useState(null) // choisi par le client, rien d'imposé
   const [formatId, setFormatId] = useState('')
   const [channel, setChannel] = useState('')
   const [date, setDate] = useState('')
@@ -131,7 +131,7 @@ export default function CoachingPage() {
     if (channels.length > 0 && !channel) return setError('Choisissez comment faire l\'appel vidéo.')
     setSubmitting(true)
     try {
-      const { data } = await api.post('/coaching/book', { fullName, phone, topicId, formatId, channel, date, timeSlot, message, website, participants })
+      const { data } = await api.post('/coaching/book', { fullName, phone, topicId, formatId, channel, date, timeSlot, message, website, participants: people })
       setDone(data.booking)
       requestAnimationFrame(() => topRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }))
     } catch (err) {
@@ -143,6 +143,8 @@ export default function CoachingPage() {
   }
 
   const maxPeople = Math.max(1, Number(cfg?.maxParticipants) || 1)
+  // Une seule formule possible (individuel uniquement) : rien à choisir.
+  const people = maxPeople === 1 ? 1 : participants
   // La dernière option, à partir de 4, représente un groupe (4 personnes et plus).
   const isGroup = (n) => n >= 4 && n === maxPeople
   const peopleLabel = (n) => (n <= 1 ? 'Individuel' : isGroup(n) ? `En groupe (${n} personnes et +)` : `${n} personnes`)
@@ -320,9 +322,11 @@ export default function CoachingPage() {
                           ))}
                         </div>
                         <p className="text-xs text-academy-textMain/55 mt-1.5">
-                          {participants === 1
-                            ? 'Le coach se concentre à 100 % sur votre projet : c’est la formule la plus efficace.'
-                            : 'Avec des amis ou des collègues, dans le même appel vidéo.'}
+                          {participants === null
+                            ? 'Choisissez la formule qui vous convient.'
+                            : participants === 1
+                              ? 'Le coach se concentre à 100 % sur votre projet : c’est la formule la plus efficace.'
+                              : 'Avec des amis ou des collègues, dans le même appel vidéo.'}
                         </p>
                       </div>
                     )}
@@ -330,14 +334,14 @@ export default function CoachingPage() {
                     <div className="rounded-xl border-2 border-academy-primary/30 bg-academy-primary/5 p-4">
                       <p className="text-xs font-black uppercase tracking-wider text-academy-primary mb-1">Votre séance</p>
                       <p className="text-xl font-black">{duration ? `${duration} en appel vidéo` : 'En appel vidéo'}</p>
-                      <p className="text-sm font-semibold mt-0.5">{peopleLabel(participants)}</p>
+                      {people && <p className="text-sm font-semibold mt-0.5">{peopleLabel(people)}</p>}
                       <p className="text-sm text-academy-textMain/60 mt-1">
                         {price > 0 ? money(price, cfg.currency) : 'Le prix vous est donné sur WhatsApp après la réservation.'}
                       </p>
                     </div>
 
-                    <button type="button" disabled={!topicId} onClick={() => goTo(1)} className={primaryBtn}>
-                      {topicId ? 'Choisir ma date' : 'Choisissez un sujet'} <ArrowRight size={18} />
+                    <button type="button" disabled={!topicId || !people} onClick={() => goTo(1)} className={primaryBtn}>
+                      {!topicId ? 'Choisissez un sujet' : !people ? 'Choisissez votre formule' : 'Choisir ma date'} <ArrowRight size={18} />
                     </button>
                     {settings?.inPerson?.enabled && (
                       <p className="text-center text-sm">
@@ -416,7 +420,7 @@ export default function CoachingPage() {
                   <form onSubmit={handleSubmit} className={`${card} space-y-4 relative`}>
                     <div className="bg-academy-surface rounded-xl p-4 text-sm space-y-1.5">
                       <p className="font-bold">{topic?.label}</p>
-                      <p className="text-academy-textMain/70">{peopleLabel(participants)}</p>
+                      <p className="text-academy-textMain/70">{peopleLabel(people || 1)}</p>
                       <p className="text-academy-textMain/70">{formatDate(date)}{timeSlot ? ` à ${timeSlot.replace(':', 'h')}` : ''}{duration ? ` · ${duration}` : ''}</p>
                       <p className="font-black">{price > 0 ? money(price, cfg.currency) : 'Le prix vous sera donné sur WhatsApp'}</p>
                     </div>
