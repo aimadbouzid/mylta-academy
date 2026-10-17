@@ -328,7 +328,7 @@ export default function InPersonPage() {
                             d'un seul geste la date ET le moment de la journée. */}
                         {[...sessions]
                           .sort((a, b) => a.date.localeCompare(b.date) || isMorning(b) - isMorning(a))
-                          .map(s => {
+                          .map((s, i) => {
                             const full = s.seatsLeft <= 0
                             const on = sessionId === s.id
                             const am = isMorning(s)
@@ -337,7 +337,11 @@ export default function InPersonPage() {
                                       className={`w-full text-left rounded-xl border-2 p-3 transition-colors ${on ? 'border-academy-primary bg-academy-primary/5' : 'border-academy-border'} ${full ? 'opacity-50 cursor-not-allowed' : ''}`}>
                                 <div className="flex items-start justify-between gap-3">
                                   <span className="min-w-0">
-                                    <span className="block font-bold text-[15px] leading-tight">{shortRange(s.date)}</span>
+                                    {/* Numéro de session : un repère à citer au téléphone ou sur
+                                        WhatsApp, là où « la formation du 20 » prête à confusion
+                                        entre le matin et le soir. */}
+                                    <span className="block text-[11px] font-black uppercase tracking-[0.12em] text-academy-primary">Formation n° {i + 1}</span>
+                                    <span className="block font-bold text-[15px] leading-tight mt-0.5">{shortRange(s.date)}</span>
                                     <span className="block text-xs text-academy-textMain/55 mt-0.5">3 jours de suite</span>
                                   </span>
                                   <span className={`shrink-0 inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] font-black uppercase tracking-wide ${am ? 'bg-amber-50 text-amber-900' : 'bg-indigo-50 text-indigo-900'}`}>
