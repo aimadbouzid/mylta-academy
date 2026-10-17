@@ -5,7 +5,7 @@ import { useToast } from '../../hooks/useToast.jsx'
 
 const input = 'w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2.5 text-white outline-none text-sm'
 const label = 'text-xs font-bold text-neutral-400 mb-1.5 block'
-const panel = 'bg-neutral-900/50 border border-white/5 rounded-2xl p-6'
+const panel = 'bg-neutral-900/50 border border-white/5 rounded-2xl p-4 sm:p-6'
 
 const slugify = (s) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
 const EMPTY = { id: '', title: '', category: '', level: 'Débutant', duration: '', price: 3000, oldPrice: 5000, description: '', program: [], included: [] }

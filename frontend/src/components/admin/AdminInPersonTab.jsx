@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { Users, Plus, Trash2, Save, MessageCircle, Pencil, X, QrCode, KeyRound, Download } from 'lucide-react'
+import { Users, Plus, Trash2, Save, MessageCircle, Pencil, X, QrCode, KeyRound, Download, ChevronDown } from 'lucide-react'
 import QRCode from 'qrcode'
 import AdminContestPanel from './AdminContestPanel'
 import api from '../../api/axios'
@@ -13,7 +13,7 @@ const STATUS = {
 const EMPTY_SESSION = { title: '', date: '', startTime: '09:00', endTime: '17:00', city: '', place: '', capacity: 10, price: 0, isOpen: true }
 
 const input = 'w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2.5 text-white outline-none text-sm'
-const panel = 'bg-neutral-900/50 border border-white/5 rounded-2xl p-6'
+const panel = 'bg-neutral-900/50 border border-white/5 rounded-2xl p-4 sm:p-6'
 const label = 'text-xs font-bold text-neutral-400 mb-1.5 block'
 
 const waLink = (r, extra = '') => {
@@ -22,6 +22,19 @@ const waLink = (r, extra = '') => {
   return `https://wa.me/${num}?text=${encodeURIComponent(`Bonjour ${r.fullName}, c'est Mylta Academy à propos du coaching présentiel${extra}.`)}`
 }
 const fmtDate = (s) => new Date(`${s}T12:00:00`).toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })
+
+// Section repliable : garde la page courte sur téléphone, l'essentiel reste ouvert.
+export function Fold({ title, children, defaultOpen = false }) {
+  return (
+    <details open={defaultOpen} className="group bg-neutral-900/50 border border-white/5 rounded-2xl">
+      <summary className="list-none [&::-webkit-details-marker]:hidden cursor-pointer select-none flex items-center justify-between gap-3 px-4 sm:px-6 py-4 font-bold">
+        {title}
+        <ChevronDown size={18} className="shrink-0 text-neutral-500 transition-transform group-open:rotate-180" />
+      </summary>
+      <div className="px-4 sm:px-6 pb-5 space-y-4">{children}</div>
+    </details>
+  )
+}
 
 function ListEditor({ title, items, onChange, placeholder }) {
   return (
@@ -205,36 +218,16 @@ export default function AdminInPersonTab() {
   )
 
   return (
-    <div className="space-y-6">
-      <div className="bg-gradient-to-r from-amber-500/10 to-red-500/10 border border-amber-500/20 rounded-2xl p-6 sm:p-8 flex flex-wrap items-center justify-between gap-4">
+    <div className="space-y-4 sm:space-y-6">
+      <div className="bg-gradient-to-r from-amber-500/10 to-red-500/10 border border-amber-500/20 rounded-2xl p-4 sm:p-8 flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="font-display font-bold text-2xl text-white mb-2 flex items-center gap-3"><Users className="text-amber-400" /> Coaching présentiel</h2>
+          <h2 className="font-display font-bold text-xl sm:text-2xl text-white mb-1 flex items-center gap-3"><Users className="text-amber-400" /> Coaching présentiel</h2>
           <p className="text-neutral-400 text-sm">Créez vos sessions quand vous avez la date. En attendant, les visiteurs s'inscrivent en liste d'attente.</p>
         </div>
         <label className="flex items-center gap-2 text-sm font-bold cursor-pointer">
           <input type="checkbox" checked={cfg.enabled} onChange={e => toggleEnabled(e.target.checked)} className="w-4 h-4" />
           Section visible sur le site
         </label>
-      </div>
-
-      {/* QR code d'inscription sur place */}
-      <div className={`${panel} space-y-3`}>
-        <h3 className="font-bold flex items-center gap-2"><QrCode size={18} /> QR code d'inscription sur place</h3>
-        <p className="text-sm text-neutral-400">Montrez ce QR aux participants : en le scannant, ils entrent leur nom et leur téléphone et reçoivent tout de suite leur identifiant et mot de passe. Sans ce QR, personne ne peut créer de compte par ce moyen. Générez-en un nouveau après chaque session.</p>
-        {qrImage ? (
-          <div className="flex flex-wrap items-start gap-4">
-            <img src={qrImage} alt="QR code d'inscription" className="w-40 h-40 rounded-xl bg-white p-1" />
-            <div className="space-y-2 text-sm">
-              <a href={qrImage} download="qr-inscription-mylta.png" className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white/10 hover:bg-white/15 font-bold"><Download size={15} /> Télécharger</a>
-              <div className="flex flex-wrap gap-2">
-                <button onClick={() => setJoinCode(false)} className="px-3 py-2 rounded-lg bg-white/10 hover:bg-white/15 font-bold">Nouveau QR</button>
-                <button onClick={() => setJoinCode(true)} className="px-3 py-2 rounded-lg text-red-400 hover:bg-red-500/10 font-bold">Désactiver</button>
-              </div>
-            </div>
-          </div>
-        ) : (
-          <button onClick={() => setJoinCode(false)} className="px-4 py-2.5 rounded-lg bg-white text-black font-bold inline-flex items-center gap-2"><QrCode size={16} /> Générer le QR code</button>
-        )}
       </div>
 
       {created && (
@@ -250,7 +243,8 @@ export default function AdminInPersonTab() {
       )}
 
       {/* Sessions */}
-      <form onSubmit={saveSession} className={`${panel} space-y-4`}>
+      <Fold key={editingId || 'new'} defaultOpen={!!editingId} title={editingId ? 'Modifier la session' : '+ Ajouter une session'}>
+      <form onSubmit={saveSession} className="space-y-4">
         <div className="flex items-center justify-between">
           <h3 className="font-bold">{editingId ? 'Modifier la session' : 'Nouvelle session'}</h3>
           {editingId && (
@@ -273,6 +267,7 @@ export default function AdminInPersonTab() {
           <Save size={16} /> {editingId ? 'Enregistrer la session' : 'Créer la session'}
         </button>
       </form>
+      </Fold>
 
       <div className="space-y-4">
         {sessions.length === 0 && <div className={`${panel} text-center text-neutral-500`}>Aucune session pour le moment.</div>}
@@ -320,9 +315,27 @@ export default function AdminInPersonTab() {
         ))}
       </div>
 
+      {/* QR code d'inscription sur place */}
+      <Fold title={<span className="flex items-center gap-2"><QrCode size={18} /> QR code d'inscription sur place</span>}>
+        <p className="text-sm text-neutral-400">Montrez ce QR aux participants : en le scannant, ils entrent leur nom et leur téléphone et reçoivent tout de suite leur identifiant et mot de passe. Sans ce QR, personne ne peut créer de compte par ce moyen. Générez-en un nouveau après chaque session.</p>
+        {qrImage ? (
+          <div className="flex flex-wrap items-start gap-4">
+            <img src={qrImage} alt="QR code d'inscription" className="w-40 h-40 rounded-xl bg-white p-1" />
+            <div className="space-y-2 text-sm">
+              <a href={qrImage} download="qr-inscription-mylta.png" className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white/10 hover:bg-white/15 font-bold"><Download size={15} /> Télécharger</a>
+              <div className="flex flex-wrap gap-2">
+                <button onClick={() => setJoinCode(false)} className="px-3 py-2 rounded-lg bg-white/10 hover:bg-white/15 font-bold">Nouveau QR</button>
+                <button onClick={() => setJoinCode(true)} className="px-3 py-2 rounded-lg text-red-400 hover:bg-red-500/10 font-bold">Désactiver</button>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <button onClick={() => setJoinCode(false)} className="px-4 py-2.5 rounded-lg bg-white text-black font-bold inline-flex items-center gap-2"><QrCode size={16} /> Générer le QR code</button>
+        )}
+      </Fold>
+
       {/* Textes de la page */}
-      <div className={`${panel} space-y-4`}>
-        <h3 className="font-bold">Textes de la page</h3>
+      <Fold title="Textes, prix et options">
         <div><label className={label}>Titre</label><input className={input} value={cfg.title} onChange={e => setCfg({ ...cfg, title: e.target.value })} /></div>
         <div><label className={label}>Sous-titre</label><textarea className={input} rows={2} value={cfg.subtitle} onChange={e => setCfg({ ...cfg, subtitle: e.target.value })} /></div>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-2xl">
@@ -342,7 +355,7 @@ export default function AdminInPersonTab() {
         <button type="button" onClick={saveTexts} disabled={busy} className="flex items-center gap-2 px-6 py-3 bg-emerald-600 hover:bg-emerald-500 rounded-xl font-bold transition-colors disabled:opacity-60">
           <Save size={16} /> Enregistrer la page
         </button>
-      </div>
+      </Fold>
 
       <AdminContestPanel />
     </div>

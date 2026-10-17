@@ -15,7 +15,7 @@ const STATUS = {
 
 const slugify = (s) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || `sujet-${Date.now()}`
 const input = 'w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2.5 text-white outline-none text-sm'
-const panel = 'bg-neutral-900/50 border border-white/5 rounded-2xl p-6'
+const panel = 'bg-neutral-900/50 border border-white/5 rounded-2xl p-4 sm:p-6'
 
 export default function AdminCoachingTab() {
   const { success: toastSuccess, error: toastError } = useToast()

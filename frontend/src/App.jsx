@@ -64,6 +64,7 @@ const ModuleRoute = ({ moduleName, children }) => {
 
 export default function App() {
   const { socket } = useSocket()
+  const { pathname } = useLocation()
   const { success } = useToast()
   const { settings } = useSiteSettings()
   // Actif par défaut, y compris pendant le chargement des réglages : on ne
@@ -181,7 +182,7 @@ export default function App() {
           <CookieBanner />
 
           {/* WhatsApp Button */}
-          <WhatsAppButton />
+          {!(pathname.startsWith('/admin') || pathname.startsWith('/instructor')) && <WhatsAppButton />}
 
           {/* Système de notifications toast — global */}
           <Toast />

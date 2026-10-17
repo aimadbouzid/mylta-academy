@@ -2,8 +2,8 @@ import { useState, useEffect, useCallback } from 'react'
 import { Gift, Trash2, Save, Shuffle, MessageCircle } from 'lucide-react'
 import api from '../../api/axios'
 import { useToast } from '../../hooks/useToast.jsx'
+import { Fold } from './AdminInPersonTab'
 
-const panel = 'bg-neutral-900/50 border border-white/5 rounded-2xl p-6'
 const label = 'text-xs font-bold text-neutral-400 mb-1.5 block'
 const input = 'w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2.5 text-white outline-none focus:border-white/40'
 
@@ -57,9 +57,8 @@ export default function AdminContestPanel() {
   if (!cfg) return null
 
   return (
-    <div className={`${panel} space-y-4`}>
+    <Fold title={<span className="flex items-center gap-2"><Gift size={18} className="text-pink-400" /> Concours — {entries.length} participant{entries.length > 1 ? 's' : ''}</span>}>
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h3 className="font-bold flex items-center gap-2"><Gift size={18} className="text-pink-400" /> Concours — formation gratuite</h3>
         <label className="flex items-center gap-2 text-sm font-bold cursor-pointer">
           <input type="checkbox" checked={!!cfg.enabled} onChange={e => save({ enabled: e.target.checked })} className="w-4 h-4" />
           Visible sur le site (accueil + page /concours)
@@ -96,6 +95,6 @@ export default function AdminContestPanel() {
           ))}
         </div>
       </div>
-    </div>
+    </Fold>
   )
 }

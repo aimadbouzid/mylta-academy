@@ -16,6 +16,7 @@ import { useAuth } from '../context/AuthContext'
 import { useToast } from '../hooks/useToast.jsx'
 import { optimizeImage } from '../utils/imageOptimizer'
 import Logo from '../components/Logo'
+import { useSiteSettings } from '../context/SiteSettingsContext'
 import CertificateGenerator from '../components/CertificateGenerator'
 import AdminCouponsTab from '../components/admin/AdminCouponsTab'
 import AdminPayoutsTab from '../components/admin/AdminPayoutsTab'
@@ -28,19 +29,19 @@ import { useLanguage } from '../context/LanguageContext'
 // ── Carte Statistique ──────────────────────────────────────────
 function StatCard({ icon: Icon, label, value, color, border, glowColor = 'from-blue-500/10' }) {
   return (
-    <div className={`bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-xl border border-white/5 rounded-2xl sm:rounded-3xl p-5 relative overflow-hidden group transition-all duration-500 hover:-translate-y-1 hover:border-white/10 hover:shadow-[0_20px_50px_rgba(0,0,0,0.4)]`}>
+    <div className={`bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-xl border border-white/5 rounded-2xl sm:rounded-3xl p-3.5 sm:p-5 relative overflow-hidden group transition-all duration-500 hover:-translate-y-1 hover:border-white/10 hover:shadow-[0_20px_50px_rgba(0,0,0,0.4)]`}>
       {/* Background ambient glow */}
       <div className={`absolute -right-8 -bottom-8 w-28 h-28 bg-gradient-to-br ${glowColor} to-transparent rounded-full blur-2xl opacity-30 group-hover:opacity-60 transition-opacity duration-500`} />
       <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
       
       <div className="flex items-start justify-between">
-        <div className="space-y-3">
-          <p className="text-neutral-400 text-xs font-semibold tracking-wide uppercase">{label}</p>
-          <p className="font-display font-black text-2xl sm:text-3xl text-white tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-white to-neutral-400">
+        <div className="space-y-1.5 sm:space-y-3 min-w-0">
+          <p className="text-neutral-400 text-[10px] sm:text-xs font-semibold tracking-wide uppercase">{label}</p>
+          <p className="font-display font-black text-xl sm:text-3xl text-white tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-white to-neutral-400">
             {value}
           </p>
         </div>
-        <div className={`w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br ${color} flex items-center justify-center border border-white/10 shadow-lg`}>
+        <div className={`hidden sm:flex w-11 h-11 rounded-xl bg-gradient-to-br ${color} items-center justify-center border border-white/10 shadow-lg`}>
           <Icon className="w-5 h-5 text-white" />
         </div>
       </div>
@@ -1836,23 +1837,40 @@ export default function AdminDashboard() {
   }
 
   const handleLogout = () => { logout(); navigate('/') }
+  const { settings: siteSettings } = useSiteSettings()
+  const instructorsOn = siteSettings?.modules?.instructorEnabled !== false
 
+  // Menu rangé par thème ; les écrans formateurs n'apparaissent que si le module est actif.
   const SIDEBAR = [
+    { group: 'Essentiel' },
     { id: 'overview', icon: LayoutDashboard, label: 'Tableau de bord' },
-    { id: 'presence', icon: Radio, label: 'Présence & Clics', badge: 'Live' },
-    { id: 'receipts', icon: ClipboardCheck, label: 'Validation paiements', badge: stats?.pendingReceipts > 0 ? stats.pendingReceipts : null },
-    { id: 'courses',  icon: BookOpen, label: 'Gestion formations' },
-    { id: 'upcoming', icon: Clock, label: 'Formations à venir' },
-    { id: 'instructors', icon: GraduationCap, label: 'Formateurs' },
-    { id: 'instructor_apps', icon: GraduationCap, label: 'Candidatures' },
-    { id: 'payouts', icon: CreditCard, label: 'Retraits Formateurs' },
-    { id: 'certificates', icon: Award, label: 'Certificats' },
-    { id: 'coupons', icon: Ticket, label: 'Coupons (Promo)' },
-    { id: 'coaching', icon: CalendarDays, label: 'Coaching en ligne' },
+    { id: 'receipts', icon: ClipboardCheck, label: 'Paiements à valider', badge: stats?.pendingReceipts > 0 ? stats.pendingReceipts : null },
     { id: 'in_person', icon: Users, label: 'Coaching présentiel' },
+    { id: 'coaching', icon: CalendarDays, label: 'Coaching en ligne' },
+    { group: 'Formations' },
+    { id: 'courses',  icon: BookOpen, label: 'Formations en ligne' },
+    { id: 'upcoming', icon: Clock, label: 'Formations à venir' },
+    { id: 'certificates', icon: Award, label: 'Certificats' },
+    { id: 'coupons', icon: Ticket, label: 'Codes promo' },
+    ...(instructorsOn ? [
+      { group: 'Formateurs' },
+      { id: 'instructors', icon: GraduationCap, label: 'Formateurs' },
+      { id: 'instructor_apps', icon: GraduationCap, label: 'Candidatures' },
+      { id: 'payouts', icon: CreditCard, label: 'Retraits' },
+    ] : []),
+    { group: 'Site' },
+    { id: 'site_cms', icon: Globe, label: 'Contenu du site' },
+    { id: 'presence', icon: Radio, label: 'Visiteurs en direct' },
     { id: 'newsletter', icon: Mail, label: 'Newsletter', badge: stats?.totalSubscribers > 0 ? stats.totalSubscribers : null },
-    { id: 'site_cms', icon: Globe, label: 'Gestion du Site (CMS)' },
     { id: 'settings', icon: Settings, label: 'Paramètres' },
+  ]
+  const currentLabel = SIDEBAR.find(i => i.id === tab)?.label || 'Administration'
+  // Barre du bas (téléphone) : les écrans utilisés tous les jours.
+  const BOTTOM_NAV = [
+    { id: 'overview', icon: LayoutDashboard, label: 'Accueil' },
+    { id: 'receipts', icon: ClipboardCheck, label: 'Paiements', badge: stats?.pendingReceipts > 0 ? stats.pendingReceipts : null },
+    { id: 'in_person', icon: Users, label: 'Présentiel' },
+    { id: 'coaching', icon: CalendarDays, label: 'En ligne' },
   ]
 
   return (
@@ -1880,15 +1898,16 @@ export default function AdminDashboard() {
           </button>
         </div>
 
-        <nav className="flex-1 p-4 space-y-1.5">
+        <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
           {SIDEBAR.map(item => {
+            if (item.group) return <p key={item.group} className="px-4 pt-4 pb-1 text-[10px] font-bold uppercase tracking-[0.18em] text-neutral-600">{item.group}</p>
             const Icon = item.icon
             const active = tab === item.id
             return (
               <button
                 key={item.id}
                 onClick={() => { setTab(item.id); setIsSidebarOpen(false) }}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-300 text-left group relative border
+                className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 text-left group relative border
                             ${active 
                               ? 'bg-blue-600/10 border-blue-500/30 text-white shadow-[0_0_20px_rgba(59,130,246,0.1)]' 
                               : 'border-transparent text-neutral-400 hover:bg-white/[0.03] hover:text-white'}`}
@@ -1932,20 +1951,20 @@ export default function AdminDashboard() {
       {/* Main Content */}
       <main className="flex-1 overflow-auto relative z-10 w-full h-screen">
         {/* Mobile Header */}
-        <div className="lg:hidden flex items-center justify-between p-4 border-b border-white/5 bg-neutral-900/50 backdrop-blur-md sticky top-0 z-30">
-          <Logo size="sm" theme="dark" />
+        <div className="lg:hidden flex items-center justify-between px-4 py-3 border-b border-white/5 bg-neutral-950/90 backdrop-blur-md sticky top-0 z-30">
+          <p className="font-bold text-[15px] truncate">{currentLabel}</p>
           <button onClick={() => setIsSidebarOpen(true)} className="p-2 bg-white/5 border border-white/10 rounded-lg text-white hover:bg-white/10 transition">
             <Menu size={20} />
           </button>
         </div>
 
-        <div className="p-6 lg:p-12 max-w-7xl mx-auto">
+        <div className="p-4 pb-24 sm:p-6 lg:p-12 max-w-7xl mx-auto">
 
           {/* OVERVIEW */}
           {tab === 'overview' && (
-            <div className="animate-fade-up space-y-10">
+            <div className="animate-fade-up space-y-6 sm:space-y-10">
               <div>
-                <h1 className="font-display font-bold text-4xl text-white mb-2 tracking-tight">Tableau de bord</h1>
+                <h1 className="font-display font-bold text-2xl sm:text-4xl text-white mb-1 sm:mb-2 tracking-tight">Tableau de bord</h1>
                 <p className="text-neutral-400">Bienvenue, <span className="text-white font-medium">{user?.name}</span> — Vue d&apos;ensemble de la plateforme</p>
               </div>
 
@@ -1958,7 +1977,7 @@ export default function AdminDashboard() {
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 animate-fade-up" style={{ animationDelay: '0.2s' }}>
                 {/* Action Valider Paiements */}
-                <button onClick={() => setTab('receipts')} className="bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-xl border border-white/5 rounded-2xl sm:rounded-3xl p-5 sm:p-7 text-left hover:border-amber-500/30 hover:-translate-y-1 hover:shadow-2xl shadow-amber-500/5 transition-all duration-500 group relative overflow-hidden flex flex-col justify-between min-h-[170px]">
+                <button onClick={() => setTab('receipts')} className="bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-xl border border-white/5 rounded-2xl sm:rounded-3xl p-4 sm:p-7 text-left hover:border-amber-500/30 hover:-translate-y-1 hover:shadow-2xl shadow-amber-500/5 transition-all duration-500 group relative overflow-hidden flex flex-col justify-between min-h-[110px] sm:min-h-[170px]">
                   <div className="absolute top-0 right-0 p-4 sm:p-6 opacity-[0.02] transform translate-x-2 -translate-y-2 group-hover:scale-110 group-hover:opacity-[0.05] transition-all duration-700">
                     <ClipboardCheck className="w-24 h-24 text-amber-500" />
                   </div>
@@ -1976,7 +1995,7 @@ export default function AdminDashboard() {
                 </button>
 
                 {/* Action Gérer formations */}
-                <button onClick={() => setTab('courses')} className="bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-xl border border-white/5 rounded-2xl sm:rounded-3xl p-5 sm:p-7 text-left hover:border-blue-500/30 hover:-translate-y-1 hover:shadow-2xl shadow-blue-500/5 transition-all duration-500 group relative overflow-hidden flex flex-col justify-between min-h-[170px]">
+                <button onClick={() => setTab('courses')} className="bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-xl border border-white/5 rounded-2xl sm:rounded-3xl p-4 sm:p-7 text-left hover:border-blue-500/30 hover:-translate-y-1 hover:shadow-2xl shadow-blue-500/5 transition-all duration-500 group relative overflow-hidden flex flex-col justify-between min-h-[110px] sm:min-h-[170px]">
                   <div className="absolute top-0 right-0 p-4 sm:p-6 opacity-[0.02] transform translate-x-2 -translate-y-2 group-hover:scale-110 group-hover:opacity-[0.05] transition-all duration-700">
                     <BookOpen className="w-24 h-24 text-blue-500" />
                   </div>
@@ -1994,7 +2013,7 @@ export default function AdminDashboard() {
                 </button>
 
                 {/* Action Générer Certificats */}
-                <button onClick={() => setTab('certificates')} className="bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-xl border border-white/5 rounded-2xl sm:rounded-3xl p-5 sm:p-7 text-left hover:border-[#d25b5b]/30 hover:-translate-y-1 hover:shadow-2xl shadow-[#d25b5b]/5 transition-all duration-500 group relative overflow-hidden flex flex-col justify-between min-h-[170px]">
+                <button onClick={() => setTab('certificates')} className="bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-xl border border-white/5 rounded-2xl sm:rounded-3xl p-4 sm:p-7 text-left hover:border-[#d25b5b]/30 hover:-translate-y-1 hover:shadow-2xl shadow-[#d25b5b]/5 transition-all duration-500 group relative overflow-hidden flex flex-col justify-between min-h-[110px] sm:min-h-[170px]">
                   <div className="absolute top-0 right-0 p-4 sm:p-6 opacity-[0.02] transform translate-x-2 -translate-y-2 group-hover:scale-110 group-hover:opacity-[0.05] transition-all duration-700">
                     <Award className="w-24 h-24 text-[#d25b5b]" />
                   </div>
@@ -2415,6 +2434,25 @@ export default function AdminDashboard() {
           {tab === 'upcoming' && <AdminUpcomingTab />}
           {tab === 'settings' && <SettingsTab />}
         </div>
+        {/* Barre de navigation du bas (téléphone) */}
+        <nav className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-neutral-950/95 backdrop-blur-md border-t border-white/10 grid grid-cols-5 pb-[env(safe-area-inset-bottom)]">
+          {BOTTOM_NAV.map(item => {
+            const Icon = item.icon
+            const active = tab === item.id
+            return (
+              <button key={item.id} onClick={() => setTab(item.id)}
+                      className={`relative flex flex-col items-center gap-0.5 py-2 text-[10px] font-semibold ${active ? 'text-white' : 'text-neutral-500'}`}>
+                <Icon size={20} />
+                {item.label}
+                {item.badge && <span className="absolute top-1 right-[22%] min-w-4 h-4 px-1 rounded-full bg-amber-500 text-black text-[9px] font-black flex items-center justify-center">{item.badge}</span>}
+              </button>
+            )
+          })}
+          <button onClick={() => setIsSidebarOpen(true)} className="flex flex-col items-center gap-0.5 py-2 text-[10px] font-semibold text-neutral-500">
+            <Menu size={20} />
+            Plus
+          </button>
+        </nav>
       </main>
 
       {imgModal && <ReceiptImageModal url={imgModal} onClose={() => setImgModal(null)} />}
