@@ -24,7 +24,7 @@ function Card({ Icon, kicker, title, text, facts, next, nextLabel = 'Prochaine',
         <Icon size={17} />
       </span>
       <p className="mt-3 text-[10px] font-black uppercase tracking-[0.18em] text-academy-textMain/45">{kicker}</p>
-      <h3 className="mt-1 font-display font-black text-xl leading-tight text-academy-textMain">{title}</h3>
+      <h3 className="mt-1 font-display font-black text-2xl sm:text-[26px] leading-[1.1] tracking-tight text-academy-textMain">{title}</h3>
       <p className="mt-1.5 text-[13px] text-academy-textMain/60 leading-snug">{text}</p>
 
       <dl className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px]">
