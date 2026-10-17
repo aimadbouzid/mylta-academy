@@ -365,6 +365,18 @@ export default function InPersonPage() {
                         </button>
                       </div>
                     )}
+                    {/* Le tarif étudiant se décidait seulement à la dernière étape : on le
+                        propose dès le choix de la date, là où le visiteur compare les prix. */}
+                    {studentPrice > 0 && (
+                      <label className="flex items-center gap-3 rounded-xl border border-academy-border bg-academy-surface/60 p-3 cursor-pointer">
+                        <input type="checkbox" checked={isStudent} onChange={e => setIsStudent(e.target.checked)}
+                               className="w-5 h-5 shrink-0 accent-academy-primary" />
+                        <span className="text-[13px]">
+                          <span className="font-bold text-[14px] block">🎓 Je suis étudiant(e) — {money(studentPrice, currency)}</span>
+                          <span className="text-academy-textMain/65">Photo de votre carte étudiante demandée à la dernière étape.</span>
+                        </span>
+                      </label>
+                    )}
                     {whatsappNumber && (
                       <div className="rounded-xl border border-academy-border bg-academy-surface/60 p-3 text-[13px]">
                         <p className="font-bold text-[14px]">Vous travaillez en semaine ?</p>
