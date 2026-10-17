@@ -597,18 +597,9 @@ export const translations = {
     },
     landing_data: {
       features: [
-        {
-          title: 'Qualité Premium',
-          desc: 'Des formations d\'excellence conçues par des experts. Vidéos HD, cas pratiques et accompagnement pédagogique de haut niveau.'
-        },
-        {
-          title: 'Prix Imbattable & Paiement Local',
-          desc: 'Le meilleur rapport qualité/prix en Algérie. Payez facilement via Edahabia, CIB, CCP, BaridiMob ou RedotPay.'
-        },
-        {
-          title: 'Accès Illimité',
-          desc: 'Accédez à vos cours 24h/24 et 7j/7 sans aucune limite de temps. Apprenez à votre rythme et accédez aux mises à jour gratuites.'
-        }
+        { title: 'Qualité Premium', desc: 'Vidéos HD et cas pratiques, signés par des experts.' },
+        { title: 'Paiement Local', desc: 'Edahabia, CIB, CCP, BaridiMob ou RedotPay.' },
+        { title: 'Accès à Vie', desc: 'Vos cours 24h/24, mises à jour comprises.' }
       ],
       testimonials: [
         { name: 'Amina Berrahal', role: 'Responsable Marketing, Alger', text: 'Mylta Academy m\'a permis de maîtriser le marketing digital rapidement. Les cours sont clairs, concrets et adaptés.', course: 'Marketing Digital Avancé' },
@@ -1246,18 +1237,9 @@ export const translations = {
     },
     landing_data: {
       features: [
-        {
-          title: 'Premium Quality',
-          desc: 'Excellent courses designed by experts. HD videos, practical cases, and top-level pedagogical support.'
-        },
-        {
-          title: 'Unbeatable Price & Local Payment',
-          desc: 'The best value for money in Algeria. Pay easily via Edahabia, CIB, CCP, BaridiMob or RedotPay.'
-        },
-        {
-          title: 'Unlimited Access',
-          desc: 'Access your courses 24/7 with no time limits. Learn at your own pace and get free updates.'
-        }
+        { title: 'Premium Quality', desc: 'HD videos and real cases, built by experts.' },
+        { title: 'Local Payment', desc: 'Edahabia, CIB, CCP, BaridiMob or RedotPay.' },
+        { title: 'Lifetime Access', desc: 'Your courses 24/7, free updates included.' }
       ],
       testimonials: [
         { name: 'Amina Berrahal', role: 'Marketing Manager, Algiers', text: 'Mylta Academy allowed me to master digital marketing quickly. The courses are clear, practical, and adapted.', course: 'Advanced Digital Marketing' },
@@ -1886,18 +1868,9 @@ export const translations = {
     },
     landing_data: {
       features: [
-        {
-          title: 'جودة استثنائية',
-          desc: 'دورات متميزة مصممة من قبل خبراء. فيديوهات عالية الجودة، حالات عملية، ودعم تعليمي على أعلى مستوى.'
-        },
-        {
-          title: 'سعر لا يضاهى ودفع محلي',
-          desc: 'أفضل قيمة مقابل السعر في الجزائر. ادفع بسهولة عبر الذهبية، CIB، بريد الجزائر (CCP)، بريدي موب أو RedotPay.'
-        },
-        {
-          title: 'وصول غير محدود',
-          desc: 'قم بالوصول إلى دوراتك على مدار الساعة طوال أيام الأسبوع بدون حدود زمنية. تعلم بالسرعة التي تناسبك واحصل على تحديثات مجانية.'
-        }
+        { title: 'جودة استثنائية', desc: 'فيديوهات عالية الجودة وحالات عملية، من خبراء.' },
+        { title: 'دفع محلي', desc: 'الذهبية، CIB، CCP، بريدي موب أو RedotPay.' },
+        { title: 'وصول مدى الحياة', desc: 'دوراتك على مدار الساعة، مع تحديثات مجانية.' }
       ],
       testimonials: [
         { name: 'أمينة برحال', role: 'مديرة تسويق، الجزائر', text: 'سمحت لي ميلتا أكاديمي بإتقان التسويق الرقمي بسرعة. الدورات واضحة وعملية ومناسبة تمامًا.', course: 'التسويق الرقمي المتقدم' },

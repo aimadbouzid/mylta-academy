@@ -100,7 +100,7 @@ export default function LandingPage() {
         <Navbar onLoginClick={() => setLoginOpen(true)} />
 
         {/* HERO SECTION */}
-        <section className="relative flex items-center pt-32 sm:pt-36 lg:pt-40 pb-4 lg:pb-8 overflow-hidden">
+        <section className="relative flex items-center pt-24 sm:pt-36 lg:pt-40 pb-4 lg:pb-8 overflow-hidden">
           {/* Background grid pattern */}
           <div className="absolute inset-0 grid-pattern pointer-events-none opacity-40 z-0" />
           
@@ -115,7 +115,7 @@ export default function LandingPage() {
             <div className="flex-1 text-center lg:text-left">
 
               {/* Titre Principal Pro */}
-              <h1 className="font-display text-3xl sm:text-5xl lg:text-6xl font-black leading-[1.15] mb-4 lg:mb-6 text-academy-textMain tracking-tight">
+              <h1 className="font-display text-[26px] sm:text-5xl lg:text-6xl font-black leading-[1.15] mb-3 lg:mb-6 text-academy-textMain tracking-tight">
                 {landingData.hero_title ? (
                   <>
                     {landingData.hero_title.split(' ').slice(0, -1).join(' ')}{' '}
@@ -127,13 +127,13 @@ export default function LandingPage() {
               </h1>
 
               {/* Sous-titre */}
-              <p className="text-sm sm:text-base lg:text-lg text-academy-textMain/70 font-medium leading-relaxed mb-6 lg:mb-8 max-w-xl mx-auto lg:mx-0">
+              <p className="text-sm sm:text-base lg:text-lg text-academy-textMain/70 font-medium leading-relaxed mb-4 lg:mb-8 max-w-xl mx-auto lg:mx-0">
                 {landingData.hero_subtitle || siteSettings.hero?.subtitle || "Des cours structurés, concrets et conçus par des experts. Accédez aux meilleures formations et payez facilement via CCP ou BaridiMob."}
               </p>
 
               {/* Boutons d'action — volontairement sobres : pas de dégradé,
                   de halo ni de reflet animé, qui donnaient un rendu générique. */}
-              <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start mb-6 lg:mb-8">
+              <div className="flex flex-row gap-3 justify-center lg:justify-start mb-4 lg:mb-8">
                 <Link
                   to="/courses"
                   className="group inline-flex items-center justify-center gap-2 py-3 px-6 rounded-md bg-academy-textMain text-academy-surface text-sm font-semibold hover:opacity-90 transition-opacity"
@@ -146,16 +146,16 @@ export default function LandingPage() {
               {/* Moyens de paiement : simple mention en ligne.
                   Doit refléter les moyens réellement acceptés (cf. sous-titre
                   et PaymentModal) : Edahabia et CIB passent par Chargily. */}
-              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-x-3 gap-y-2 border-t border-academy-border pt-4 mt-2">
+              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-x-3 gap-y-1.5 sm:border-t sm:border-academy-border sm:pt-4 sm:mt-2">
                 <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-academy-textMain/45">
                   <CreditCard size={14} />
                   {t('landing.local_payment')}
                 </span>
-                <div className="flex flex-wrap items-center justify-center lg:justify-start gap-1.5">
+                <div className="flex flex-wrap items-center justify-center lg:justify-start gap-1">
                   {['Edahabia', 'CIB', 'CCP', 'BaridiMob', 'RedotPay'].map(label => (
                     <span
                       key={label}
-                      className="rounded-md border border-academy-border bg-academy-textMain/[0.04] px-2.5 py-1 text-[13px] font-semibold text-academy-textMain/85"
+                      className="rounded-md border border-academy-border bg-academy-textMain/[0.04] px-2 py-0.5 sm:px-2.5 sm:py-1 text-[11px] sm:text-[13px] font-semibold text-academy-textMain/85"
                     >
                       {label}
                     </span>
@@ -371,46 +371,48 @@ export default function LandingPage() {
         </section>
 
         {/* FAQ SECTION */}
-        <section className="py-12 lg:py-20 border-t border-academy-border relative overflow-hidden">
+        <section className="py-8 lg:py-12 border-t border-academy-border relative overflow-hidden">
           <div className="absolute top-[20%] left-[-10%] w-[50vw] h-[50vw] rounded-full bg-academy-primary/25 dark:bg-academy-primary/[0.08] pointer-events-none select-none z-0" style={{ filter: 'blur(130px)', WebkitFilter: 'blur(130px)' }} />
-          <div className="section-container max-w-4xl mx-auto relative z-10">
-            <div className="text-center mb-14">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-academy-primary/10 border border-academy-primary/20 mb-4">
-                <HelpCircle size={15} className="text-academy-primary" />
-                <span className="text-academy-primary text-sm font-bold tracking-wide uppercase">FAQ</span>
+          <div className="section-container relative z-10">
+            <div className="max-w-2xl mx-auto">
+            <div className="text-center mb-6">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-academy-primary/10 border border-academy-primary/20 mb-3">
+                <HelpCircle size={13} className="text-academy-primary" />
+                <span className="text-academy-primary text-xs font-bold tracking-wide uppercase">FAQ</span>
               </div>
-              <h2 className="font-display font-black text-3xl sm:text-4xl text-academy-textMain mb-3">
+              <h2 className="font-display font-bold text-xl sm:text-2xl text-academy-textMain">
                 {t('landing.faq')} <span className="text-academy-primary">— {t('landing.faq_answers')}</span>
               </h2>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-2">
               {faqItems.map((item, index) => {
                 const isOpen = openFaq === index
                 return (
                   <div key={index} className={`card-academy overflow-hidden transition-all duration-300 ${isOpen ? 'border-academy-primary shadow-soft-lg' : ''}`}>
                     <button
                       onClick={() => setOpenFaq(isOpen ? null : index)}
-                      className="w-full px-6 py-5 text-left flex items-center justify-between gap-4 focus:outline-none bg-red-950/5 border-red-900/10 backdrop-blur-md"
+                      className="w-full px-4 py-3 text-left flex items-center justify-between gap-3 focus:outline-none bg-red-950/5 border-red-900/10 backdrop-blur-md"
                     >
-                      <span className="font-display font-bold text-base sm:text-lg text-academy-textMain pr-2">
+                      <span className="font-display font-bold text-sm sm:text-[15px] text-academy-textMain pr-1 leading-snug">
                         {item.question}
                       </span>
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-transform duration-300 flex-shrink-0 ${
+                      <div className={`w-7 h-7 rounded-full flex items-center justify-center transition-transform duration-300 flex-shrink-0 ${
                         isOpen ? 'bg-academy-primary text-academy-onPrimary rotate-180' : 'bg-academy-surfaceDark text-academy-textMain/60'
                       }`}>
-                        <ChevronDown size={18} />
+                        <ChevronDown size={15} />
                       </div>
                     </button>
 
                     {isOpen && (
-                      <div className="px-6 pb-6 pt-1 text-academy-textMain/70 font-medium text-sm leading-relaxed border-t border-academy-border bg-red-950/5 border-red-900/10 backdrop-blur-md animate-fade-in">
+                      <div className="px-4 pb-4 pt-2 text-academy-textMain/70 font-medium text-[13px] leading-relaxed border-t border-academy-border bg-red-950/5 border-red-900/10 backdrop-blur-md animate-fade-in">
                         {item.answer}
                       </div>
                     )}
                   </div>
                 )
               })}
+            </div>
             </div>
           </div>
         </section>

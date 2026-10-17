@@ -4,7 +4,7 @@ import { ArrowRight, Video, MapPin, Clapperboard } from 'lucide-react'
 import api from '../api/axios'
 
 // Accueil : une seule section qui présente les trois façons de se former,
-// chacune reconnaissable à sa bande du haut (noire, rouge, clap).
+// chacune avec sa pastille d'icône.
 
 const money = (n) => `${Number(n).toLocaleString('fr-FR')} DA`
 const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1)
@@ -17,39 +17,31 @@ const range3 = (iso) => {
 }
 const hourShort = (t) => (t || '').replace(/^0/, '').replace(':00', 'h').replace(':', 'h')
 
-const BANDS = {
-  dark: { className: 'bg-neutral-900' },
-  red: { className: 'bg-academy-primary' },
-  slate: { style: { background: 'repeating-linear-gradient(-45deg, #111 0 12px, #fff 12px 24px)' }, className: 'border-b-2 border-neutral-900' },
-}
-
-function Card({ band, Icon, kicker, title, text, facts, next, nextLabel = 'Prochaine', to, cta, accent }) {
-  const b = BANDS[band]
+function Card({ Icon, kicker, title, text, facts, next, nextLabel = 'Prochaine', to, cta, accent }) {
   return (
-    <Link to={to} className="group flex flex-col bg-white dark:bg-academy-surfaceDark border border-academy-border rounded-2xl overflow-hidden hover:border-academy-textMain/30 hover:shadow-sm transition-all">
-      <div aria-hidden="true" className={`h-3 ${b.className || ''}`} style={b.style} />
-      <div className="flex-1 flex flex-col p-4 sm:p-5">
-        <p className={`inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.18em] ${accent}`}>
-          <Icon size={13} /> {kicker}
-        </p>
-        <h3 className="mt-1.5 font-display font-black text-xl leading-tight text-academy-textMain">{title}</h3>
-        <p className="mt-1 text-[13px] text-academy-textMain/60 leading-snug">{text}</p>
+    <Link to={to} className="group flex flex-col p-5 bg-white dark:bg-academy-surfaceDark border border-academy-border rounded-2xl hover:border-academy-textMain/30 hover:shadow-sm transition-all">
+      <span className={`inline-flex items-center justify-center w-9 h-9 rounded-xl ${accent}`}>
+        <Icon size={17} />
+      </span>
+      <p className="mt-3 text-[10px] font-black uppercase tracking-[0.18em] text-academy-textMain/45">{kicker}</p>
+      <h3 className="mt-1 font-display font-black text-xl leading-tight text-academy-textMain">{title}</h3>
+      <p className="mt-1.5 text-[13px] text-academy-textMain/60 leading-snug">{text}</p>
 
-        <dl className="mt-3 grid grid-cols-3 gap-px rounded-lg overflow-hidden border border-academy-border bg-academy-border">
-          {facts.map(([k, v]) => (
-            <div key={k} className="bg-white dark:bg-academy-surfaceDark px-2.5 py-2">
-              <dt className="text-[9px] font-bold uppercase tracking-[0.15em] text-academy-textMain/45">{k}</dt>
-              <dd className="font-bold text-[13px] leading-tight text-academy-textMain">{v}</dd>
-            </div>
-          ))}
-        </dl>
+      <dl className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px]">
+        {facts.map(([k, v], i) => (
+          <span key={k} className="inline-flex items-center gap-2">
+            {i > 0 && <span aria-hidden="true" className="text-academy-textMain/25">·</span>}
+            <dt className="sr-only">{k}</dt>
+            <dd className="font-bold text-academy-textMain">{v}</dd>
+          </span>
+        ))}
+      </dl>
 
-        {next && <p className="mt-3 text-[13px] text-academy-textMain/70"><span className="font-bold text-academy-textMain">{nextLabel} : </span>{next}</p>}
+      {next && <p className="mt-2 text-[13px] text-academy-textMain/60">{nextLabel} : <span className="font-semibold text-academy-textMain/80">{next}</span></p>}
 
-        <span className="mt-auto pt-4 inline-flex self-start items-center gap-1.5 text-sm font-bold border-b-2 border-academy-textMain text-academy-textMain group-hover:text-academy-primary group-hover:border-academy-primary transition-colors">
-          {cta} <ArrowRight size={15} />
-        </span>
-      </div>
+      <span className="mt-auto pt-4 inline-flex self-start items-center gap-1.5 text-sm font-bold text-academy-textMain group-hover:text-academy-primary transition-colors">
+        {cta} <ArrowRight size={15} className="group-hover:translate-x-0.5 transition-transform" />
+      </span>
     </Link>
   )
 }
@@ -73,7 +65,7 @@ export default function FormationsHub({ coaching, inPerson, express }) {
 
   const cards = []
   if (coaching?.enabled) cards.push(
-    <Card key="online" band="dark" Icon={Video} accent="text-academy-textMain" kicker="En ligne · depuis chez vous"
+    <Card key="online" Icon={Video} accent="bg-academy-textMain/5 text-academy-textMain" kicker="En ligne · depuis chez vous"
           title={coaching.title || 'Coaching en ligne'}
           text="Un coach en visio pour apprendre l'IA ou créer votre site. Seul ou avec vos amis."
           facts={[['Durée', coaching.formats?.[0]?.duration || '2h30'], ['Format', 'Visio'], ['Quand', '7 j / 7']]}
@@ -81,7 +73,7 @@ export default function FormationsHub({ coaching, inPerson, express }) {
           to="/coaching" cta="Choisir mon pack" />
   )
   if (inPerson?.enabled) cards.push(
-    <Card key="3j" band="red" Icon={MapPin} accent="text-academy-primary" kicker="Présentiel · 3 jours"
+    <Card key="3j" Icon={MapPin} accent="bg-academy-primary/10 text-academy-primary" kicker="Présentiel · 3 jours"
           title={inPerson.title || 'Formation en présentiel'}
           text={`En petit groupe chez Camden, à Béjaïa.${Number(inPerson.studentPrice) > 0 ? ` Étudiants : ${money(inPerson.studentPrice)}.` : ''}`}
           facts={[['Durée', '3 jours'], ['Lieu', 'Camden'], ['Prix', inPerson.price ? money(inPerson.price) : '—']]}
@@ -89,7 +81,7 @@ export default function FormationsHub({ coaching, inPerson, express }) {
           to="/coaching-presentiel" cta="Voir les dates" />
   )
   if (express?.enabled) cards.push(
-    <Card key="1j" band="slate" Icon={Clapperboard} accent="text-academy-primary" kicker="Nouveau · chaque samedi"
+    <Card key="1j" Icon={Clapperboard} accent="bg-academy-primary/10 text-academy-primary" kicker="Nouveau · chaque samedi"
           title="Montage vidéo en 1 jour"
           text="On filme, on monte, vous repartez avec votre vidéo terminée le jour même."
           facts={[['Horaires', `${hourShort(express.startTime)}–${hourShort(express.endTime)}`], ['Lieu', 'Viga Center'], ['Prix', money(express.price)]]}
