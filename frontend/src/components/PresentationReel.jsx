@@ -10,7 +10,7 @@ import { useSiteSettings } from '../context/SiteSettingsContext'
 
 // Scènes et durées. La séquence du samedi chez Viga Center n'entre dans la
 // séquence que si la formation d'un jour est activée dans les réglages.
-const DUR = { convention: 4800, formation: 4800, route: 6200, programme: 5800, viga: 5600, offre: 6000 }
+const DUR = { convention: 2600, formation: 4800, route: 6200, programme: 5800, viga: 5600, offre: 6000 }
 const ROUTE = 'M286 34 L262 62 L232 112 L204 160 L178 204 L160 170 L146 136'
 const money = (n) => `${Number(n).toLocaleString('fr-FR')} DA`
 const hour = (t) => (t || '').replace(/^0/, '').replace(':00', 'h').replace(':', 'h')
@@ -116,7 +116,6 @@ export default function PresentationReel() {
         @keyframes ae-bar   { from { transform: scaleX(0) } to { transform: scaleX(1) } }
         @keyframes ae-grain { 0% { transform: translate(0,0) } 25% { transform: translate(-2%,1%) } 50% { transform: translate(1%,-2%) } 75% { transform: translate(-1%,-1%) } 100% { transform: translate(0,0) } }
         @media (prefers-reduced-motion: reduce) {
-          .reel .rv > span, .reel .fx, .reel .pop, .reel .slam, .reel .push, .reel .grain {
             animation: none; opacity: 1; transform: none;
           }
           .reel .wipe { animation: none; clip-path: none }
@@ -156,21 +155,18 @@ export default function PresentationReel() {
         ))}
       </div>
 
-      {/* Signature discrète, en bas de cadre, présente sur toutes les scènes. */}
-      <img src="/logo-wordmark-white.png" alt="" aria-hidden="true"
-           className="absolute bottom-[3.5cqw] left-[4cqw] z-20 h-[2.4cqw] w-auto opacity-30 pointer-events-none" />
+      {/* Signature discrète, en bas de cadre. Absente de la scène d'ouverture,
+          où le logo est déjà le sujet : deux fois la même marque à l'écran. */}
+      {act !== 'convention' && (
+        <img src="/logo-wordmark-white.png" alt="" aria-hidden="true"
+             className="absolute bottom-[3.5cqw] left-[4cqw] z-20 h-[2.4cqw] w-auto opacity-30 pointer-events-none" />
+      )}
 
       <div key={step} className="push absolute inset-0 flex items-center justify-center px-[7cqw] pt-[7cqw] pb-[7.5cqw]">
         {act === 'convention' && (
           <div className="w-full text-center">
-            <div className="flex items-center justify-center gap-[4cqw]">
-              <span className="rv inline-block align-bottom"><span style={{ animationDelay: '.05s' }}><img src="/logo-wordmark-white.png" alt="Mylta Academy" className="h-[7cqw] w-auto" /></span></span>
-              <span className="pop text-[6cqw] font-extralight text-white/60" style={{ animationDelay: '.5s' }}>×</span>
-              <span className="rv inline-block align-bottom"><span style={{ animationDelay: '.22s' }}><span className="block bg-white rounded-[1.6cqw] p-[1cqw]"><img src="/camden-logo.jpg" alt="Camden International Institute" className="h-[10cqw] w-auto" /></span></span></span>
-            </div>
-            <span className="wipe block mx-auto mt-[4cqw] h-[0.25cqw] w-[10cqw] bg-red-500" style={{ animationDelay: '.8s' }} />
-            <span className="rv inline-block align-bottom mt-[3cqw]"><span className="text-[2.2cqw] font-bold uppercase tracking-[0.35em] text-white/55" style={{ animationDelay: '.95s' }}>Convention de partenariat</span></span>
-            <p className="slam mt-[1.6cqw] text-[3.4cqw] font-black uppercase tracking-[0.18em]" style={{ animationDelay: '1.3s' }}>Signée</p>
+            {/* Ouverture : la marque seule, au centre, et rien d'autre. */}
+            <img src="/logo-wordmark-white.png" alt="Mylta Academy" className="fx mx-auto h-[8cqw] w-auto" />
           </div>
         )}
 
