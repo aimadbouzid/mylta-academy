@@ -6,7 +6,7 @@ import { MapPin, Phone, Mail, Facebook } from 'lucide-react'
 // l'axe, plutôt qu'alignées à gauche contre le logo.
 export default function CamdenPartner() {
   return (
-    <section className="section-container pt-4">
+    <section className="section-container pt-0">
       <div className="max-w-3xl mx-auto bg-white border border-academy-border rounded-xl p-5 sm:p-6 text-center">
         <img src="/camden-logo.jpg" alt="Camden International Institute" width="96" height="64" loading="lazy"
              className="mx-auto w-24 sm:w-28 h-16 sm:h-20 object-contain" />

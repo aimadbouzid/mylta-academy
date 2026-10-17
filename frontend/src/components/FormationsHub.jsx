@@ -17,19 +17,20 @@ const range3 = (iso) => {
 }
 const hourShort = (t) => (t || '').replace(/^0/, '').replace(':00', 'h').replace(':', 'h')
 
-function Card({ kicker, title, text, facts, next, nextLabel = 'Prochaine', to, cta, accent, accentText, button }) {
+function Card({ kicker, title, text, facts, next, nextLabel = 'Prochaine', to, cta, accent, accentText, button, badge, surface = 'bg-white dark:bg-academy-surfaceDark border-academy-border' }) {
   const [mode, ...rest] = kicker.split(' · ')
   return (
-    <Link to={to} className="group flex flex-col overflow-hidden bg-white dark:bg-academy-surfaceDark border border-academy-border rounded-2xl hover:border-academy-textMain/30 hover:shadow-sm transition-all">
+    <Link to={to} className={`group flex flex-col overflow-hidden border rounded-2xl hover:border-academy-textMain/30 hover:shadow-sm transition-all ${surface}`}>
       {/* Chaque formation porte sa couleur, du bandeau jusqu'au bouton : les
           trois cartes se ressemblaient trop pour se distinguer d'un coup d'œil. */}
       <span aria-hidden="true" className={`block h-1.5 w-full ${accent}`} />
       <div className="flex flex-1 flex-col p-5 lg:p-6">
       {/* Le mode — en ligne ou présentiel — décide si la formation est
           accessible au visiteur : il doit se lire d'un coup d'œil. */}
-      <p className="text-xs font-black uppercase tracking-[0.12em]">
+      <p className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.12em]">
         <span className={accentText}>{mode}</span>
-        {rest.length > 0 && <span className="text-academy-textMain/50"> · {rest.join(' · ')}</span>}
+        {rest.length > 0 && <span className="text-academy-textMain/50">· {rest.join(' · ')}</span>}
+        {badge && <span className={`ml-auto shrink-0 rounded-full px-2 py-0.5 text-[10px] tracking-[0.1em] ${button}`}>{badge}</span>}
       </p>
       <h3 className="mt-1 font-display font-black text-2xl sm:text-[26px] leading-[1.1] lg:min-h-[2.2em] tracking-tight text-academy-textMain">{title}</h3>
       <p className="mt-1.5 text-[13px] lg:text-sm text-academy-textMain/60 leading-snug lg:min-h-[2.75em]">{text}</p>
@@ -92,6 +93,7 @@ export default function FormationsHub({ coaching, inPerson, express }) {
   )
   if (express?.enabled) cards.push(
     <Card key="1j" accent="bg-blue-600" accentText="text-blue-600" button="bg-blue-600 text-white" kicker="Présentiel · chaque samedi"
+          badge="Nouveau" surface="bg-blue-50 dark:bg-blue-500/10 border-blue-200 dark:border-blue-500/30"
           title="Montage vidéo en 1 jour"
           text="On filme, on monte, vous repartez avec votre vidéo terminée le jour même."
           facts={[['Horaires', `${hourShort(express.startTime)}–${hourShort(express.endTime)}`], ['Lieu', 'Viga Center'], ['Prix', money(express.price)]]}
