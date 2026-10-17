@@ -42,6 +42,17 @@ const compressPhoto = (file) => new Promise((resolve, reject) => {
 })
 
 const hour = (t) => (t ? t.replace(':', 'h') : '')
+const isMorning = (s) => !s.startTime || s.startTime < '12:00'
+// « Mar. 20 → jeu. 22 oct. » : début et fin des 3 jours, lisible d'un coup d'œil.
+const shortRange = (date) => {
+  const [y, m, d] = date.split('-').map(Number)
+  const start = new Date(y, m - 1, d)
+  const end = new Date(y, m - 1, d + 2)
+  const day = (dt) => dt.toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric' })
+  const month = (dt) => dt.toLocaleDateString('fr-FR', { month: 'short' })
+  const label = `${day(start)}${start.getMonth() === end.getMonth() ? '' : ` ${month(start)}`} → ${day(end)} ${month(end)}`
+  return label.charAt(0).toUpperCase() + label.slice(1)
+}
 const hours = (s) => (s.startTime ? `${hour(s.startTime)}${s.endTime ? ` – ${hour(s.endTime)}` : ''}` : '')
 const money = (n, cur) => `${Number(n).toLocaleString('fr-FR')} ${cur || 'DA'}`
 
@@ -64,6 +75,8 @@ export default function InPersonPage() {
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
   const [done, setDone] = useState(null)
+  const [period, setPeriod] = useState('all') // filtre matin / après-midi
+  const [showPlace, setShowPlace] = useState(false)
   const [copied, setCopied] = useState('')
 
   const loadSessions = () => {
@@ -291,42 +304,55 @@ export default function InPersonPage() {
                 )}
                 {step === 0 && <div className="mt-4"><TrainingLocation /></div>}
 
+
                 {/* 2. La date */}
                 {step === 1 && (
                   <section className={`${card} space-y-4`}>
                     <h2 className="font-bold text-lg">Choisissez votre session</h2>
                     {cfg.datesNotice && (
-                      <p className="text-[13px] font-semibold leading-snug rounded-xl bg-amber-50 border border-amber-200 text-amber-900 p-3">📅 {cfg.datesNotice}</p>
+                      <p className="text-[13px] leading-snug text-academy-textMain/70">{cfg.datesNotice}</p>
                     )}
                     {sessions === null ? (
                       <p className="text-sm text-academy-textMain/60">Chargement des dates…</p>
                     ) : (
-                      <div className="grid grid-cols-2 gap-2">
+                      <div className="space-y-2">
                         {sessions.length === 0 && (
-                          <p className="col-span-2 text-sm text-academy-textMain/70 bg-academy-surface rounded-xl p-4">
+                          <p className="text-sm text-academy-textMain/70 bg-academy-surface rounded-xl p-4">
                             Les prochaines dates arrivent bientôt. Inscrivez-vous : on vous prévient en premier.
                           </p>
                         )}
-                        {sessions.map(s => {
+                        {sessions.some(isMorning) && sessions.some(s => !isMorning(s)) && (
+                          <div className="flex gap-1.5 pb-1">
+                            {[['all', 'Tout voir'], ['am', 'Le matin'], ['pm', "L'après-midi"]].map(([id, label]) => (
+                              <button key={id} type="button" onClick={() => setPeriod(id)}
+                                      className={`h-8 px-3 rounded-full border text-[13px] font-semibold ${period === id ? 'border-academy-textMain bg-academy-textMain text-white' : 'border-academy-border bg-white text-academy-textMain/75'}`}>
+                                {label}
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                        {sessions.filter(s => period === 'all' || (period === 'am') === isMorning(s)).map(s => {
                           const full = s.seatsLeft <= 0
+                          const am = isMorning(s)
                           return (
-                            <button type="button" key={s.id} disabled={full} onClick={() => setSessionId(s.id)} className={`${choice(sessionId === s.id, full)} !p-2.5 !gap-2`}>
-                              <span className={radio(sessionId === s.id)} aria-hidden="true" />
-                              <span className="flex-1 min-w-0 space-y-0.5">
-                                <span className="font-bold block text-[12.5px] leading-snug">{formatDate(s.date)}</span>
-                                {s.title && <span className="block text-[11px] font-semibold leading-snug text-academy-textMain/80">{s.title}</span>}
-                                <span className="flex flex-col gap-0.5 text-[11px] text-academy-textMain/65">
-                                  {hours(s) && <span className="inline-flex items-center gap-1"><Clock size={11} /> {hours(s)}</span>}
-                                  {(s.city || s.place) && <span className="inline-flex items-center gap-1"><MapPin size={11} className="shrink-0" /> <span className="truncate">{[s.place, s.city].filter(Boolean).join(', ')}</span></span>}
-                                  <span className={`inline-flex items-center gap-1 font-bold ${full ? 'text-red-600' : s.seatsLeft <= 3 ? 'text-amber-600' : ''}`}>
-                                    <Users size={11} /> {full ? 'Complet' : !cfg.showSeats ? 'Places limitées' : s.seatsLeft === 1 ? 'Plus qu\'1 place' : `${s.seatsLeft} places restantes`}
-                                  </span>
+                            <button type="button" key={s.id} disabled={full} onClick={() => setSessionId(s.id)} className={`${choice(sessionId === s.id, full)} !p-3 !items-center`}>
+                              <span className={`${radio(sessionId === s.id)} !mt-0`} aria-hidden="true" />
+                              <span className="flex-1 min-w-0">
+                                <span className="font-bold block text-[15px] leading-tight">{shortRange(s.date)}</span>
+                                <span className={`block text-xs mt-0.5 ${full ? 'text-red-600 font-bold' : 'text-academy-textMain/55'}`}>
+                                  {full ? 'Complet' : !cfg.showSeats ? '3 jours de suite' : s.seatsLeft === 1 ? "Plus qu'1 place" : `${s.seatsLeft} places`}
                                 </span>
                               </span>
+                              {hours(s) && (
+                                <span className={`shrink-0 text-right rounded-lg px-2.5 py-1 border ${am ? 'bg-amber-50 border-amber-200 text-amber-800' : 'bg-indigo-50 border-indigo-200 text-indigo-800'}`}>
+                                  <span className="block text-[11px] font-black uppercase tracking-wide">{am ? 'Matin' : 'Après-midi'}</span>
+                                  <span className="block text-[12px] font-semibold">{hours(s)}</span>
+                                </span>
+                              )}
                             </button>
                           )
                         })}
-                        <button type="button" onClick={() => setSessionId(null)} className={`${choice(sessionId === null, false)} col-span-2 !p-3`}>
+                        <button type="button" onClick={() => setSessionId(null)} className={`${choice(sessionId === null, false)} !p-3`}>
                           <span className={radio(sessionId === null)} aria-hidden="true" />
                           <span>
                             <span className="font-bold block text-[15px]">{sessions.length === 0 ? 'Me prévenir des prochaines dates' : 'Aucune date ne me convient'}</span>
@@ -449,6 +475,22 @@ export default function InPersonPage() {
                 )}
 
                 {error && step !== 3 && <p className="mt-4 text-center text-sm font-bold text-red-600">{error}</p>}
+                {step > 0 && (
+                  <div className="mt-4">
+                    <button type="button" onClick={() => setShowPlace(v => !v)}
+                            className="w-full flex items-center justify-between gap-2 rounded-xl border border-academy-border bg-white px-4 py-3 text-left">
+                      <span className="flex items-center gap-2 min-w-0">
+                        <MapPin size={18} className="text-academy-primary shrink-0" />
+                        <span className="min-w-0">
+                          <span className="block text-[13px] font-bold">Lieu : Camden International Institute</span>
+                          <span className="block text-xs text-academy-textMain/60">Bir Slam, Béjaïa · à 4 min de la gare routière</span>
+                        </span>
+                      </span>
+                      <span className="shrink-0 text-[13px] font-bold text-academy-primary">{showPlace ? 'Masquer' : 'Voir le lieu'}</span>
+                    </button>
+                    {showPlace && <div className="mt-3"><TrainingLocation /></div>}
+                  </div>
+                )}
               </>
             )}
           </div>

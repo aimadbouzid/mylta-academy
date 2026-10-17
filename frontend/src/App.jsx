@@ -5,7 +5,14 @@ import ErrorBoundary from './components/ErrorBoundary'
 // Nouvelle page = on repart du haut (sinon le navigateur garde la position de la page précédente).
 function ScrollToTop() {
   const { pathname, hash } = useLocation()
-  useEffect(() => { if (!hash) window.scrollTo({ top: 0, left: 0, behavior: 'instant' }) }, [pathname, hash])
+  useEffect(() => {
+    if (hash) return
+    const root = document.documentElement
+    const prev = root.style.scrollBehavior
+    root.style.scrollBehavior = 'auto'
+    window.scrollTo(0, 0)
+    root.style.scrollBehavior = prev
+  }, [pathname, hash])
   return null
 }
 import Toast from './components/Toast'
