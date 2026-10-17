@@ -17,11 +17,17 @@ const range3 = (iso) => {
 }
 const hourShort = (t) => (t || '').replace(/^0/, '').replace(':00', 'h').replace(':', 'h')
 
-function Card({ kicker, title, text, facts, next, nextLabel = 'Prochaine', to, cta, accent }) {
+function Card({ kicker, title, text, facts, next, nextLabel = 'Prochaine', to, cta, accent, accentText }) {
+  const [mode, ...rest] = kicker.split(' · ')
   return (
     <Link to={to} className="group flex flex-col p-5 bg-white dark:bg-academy-surfaceDark border border-academy-border rounded-2xl hover:border-academy-textMain/30 hover:shadow-sm transition-all">
       <span aria-hidden="true" className={`block w-10 h-1 rounded-full ${accent}`} />
-      <p className="mt-3 text-[10px] font-black uppercase tracking-[0.18em] text-academy-textMain/45">{kicker}</p>
+      {/* Le mode — en ligne ou présentiel — décide si la formation est
+          accessible au visiteur : il doit se lire d'un coup d'œil. */}
+      <p className="mt-3 text-xs font-black uppercase tracking-[0.12em]">
+        <span className={accentText}>{mode}</span>
+        {rest.length > 0 && <span className="text-academy-textMain/50"> · {rest.join(' · ')}</span>}
+      </p>
       <h3 className="mt-1 font-display font-black text-2xl sm:text-[26px] leading-[1.1] tracking-tight text-academy-textMain">{title}</h3>
       <p className="mt-1.5 text-[13px] text-academy-textMain/60 leading-snug">{text}</p>
 
@@ -65,7 +71,7 @@ export default function FormationsHub({ coaching, inPerson, express }) {
 
   const cards = []
   if (coaching?.enabled) cards.push(
-    <Card key="online" accent="bg-academy-textMain" kicker="En ligne · depuis chez vous"
+    <Card key="online" accent="bg-academy-textMain" accentText="text-academy-textMain" kicker="En ligne · depuis chez vous"
           title={coaching.title || 'Coaching en ligne'}
           text="Un coach en visio pour apprendre l'IA ou créer votre site. Seul ou avec vos amis."
           facts={[['Durée', coaching.formats?.[0]?.duration || '2h30'], ['Format', 'Visio'], ['Quand', '7 j / 7']]}
@@ -73,7 +79,7 @@ export default function FormationsHub({ coaching, inPerson, express }) {
           to="/coaching" cta="Choisir mon pack" />
   )
   if (inPerson?.enabled) cards.push(
-    <Card key="3j" accent="bg-academy-primary" kicker="Présentiel · 3 jours"
+    <Card key="3j" accent="bg-academy-primary" accentText="text-academy-primary" kicker="Présentiel · 3 jours"
           title={inPerson.title || 'Formation en présentiel'}
           text={`En petit groupe chez Camden, à Béjaïa.${Number(inPerson.studentPrice) > 0 ? ` Étudiants : ${money(inPerson.studentPrice)}.` : ''}`}
           facts={[['Durée', '3 jours'], ['Lieu', 'Camden'], ['Prix', inPerson.price ? money(inPerson.price) : '—']]}
@@ -81,7 +87,7 @@ export default function FormationsHub({ coaching, inPerson, express }) {
           to="/coaching-presentiel" cta="Voir les dates" />
   )
   if (express?.enabled) cards.push(
-    <Card key="1j" accent="bg-academy-primary" kicker="Nouveau · chaque samedi"
+    <Card key="1j" accent="bg-academy-primary" accentText="text-academy-primary" kicker="Présentiel · chaque samedi"
           title="Montage vidéo en 1 jour"
           text="On filme, on monte, vous repartez avec votre vidéo terminée le jour même."
           facts={[['Horaires', `${hourShort(express.startTime)}–${hourShort(express.endTime)}`], ['Lieu', 'Viga Center'], ['Prix', money(express.price)]]}
