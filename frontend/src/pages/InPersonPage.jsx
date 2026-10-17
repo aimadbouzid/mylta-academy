@@ -6,6 +6,7 @@ import TrainingLocation from '../components/TrainingLocation'
 import SEOHead from '../components/SEOHead'
 import api from '../api/axios'
 import { useSiteSettings } from '../context/SiteSettingsContext'
+import StepIndicator from '../components/StepIndicator'
 import { formatDate } from '../utils/sessionDates'
 import { PAYMENT_INFO } from '../config/paymentConfig'
 
@@ -251,16 +252,7 @@ export default function InPersonPage() {
                   <p className="text-academy-textMain/60 sm:text-lg">{cfg.subtitle}</p>
                 </div>
 
-                <ol className="grid grid-cols-4 gap-2 mb-6">
-                  {STEPS.map((label, i) => (
-                    <li key={label}>
-                      <button type="button" disabled={i > step} onClick={() => goTo(i)} className="w-full text-left disabled:cursor-default">
-                        <span className={`block h-1.5 rounded-full mb-1.5 ${i <= step ? 'bg-academy-primary' : 'bg-academy-border'}`} />
-                        <span className={`text-[11px] sm:text-xs font-bold ${i === step ? 'text-academy-textMain' : 'text-academy-textMain/45'}`}>{i + 1}. {label}</span>
-                      </button>
-                    </li>
-                  ))}
-                </ol>
+                <StepIndicator steps={STEPS} current={step} onGo={goTo} />
 
                 {step > 0 && (
                   <button type="button" onClick={() => goTo(step - 1)} className="mb-4 inline-flex items-center gap-1.5 text-sm font-bold text-academy-textMain/60 hover:text-academy-textMain">
@@ -272,26 +264,38 @@ export default function InPersonPage() {
                 {step === 0 && (
                   <section className={`${card} space-y-5`}>
                     {(cfg.infos || []).length > 0 && (
-                      <ul className="flex flex-wrap gap-x-3 gap-y-1 text-[12.5px] font-semibold text-academy-textMain/70">
+                      <ul className="grid grid-cols-3 gap-px rounded-xl overflow-hidden border border-academy-border bg-academy-border">
                         {cfg.infos.map((info, i) => (
-                          <li key={i} className="inline-flex items-center gap-1"><Check size={13} className="text-emerald-600 shrink-0" /> {info}</li>
+                          <li key={i} className="bg-white px-1.5 py-2.5 text-center text-[12px] sm:text-[13px] font-bold leading-tight flex items-center justify-center">{info}</li>
                         ))}
                       </ul>
                     )}
 
-                    {(cfg.program || []).length > 0 && (
-                      <div>
-                        <h2 className="font-bold text-lg mb-3">Au programme</h2>
-                        <ol className="grid grid-cols-2 gap-x-3 gap-y-2">
-                          {cfg.program.map((p, i) => (
-                            <li key={i} className="flex items-baseline gap-2 border-b border-academy-border pb-2">
-                              <span className="text-xs font-black text-academy-primary tabular-nums">{String(i + 1).padStart(2, '0')}</span>
-                              <span className="text-[13.5px] font-semibold leading-snug">{p}</span>
-                            </li>
-                          ))}
-                        </ol>
-                      </div>
-                    )}
+                    {(cfg.program || []).length > 0 && (() => {
+                      // Le programme est réparti sur les 3 jours de la formation.
+                      const perDay = Math.ceil(cfg.program.length / 3)
+                      const days = [0, 1, 2].map(d => cfg.program.slice(d * perDay, (d + 1) * perDay)).filter(d => d.length)
+                      return (
+                        <div>
+                          <h2 className="font-display font-black text-xl mb-3">Le programme</h2>
+                          <ol className="space-y-0 border-t border-academy-border">
+                            {days.map((items, d) => (
+                              <li key={d} className="flex gap-4 py-3 border-b border-academy-border">
+                                <div className="shrink-0 w-14 text-center">
+                                  <span className="block text-[10px] font-bold uppercase tracking-[0.15em] text-academy-textMain/45">Jour</span>
+                                  <span className="block font-display font-black text-2xl leading-none text-academy-primary">{d + 1}</span>
+                                </div>
+                                <ul className="flex-1 space-y-1.5 pt-0.5">
+                                  {items.map((p, i) => (
+                                    <li key={i} className="text-[14.5px] font-semibold leading-snug">{p}</li>
+                                  ))}
+                                </ul>
+                              </li>
+                            ))}
+                          </ol>
+                        </div>
+                      )
+                    })()}
 
                     {price > 0 && <PriceBox />}
                     <button type="button" onClick={() => goTo(1)} className={primaryBtn}>

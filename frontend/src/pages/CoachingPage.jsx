@@ -5,6 +5,7 @@ import Navbar from '../components/Navbar'
 import SEOHead from '../components/SEOHead'
 import api from '../api/axios'
 import { useSiteSettings } from '../context/SiteSettingsContext'
+import StepIndicator from '../components/StepIndicator'
 
 const STEPS = ['Sujet', 'Date', 'Infos']
 const MONTHS = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre']
@@ -254,16 +255,7 @@ export default function CoachingPage() {
                   <p className="text-academy-textMain/60 sm:text-lg">{cfg.subtitle}</p>
                 </div>
 
-                <ol className="grid grid-cols-3 gap-2 mb-6">
-                  {STEPS.map((label, i) => (
-                    <li key={label}>
-                      <button type="button" disabled={i > step} onClick={() => goTo(i)} className="w-full text-left disabled:cursor-default">
-                        <span className={`block h-1.5 rounded-full mb-1.5 ${i <= step ? 'bg-academy-primary' : 'bg-academy-border'}`} />
-                        <span className={`text-[11px] sm:text-xs font-bold ${i === step ? 'text-academy-textMain' : 'text-academy-textMain/45'}`}>{i + 1}. {label}</span>
-                      </button>
-                    </li>
-                  ))}
-                </ol>
+                <StepIndicator steps={STEPS} current={step} onGo={goTo} />
 
                 {step > 0 && (
                   <button type="button" onClick={() => goTo(step - 1)} className="mb-4 inline-flex items-center gap-1.5 text-sm font-bold text-academy-textMain/60 hover:text-academy-textMain">
@@ -275,9 +267,9 @@ export default function CoachingPage() {
                 {step === 0 && (
                   <section className={`${card} space-y-5`}>
                     {(cfg.infos || []).length > 0 && (
-                      <ul className="flex flex-wrap gap-x-3 gap-y-1 text-[12.5px] font-semibold text-academy-textMain/70">
+                      <ul className="grid grid-cols-3 gap-px rounded-xl overflow-hidden border border-academy-border bg-academy-border">
                         {cfg.infos.map((info, i) => (
-                          <li key={i} className="inline-flex items-center gap-1"><Check size={13} className="text-emerald-600 shrink-0" /> {info}</li>
+                          <li key={i} className="bg-white px-1.5 py-2.5 text-center text-[12px] sm:text-[13px] font-bold leading-tight flex items-center justify-center">{info}</li>
                         ))}
                       </ul>
                     )}
