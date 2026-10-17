@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import {
   ArrowRight, Star, Shield, Infinity, CreditCard,
   Trophy, Users, BookOpen, TrendingUp, ChevronRight, Sparkles, ChevronDown, HelpCircle, ExternalLink,
-  Instagram, Facebook
+  Instagram, Facebook, Download
 } from 'lucide-react'
 import Navbar from '../components/Navbar'
 import SEOHead from '../components/SEOHead'
@@ -141,6 +141,14 @@ export default function LandingPage() {
                   {t('landing.discover_courses')}
                   <ArrowRight size={16} className="opacity-60 group-hover:translate-x-0.5 transition-transform" />
                 </Link>
+                <a
+                  href="/guide-aimad-bouzidi.pdf"
+                  download
+                  className="inline-flex items-center justify-center gap-2 py-3 px-6 rounded-md border border-academy-border text-academy-textMain text-sm font-semibold hover:bg-academy-textMain/[0.04] transition-colors"
+                >
+                  <Download size={16} className="opacity-60" />
+                  {t('landing.download_guide')}
+                </a>
               </div>
 
               {/* Moyens de paiement : simple mention en ligne.
