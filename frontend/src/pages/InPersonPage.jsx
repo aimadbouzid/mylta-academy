@@ -335,6 +335,16 @@ export default function InPersonPage() {
                         </button>
                       </div>
                     )}
+                    {whatsappNumber && (
+                      <div className="rounded-xl border border-academy-border bg-academy-surface/60 p-3 text-[13px]">
+                        <p className="font-bold text-[14px]">Vous travaillez en semaine ?</p>
+                        <p className="text-academy-textMain/70 mt-0.5">Formule week-end en 2 jours (samedi + dimanche), dans un autre lieu à Béjaïa. On organise ça ensemble sur WhatsApp.</p>
+                        <a href={`https://wa.me/${whatsappNumber.replace(/\D/g, '')}?text=${encodeURIComponent("Bonjour Mylta Academy, je suis intéressé(e) par la formation IA & Montage Vidéo en week-end (samedi + dimanche).")}`}
+                           target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex items-center gap-1.5 font-bold text-[#128C7E]">
+                          <MessageCircle size={16} /> En parler sur WhatsApp
+                        </a>
+                      </div>
+                    )}
                     <button type="button" disabled={sessions === null} onClick={() => goTo(2)} className={primaryBtn}>
                       Continuer <ArrowRight size={18} />
                     </button>

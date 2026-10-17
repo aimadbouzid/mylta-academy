@@ -258,7 +258,7 @@ const defaultSettings = {
     oldPrice: 16000, // prix barré affiché à côté (offre de lancement) ; 0 = pas de prix barré
     deposit: 3000,  // acompte obligatoire pour réserver sa place
     // Message affiché au-dessus des sessions (vide = rien) : utile tant que les dates ne sont pas définitives.
-    datesNotice: "Inscriptions ouvertes ! Le calendrier exact des sessions vous sera communiqué d'ici 2 à 4 jours.",
+    datesNotice: "Du dimanche au jeudi, de 8h30 à 12h30, chez Camden à Béjaïa : 3 matinées de suite.",
     showSeats: false,
     joinCode: '', // code secret du QR d'inscription sur place (vide = QR désactivé) // afficher « il reste N places » sur les sessions (désactivé par défaut)
     // Titres courts : affichés en cartes compactes (2 par ligne sur téléphone).
@@ -374,7 +374,7 @@ function getSettings() {
 // les valeurs par défaut au premier démarrage, donc un simple changement de
 // défaut ne l'atteint pas). Appliqué une fois : le prochain enregistrement admin
 // écrit settingsVersion à jour.
-const SETTINGS_VERSION = 7
+const SETTINGS_VERSION = 8
 const OLD_BANNER_TEXTS = ["🚀 Promo exceptionnelle : -50% sur toutes les formations ! Inscrivez-vous vite."]
 
 function migrateSettings(parsed, merged) {
@@ -404,6 +404,9 @@ function migrateSettings(parsed, merged) {
   }
   if ((parsed.settingsVersion || 1) < 7 && Number(merged.inPerson?.oldPrice) === 14000) {
     merged.inPerson = { ...merged.inPerson, oldPrice: 16000 }
+  }
+  if ((parsed.settingsVersion || 1) < 8 && merged.inPerson?.datesNotice === "Inscriptions ouvertes ! Le calendrier exact des sessions vous sera communiqué d'ici 2 à 4 jours.") {
+    merged.inPerson = { ...merged.inPerson, datesNotice: defaultSettings.inPerson.datesNotice }
   }
   merged.settingsVersion = SETTINGS_VERSION
   return merged
