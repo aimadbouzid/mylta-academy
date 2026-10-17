@@ -13,6 +13,7 @@ import UpcomingCourseModal from '../components/UpcomingCourseModal'
 import LoginModal from '../components/LoginModal'
 import PaymentModal from '../components/PaymentModal'
 import NextSessionAd from '../components/NextSessionAd'
+import PresentationReel from '../components/PresentationReel'
 import CamdenPartner from '../components/CamdenPartner'
 import IntroVideoModal from '../components/IntroVideoModal'
 import UniversalVideoPlayer from '../components/UniversalVideoPlayer'
@@ -162,7 +163,9 @@ export default function LandingPage() {
                   (dont le texte s'adresse à l'admin, pas au visiteur). */}
               <div className="relative max-w-xl mx-auto lg:mr-0">
                 <div className="absolute -inset-8 rounded-full bg-academy-primary/20 dark:bg-academy-primary/[0.07] pointer-events-none select-none z-0" style={{ filter: 'blur(60px)', WebkitFilter: 'blur(60px)' }} />
-                {/^\/[^/].*\.(mp4|webm)$/i.test(siteSettings.introVideoUrl || '') ? (
+                {siteSettings.inPerson?.enabled ? (
+                  <div className="relative z-10"><PresentationReel /></div>
+                ) : /^\/[^/].*\.(mp4|webm)$/i.test(siteSettings.introVideoUrl || '') ? (
                   <video
                     src={siteSettings.introVideoUrl}
                     poster={siteSettings.introVideoUrl.replace(/\.(mp4|webm)$/i, '-poster.jpg')}
