@@ -408,6 +408,9 @@ export default function CoachingPage() {
                             )
                           })}
                         </div>
+                        {booked.some(b => b.date === date && b.reason === 'presentiel') && (
+                          <p className="mt-2 text-xs text-academy-textMain/60">Les horaires barrés ne sont pas disponibles : le coach anime une formation présentielle ce jour-là.</p>
+                        )}
                       </div>
                     )}
 

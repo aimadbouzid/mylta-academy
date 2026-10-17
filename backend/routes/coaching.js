@@ -24,6 +24,37 @@ function dateError(date, cfg) {
   return null
 }
 
+// Créneaux en ligne qui tombent pendant une formation présentielle (3 jours consécutifs
+// à partir de la date de session) : le coach ne peut pas être aux deux endroits.
+const toMin = (t) => { const [h, m] = String(t).split(':').map(Number); return h * 60 + (m || 0) }
+const durationMin = (cfg) => {
+  const m = String(cfg.formats?.[0]?.duration || '').match(/(\d+)\s*h\s*(\d+)?/i)
+  return m ? Number(m[1]) * 60 + Number(m[2] || 0) : 150
+}
+async function inPersonBusy(cfg) {
+  const today = ymd(new Date())
+  const sessions = await prisma.inPersonSession.findMany({
+    where: { isOpen: true, date: { gte: ymd(new Date(Date.now() - 3 * 86400000)) } },
+    select: { date: true, startTime: true, endTime: true },
+  })
+  const len = durationMin(cfg)
+  const busy = []
+  for (const s of sessions) {
+    if (!s.startTime || !s.endTime) continue
+    const start = toMin(s.startTime) - 30 // marge pour se déplacer
+    const end = toMin(s.endTime) + 30
+    for (let i = 0; i < 3; i++) {
+      const day = ymd(new Date(toUtcNoon(s.date).getTime() + i * 86400000))
+      if (day < today) continue
+      for (const slot of cfg.timeSlots || []) {
+        const a = toMin(slot)
+        if (a < end && a + len > start) busy.push({ date: day, timeSlot: slot, reason: 'presentiel' })
+      }
+    }
+  }
+  return busy
+}
+
 // GET /api/coaching/availability — créneaux déjà pris (pour griser le calendrier)
 router.get('/availability', async (req, res, next) => {
   try {
@@ -34,8 +65,9 @@ router.get('/availability', async (req, res, next) => {
       where: { status: { not: 'CANCELLED' }, date: { gte: ymd(new Date()) } },
       select: { date: true, timeSlot: true },
     })
+    const busy = await inPersonBusy(cfg)
     res.setHeader('Cache-Control', 'no-store')
-    res.json({ booked: bookings })
+    res.json({ booked: [...bookings, ...busy] })
   } catch (err) { next(err) }
 })
 
@@ -100,6 +132,9 @@ router.post('/book', async (req, res, next) => {
     }
     const slot = slots.length > 0 ? timeSlot : ''
 
+    if (slot && (await inPersonBusy(cfg)).some(b => b.date === date && b.timeSlot === slot)) {
+      return res.status(409).json({ error: 'Ce créneau tombe pendant une formation présentielle. Choisissez un autre horaire.' })
+    }
     const taken = await prisma.coachingBooking.findFirst({
       where: { date, timeSlot: slot, status: { not: 'CANCELLED' } },
       select: { id: true },
