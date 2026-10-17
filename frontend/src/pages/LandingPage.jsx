@@ -211,8 +211,29 @@ export default function LandingPage() {
           </div>
         </section>
 
+        {siteSettings.contest?.enabled && !(siteSettings.contest.endDate && siteSettings.contest.endDate < new Date().toISOString().slice(0, 10)) && (
+          <section className="section-container pt-4">
+            <Link to="/concours" className="group relative flex max-w-3xl mx-auto bg-white border border-academy-border rounded-xl overflow-hidden hover:border-academy-textMain/30 transition-colors">
+              {/* Talon de ticket */}
+              <span className="shrink-0 flex items-center px-1.5 sm:px-2 bg-academy-primary text-academy-onPrimary">
+                <span className="[writing-mode:vertical-rl] rotate-180 text-[8px] font-bold uppercase tracking-[0.12em]">Concours</span>
+              </span>
+              <span className="border-l-2 border-dashed border-academy-border" />
+              <span className="flex-1 min-w-0 flex items-center justify-between gap-3 px-4 py-3.5">
+                <span className="min-w-0">
+                  <span className="block font-display font-black text-sm sm:text-base leading-tight text-academy-textMain">{siteSettings.contest.title}</span>
+                  <span className="block text-xs text-academy-textMain/55 mt-0.5">Présentiel ou en ligne · tirage au sort</span>
+                </span>
+                <span className="shrink-0 text-sm font-bold text-academy-textMain border-b-2 border-academy-textMain group-hover:border-academy-primary group-hover:text-academy-primary transition-colors">Participer</span>
+              </span>
+            </Link>
+          </section>
+        )}
+
+        <NextSessionAd enabled={!!siteSettings.inPerson?.enabled} notice={siteSettings.inPerson?.datesNotice} />
+
         {siteSettings.express?.enabled && (
-          <section className="section-container pt-6">
+          <section className="section-container pt-4">
             <Link to="/formation-1-jour" className="group block max-w-3xl mx-auto rounded-xl overflow-hidden border-2 border-neutral-900 bg-white text-neutral-900">
               <div aria-hidden="true" className="h-5 sm:h-6" style={{ background: 'repeating-linear-gradient(-45deg, #111 0 14px, #fff 14px 28px)' }} />
               <div className="border-t-2 border-neutral-900 px-4 pt-3.5 pb-4 sm:px-5">
@@ -241,27 +262,6 @@ export default function LandingPage() {
             </Link>
           </section>
         )}
-
-        {siteSettings.contest?.enabled && !(siteSettings.contest.endDate && siteSettings.contest.endDate < new Date().toISOString().slice(0, 10)) && (
-          <section className="section-container pt-4">
-            <Link to="/concours" className="group relative flex max-w-3xl mx-auto bg-white border border-academy-border rounded-xl overflow-hidden hover:border-academy-textMain/30 transition-colors">
-              {/* Talon de ticket */}
-              <span className="shrink-0 flex items-center px-1.5 sm:px-2 bg-academy-primary text-academy-onPrimary">
-                <span className="[writing-mode:vertical-rl] rotate-180 text-[8px] font-bold uppercase tracking-[0.12em]">Concours</span>
-              </span>
-              <span className="border-l-2 border-dashed border-academy-border" />
-              <span className="flex-1 min-w-0 flex items-center justify-between gap-3 px-4 py-3.5">
-                <span className="min-w-0">
-                  <span className="block font-display font-black text-sm sm:text-base leading-tight text-academy-textMain">{siteSettings.contest.title}</span>
-                  <span className="block text-xs text-academy-textMain/55 mt-0.5">Présentiel ou en ligne · tirage au sort</span>
-                </span>
-                <span className="shrink-0 text-sm font-bold text-academy-textMain border-b-2 border-academy-textMain group-hover:border-academy-primary group-hover:text-academy-primary transition-colors">Participer</span>
-              </span>
-            </Link>
-          </section>
-        )}
-
-        <NextSessionAd enabled={!!siteSettings.inPerson?.enabled} notice={siteSettings.inPerson?.datesNotice} />
 
         <CamdenPartner />
 
