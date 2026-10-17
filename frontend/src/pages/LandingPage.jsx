@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import {
   ArrowRight, Star, Shield, Infinity, CreditCard,
   Trophy, Users, BookOpen, TrendingUp, ChevronRight, Sparkles, ChevronDown, HelpCircle, ExternalLink,
-  Instagram, Facebook, Video, MapPin
+  Instagram, Facebook
 } from 'lucide-react'
 import Navbar from '../components/Navbar'
 import SEOHead from '../components/SEOHead'
@@ -12,7 +12,7 @@ import UpcomingCourseCard from '../components/UpcomingCourseCard'
 import UpcomingCourseModal from '../components/UpcomingCourseModal'
 import LoginModal from '../components/LoginModal'
 import PaymentModal from '../components/PaymentModal'
-import NextSessionAd from '../components/NextSessionAd'
+import FormationsHub from '../components/FormationsHub'
 import PresentationReel from '../components/PresentationReel'
 import CamdenPartner from '../components/CamdenPartner'
 import IntroVideoModal from '../components/IntroVideoModal'
@@ -230,38 +230,7 @@ export default function LandingPage() {
           </section>
         )}
 
-        <NextSessionAd enabled={!!siteSettings.inPerson?.enabled} notice={siteSettings.inPerson?.datesNotice} />
-
-        {siteSettings.express?.enabled && (
-          <section className="section-container pt-4">
-            <Link to="/formation-1-jour" className="group block max-w-3xl mx-auto rounded-xl overflow-hidden border-2 border-neutral-900 bg-white text-neutral-900">
-              <div aria-hidden="true" className="h-5 sm:h-6" style={{ background: 'repeating-linear-gradient(-45deg, #111 0 14px, #fff 14px 28px)' }} />
-              <div className="border-t-2 border-neutral-900 px-4 pt-3.5 pb-4 sm:px-5">
-                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-academy-primary">Nouveau · chaque samedi</p>
-                <p className="mt-1 font-display font-black text-[1.35rem] sm:text-3xl leading-[1.05] tracking-tight">{siteSettings.express.title}</p>
-                <p className="mt-1 text-sm text-neutral-600">On filme, on monte, vous repartez avec votre vidéo terminée.</p>
-              </div>
-              <dl className="grid grid-cols-3 gap-px bg-neutral-900/15 border-t border-neutral-900/15">
-                {[
-                  ['Horaires', [siteSettings.express.startTime, siteSettings.express.endTime].map(t => (t || '').replace(/^0/, '').replace(':00', 'h').replace(':', 'h')).join('–')],
-                  ['Lieu', 'Viga Center'],
-                  ['Prix', `${Number(siteSettings.express.price).toLocaleString('fr-FR')} DA`],
-                ].map(([k, v]) => (
-                  <div key={k} className="bg-white px-3 py-2">
-                    <dt className="text-[9px] font-bold uppercase tracking-[0.2em] text-neutral-500">{k}</dt>
-                    <dd className="font-bold text-[13px] sm:text-[15px] leading-tight">{v}</dd>
-                  </div>
-                ))}
-              </dl>
-              <div className="flex items-center justify-between border-t border-neutral-900/15 px-4 py-3 sm:px-5">
-                <span className="text-[11px] sm:text-xs text-neutral-500">4 heures · places limitées</span>
-                <span className="whitespace-nowrap inline-flex items-center gap-1.5 text-sm font-bold border-b-2 border-neutral-900 group-hover:text-academy-primary group-hover:border-academy-primary transition-colors">
-                  Réserver mon samedi <ArrowRight size={15} />
-                </span>
-              </div>
-            </Link>
-          </section>
-        )}
+        <FormationsHub coaching={siteSettings.coaching} inPerson={siteSettings.inPerson} express={siteSettings.express} />
 
         <CamdenPartner />
 
@@ -303,90 +272,6 @@ export default function LandingPage() {
             )}
           </div>
         </section>
-
-        {/* COACHING : en ligne et en présentiel, deux tickets côte à côte */}
-        {(siteSettings.coaching?.enabled || siteSettings.inPerson?.enabled) && (() => {
-          const co = siteSettings.coaching || {}
-          const ip = siteSettings.inPerson || {}
-          const money = (n) => `${Number(n).toLocaleString('fr-FR')} DA`
-          const perDay = Math.ceil((ip.program || []).length / 3) || 1
-          const days = [0, 1, 2].map(d => (ip.program || []).slice(d * perDay, (d + 1) * perDay)).filter(d => d.length)
-          // Deux identités nettes : en ligne = noir + caméra, présentiel = rouge + lieu.
-          const Ticket = ({ stub, tone, Icon, kicker, to, title, text, facts, children, cta }) => (
-            <Link to={to} className={`group flex border rounded-2xl overflow-hidden hover:shadow-sm transition-all ${tone === 'red'
-              ? 'bg-academy-primary/[0.04] border-academy-primary/30 hover:border-academy-primary/60'
-              : 'bg-white dark:bg-academy-surfaceDark border-academy-border hover:border-academy-textMain/30'}`}>
-              <span className={`shrink-0 flex flex-col items-center justify-between gap-3 px-3 py-4 ${tone === 'red' ? 'bg-academy-primary text-academy-onPrimary' : 'bg-neutral-900 text-white'}`}>
-                <Icon size={18} />
-                <span className="[writing-mode:vertical-rl] rotate-180 text-[10px] font-black uppercase tracking-[0.25em]">{stub}</span>
-                <span />
-              </span>
-              <span className="border-l-2 border-dashed border-academy-border" />
-              <div className="flex-1 min-w-0 flex flex-col">
-                <div className="px-4 pt-4 sm:px-5">
-                  <p className={`inline-flex items-center gap-1.5 text-[11px] font-black uppercase tracking-[0.15em] ${tone === 'red' ? 'text-academy-primary' : 'text-academy-textMain'}`}>
-                    <Icon size={13} /> {kicker}
-                  </p>
-                  <h3 className="mt-1 font-display font-black text-xl leading-tight text-academy-textMain">{title}</h3>
-                  <p className="mt-1 text-[13px] text-academy-textMain/60 leading-snug">{text}</p>
-                </div>
-                <dl className="mt-3 grid grid-cols-3 gap-px bg-academy-border border-y border-academy-border">
-                  {facts.map(([k, v]) => (
-                    <div key={k} className={`px-3 py-2 ${tone === 'red' ? 'bg-[#fdf7f7] dark:bg-academy-surfaceDark' : 'bg-white dark:bg-academy-surfaceDark'}`}>
-                      <dt className="text-[9px] font-bold uppercase tracking-[0.18em] text-academy-textMain/45">{k}</dt>
-                      <dd className="font-bold text-[13px] leading-tight text-academy-textMain">{v}</dd>
-                    </div>
-                  ))}
-                </dl>
-                <div className="flex-1 px-4 py-3 sm:px-5">{children}</div>
-                <div className="px-4 pb-4 sm:px-5">
-                  <span className="inline-flex items-center gap-1.5 text-sm font-bold border-b-2 border-academy-textMain text-academy-textMain group-hover:text-academy-primary group-hover:border-academy-primary transition-colors">
-                    {cta} <ArrowRight size={15} />
-                  </span>
-                </div>
-              </div>
-            </Link>
-          )
-          return (
-            <section className="py-10 lg:py-14 border-t border-academy-border">
-              <div className="section-container">
-                <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-academy-primary">Coaching</p>
-                <h2 className="mt-1 font-display font-black text-2xl sm:text-3xl text-academy-textMain tracking-tight">Apprenez avec un coach, en ligne ou en vrai</h2>
-                <p className="mt-1 text-sm sm:text-base text-academy-textMain/60 max-w-2xl">Débutants bienvenus : on part de zéro et on avance sur votre propre projet.</p>
-
-                <div className="mt-5 grid md:grid-cols-2 gap-3 sm:gap-4">
-                  {co.enabled && (
-                    <Ticket stub="En ligne" tone="dark" Icon={Video} kicker="À distance — depuis chez vous" to="/coaching" title={co.title || 'Coaching en ligne'} text={co.subtitle} cta="Choisir mon pack"
-                            facts={[['Durée', co.formats?.[0]?.duration || '2h30'], ['Format', 'Visio'], ['Quand', '7 j / 7']]}>
-                      <ol className="space-y-1.5">
-                        {(co.topics || []).slice(0, 4).map((tp, i) => (
-                          <li key={tp.id || i} className="flex gap-2.5 text-[13.5px] font-semibold leading-snug text-academy-textMain">
-                            <span className="font-mono text-[11px] text-academy-textMain/40 pt-0.5">{String(i + 1).padStart(2, '0')}</span>{tp.label}
-                          </li>
-                        ))}
-                      </ol>
-                      <p className="mt-2 text-xs text-academy-textMain/50">Seul ou avec vos amis, dans le même appel.</p>
-                    </Ticket>
-                  )}
-                  {ip.enabled && (
-                    <Ticket stub="Présentiel" tone="red" Icon={MapPin} kicker="Sur place — à Béjaïa" to="/coaching-presentiel" title={ip.title || 'Formation en présentiel'} text="3 jours en petit groupe, chez notre partenaire Camden à Béjaïa." cta="Voir les dates"
-                            facts={[['Durée', '3 jours'], ['Lieu', 'Béjaïa'], ['Prix', ip.price ? money(ip.price) : '—']]}>
-                      <ol className="space-y-1.5">
-                        {days.map((items, d) => (
-                          <li key={d} className="flex gap-2.5 text-[13.5px] leading-snug text-academy-textMain">
-                            <span className="shrink-0 font-mono text-[11px] font-bold text-academy-primary pt-0.5">J{d + 1}</span>
-                            <span className="font-semibold">{items.join(' · ')}</span>
-                          </li>
-                        ))}
-                      </ol>
-                      {Number(ip.studentPrice) > 0 && <p className="mt-2 text-xs font-bold text-academy-textMain/70">Étudiants : {money(ip.studentPrice)} avec la carte étudiante</p>}
-                    </Ticket>
-                  )}
-                </div>
-              </div>
-            </section>
-          )
-        })()}
 
         {/* FEATURES */}
         <section id="mission" className="pt-4 lg:pt-6 pb-10 lg:pb-12 bg-academy-surfaceDark/40 relative border-t border-academy-border overflow-hidden">
