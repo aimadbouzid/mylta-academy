@@ -17,21 +17,24 @@ const range3 = (iso) => {
 }
 const hourShort = (t) => (t || '').replace(/^0/, '').replace(':00', 'h').replace(':', 'h')
 
-function Card({ kicker, title, text, facts, next, nextLabel = 'Prochaine', to, cta, accent, accentText }) {
+function Card({ kicker, title, text, facts, next, nextLabel = 'Prochaine', to, cta, accent, accentText, button }) {
   const [mode, ...rest] = kicker.split(' · ')
   return (
-    <Link to={to} className="group flex flex-col p-5 bg-white dark:bg-academy-surfaceDark border border-academy-border rounded-2xl hover:border-academy-textMain/30 hover:shadow-sm transition-all">
-      <span aria-hidden="true" className={`block w-10 h-1 rounded-full ${accent}`} />
+    <Link to={to} className="group flex flex-col overflow-hidden bg-white dark:bg-academy-surfaceDark border border-academy-border rounded-2xl hover:border-academy-textMain/30 hover:shadow-sm transition-all">
+      {/* Chaque formation porte sa couleur, du bandeau jusqu'au bouton : les
+          trois cartes se ressemblaient trop pour se distinguer d'un coup d'œil. */}
+      <span aria-hidden="true" className={`block h-1.5 w-full ${accent}`} />
+      <div className="flex flex-1 flex-col p-5 lg:p-6">
       {/* Le mode — en ligne ou présentiel — décide si la formation est
           accessible au visiteur : il doit se lire d'un coup d'œil. */}
-      <p className="mt-3 text-xs font-black uppercase tracking-[0.12em]">
+      <p className="text-xs font-black uppercase tracking-[0.12em]">
         <span className={accentText}>{mode}</span>
         {rest.length > 0 && <span className="text-academy-textMain/50"> · {rest.join(' · ')}</span>}
       </p>
-      <h3 className="mt-1 font-display font-black text-2xl sm:text-[26px] leading-[1.1] tracking-tight text-academy-textMain">{title}</h3>
-      <p className="mt-1.5 text-[13px] text-academy-textMain/60 leading-snug">{text}</p>
+      <h3 className="mt-1 font-display font-black text-2xl sm:text-[26px] leading-[1.1] lg:min-h-[2.2em] tracking-tight text-academy-textMain">{title}</h3>
+      <p className="mt-1.5 text-[13px] lg:text-sm text-academy-textMain/60 leading-snug lg:min-h-[2.75em]">{text}</p>
 
-      <dl className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px]">
+      <dl className="mt-3 lg:mt-4 flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] lg:text-sm">
         {facts.map(([k, v], i) => (
           <span key={k} className="inline-flex items-center gap-2">
             {i > 0 && <span aria-hidden="true" className="text-academy-textMain/25">·</span>}
@@ -41,13 +44,14 @@ function Card({ kicker, title, text, facts, next, nextLabel = 'Prochaine', to, c
         ))}
       </dl>
 
-      {next && <p className="mt-2 text-[13px] text-academy-textMain/60">{nextLabel} : <span className="font-semibold text-academy-textMain/80">{next}</span></p>}
+      {next && <p className="mt-2 text-[13px] lg:text-sm text-academy-textMain/60">{nextLabel} : <span className="font-semibold text-academy-textMain/80">{next}</span></p>}
 
-      <span className="mt-auto pt-4">
-        <span className="flex w-full items-center justify-center gap-2 py-3 px-4 rounded-xl bg-academy-textMain text-academy-surface text-sm font-bold shadow-sm group-hover:opacity-90 transition-opacity">
-          {cta} <ArrowRight size={16} className="group-hover:translate-x-0.5 transition-transform" />
+      <span className="mt-auto pt-4 lg:pt-5">
+        <span className={`flex w-full items-center justify-center gap-1.5 py-2 px-4 rounded-lg text-[13px] font-semibold shadow-sm group-hover:opacity-90 transition-opacity ${button}`}>
+          {cta} <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
         </span>
       </span>
+      </div>
     </Link>
   )
 }
@@ -71,7 +75,7 @@ export default function FormationsHub({ coaching, inPerson, express }) {
 
   const cards = []
   if (coaching?.enabled) cards.push(
-    <Card key="online" accent="bg-academy-textMain" accentText="text-academy-textMain" kicker="En ligne · depuis chez vous"
+    <Card key="online" accent="bg-academy-textMain" accentText="text-academy-textMain" button="bg-academy-textMain text-academy-surface" kicker="En ligne · depuis chez vous"
           title={coaching.title || 'Coaching en ligne'}
           text="Un coach en visio pour apprendre l'IA ou créer votre site. Seul ou avec vos amis."
           facts={[['Durée', coaching.formats?.[0]?.duration || '2h30'], ['Format', 'Visio'], ['Quand', '7 j / 7']]}
@@ -79,15 +83,15 @@ export default function FormationsHub({ coaching, inPerson, express }) {
           to="/coaching" cta="Choisir mon pack" />
   )
   if (inPerson?.enabled) cards.push(
-    <Card key="3j" accent="bg-academy-primary" accentText="text-academy-primary" kicker="Présentiel · 3 jours"
+    <Card key="3j" accent="bg-academy-primary" accentText="text-academy-primary" button="bg-academy-primary text-white" kicker="Présentiel · 3 jours"
           title={inPerson.title || 'Formation en présentiel'}
           text={`En petit groupe chez Camden, à Béjaïa.${Number(inPerson.studentPrice) > 0 ? ` Étudiants : ${money(inPerson.studentPrice)}.` : ''}`}
           facts={[['Durée', '3 jours'], ['Lieu', 'Camden'], ['Prix', inPerson.price ? money(inPerson.price) : '—']]}
-          next={session ? `${range3(session.date)}${session.startTime ? (Number(session.startTime.slice(0, 2)) < 12 ? ' · matin' : ' · après-midi') : ''}` : inPerson.datesNotice ? 'dates bientôt annoncées' : null}
+          next={session ? `${range3(session.date)}${session.startTime ? (Number(session.startTime.slice(0, 2)) < 12 ? ' · matin' : ' · soir') : ''}` : inPerson.datesNotice ? 'dates bientôt annoncées' : null}
           to="/coaching-presentiel" cta="Voir les dates" />
   )
   if (express?.enabled) cards.push(
-    <Card key="1j" accent="bg-academy-primary" accentText="text-academy-primary" kicker="Présentiel · chaque samedi"
+    <Card key="1j" accent="bg-blue-600" accentText="text-blue-600" button="bg-blue-600 text-white" kicker="Présentiel · chaque samedi"
           title="Montage vidéo en 1 jour"
           text="On filme, on monte, vous repartez avec votre vidéo terminée le jour même."
           facts={[['Horaires', `${hourShort(express.startTime)}–${hourShort(express.endTime)}`], ['Lieu', 'Viga Center'], ['Prix', money(express.price)]]}
