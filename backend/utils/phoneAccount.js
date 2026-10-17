@@ -35,4 +35,21 @@ async function createPhoneAccount({ fullName, phone }) {
   return { login: phoneDigits(phone), password }
 }
 
-module.exports = { phoneToEmail, phoneDigits, createPhoneAccount, AccountExistsError }
+// L'admin régénère l'accès d'une personne qui a déjà un compte (mot de passe oublié…).
+async function resetPhoneAccount({ phone }) {
+  const password = generatePassword()
+  await prisma.user.update({ where: { email: phoneToEmail(phone) }, data: { password: await argon2.hash(password) } })
+  return { login: phoneDigits(phone), password, reset: true }
+}
+
+// Crée le compte, ou (reset) donne un nouveau mot de passe s'il existe déjà.
+async function provideAccount({ fullName, phone, reset }) {
+  try {
+    return await createPhoneAccount({ fullName, phone })
+  } catch (err) {
+    if (err instanceof AccountExistsError && reset) return resetPhoneAccount({ phone })
+    throw err
+  }
+}
+
+module.exports = { phoneToEmail, phoneDigits, createPhoneAccount, provideAccount, AccountExistsError }

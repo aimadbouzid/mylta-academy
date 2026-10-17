@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { CalendarDays, Plus, Trash2, Save, MessageCircle } from 'lucide-react'
+import { CalendarDays, Plus, Trash2, Save, MessageCircle, KeyRound, X } from 'lucide-react'
 import api from '../../api/axios'
 import { useToast } from '../../hooks/useToast.jsx'
 
@@ -86,16 +86,40 @@ export default function AdminCoachingTab() {
     }
   }
 
-  const waLink = (b) => {
+  const waLink = (b, text) => {
     let num = b.phone.replace(/\D/g, '')
     if (num.startsWith('0')) num = '213' + num.slice(1)
-    return `https://wa.me/${num}?text=${encodeURIComponent(`Bonjour ${b.fullName}, c'est Mylta Academy à propos de votre coaching « ${b.topicLabel} » du ${b.date}${b.timeSlot ? ` à ${b.timeSlot}` : ''}.`)}`
+    return `https://wa.me/${num}?text=${encodeURIComponent(text || `Bonjour ${b.fullName}, c'est Mylta Academy à propos de votre coaching « ${b.topicLabel} » du ${b.date}${b.timeSlot ? ` à ${b.timeSlot}` : ''}.`)}`
+  }
+
+  // Identifiant (numéro) + mot de passe généré, affichés une seule fois
+  const [created, setCreated] = useState(null)
+  const createAccount = async (b, reset = false) => {
+    try {
+      const { data } = await api.post(`/admin/coaching-bookings/${b.id}/account${reset ? '?reset=1' : ''}`)
+      setCreated({ b, ...data.account })
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    } catch (err) {
+      if (err.response?.data?.exists && window.confirm(`${b.fullName} a déjà un compte. Générer un nouveau mot de passe ?`)) return createAccount(b, true)
+      if (!err.response?.data?.exists) toastError(err.response?.data?.error || 'Erreur lors de la création du compte.')
+    }
   }
 
   if (!cfg) return <div className="p-8 text-center text-neutral-400">Chargement...</div>
 
   return (
     <div className="space-y-6">
+      {created && (
+        <div className="rounded-2xl border border-sky-500/30 bg-sky-500/10 p-4 text-sm space-y-2">
+          <div className="flex justify-between items-start gap-3">
+            <p className="font-bold text-white">{created.reset ? 'Nouveau mot de passe pour' : 'Compte créé pour'} {created.b.fullName} — notez-le, il ne sera plus affiché.</p>
+            <button onClick={() => setCreated(null)} className="text-neutral-400 hover:text-white"><X size={16} /></button>
+          </div>
+          <p>Identifiant : <b className="font-mono text-white">{created.login}</b> · Mot de passe : <b className="font-mono text-white">{created.password}</b></p>
+          <a href={waLink(created.b, `Bonjour ${created.b.fullName}, voici votre accès à la plateforme Mylta Academy ${window.location.origin} — identifiant : ${created.login}, mot de passe : ${created.password}`)}
+             target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#25D366] text-white font-bold"><MessageCircle size={15} /> Lui envoyer sur WhatsApp</a>
+        </div>
+      )}
       <div className="bg-gradient-to-r from-emerald-500/10 to-blue-500/10 border border-emerald-500/20 rounded-2xl p-6 sm:p-8 flex flex-wrap items-center justify-between gap-4">
         <div>
           <h2 className="font-display font-bold text-2xl text-white mb-2 flex items-center gap-3">
@@ -327,6 +351,8 @@ export default function AdminCoachingTab() {
                     </td>
                     <td className="p-4">
                       <div className="flex justify-end gap-2">
+                        <button onClick={() => createAccount(b)} title="Générer son identifiant et son mot de passe"
+                                className="p-2 rounded-lg text-sky-300 hover:bg-sky-500/10"><KeyRound size={16} /></button>
                         <a href={waLink(b)} target="_blank" rel="noopener noreferrer" title="Écrire sur WhatsApp"
                            className="p-2 rounded-lg text-emerald-400 hover:bg-emerald-500/10"><MessageCircle size={16} /></a>
                         <button onClick={() => remove(b.id)} title="Supprimer" className="p-2 rounded-lg text-red-400 hover:bg-red-500/10"><Trash2 size={16} /></button>

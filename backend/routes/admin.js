@@ -747,7 +747,7 @@ router.get('/in-person', async (req, res, next) => {
         orderBy: [{ date: 'desc' }, { startTime: 'asc' }],
         include: { registrations: { orderBy: { createdAt: 'asc' } } },
       }),
-      prisma.inPersonRegistration.findMany({ where: { sessionId: null }, orderBy: { createdAt: 'desc' } }),
+      prisma.inPersonRegistration.findMany({ where: { sessionId: null, formation: '' }, orderBy: { createdAt: 'desc' } }),
     ])
     res.json({ sessions, waitlist })
   } catch (err) { next(err) }
@@ -812,13 +812,37 @@ router.post('/in-person/registrations/:id/account', async (req, res, next) => {
     if (!id) return res.status(400).json({ error: 'ID invalide.' })
     const reg = await prisma.inPersonRegistration.findUnique({ where: { id } })
     if (!reg) return res.status(404).json({ error: 'Inscription introuvable.' })
-    const { createPhoneAccount, AccountExistsError } = require('../utils/phoneAccount')
-    try {
-      res.status(201).json({ account: await createPhoneAccount({ fullName: reg.fullName, phone: reg.phone }) })
-    } catch (err) {
-      if (err instanceof AccountExistsError) return res.status(409).json({ error: 'Cette personne a déjà un compte (même numéro).' })
-      throw err
-    }
+    await sendAccount(res, reg, req.query.reset === '1')
+  } catch (err) { next(err) }
+})
+
+// Accès plateforme pour un client du coaching en ligne (même principe que le présentiel)
+router.post('/coaching-bookings/:id/account', async (req, res, next) => {
+  try {
+    const id = validateId(req.params.id)
+    if (!id) return res.status(400).json({ error: 'ID invalide.' })
+    const booking = await prisma.coachingBooking.findUnique({ where: { id } })
+    if (!booking) return res.status(404).json({ error: 'Réservation introuvable.' })
+    await sendAccount(res, booking, req.query.reset === '1')
+  } catch (err) { next(err) }
+})
+
+async function sendAccount(res, person, reset) {
+  const { provideAccount, AccountExistsError } = require('../utils/phoneAccount')
+  try {
+    res.status(201).json({ account: await provideAccount({ fullName: person.fullName, phone: person.phone, reset }) })
+  } catch (err) {
+    if (err instanceof AccountExistsError) return res.status(409).json({ error: 'Cette personne a déjà un compte (même numéro).', exists: true })
+    throw err
+  }
+}
+
+// ─── Formation d'un jour (samedi) ─────────────────────────────
+router.get('/express/registrations', async (req, res, next) => {
+  try {
+    res.json({ registrations: await prisma.inPersonRegistration.findMany({
+      where: { formation: 'express' }, orderBy: [{ day: 'asc' }, { createdAt: 'asc' }],
+    }) })
   } catch (err) { next(err) }
 })
 

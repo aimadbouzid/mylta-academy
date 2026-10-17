@@ -185,11 +185,14 @@ export default function AdminInPersonTab() {
     } catch { toastError('Erreur lors de la génération du QR code.') }
   }
 
-  const createAccount = async (r) => {
+  const createAccount = async (r, reset = false) => {
     try {
-      const { data } = await api.post(`/admin/in-person/registrations/${r.id}/account`)
+      const { data } = await api.post(`/admin/in-person/registrations/${r.id}/account${reset ? '?reset=1' : ''}`)
       setCreated({ r, ...data.account })
-    } catch (err) { toastError(err.response?.data?.error || 'Erreur lors de la création du compte.') }
+    } catch (err) {
+      if (err.response?.data?.exists && window.confirm(`${r.fullName} a déjà un compte. Générer un nouveau mot de passe ?`)) return createAccount(r, true)
+      if (!err.response?.data?.exists) toastError(err.response?.data?.error || 'Erreur lors de la création du compte.')
+    }
   }
 
   const activeCount = (s) => s.registrations.filter(r => r.status !== 'CANCELLED').length
@@ -207,7 +210,7 @@ export default function AdminInPersonTab() {
         {r.message && <div className="text-xs text-neutral-500 mt-0.5">{r.message}</div>}
       </div>
       {extra}
-      <button onClick={() => createAccount(r)} title="Créer son accès à la plateforme" className="px-2 py-1 rounded-lg text-[11px] font-bold text-sky-300 bg-sky-500/10 hover:bg-sky-500/20 inline-flex items-center gap-1"><KeyRound size={13} /> Créer son compte</button>
+      <button onClick={() => createAccount(r)} title="Créer son accès à la plateforme" className="px-2 py-1 rounded-lg text-[11px] font-bold text-sky-300 bg-sky-500/10 hover:bg-sky-500/20 inline-flex items-center gap-1"><KeyRound size={13} /> Accès (identifiant + mot de passe)</button>
       <select value={r.status} onChange={e => updateRegistration(r.id, { status: e.target.value })}
               className={`rounded-full px-2 py-1 text-[11px] font-bold border-0 outline-none ${STATUS[r.status]?.cls}`}>
         {Object.entries(STATUS).map(([k, v]) => <option key={k} value={k} className="bg-neutral-900 text-white">{v.label}</option>)}
@@ -233,7 +236,7 @@ export default function AdminInPersonTab() {
       {created && (
         <div className="rounded-2xl border border-sky-500/30 bg-sky-500/10 p-4 text-sm space-y-2">
           <div className="flex justify-between items-start gap-3">
-            <p className="font-bold text-white">Compte créé pour {created.r.fullName} — notez le mot de passe, il ne sera plus affiché.</p>
+            <p className="font-bold text-white">{created.reset ? 'Nouveau mot de passe pour' : 'Compte créé pour'} {created.r.fullName} — notez-le, il ne sera plus affiché.</p>
             <button onClick={() => setCreated(null)} className="text-neutral-400 hover:text-white"><X size={16} /></button>
           </div>
           <p>Identifiant : <b className="font-mono text-white">{created.login}</b> · Mot de passe : <b className="font-mono text-white">{created.password}</b></p>
