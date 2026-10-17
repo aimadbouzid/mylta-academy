@@ -283,7 +283,7 @@ const defaultSettings = {
     oldPrice: 16000, // prix barré affiché à côté (offre de lancement) ; 0 = pas de prix barré
     deposit: 3000,  // acompte obligatoire pour réserver sa place
     // Message affiché au-dessus des sessions (vide = rien) : utile tant que les dates ne sont pas définitives.
-    datesNotice: "La formation dure 3 jours de suite, du dimanche au jeudi. Choisissez le matin ou l'après-midi.",
+    datesNotice: "La formation dure 3 jours de suite, du dimanche au jeudi. Choisissez le matin ou le soir.",
     showSeats: false,
     joinCode: '', // code secret du QR d'inscription sur place (vide = QR désactivé) // afficher « il reste N places » sur les sessions (désactivé par défaut)
     // Titres courts : affichés en cartes compactes (2 par ligne sur téléphone).

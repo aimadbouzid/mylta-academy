@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowLeft, ArrowRight, CheckCircle2, MessageCircle, MapPin, Clock, Users, Check, Copy } from 'lucide-react'
+import { ArrowLeft, ArrowRight, CheckCircle2, MessageCircle, MapPin, Clock, Users, Check, Copy, Sun, Sunset } from 'lucide-react'
 import Navbar from '../components/Navbar'
 import TrainingLocation from '../components/TrainingLocation'
 import SEOHead from '../components/SEOHead'
@@ -324,35 +324,33 @@ export default function InPersonPage() {
                             Les prochaines dates arrivent bientôt. Inscrivez-vous : on vous prévient en premier.
                           </p>
                         )}
-                        {/* Une même date revenait deux fois, matin puis après-midi : la liste
-                            doublait de longueur et deux lignes voisines ne se distinguaient
-                            que par leur étiquette. Une date = une ligne, ses créneaux dedans. */}
-                        {Object.entries(sessions.reduce((acc, s) => ((acc[s.date] ||= []).push(s), acc), {})).map(([date, slots]) => {
-                          const picked = slots.some(s => s.id === sessionId)
-                          return (
-                            <div key={date} className={`rounded-xl border-2 p-3 transition-colors ${picked ? 'border-academy-primary bg-academy-primary/5' : 'border-academy-border'}`}>
-                              <p className="font-bold text-[15px] leading-tight">{shortRange(date)}</p>
-                              <p className="text-xs text-academy-textMain/55 mt-0.5">3 jours de suite</p>
-                              <div className="mt-2.5 grid grid-cols-2 gap-2">
-                                {[...slots].sort((a, b) => isMorning(b) - isMorning(a)).map(s => {
-                                  const full = s.seatsLeft <= 0
-                                  const on = sessionId === s.id
-                                  const am = isMorning(s)
-                                  return (
-                                    <button type="button" key={s.id} disabled={full} onClick={() => setSessionId(s.id)}
-                                            className={`rounded-lg border-2 px-2.5 py-2 text-left transition-colors ${on ? 'border-academy-primary bg-white' : 'border-academy-border bg-white'} ${full ? 'opacity-50 cursor-not-allowed' : 'hover:border-academy-primary/50'}`}>
-                                      <span className={`block text-[11px] font-black uppercase tracking-wide ${am ? 'text-amber-700' : 'text-indigo-700'}`}>{am ? 'Matin' : 'Après-midi'}</span>
-                                      <span className="block text-[13px] font-bold">{hours(s) || '—'}</span>
-                                      {full
-                                        ? <span className="block text-[11px] font-bold text-red-600">Complet</span>
-                                        : cfg.showSeats && <span className="block text-[11px] text-academy-textMain/55">{s.seatsLeft === 1 ? "Plus qu'1 place" : `${s.seatsLeft} places`}</span>}
-                                    </button>
-                                  )
-                                })}
-                              </div>
-                            </div>
-                          )
-                        })}
+                        {/* Un créneau = une carte, réservable seule : le visiteur choisit
+                            d'un seul geste la date ET le moment de la journée. */}
+                        {[...sessions]
+                          .sort((a, b) => a.date.localeCompare(b.date) || isMorning(b) - isMorning(a))
+                          .map(s => {
+                            const full = s.seatsLeft <= 0
+                            const on = sessionId === s.id
+                            const am = isMorning(s)
+                            return (
+                              <button type="button" key={s.id} disabled={full} onClick={() => setSessionId(s.id)}
+                                      className={`w-full text-left rounded-xl border-2 p-3 transition-colors ${on ? 'border-academy-primary bg-academy-primary/5' : 'border-academy-border'} ${full ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                                <div className="flex items-start justify-between gap-3">
+                                  <span className="min-w-0">
+                                    <span className="block font-bold text-[15px] leading-tight">{shortRange(s.date)}</span>
+                                    <span className="block text-xs text-academy-textMain/55 mt-0.5">3 jours de suite</span>
+                                  </span>
+                                  <span className={`shrink-0 inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] font-black uppercase tracking-wide ${am ? 'bg-amber-50 text-amber-900' : 'bg-indigo-50 text-indigo-900'}`}>
+                                    {am ? <Sun size={13} /> : <Sunset size={13} />} {am ? 'Matin' : 'Soir'}
+                                  </span>
+                                </div>
+                                <span className="block mt-2 text-[13px] font-bold">{hours(s) || '—'}</span>
+                                {full
+                                  ? <span className="block text-[11px] font-bold text-red-600">Complet</span>
+                                  : cfg.showSeats && <span className="block text-[11px] text-academy-textMain/60">{s.seatsLeft === 1 ? "Plus qu'1 place" : `${s.seatsLeft} places`}</span>}
+                              </button>
+                            )
+                          })}
                         <button type="button" onClick={() => setSessionId(null)} className={`${choice(sessionId === null, false)} !p-3`}>
                           <span className={radio(sessionId === null)} aria-hidden="true" />
                           <span>

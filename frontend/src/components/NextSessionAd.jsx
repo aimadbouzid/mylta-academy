@@ -50,7 +50,7 @@ export default function NextSessionAd({ enabled, notice }) {
                 <span className="truncate">{shortRange(s.date)}</span>
                 {s.startTime && (
                   <span className="shrink-0 ml-auto text-[10px] font-bold uppercase tracking-wider text-academy-textMain/50">
-                    {Number(s.startTime.slice(0, 2)) < 12 ? 'Matin' : 'Après-midi'}
+                    {Number(s.startTime.slice(0, 2)) < 12 ? 'Matin' : 'Soir'}
                   </span>
                 )}
               </li>
