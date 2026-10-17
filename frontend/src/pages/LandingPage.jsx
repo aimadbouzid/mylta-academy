@@ -100,7 +100,7 @@ export default function LandingPage() {
         <Navbar onLoginClick={() => setLoginOpen(true)} />
 
         {/* HERO SECTION */}
-        <section className="relative flex items-center pt-24 sm:pt-36 lg:pt-40 pb-4 lg:pb-8 overflow-hidden">
+        <section className="relative flex items-center pt-32 sm:pt-36 lg:pt-40 pb-4 lg:pb-8 overflow-hidden">
           {/* Background grid pattern */}
           <div className="absolute inset-0 grid-pattern pointer-events-none opacity-40 z-0" />
           
@@ -127,7 +127,7 @@ export default function LandingPage() {
               </h1>
 
               {/* Sous-titre */}
-              <p className="text-sm sm:text-base lg:text-lg text-academy-textMain/70 font-medium leading-relaxed mb-4 lg:mb-8 max-w-xl mx-auto lg:mx-0">
+              <p className="text-sm sm:text-base lg:text-lg text-academy-textMain/70 font-medium leading-snug sm:leading-relaxed mb-4 lg:mb-8 max-w-xl mx-auto lg:mx-0">
                 {landingData.hero_subtitle || siteSettings.hero?.subtitle || "Des cours structurés, concrets et conçus par des experts. Accédez aux meilleures formations et payez facilement via CCP ou BaridiMob."}
               </p>
 
@@ -146,7 +146,7 @@ export default function LandingPage() {
               {/* Moyens de paiement : simple mention en ligne.
                   Doit refléter les moyens réellement acceptés (cf. sous-titre
                   et PaymentModal) : Edahabia et CIB passent par Chargily. */}
-              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-x-3 gap-y-1.5 sm:border-t sm:border-academy-border sm:pt-4 sm:mt-2">
+              <div className="hidden sm:flex flex-wrap items-center justify-center lg:justify-start gap-x-3 gap-y-1.5 sm:border-t sm:border-academy-border sm:pt-4 sm:mt-2">
                 <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-academy-textMain/45">
                   <CreditCard size={14} />
                   {t('landing.local_payment')}
