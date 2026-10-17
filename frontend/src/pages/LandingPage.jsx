@@ -211,6 +211,29 @@ export default function LandingPage() {
           </div>
         </section>
 
+        {siteSettings.express?.enabled && (
+          <section className="section-container pt-6">
+            <Link to="/formation-1-jour"
+                  className="group relative block max-w-3xl mx-auto overflow-hidden rounded-2xl text-white p-5 sm:p-7"
+                  style={{ background: 'radial-gradient(120% 120% at 10% 0%, #991b1b 0%, #450a0a 55%, #0c0303 100%)' }}>
+              <span aria-hidden="true" className="absolute -right-12 -top-12 w-48 h-48 rounded-full border border-white/10" />
+              <span aria-hidden="true" className="absolute -right-2 -top-2 w-28 h-28 rounded-full border border-white/10" />
+              <p className="text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.25em] text-red-200">
+                Nouveau · Chaque samedi · {(siteSettings.express.startTime || '').replace(':', 'h')}–{(siteSettings.express.endTime || '').replace(':', 'h')}
+              </p>
+              <p className="mt-2 font-display font-black text-2xl sm:text-4xl leading-[1.02] tracking-tight max-w-md">{siteSettings.express.title}</p>
+              <p className="mt-2 text-sm sm:text-base text-white/70 max-w-md">On filme, on monte, et vous repartez avec votre vidéo terminée le jour même.</p>
+              <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2">
+                <span className="font-display font-black text-xl">{Number(siteSettings.express.price).toLocaleString('fr-FR')} DA</span>
+                <span className="text-sm text-white/60">4 h · chez Viga Center</span>
+                <span className="ml-auto inline-flex items-center gap-1.5 rounded-lg bg-white text-[#7f1d1d] px-4 py-2 text-sm font-black group-hover:gap-2.5 transition-all">
+                  Réserver mon samedi <ArrowRight size={16} />
+                </span>
+              </div>
+            </Link>
+          </section>
+        )}
+
         {siteSettings.contest?.enabled && !(siteSettings.contest.endDate && siteSettings.contest.endDate < new Date().toISOString().slice(0, 10)) && (
           <section className="section-container pt-4">
             <Link to="/concours" className="group relative flex max-w-3xl mx-auto bg-white border border-academy-border rounded-xl overflow-hidden hover:border-academy-textMain/30 transition-colors">

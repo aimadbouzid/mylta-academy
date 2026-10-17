@@ -103,7 +103,7 @@ router.post('/register', async (req, res, next) => {
     // Une même personne (même numéro) ne s'inscrit qu'une fois par session / liste d'attente.
     const normalizedPhone = phone.replace(/\D/g, '')
     const existing = await prisma.inPersonRegistration.findMany({
-      where: { sessionId: sessionId || null, status: { not: 'CANCELLED' } },
+      where: { sessionId: sessionId || null, formation: '', status: { not: 'CANCELLED' } },
       select: { phone: true },
     })
     if (existing.some(r => r.phone.replace(/\D/g, '') === normalizedPhone)) {
@@ -148,6 +148,89 @@ router.post('/register', async (req, res, next) => {
 
     notify(result.id, result.session)
     res.status(201).json({ registration: result })
+  } catch (err) {
+    if (err instanceof SessionError) return res.status(err.status).json({ error: err.message })
+    next(err)
+  }
+})
+
+// ─── Formation d'un jour (chaque samedi) ─────────────────────
+const isoDay = (d) => d.toISOString().slice(0, 10)
+
+// Prochains jours de formation (ex. samedis) encore ouverts, du plus proche au plus lointain.
+function expressDays(cfg) {
+  const out = []
+  const now = new Date()
+  const d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()))
+  // Le jour même, plus d'inscription une fois la formation commencée.
+  const [h, m] = String(cfg.startTime || '09:00').split(':').map(Number)
+  const startedToday = now.getUTCHours() + 1 > h || (now.getUTCHours() + 1 === h && now.getUTCMinutes() >= m) // heure d'Alger = UTC+1
+  for (let i = 0; out.length < (Number(cfg.weeksAhead) || 6) && i < 120; i++) {
+    const day = new Date(d.getTime() + i * 86400000)
+    if (day.getUTCDay() !== Number(cfg.weekday ?? 6)) continue
+    const iso = isoDay(day)
+    if (i === 0 && startedToday) continue
+    if ((cfg.closedDates || []).includes(iso)) continue
+    out.push(iso)
+  }
+  return out
+}
+
+const expressActive = { formation: 'express', status: { not: 'CANCELLED' } }
+
+// GET /api/in-person/express/days — samedis proposés et places restantes
+router.get('/express/days', async (req, res, next) => {
+  try {
+    const cfg = getSettings().express
+    if (!cfg?.enabled) return res.status(404).json({ error: 'Formation indisponible.' })
+    const days = expressDays(cfg)
+    const counts = await prisma.inPersonRegistration.groupBy({
+      by: ['day'], where: { ...expressActive, day: { in: days } }, _count: { _all: true },
+    })
+    const taken = Object.fromEntries(counts.map(c => [c.day, c._count._all]))
+    res.setHeader('Cache-Control', 'no-store')
+    res.json({ days: days.map(day => ({ day, seatsLeft: Math.max(0, (Number(cfg.capacity) || 12) - (taken[day] || 0)) })) })
+  } catch (err) { next(err) }
+})
+
+const expressSchema = z.object({
+  fullName: z.string().trim().min(3).max(80),
+  phone: z.string().trim().regex(/^\+?[0-9 ]{8,20}$/),
+  day: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  message: z.string().trim().max(500).optional(),
+  website: z.string().optional(), // piège à robots
+})
+
+// POST /api/in-person/express/register — réserver sa place un samedi
+router.post('/express/register', async (req, res, next) => {
+  try {
+    const cfg = getSettings().express
+    if (!cfg?.enabled) return res.status(404).json({ error: 'Formation indisponible.' })
+    const parsed = expressSchema.safeParse(req.body)
+    if (!parsed.success) return res.status(400).json({ error: 'Vérifiez votre nom, votre numéro et la date choisie.' })
+    const { fullName, phone, day, message, website } = parsed.data
+    if (website) return res.status(201).json({ registration: { id: 0, day } })
+    if (!expressDays(cfg).includes(day)) return res.status(400).json({ error: "Cette date n'est plus disponible. Choisissez un autre samedi." })
+
+    const digits = phone.replace(/\D/g, '')
+    const capacity = Number(cfg.capacity) || 12
+    const result = await prisma.$transaction(async (tx) => {
+      // Verrou par date : deux inscriptions simultanées ne prennent pas la dernière place ensemble.
+      const lockKey = Number(day.replace(/-/g, ''))
+      await tx.$executeRaw`SELECT pg_advisory_xact_lock(${lockKey})`
+      const regs = await tx.inPersonRegistration.findMany({ where: { ...expressActive, day }, select: { phone: true } })
+      if (regs.some(r => r.phone.replace(/\D/g, '') === digits)) throw new SessionError(409, 'Vous êtes déjà inscrit à ce samedi. Écrivez-nous sur WhatsApp si besoin.')
+      if (regs.length >= capacity) throw new SessionError(409, 'Ce samedi est complet. Choisissez-en un autre.')
+      return tx.inPersonRegistration.create({
+        data: { fullName, phone, day, formation: 'express', message: message || null, ip: String(req.ip || '').slice(0, 45) },
+      })
+    })
+
+    notifyOwner(
+      `🎬 Formation 1 jour — inscription n°${result.id}\nNom : ${fullName}\nTél : ${phone}\nSamedi : ${day} (${cfg.startTime}–${cfg.endTime})\nAcompte : ${cfg.deposit} DA en attente` +
+      (message ? `\nMessage : ${message}` : '')
+    )
+    res.status(201).json({ registration: { id: result.id, day } })
   } catch (err) {
     if (err instanceof SessionError) return res.status(err.status).json({ error: err.message })
     next(err)

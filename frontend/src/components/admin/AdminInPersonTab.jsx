@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { Users, Plus, Trash2, Save, MessageCircle, Pencil, X, QrCode, KeyRound, Download, ChevronDown } from 'lucide-react'
 import QRCode from 'qrcode'
 import AdminContestPanel from './AdminContestPanel'
+import AdminExpressPanel from './AdminExpressPanel'
 import api from '../../api/axios'
 import { useToast } from '../../hooks/useToast.jsx'
 
@@ -232,6 +233,8 @@ export default function AdminInPersonTab() {
           Section visible sur le site
         </label>
       </div>
+
+      <AdminExpressPanel />
 
       {created && (
         <div className="rounded-2xl border border-sky-500/30 bg-sky-500/10 p-4 text-sm space-y-2">

@@ -249,6 +249,31 @@ const defaultSettings = {
     ],
     endDate: '', // AAAA-MM-JJ : date du tirage (vide = non précisée)
   },
+  // Formation accélérée d'un jour, chaque samedi matin, chez Viga Center (Béjaïa).
+  express: {
+    enabled: true,
+    title: 'Montage vidéo au smartphone en 1 jour',
+    subtitle: "Formation accélérée : on filme le matin, on monte ensemble, et vous repartez avec votre vidéo terminée le jour même.",
+    price: 6000,
+    deposit: 2000,
+    weekday: 6,          // 6 = samedi
+    startTime: '09:00',
+    endTime: '13:00',
+    capacity: 12,        // places par samedi
+    weeksAhead: 6,       // nombre de samedis proposés
+    closedDates: [],     // samedis sans formation (AAAA-MM-JJ)
+    place: 'Viga Center — Learning & Coaching',
+    address: 'Bd des Frères Ouakouche, Béjaïa',
+    schedule: [
+      { time: '09:00', label: 'Accueil et les bases : cadrage, lumière, son' },
+      { time: '09:40', label: 'Tournage : chacun filme sa propre vidéo' },
+      { time: '10:45', label: 'Pause café' },
+      { time: '11:00', label: 'Montage accéléré sur CapCut : coupes, rythme, transitions' },
+      { time: '12:00', label: 'Sous-titres, musique, effets et export' },
+      { time: '12:40', label: 'Projection : chacun repart avec sa vidéo terminée' },
+    ],
+    results: ['Votre vidéo terminée, prête à publier', 'La méthode pour filmer et monter seul', 'Une attestation de participation'],
+  },
   inPerson: {
     enabled: true,
     title: 'Formation IA & Montage Vidéo',
@@ -359,6 +384,7 @@ function getSettings() {
       coaching: upgradeCoaching(parsed.coaching),
       inPerson: { ...defaultSettings.inPerson, ...(parsed.inPerson || {}) },
       contest: { ...defaultSettings.contest, ...(parsed.contest || {}) },
+      express: { ...defaultSettings.express, ...(parsed.express || {}) },
       // Liste vide = choix de l'admin ; liste sans id = ancien format, remplacé par les défauts
       upcomingCourses: Array.isArray(parsed.upcomingCourses) && (parsed.upcomingCourses.length === 0 || parsed.upcomingCourses.some(c => c.id))
         ? parsed.upcomingCourses

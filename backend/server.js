@@ -377,6 +377,7 @@ const coachingBookLimiter = rateLimit({
 app.use('/api/coaching/book', coachingBookLimiter)
 app.use('/api/coaching', apiLimiter, coachingRoutes)
 app.use('/api/in-person/register', coachingBookLimiter)
+app.use('/api/in-person/express/register', coachingBookLimiter)
 app.use('/api/in-person/join', coachingBookLimiter)
 app.use('/api/in-person', apiLimiter, inPersonRoutes)
 app.use('/api/reviews', apiLimiter, reviewsRoutes)

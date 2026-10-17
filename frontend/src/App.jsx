@@ -51,6 +51,7 @@ const CoachingPage = React.lazy(() => import('./pages/CoachingPage'))
 const InPersonPage = React.lazy(() => import('./pages/InPersonPage'))
 const JoinPage = React.lazy(() => import('./pages/JoinPage'))
 const ContestPage = React.lazy(() => import('./pages/ContestPage'))
+const ExpressPage = React.lazy(() => import('./pages/ExpressPage'))
 
 const SuspenseFallback = () => (
   <div className="min-h-screen flex items-center justify-center">
@@ -134,6 +135,7 @@ export default function App() {
               <Route path="/coaching-presentiel" element={<InPersonPage />} />
               <Route path="/rejoindre" element={<JoinPage />} />
               <Route path="/concours" element={<ContestPage />} />
+              <Route path="/formation-1-jour" element={<ExpressPage />} />
               <Route path="/resources" element={<ModuleRoute moduleName="resourcesEnabled"><ResourcesPage /></ModuleRoute>} />
               <Route path="/ressources" element={<ModuleRoute moduleName="resourcesEnabled"><ResourcesPage /></ModuleRoute>} />
               <Route path="/terms" element={<TermsPage />} />

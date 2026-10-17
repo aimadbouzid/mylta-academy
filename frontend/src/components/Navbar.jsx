@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { GraduationCap, BookOpen, LayoutDashboard, LogOut, User, Menu, X, Bell, Settings, PlayCircle, CheckCircle2, AlertTriangle, Info, Home, Users, Target, Globe, Gift, Award, CalendarDays } from 'lucide-react'
+import { GraduationCap, BookOpen, LayoutDashboard, LogOut, User, Menu, X, Bell, Settings, PlayCircle, CheckCircle2, AlertTriangle, Info, Home, Users, Target, Globe, Gift, Award, CalendarDays, Clapperboard } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { useLanguage } from '../context/LanguageContext'
 import { useSiteSettings } from '../context/SiteSettingsContext'
@@ -170,6 +170,11 @@ export default function Navbar({ onLoginClick }) {
               {settings?.inPerson?.enabled !== false && (
                 <Link to="/coaching-presentiel" className="px-3 py-2 whitespace-nowrap rounded-full text-[13px] font-bold text-neutral-600 dark:text-academy-textMain/60 hover:text-black hover:bg-white hover:shadow-xs transition-all flex items-center gap-1.5">
                   <Users size={15} /> Présentiel
+                </Link>
+              )}
+              {settings?.express?.enabled && (
+                <Link to="/formation-1-jour" className="px-3 py-2 whitespace-nowrap rounded-full text-[13px] font-bold text-neutral-600 dark:text-academy-textMain/60 hover:text-black hover:bg-white hover:shadow-xs transition-all flex items-center gap-1.5">
+                  <Clapperboard size={15} /> 1 jour
                 </Link>
               )}
               {isAuthenticated && !isAdmin && !isInstructor && (
@@ -393,6 +398,11 @@ export default function Navbar({ onLoginClick }) {
               {settings?.inPerson?.enabled !== false && (
                 <Link to="/coaching-presentiel" onClick={() => setMobileOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl text-neutral-700 dark:text-academy-textMain/75 font-bold hover:bg-black/5 hover:text-black transition-colors">
                   <Users size={16} /> Coaching présentiel
+                </Link>
+              )}
+              {settings?.express?.enabled && (
+                <Link to="/formation-1-jour" onClick={() => setMobileOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl text-neutral-700 dark:text-academy-textMain/75 font-bold hover:bg-black/5 hover:text-black transition-colors">
+                  <Clapperboard size={16} /> Montage vidéo en 1 jour <span className="ml-auto text-[10px] font-black uppercase rounded bg-academy-primary text-academy-onPrimary px-1.5 py-0.5">Samedi</span>
                 </Link>
               )}
               {isAuthenticated && !isAdmin && !isInstructor && (
