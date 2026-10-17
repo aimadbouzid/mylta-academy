@@ -2,10 +2,13 @@ import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { X } from 'lucide-react'
 import api from '../api/axios'
+import { useAuth } from '../context/AuthContext'
 
 // Formulaire « Laisser un avis » : l'avis est publié tout de suite sur l'accueil.
+// Réservé aux comptes, et signé du nom du compte : un avis sur la formation
+// vaut par la personne qui le signe, pas par un prénom tapé au hasard.
 export default function ReviewModal({ onClose, onPublished }) {
-  const [fullName, setFullName] = useState('')
+  const { user } = useAuth()
   const [role, setRole] = useState('')
   const [text, setText] = useState('')
   const [website, setWebsite] = useState('') // piège à robots
@@ -23,7 +26,7 @@ export default function ReviewModal({ onClose, onPublished }) {
     setError('')
     setSending(true)
     try {
-      const { data } = await api.post('/reviews', { fullName, role, text, website })
+      const { data } = await api.post('/reviews', { role, text, website })
       onPublished(data.review)
     } catch (err) {
       setError(err.response?.data?.error || "L'envoi a échoué. Réessayez.")
@@ -45,7 +48,7 @@ export default function ReviewModal({ onClose, onPublished }) {
         </div>
         <input type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" value={website}
                onChange={e => setWebsite(e.target.value)} className="absolute -left-[9999px] w-px h-px opacity-0" />
-        <input className={input} required minLength={2} maxLength={40} placeholder="Votre prénom" value={fullName} onChange={e => setFullName(e.target.value)} />
+        <p className="text-[13px] text-academy-textMain/60">Publié sous le nom <span className="font-bold text-academy-textMain">{user?.name}</span>.</p>
         <input className={input} maxLength={40} placeholder="Vous êtes… (étudiant, commerçant…) — facultatif" value={role} onChange={e => setRole(e.target.value)} />
         <textarea className={input} required minLength={10} maxLength={400} rows={4} placeholder="Votre avis sur la formation" value={text} onChange={e => setText(e.target.value)} />
         <p className="text-xs text-academy-textMain/50 text-right">{text.length}/400</p>

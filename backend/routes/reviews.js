@@ -2,6 +2,7 @@ const express = require('express')
 const { z } = require('zod')
 const prisma = require('../prisma')
 const { notifyOwner } = require('../utils/notifyOwner')
+const { authenticate } = require('../middleware/auth')
 
 const router = express.Router()
 
@@ -22,7 +23,6 @@ router.get('/', async (req, res, next) => {
 })
 
 const reviewSchema = z.object({
-  fullName: z.string().trim().min(2).max(40),
   role: z.string().trim().max(40).optional().default(''),
   text: z.string().trim().min(10).max(400),
   website: z.string().optional(), // piège à robots : toujours vide pour un humain
@@ -31,12 +31,16 @@ const reviewSchema = z.object({
 // Liens et numéros : signe de spam, refusés pour garder des avis propres.
 const SPAM_RE = /(https?:\/\/|www\.|\.(com|net|org|xyz|ru|io|dz)\b|@|\d{8,})/i
 
-// POST /api/reviews — publication immédiate, l'admin peut masquer ou supprimer
-router.post('/', async (req, res, next) => {
+// POST /api/reviews — réservé aux comptes : le nom affiché vient du compte,
+// il ne peut donc plus être inventé, et chaque avis a un auteur identifiable.
+// Publication immédiate, l'admin peut masquer ou supprimer.
+router.post('/', authenticate, async (req, res, next) => {
   try {
     const parsed = reviewSchema.safeParse(req.body)
-    if (!parsed.success) return res.status(400).json({ error: 'Écrivez votre prénom et un avis d\'au moins 10 caractères.' })
-    const { fullName, role, text, website } = parsed.data
+    if (!parsed.success) return res.status(400).json({ error: 'Écrivez un avis d\'au moins 10 caractères.' })
+    const { role, text, website } = parsed.data
+    const fullName = String(req.user.name || '').trim().slice(0, 40)
+    if (fullName.length < 2) return res.status(400).json({ error: 'Ajoutez votre nom dans votre profil avant de laisser un avis.' })
     if (website) return res.status(201).json({ review: { id: 0, fullName, role, text, createdAt: new Date() } })
     if (SPAM_RE.test(`${fullName} ${role} ${text}`)) {
       return res.status(400).json({ error: 'Les liens, e-mails et numéros ne sont pas acceptés dans les avis.' })

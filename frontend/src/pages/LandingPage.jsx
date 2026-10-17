@@ -367,7 +367,7 @@ export default function LandingPage() {
           <div className="section-container relative z-10 text-center mt-4">
             {reviewThanks
               ? <p className="text-sm font-bold text-emerald-700">Merci ! Votre avis est publié.</p>
-              : <button type="button" onClick={() => setReviewOpen(true)}
+              : <button type="button" onClick={() => isAuthenticated ? setReviewOpen(true) : setLoginOpen(true)}
                         className="text-sm font-bold border-b-2 border-academy-textMain hover:text-academy-primary hover:border-academy-primary">
                   Laisser un avis
                 </button>}
