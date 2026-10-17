@@ -23,7 +23,7 @@ function Card({ kicker, title, text, facts, next, nextLabel = 'Prochaine', to, c
   const ink = solid ? 'text-white' : 'text-academy-textMain'
   const soft = solid ? 'text-white/75' : 'text-academy-textMain/60'
   return (
-    <Link to={to} className={`group flex flex-col overflow-hidden border rounded-2xl ${solid ? 'hover:shadow-sm' : 'hover:border-academy-textMain/30 hover:shadow-sm'} transition-all ${surface}`}>
+    <Link to={to} className={`group flex flex-col overflow-hidden border-2 rounded-2xl hover:shadow-md transition-all ${surface}`}>
       {/* Chaque formation porte sa couleur, du bandeau jusqu'au bouton : les
           trois cartes se ressemblaient trop pour se distinguer d'un coup d'œil. */}
       <span aria-hidden="true" className={`block h-1.5 w-full ${accent}`} />
@@ -82,7 +82,7 @@ export default function FormationsHub({ coaching, inPerson, express }) {
 
   const cards = []
   if (coaching?.enabled) cards.push(
-    <Card key="online" accent="bg-academy-textMain" accentText="text-academy-textMain" button="bg-academy-textMain text-academy-surface" kicker="En ligne · depuis chez vous"
+    <Card key="online" accent="bg-academy-textMain" accentText="text-academy-textMain" button="bg-academy-textMain text-academy-surface" surface="bg-white dark:bg-academy-surfaceDark border-academy-textMain" kicker="En ligne · depuis chez vous"
           title={coaching.title || 'Coaching en ligne'}
           text="Un coach en visio pour apprendre l'IA ou créer votre site. Seul ou avec vos amis."
           facts={[['Durée', coaching.formats?.[0]?.duration || '2h30'], ['Format', 'Visio'], ['Quand', '7 j / 7']]}
@@ -90,7 +90,7 @@ export default function FormationsHub({ coaching, inPerson, express }) {
           to="/coaching" cta="Choisir mon pack" />
   )
   if (inPerson?.enabled) cards.push(
-    <Card key="3j" accent="bg-academy-primary" accentText="text-academy-primary" button="bg-academy-primary text-white" kicker="Présentiel · 3 jours"
+    <Card key="3j" accent="bg-academy-primary" accentText="text-academy-primary" button="bg-academy-primary text-white" surface="bg-white dark:bg-academy-surfaceDark border-academy-primary" kicker="Présentiel · 3 jours"
           title={inPerson.title || 'Formation en présentiel'}
           text={`En petit groupe chez Camden, à Béjaïa.${Number(inPerson.studentPrice) > 0 ? ` Étudiants : ${money(inPerson.studentPrice)}.` : ''}`}
           facts={[['Durée', '3 jours'], ['Lieu', 'Camden'], ['Prix', inPerson.price ? money(inPerson.price) : '—']]}
