@@ -35,6 +35,7 @@ const seoRoutes     = require('./routes/seo')
 const instructorRoutes = require('./routes/instructor')
 const coachingRoutes = require('./routes/coaching')
 const inPersonRoutes = require('./routes/inPerson')
+const reviewsRoutes = require('./routes/reviews')
 const contestRoutes = require('./routes/contest')
 
 // ─── App & Config ─────────────────────────────────────────────
@@ -378,6 +379,7 @@ app.use('/api/coaching', apiLimiter, coachingRoutes)
 app.use('/api/in-person/register', coachingBookLimiter)
 app.use('/api/in-person/join', coachingBookLimiter)
 app.use('/api/in-person', apiLimiter, inPersonRoutes)
+app.use('/api/reviews', apiLimiter, reviewsRoutes)
 app.use('/api/contest/enter', coachingBookLimiter)
 app.use('/api/contest', apiLimiter, contestRoutes)
 

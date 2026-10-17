@@ -22,6 +22,7 @@ import AdminCouponsTab from '../components/admin/AdminCouponsTab'
 import AdminPayoutsTab from '../components/admin/AdminPayoutsTab'
 import AdminCoachingTab from '../components/admin/AdminCoachingTab'
 import AdminInPersonTab from '../components/admin/AdminInPersonTab'
+import AdminReviewsPanel from '../components/admin/AdminReviewsPanel'
 import AdminUpcomingTab from '../components/admin/AdminUpcomingTab'
 import api from '../api/axios'
 import { useLanguage } from '../context/LanguageContext'
@@ -2426,7 +2427,7 @@ export default function AdminDashboard() {
           )}
 
           {/* SETTINGS (VIDÉO D'ACCUEIL & CMS) */}
-          {tab === 'site_cms' && <SiteCMSConfigTab />}
+          {tab === 'site_cms' && <><SiteCMSConfigTab /><AdminReviewsPanel /></>}
           {tab === 'coupons' && <AdminCouponsTab />}
           {tab === 'payouts' && <AdminPayoutsTab />}
           {tab === 'coaching' && <AdminCoachingTab />}

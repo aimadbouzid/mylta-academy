@@ -24,6 +24,7 @@ import { useCourses } from '../hooks/useCourses'
 import { useAuth } from '../context/AuthContext'
 import { useLanguage } from '../context/LanguageContext'
 import api from '../api/axios'
+import ReviewModal from '../components/ReviewModal'
 import { testimonialsData } from '../data/testimonialsData'
 
 const FEATURE_STYLES = [
@@ -52,6 +53,16 @@ export default function LandingPage() {
     hero: { phrases: heroPhrases, subtitle: '' }
   })
   const [randomTestimonials, setRandomTestimonials] = useState([])
+  const [siteReviews, setSiteReviews] = useState([]) // avis laissés par les visiteurs
+  const [reviewOpen, setReviewOpen] = useState(false)
+  const [reviewThanks, setReviewThanks] = useState(false)
+  useEffect(() => {
+    api.get('/reviews').then(({ data }) => setSiteReviews(data.reviews || [])).catch(() => {})
+  }, [])
+  const allReviews = [
+    ...siteReviews.map(r => ({ name: r.fullName, role: r.role, text: r.text, avatar: r.fullName.charAt(0).toUpperCase(), visitor: true })),
+    ...randomTestimonials,
+  ]
 
   useEffect(() => {
     // Mélange l'ordre des témoignages aléatoirement et en prend un sous-ensemble (ex: 10)
@@ -310,14 +321,14 @@ export default function LandingPage() {
                 const style = FEATURE_STYLES[i] || FEATURE_STYLES[0]
                 const Icon = style.icon
                 return (
-                  <div key={f.title} className="card-academy p-4 lg:p-5 flex flex-col justify-start">
-                    <div className="flex items-center gap-2.5 mb-2">
-                      <div className={`w-8 h-8 shrink-0 rounded-lg ${style.bg} border ${style.border} flex items-center justify-center`}>
-                        <Icon className={`w-4 h-4 ${style.color}`} />
-                      </div>
-                      <h3 className="font-display font-bold text-base text-academy-textMain leading-tight">{f.title}</h3>
+                  <div key={f.title} className="card-academy p-3.5 flex items-center gap-3 md:flex-col md:items-start md:gap-2">
+                    <div className={`w-9 h-9 shrink-0 rounded-xl ${style.bg} border ${style.border} flex items-center justify-center`}>
+                      <Icon className={`w-[18px] h-[18px] ${style.color}`} />
                     </div>
-                    <p className="text-academy-textMain/70 leading-relaxed text-[13px] font-medium">{f.desc}</p>
+                    <div className="min-w-0">
+                      <h3 className="font-display font-bold text-[15px] text-academy-textMain leading-tight">{f.title}</h3>
+                      <p className="text-academy-textMain/60 text-xs font-medium leading-snug mt-0.5">{f.desc}</p>
+                    </div>
                   </div>
                 )
               })}
@@ -342,15 +353,17 @@ export default function LandingPage() {
             <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-24 sm:w-40 bg-gradient-to-l from-academy-surfaceDark to-transparent z-10" />
 
             <div className="animate-marquee-track flex gap-3 px-4">
-              {[...randomTestimonials, ...randomTestimonials].map((testimonial, idx) => (
+              {[...allReviews, ...allReviews].map((testimonial, idx) => (
                 <div key={idx} className="card-academy p-3 w-[210px] sm:w-[260px] flex-shrink-0 group">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-[9px] font-bold text-academy-primary tracking-wide uppercase">
                       {t('landing.student_review')}
                     </span>
-                    <span className="text-[8px] font-bold text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-500/15 px-1.5 py-0.5 rounded-full border border-green-200 dark:border-green-500/25">
-                      {t('landing.verified')}
-                    </span>
+                    {!testimonial.visitor && (
+                      <span className="text-[8px] font-bold text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-500/15 px-1.5 py-0.5 rounded-full border border-green-200 dark:border-green-500/25">
+                        {t('landing.verified')}
+                      </span>
+                    )}
                   </div>
 
                   <p className="text-academy-textMain/80 text-[11px] font-medium leading-snug mb-3 italic">
@@ -372,6 +385,18 @@ export default function LandingPage() {
               ))}
             </div>
           </div>
+          <div className="section-container relative z-10 text-center mt-4">
+            {reviewThanks
+              ? <p className="text-sm font-bold text-emerald-700">Merci ! Votre avis est publié.</p>
+              : <button type="button" onClick={() => setReviewOpen(true)}
+                        className="text-sm font-bold border-b-2 border-academy-textMain hover:text-academy-primary hover:border-academy-primary">
+                  Laisser un avis
+                </button>}
+          </div>
+          {reviewOpen && (
+            <ReviewModal onClose={() => setReviewOpen(false)}
+                         onPublished={(r) => { if (r.id) setSiteReviews(rs => [r, ...rs]); setReviewOpen(false); setReviewThanks(true) }} />
+          )}
         </section>
 
         {/* FAQ SECTION */}

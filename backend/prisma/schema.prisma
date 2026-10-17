@@ -437,11 +437,14 @@ model InPersonRegistration {
   status    String           @default("PENDING")
   isStudent   Boolean        @default(false)
   studentCard String?
+  formation   String         @default("") // "" = formation 3 jours ; "express" = formation d'un jour (samedi)
+  day         String         @default("") // jour choisi (AAAA-MM-JJ) pour la formation d'un jour
   ip        String?
   createdAt DateTime         @default(now())
   updatedAt DateTime         @updatedAt
 
   @@index([sessionId])
+  @@index([formation, day])
 }
 
 model ContestEntry {
@@ -452,4 +455,17 @@ model ContestEntry {
   prize     String   @default("")
   ip        String?
   createdAt DateTime @default(now())
+}
+
+// Avis laissés par les visiteurs sur l'accueil : publiés tout de suite, masquables dans l'admin.
+model SiteReview {
+  id        Int      @id @default(autoincrement())
+  fullName  String
+  role      String   @default("")
+  text      String
+  status    String   @default("PUBLISHED") // PUBLISHED | HIDDEN
+  ip        String?
+  createdAt DateTime @default(now())
+
+  @@index([status, createdAt])
 }

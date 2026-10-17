@@ -692,6 +692,32 @@ router.put('/coaching-bookings/:id', async (req, res, next) => {
   } catch (err) { next(err) }
 })
 
+// ─── Avis des visiteurs ──────────────────────────────────────
+router.get('/reviews', async (req, res, next) => {
+  try {
+    const reviews = await prisma.siteReview.findMany({ orderBy: { createdAt: 'desc' }, take: 200 })
+    res.json({ reviews })
+  } catch (err) { next(err) }
+})
+
+router.put('/reviews/:id', async (req, res, next) => {
+  try {
+    const id = validateId(req.params.id)
+    const status = req.body?.status
+    if (!id || !['PUBLISHED', 'HIDDEN'].includes(status)) return res.status(400).json({ error: 'Requête invalide.' })
+    res.json({ review: await prisma.siteReview.update({ where: { id }, data: { status } }) })
+  } catch (err) { next(err) }
+})
+
+router.delete('/reviews/:id', async (req, res, next) => {
+  try {
+    const id = validateId(req.params.id)
+    if (!id) return res.status(400).json({ error: 'ID invalide.' })
+    await prisma.siteReview.delete({ where: { id } })
+    res.json({ success: true })
+  } catch (err) { next(err) }
+})
+
 router.delete('/coaching-bookings/:id', async (req, res, next) => {
   try {
     const id = validateId(req.params.id)
