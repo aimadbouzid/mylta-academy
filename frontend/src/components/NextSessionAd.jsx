@@ -1,7 +1,19 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { CalendarDays, ArrowRight } from 'lucide-react'
 import api from '../api/axios'
-import { formatDate } from '../utils/sessionDates'
+
+// « Mar. 20 → jeu. 22 oct. » : tient sur une ligne de téléphone, même avec l'étiquette du créneau.
+const shortRange = (iso) => {
+  const [y, m, d] = iso.split('-').map(Number)
+  const start = new Date(y, m - 1, d)
+  const end = new Date(y, m - 1, d + 2)
+  const wd = (dt) => dt.toLocaleDateString('fr-FR', { weekday: 'short' })
+  const mo = (dt) => dt.toLocaleDateString('fr-FR', { month: 'short' })
+  const left = `${wd(start)} ${start.getDate()}${start.getMonth() !== end.getMonth() ? ` ${mo(start)}` : ''}`
+  const label = `${left} → ${wd(end)} ${end.getDate()} ${mo(end)}`
+  return label.charAt(0).toUpperCase() + label.slice(1)
+}
 
 export default function NextSessionAd({ enabled, notice }) {
   const [sessions, setSessions] = useState([])
@@ -18,17 +30,34 @@ export default function NextSessionAd({ enabled, notice }) {
   return (
     <section className="section-container py-4">
       <Link to="/coaching-presentiel"
-            className="group block max-w-3xl mx-auto bg-white border border-academy-border rounded-xl px-4 py-3.5 hover:border-academy-textMain/30 transition-colors">
-        <div className="flex items-baseline justify-between gap-3">
-          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-academy-primary">Présentiel · 3 jours</p>
-          <span className="text-sm font-bold text-academy-textMain border-b-2 border-academy-textMain group-hover:border-academy-primary group-hover:text-academy-primary transition-colors">S'inscrire</span>
+            className="group flex max-w-3xl mx-auto bg-white dark:bg-academy-surfaceDark border border-academy-border rounded-2xl overflow-hidden hover:border-academy-textMain/25 hover:shadow-sm transition-all">
+        {/* Talon rouge, comme le ticket du concours */}
+        <span className="shrink-0 flex items-center px-3 sm:px-4 bg-academy-primary text-academy-onPrimary">
+          <span className="[writing-mode:vertical-rl] rotate-180 text-[10px] font-black uppercase tracking-[0.25em]">Présentiel</span>
+        </span>
+        <span className="border-l-2 border-dashed border-academy-border" />
+        <div className="flex-1 min-w-0 px-4 py-3.5 sm:px-5">
+          <div className="flex items-center justify-between gap-3">
+            <p className="font-display font-black text-[15px] sm:text-lg leading-tight text-academy-textMain">Formation de 3 jours</p>
+            <span className="shrink-0 inline-flex items-center gap-1.5 rounded-full bg-academy-textMain text-academy-surface px-3.5 py-1.5 text-xs font-bold group-hover:opacity-90 transition-opacity">
+              S'inscrire <ArrowRight size={13} />
+            </span>
+          </div>
+          <ul className="mt-2.5 space-y-1.5">
+            {sessions.map(s => (
+              <li key={s.id} className="flex items-center gap-2 text-[13px] sm:text-sm font-semibold text-academy-textMain/90">
+                <CalendarDays size={15} className="shrink-0 text-academy-textMain/35" />
+                <span className="truncate">{shortRange(s.date)}</span>
+                {s.startTime && (
+                  <span className="shrink-0 ml-auto text-[10px] font-bold uppercase tracking-wider text-academy-textMain/50">
+                    {Number(s.startTime.slice(0, 2)) < 12 ? 'Matin' : 'Après-midi'}
+                  </span>
+                )}
+              </li>
+            ))}
+          </ul>
+          {notice && <p className="mt-3 pt-3 border-t border-academy-border text-[11px] sm:text-xs text-academy-textMain/50 leading-snug">{notice}</p>}
         </div>
-        <ul className="mt-2 divide-y divide-academy-border">
-          {sessions.map(s => (
-            <li key={s.id} className="py-1.5 text-[13px] sm:text-sm font-bold text-academy-textMain truncate">{formatDate(s.date)}</li>
-          ))}
-        </ul>
-        {notice && <p className="mt-1.5 text-[11px] sm:text-xs text-academy-textMain/55 leading-snug">{notice}</p>}
       </Link>
     </section>
   )
