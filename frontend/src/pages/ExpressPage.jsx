@@ -22,6 +22,23 @@ const ROUTE = 'M300 34 L292 52 L276 58 L256 112 L236 168 L214 212 L190 186 L150 
 const DIRECTIONS = (mode) =>
   `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent('Gare Routière de Béjaïa')}&destination=${encodeURIComponent('Viga Center Bejaia')}&travelmode=${mode}`
 
+// Clap de tournage : bande rayée + cases d'information, comme sur un vrai plateau.
+function Slate({ cells, className = '', style }) {
+  return (
+    <div className={`rounded-lg overflow-hidden border-2 border-neutral-900 bg-white text-neutral-900 ${className}`} style={style}>
+      <div aria-hidden="true" className="h-6 sm:h-8" style={{ background: 'repeating-linear-gradient(-45deg, #111 0 16px, #fff 16px 32px)' }} />
+      <dl className="grid grid-cols-2 sm:grid-cols-3 gap-px bg-neutral-900/15 border-t-2 border-neutral-900">
+        {cells.map(([k, v]) => (
+          <div key={k} className="bg-white px-3 py-2.5">
+            <dt className="text-[9px] font-bold uppercase tracking-[0.2em] text-neutral-500">{k}</dt>
+            <dd className="mt-0.5 font-bold text-[15px] leading-tight">{v}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  )
+}
+
 function useCountdown(target) {
   const [now, setNow] = useState(Date.now())
   useEffect(() => {
@@ -65,6 +82,7 @@ export default function ExpressPage() {
     return first ? new Date(`${first}T${cfg?.startTime || '09:00'}:00+01:00`).getTime() : null
   }, [days, cfg?.startTime])
   const cd = useCountdown(nextStart)
+  const nextDay = days?.find(d => d.seatsLeft > 0)?.day
 
   const scrollToBook = () => bookRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
 
@@ -133,74 +151,59 @@ export default function ExpressPage() {
         @media (prefers-reduced-motion: reduce) { .xp-in { animation: none; opacity: 1 } .xp-draw { animation: none; stroke-dashoffset: 0 } .xp-pulse { animation: none; opacity: 0 } }
       `}</style>
 
-      <main className="min-h-screen bg-academy-surface pt-24 pb-20">
-        {/* ── En-tête ── */}
-        <section className="px-4">
-          <div className="max-w-3xl mx-auto relative overflow-hidden rounded-3xl text-white px-5 py-8 sm:px-10 sm:py-12"
-               style={{ background: 'radial-gradient(120% 100% at 15% 0%, #991b1b 0%, #450a0a 50%, #0c0303 100%)' }}>
-            <div aria-hidden="true" className="absolute -right-16 -top-16 w-64 h-64 rounded-full border border-white/10" />
-            <div aria-hidden="true" className="absolute -right-4 -top-4 w-40 h-40 rounded-full border border-white/10" />
-
-            <p className="xp-in text-[11px] font-bold uppercase tracking-[0.25em] text-red-200">
-              Nouveau · Chaque samedi · {hour(cfg.startTime)}–{hour(cfg.endTime)}
-            </p>
-            <h1 className="xp-in mt-3 font-display font-black text-[2.15rem] sm:text-6xl leading-[0.98] tracking-tight" style={{ animationDelay: '.1s' }}>
-              Filmez.<br />Montez.<br /><span className="text-red-300">Repartez avec votre vidéo.</span>
+      <main className="min-h-screen bg-academy-surface pt-28 pb-20">
+        <div className="max-w-3xl mx-auto px-4">
+          {/* ── En-tête : texte éditorial + clap de tournage ── */}
+          <section>
+            <p className="xp-in text-[11px] font-bold uppercase tracking-[0.2em] text-academy-textMain/55">Formation accélérée · chaque samedi</p>
+            <h1 className="xp-in mt-2 font-display font-black text-[2.3rem] sm:text-6xl leading-[1] tracking-tight" style={{ animationDelay: '.08s' }}>
+              Montage vidéo au smartphone, <span className="whitespace-nowrap border-b-[6px] border-academy-primary">en un jour.</span>
             </h1>
-            <p className="xp-in mt-4 max-w-lg text-[15px] sm:text-lg text-white/75 leading-relaxed" style={{ animationDelay: '.25s' }}>{cfg.subtitle}</p>
+            <p className="xp-in mt-4 max-w-xl text-[15px] sm:text-lg text-academy-textMain/70 leading-relaxed" style={{ animationDelay: '.16s' }}>{cfg.subtitle}</p>
 
-            <dl className="xp-in mt-6 grid grid-cols-3 border-y border-white/15 divide-x divide-white/15" style={{ animationDelay: '.4s' }}>
-              {[['4 h', 'de pratique'], [money(price), 'la formation'], ['1 vidéo', 'finie le jour même']].map(([v, l]) => (
-                <div key={l} className="py-3 text-center">
-                  <dt className="font-display font-black text-xl sm:text-3xl leading-none">{v}</dt>
-                  <dd className="mt-1 text-[10px] sm:text-xs uppercase tracking-wider text-white/55">{l}</dd>
-                </div>
-              ))}
-            </dl>
+            <Slate className="xp-in mt-6" style={{ animationDelay: '.24s' }} cells={[
+              ['Production', 'Mylta Academy'],
+              ['Scène', 'Filmer & monter'],
+              ['Date', nextDay ? dayLabel(nextDay, { weekday: 'long', day: 'numeric', month: 'short' }) : 'Chaque samedi'],
+              ['Horaires', `${hour(cfg.startTime)} – ${hour(cfg.endTime)}`],
+              ['Lieu', 'Viga Center'],
+              ['Prix', money(price)],
+            ]} />
 
             {cd && (
-              <div className="xp-in mt-5" style={{ animationDelay: '.55s' }}>
-                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/50">Prochaine session dans</p>
-                <div className="mt-1.5 flex gap-2 font-mono">
-                  {[[cd.d, 'j'], [cd.h, 'h'], [cd.m, 'min'], [cd.s, 's']].map(([v, u]) => (
-                    <span key={u} className="min-w-[3.6rem] rounded-lg bg-white/10 border border-white/10 px-2 py-1.5 text-center">
-                      <span className="block text-xl font-bold leading-none tabular-nums">{String(v).padStart(2, '0')}</span>
-                      <span className="block text-[9px] uppercase tracking-wider text-white/50 mt-0.5">{u}</span>
-                    </span>
-                  ))}
-                </div>
-              </div>
+              <p className="xp-in mt-3 font-mono text-[13px] text-academy-textMain/60" style={{ animationDelay: '.32s' }}>
+                Prochaine session dans{' '}
+                <span className="font-bold text-academy-textMain tabular-nums">
+                  {cd.d > 0 && `${cd.d} j `}{String(cd.h).padStart(2, '0')} h {String(cd.m).padStart(2, '0')} min {String(cd.s).padStart(2, '0')} s
+                </span>
+              </p>
             )}
 
             <button type="button" onClick={scrollToBook}
-                    className="xp-in mt-7 w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-white text-[#7f1d1d] px-7 py-3.5 font-black" style={{ animationDelay: '.7s' }}>
+                    className="xp-in mt-5 w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg bg-neutral-900 text-white px-7 py-3.5 font-bold" style={{ animationDelay: '.4s' }}>
               Réserver mon samedi <ArrowRight size={18} />
             </button>
-          </div>
-        </section>
+          </section>
 
-        <div className="max-w-3xl mx-auto px-4">
-          {/* ── Déroulé de la matinée ── */}
-          <section className="mt-10">
-            <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-academy-primary">Le déroulé</p>
-            <h2 className="mt-1 font-display font-black text-2xl sm:text-3xl tracking-tight">Votre matinée, heure par heure</h2>
-            <ol className="mt-5 relative">
-              <span aria-hidden="true" className="absolute left-[61.5px] top-3 bottom-3 w-px bg-academy-border" />
+          {/* ── Feuille de service : la matinée heure par heure ── */}
+          <section className="mt-12">
+            <div className="flex items-end justify-between gap-3 border-b-2 border-academy-textMain pb-2">
+              <h2 className="font-display font-black text-2xl sm:text-3xl tracking-tight">Feuille de service</h2>
+              <span className="font-mono text-xs text-academy-textMain/55">{hour(cfg.startTime)} → {hour(cfg.endTime)}</span>
+            </div>
+            <ol>
               {schedule.map((s, i) => {
                 const last = i === schedule.length - 1
                 return (
-                  <li key={i} className="relative flex items-start gap-4 pb-5 last:pb-0">
-                    <span className="w-10 shrink-0 pt-0.5 text-right font-mono text-sm font-bold tabular-nums text-academy-textMain/60">{hour(s.time)}</span>
-                    <span className={`relative z-10 mt-1.5 w-3 h-3 shrink-0 rounded-full ring-4 ring-academy-surface ${last ? 'bg-academy-primary' : 'bg-academy-textMain'}`} />
-                    <span className={`flex-1 text-[15px] leading-snug ${last ? 'font-black text-academy-primary' : 'font-semibold'}`}>{s.label}</span>
+                  <li key={i} className={`grid grid-cols-[3.5rem_1fr] gap-3 py-3 border-b border-academy-border ${last ? 'border-l-4 border-l-academy-primary pl-3 -ml-[1px]' : ''}`}>
+                    <span className="font-mono text-sm font-bold tabular-nums pt-px">{hour(s.time)}</span>
+                    <span className={`text-[15px] leading-snug ${last ? 'font-black' : 'font-semibold'}`}>
+                      {s.label}
+                      {last && <span className="block text-xs font-bold uppercase tracking-wider text-academy-primary mt-0.5">Résultat le jour même</span>}
+                    </span>
                   </li>
                 )
               })}
-              <li className="relative flex items-start gap-4 pt-1">
-                <span className="w-10 shrink-0 text-right font-mono text-sm font-bold tabular-nums text-academy-textMain/60">{hour(cfg.endTime)}</span>
-                <span className="relative z-10 mt-1 w-3 h-3 shrink-0 rounded-full ring-4 ring-academy-surface bg-academy-border" />
-                <span className="flex-1 text-sm text-academy-textMain/60">Fin de la formation</span>
-              </li>
             </ol>
           </section>
 

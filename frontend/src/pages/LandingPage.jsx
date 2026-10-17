@@ -213,21 +213,29 @@ export default function LandingPage() {
 
         {siteSettings.express?.enabled && (
           <section className="section-container pt-6">
-            <Link to="/formation-1-jour"
-                  className="group relative block max-w-3xl mx-auto overflow-hidden rounded-2xl text-white p-5 sm:p-7"
-                  style={{ background: 'radial-gradient(120% 120% at 10% 0%, #991b1b 0%, #450a0a 55%, #0c0303 100%)' }}>
-              <span aria-hidden="true" className="absolute -right-12 -top-12 w-48 h-48 rounded-full border border-white/10" />
-              <span aria-hidden="true" className="absolute -right-2 -top-2 w-28 h-28 rounded-full border border-white/10" />
-              <p className="text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.25em] text-red-200">
-                Nouveau · Chaque samedi · {(siteSettings.express.startTime || '').replace(':', 'h')}–{(siteSettings.express.endTime || '').replace(':', 'h')}
-              </p>
-              <p className="mt-2 font-display font-black text-2xl sm:text-4xl leading-[1.02] tracking-tight max-w-md">{siteSettings.express.title}</p>
-              <p className="mt-2 text-sm sm:text-base text-white/70 max-w-md">On filme, on monte, et vous repartez avec votre vidéo terminée le jour même.</p>
-              <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2">
-                <span className="font-display font-black text-xl">{Number(siteSettings.express.price).toLocaleString('fr-FR')} DA</span>
-                <span className="text-sm text-white/60">4 h · chez Viga Center</span>
-                <span className="ml-auto inline-flex items-center gap-1.5 rounded-lg bg-white text-[#7f1d1d] px-4 py-2 text-sm font-black group-hover:gap-2.5 transition-all">
-                  Réserver mon samedi <ArrowRight size={16} />
+            <Link to="/formation-1-jour" className="group block max-w-3xl mx-auto rounded-xl overflow-hidden border-2 border-neutral-900 bg-white text-neutral-900">
+              <div aria-hidden="true" className="h-5 sm:h-6" style={{ background: 'repeating-linear-gradient(-45deg, #111 0 14px, #fff 14px 28px)' }} />
+              <div className="border-t-2 border-neutral-900 px-4 pt-3.5 pb-4 sm:px-5">
+                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-academy-primary">Nouveau · chaque samedi</p>
+                <p className="mt-1 font-display font-black text-[1.35rem] sm:text-3xl leading-[1.05] tracking-tight">{siteSettings.express.title}</p>
+                <p className="mt-1 text-sm text-neutral-600">On filme, on monte, vous repartez avec votre vidéo terminée.</p>
+              </div>
+              <dl className="grid grid-cols-3 gap-px bg-neutral-900/15 border-t border-neutral-900/15">
+                {[
+                  ['Horaires', [siteSettings.express.startTime, siteSettings.express.endTime].map(t => (t || '').replace(/^0/, '').replace(':00', 'h').replace(':', 'h')).join('–')],
+                  ['Lieu', 'Viga Center'],
+                  ['Prix', `${Number(siteSettings.express.price).toLocaleString('fr-FR')} DA`],
+                ].map(([k, v]) => (
+                  <div key={k} className="bg-white px-3 py-2">
+                    <dt className="text-[9px] font-bold uppercase tracking-[0.2em] text-neutral-500">{k}</dt>
+                    <dd className="font-bold text-[13px] sm:text-[15px] leading-tight">{v}</dd>
+                  </div>
+                ))}
+              </dl>
+              <div className="flex items-center justify-between border-t border-neutral-900/15 px-4 py-3 sm:px-5">
+                <span className="text-[11px] sm:text-xs text-neutral-500">4 heures · places limitées</span>
+                <span className="whitespace-nowrap inline-flex items-center gap-1.5 text-sm font-bold border-b-2 border-neutral-900 group-hover:text-academy-primary group-hover:border-academy-primary transition-colors">
+                  Réserver mon samedi <ArrowRight size={15} />
                 </span>
               </div>
             </Link>
