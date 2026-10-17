@@ -9,8 +9,56 @@ import SEOHead from '../components/SEOHead'
 import api from '../api/axios'
 import { useLanguage } from '../context/LanguageContext'
 
+// Preuve sociale et engagements : textes propres à cette page, dans les trois langues du site.
+const TRAINED = 170
+const COPY = {
+  fr: {
+    proofLabel: 'personnes déjà formées',
+    proofText: "Étudiants, entrepreneurs, salariés, parents… Ils ont commencé avec un simple smartphone et beaucoup de doutes. Aujourd'hui, ils filment, montent, créent et utilisent l'IA dans leur travail.",
+    facts: [['Formés', `+${TRAINED}`], ['Méthode', '100 % pratique'], ['Matériel', 'Un smartphone']],
+    promisesTitle: 'Ce que nous vous promettons',
+    promises: [
+      "Vous n'avez pas besoin d'être doué : vous avez besoin d'être guidé.",
+      'Chaque séance se termine par un résultat concret, jamais par de la théorie seule.',
+      'Votre téléphone est déjà un outil de travail : on vous apprend à vous en servir.',
+      "Vous ne serez jamais seul : on répond à vos questions, même après la formation.",
+    ],
+    nowTitle: 'Le meilleur moment pour commencer, c’est maintenant.',
+    nowText: `${TRAINED} personnes ont déjà fait le premier pas. La prochaine, c'est vous.`,
+  },
+  en: {
+    proofLabel: 'people already trained',
+    proofText: 'Students, entrepreneurs, employees, parents… They started with nothing but a smartphone and plenty of doubts. Today they film, edit, create and use AI in their work.',
+    facts: [['Trained', `${TRAINED}+`], ['Method', '100% hands-on'], ['Gear', 'A smartphone']],
+    promisesTitle: 'What we promise you',
+    promises: [
+      "You don't need to be gifted: you need to be guided.",
+      'Every session ends with a concrete result, never with theory alone.',
+      'Your phone is already a work tool: we teach you how to use it.',
+      "You're never alone: we answer your questions, even after the training.",
+    ],
+    nowTitle: 'The best time to start is now.',
+    nowText: `${TRAINED} people have already taken the first step. You're next.`,
+  },
+  ar: {
+    proofLabel: 'شخصًا تكوّنوا معنا',
+    proofText: 'طلبة، رواد أعمال، موظفون، أولياء… بدؤوا بهاتف ذكي فقط والكثير من التردد. اليوم يصوّرون، يمونتجون، يبدعون ويستعملون الذكاء الاصطناعي في عملهم.',
+    facts: [['المتكوّنون', `+${TRAINED}`], ['الطريقة', 'تطبيقية 100٪'], ['المعدات', 'هاتف ذكي']],
+    promisesTitle: 'وعدنا لكم',
+    promises: [
+      'لا تحتاج أن تكون موهوبًا، تحتاج فقط من يوجّهك.',
+      'كل حصة تنتهي بنتيجة ملموسة، وليس بالنظري فقط.',
+      'هاتفك أداة عمل حقيقية، ونحن نعلّمك كيف تستعمله.',
+      'لن تكون وحدك أبدًا: نجيب عن أسئلتك حتى بعد التكوين.',
+    ],
+    nowTitle: 'أفضل وقت للبداية هو الآن.',
+    nowText: `${TRAINED} شخصًا خطوا الخطوة الأولى. الدور عليك.`,
+  },
+}
+
 export default function MissionPage() {
-  const { t } = useLanguage()
+  const { t, currentLang } = useLanguage()
+  const c = COPY[currentLang] || COPY.fr
   const [missionData, setMissionData] = useState({
     title: t('mission.hero_title_1') + " " + t('mission.hero_title_2'),
     subtitle: t('mission.pillars_desc'),
@@ -56,6 +104,26 @@ export default function MissionPage() {
                 <ArrowRight size={18} />
               </Link>
             </div>
+          </div>
+        </section>
+
+        {/* PREUVE : déjà +170 personnes formées */}
+        <section className="px-4 relative z-10">
+          <div className="max-w-md mx-auto">
+            <div className="flex items-end gap-3">
+              <span className="font-display font-black text-7xl leading-none tracking-tight text-academy-textMain">+{TRAINED}</span>
+              <span className="pb-2 text-sm font-bold uppercase tracking-[0.15em] text-academy-primary leading-tight">{c.proofLabel}</span>
+            </div>
+            <span className="block mt-2 h-1.5 w-24 bg-academy-primary" />
+            <p className="mt-4 text-[15px] leading-relaxed text-academy-textMain/75">{c.proofText}</p>
+            <dl className="mt-5 grid grid-cols-3 gap-px rounded-xl overflow-hidden border border-academy-border bg-academy-border">
+              {c.facts.map(([k, v]) => (
+                <div key={k} className="bg-white dark:bg-academy-surfaceDark px-3 py-2.5">
+                  <dt className="text-[9px] font-bold uppercase tracking-[0.18em] text-academy-textMain/45">{k}</dt>
+                  <dd className="font-bold text-[14px] leading-tight">{v}</dd>
+                </div>
+              ))}
+            </dl>
           </div>
         </section>
 
@@ -108,14 +176,33 @@ export default function MissionPage() {
           </div>
         </section>
 
+        {/* NOS PROMESSES */}
+        <section className="py-6 px-4">
+          <div className="max-w-md mx-auto">
+            <h2 className="font-display font-black text-2xl tracking-tight border-b-2 border-academy-textMain pb-2">{c.promisesTitle}</h2>
+            <ol>
+              {c.promises.map((p, i) => (
+                <li key={i} className="flex gap-4 py-3.5 border-b border-academy-border">
+                  <span className="font-mono text-sm font-bold text-academy-primary pt-px">{String(i + 1).padStart(2, '0')}</span>
+                  <span className="text-[15px] font-semibold leading-snug">{p}</span>
+                </li>
+              ))}
+            </ol>
+            <blockquote className="mt-8 border-s-4 border-academy-primary ps-4">
+              <p className="text-lg font-display font-bold leading-snug text-academy-textMain">{t('mission.quote')}</p>
+              <footer className="mt-2 text-xs font-bold uppercase tracking-[0.15em] text-academy-textMain/50">{t('mission.quote_author')}</footer>
+            </blockquote>
+          </div>
+        </section>
+
         {/* CALL TO ACTION ULTRA SIMPLE */}
         <section className="py-12 px-4 text-center">
           <div className="max-w-md mx-auto p-6 rounded-3xl bg-gradient-to-br from-academy-primary/10 to-transparent border border-academy-primary/20">
             <h2 className="font-display font-bold text-xl text-academy-textMain mb-2">
-              {t('mission.cta_title')}
+              {c.nowTitle}
             </h2>
             <p className="text-academy-textMain/60 text-sm mb-6">
-              {t('mission.cta_desc')}
+              {c.nowText}
             </p>
             <Link to="/courses" className="btn-primary w-full py-4 text-sm font-bold inline-flex justify-center items-center gap-2 rounded-xl">
               <BookOpen size={18} /> {t('mission.cta_button')}
