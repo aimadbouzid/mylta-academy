@@ -67,7 +67,7 @@ export default defineConfig({
         maximumFileSizeToCacheInBytes: 1.5 * 1024 * 1024,
         // Ne pas cacher les API
         navigateFallback: 'index.html',
-        navigateFallbackDenylist: [/^\/api\//, /^\/uploads\//],
+        navigateFallbackDenylist: [/^\/api\//, /^\/uploads\//, /\.pdf$/, /^\/guide$/],
         runtimeCaching: [
           // Google Fonts stylesheets
           {
