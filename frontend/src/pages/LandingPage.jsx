@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import {
   ArrowRight, Star, Shield, Infinity, CreditCard,
   Trophy, Users, BookOpen, TrendingUp, ChevronRight, Sparkles, ChevronDown, HelpCircle, ExternalLink,
-  Instagram, Facebook
+  Instagram, Facebook, Video, MapPin
 } from 'lucide-react'
 import Navbar from '../components/Navbar'
 import SEOHead from '../components/SEOHead'
@@ -311,20 +311,28 @@ export default function LandingPage() {
           const money = (n) => `${Number(n).toLocaleString('fr-FR')} DA`
           const perDay = Math.ceil((ip.program || []).length / 3) || 1
           const days = [0, 1, 2].map(d => (ip.program || []).slice(d * perDay, (d + 1) * perDay)).filter(d => d.length)
-          const Ticket = ({ stub, to, title, text, facts, children, cta }) => (
-            <Link to={to} className="group flex bg-white dark:bg-academy-surfaceDark border border-academy-border rounded-2xl overflow-hidden hover:border-academy-textMain/25 hover:shadow-sm transition-all">
-              <span className="shrink-0 flex items-center px-3 bg-academy-primary text-academy-onPrimary">
+          // Deux identités nettes : en ligne = noir + caméra, présentiel = rouge + lieu.
+          const Ticket = ({ stub, tone, Icon, kicker, to, title, text, facts, children, cta }) => (
+            <Link to={to} className={`group flex border rounded-2xl overflow-hidden hover:shadow-sm transition-all ${tone === 'red'
+              ? 'bg-academy-primary/[0.04] border-academy-primary/30 hover:border-academy-primary/60'
+              : 'bg-white dark:bg-academy-surfaceDark border-academy-border hover:border-academy-textMain/30'}`}>
+              <span className={`shrink-0 flex flex-col items-center justify-between gap-3 px-3 py-4 ${tone === 'red' ? 'bg-academy-primary text-academy-onPrimary' : 'bg-neutral-900 text-white'}`}>
+                <Icon size={18} />
                 <span className="[writing-mode:vertical-rl] rotate-180 text-[10px] font-black uppercase tracking-[0.25em]">{stub}</span>
+                <span />
               </span>
               <span className="border-l-2 border-dashed border-academy-border" />
               <div className="flex-1 min-w-0 flex flex-col">
                 <div className="px-4 pt-4 sm:px-5">
-                  <h3 className="font-display font-black text-xl leading-tight text-academy-textMain">{title}</h3>
+                  <p className={`inline-flex items-center gap-1.5 text-[11px] font-black uppercase tracking-[0.15em] ${tone === 'red' ? 'text-academy-primary' : 'text-academy-textMain'}`}>
+                    <Icon size={13} /> {kicker}
+                  </p>
+                  <h3 className="mt-1 font-display font-black text-xl leading-tight text-academy-textMain">{title}</h3>
                   <p className="mt-1 text-[13px] text-academy-textMain/60 leading-snug">{text}</p>
                 </div>
                 <dl className="mt-3 grid grid-cols-3 gap-px bg-academy-border border-y border-academy-border">
                   {facts.map(([k, v]) => (
-                    <div key={k} className="bg-white dark:bg-academy-surfaceDark px-3 py-2">
+                    <div key={k} className={`px-3 py-2 ${tone === 'red' ? 'bg-[#fdf7f7] dark:bg-academy-surfaceDark' : 'bg-white dark:bg-academy-surfaceDark'}`}>
                       <dt className="text-[9px] font-bold uppercase tracking-[0.18em] text-academy-textMain/45">{k}</dt>
                       <dd className="font-bold text-[13px] leading-tight text-academy-textMain">{v}</dd>
                     </div>
@@ -348,12 +356,12 @@ export default function LandingPage() {
 
                 <div className="mt-5 grid md:grid-cols-2 gap-3 sm:gap-4">
                   {co.enabled && (
-                    <Ticket stub="En ligne" to="/coaching" title={co.title || 'Coaching en ligne'} text={co.subtitle} cta="Choisir mon pack"
+                    <Ticket stub="En ligne" tone="dark" Icon={Video} kicker="À distance — depuis chez vous" to="/coaching" title={co.title || 'Coaching en ligne'} text={co.subtitle} cta="Choisir mon pack"
                             facts={[['Durée', co.formats?.[0]?.duration || '2h30'], ['Format', 'Visio'], ['Quand', '7 j / 7']]}>
                       <ol className="space-y-1.5">
                         {(co.topics || []).slice(0, 4).map((tp, i) => (
                           <li key={tp.id || i} className="flex gap-2.5 text-[13.5px] font-semibold leading-snug text-academy-textMain">
-                            <span className="font-mono text-[11px] text-academy-primary pt-0.5">{String(i + 1).padStart(2, '0')}</span>{tp.label}
+                            <span className="font-mono text-[11px] text-academy-textMain/40 pt-0.5">{String(i + 1).padStart(2, '0')}</span>{tp.label}
                           </li>
                         ))}
                       </ol>
@@ -361,7 +369,7 @@ export default function LandingPage() {
                     </Ticket>
                   )}
                   {ip.enabled && (
-                    <Ticket stub="Présentiel" to="/coaching-presentiel" title={ip.title || 'Formation en présentiel'} text="3 jours en petit groupe, chez notre partenaire Camden à Béjaïa." cta="Voir les dates"
+                    <Ticket stub="Présentiel" tone="red" Icon={MapPin} kicker="Sur place — à Béjaïa" to="/coaching-presentiel" title={ip.title || 'Formation en présentiel'} text="3 jours en petit groupe, chez notre partenaire Camden à Béjaïa." cta="Voir les dates"
                             facts={[['Durée', '3 jours'], ['Lieu', 'Béjaïa'], ['Prix', ip.price ? money(ip.price) : '—']]}>
                       <ol className="space-y-1.5">
                         {days.map((items, d) => (
