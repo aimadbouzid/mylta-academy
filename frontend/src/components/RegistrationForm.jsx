@@ -234,33 +234,12 @@ const RegistrationForm = ({ onSuccess }) => {
         </div>
       )}
 
-      {/* Bouton Google Auth */}
-      <div className="mb-3 flex justify-center">
-        <GoogleLogin
-          onSuccess={handleGoogleSuccess}
-          onError={() => setError('Échec de la connexion Google')}
-          useOneTap
-          theme="filled_black"
-          size="large"
-          text="continue_with"
-        />
-      </div>
-
-      {/* Bouton Facebook Auth */}
-      <button
-        type="button"
-        onClick={handleFacebookLogin}
-        disabled={loading}
-        className="mb-6 w-full flex items-center justify-center gap-2.5 h-11 rounded-xl bg-[#1877F2] hover:bg-[#166FE5] text-white text-sm font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-          <path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/>
-        </svg>
-        Continuer avec Facebook
-      </button>
-
-      <div className="mb-6 flex items-center before:mt-0.5 before:flex-1 before:border-t before:border-neutral-800 after:mt-0.5 after:flex-1 after:border-t after:border-neutral-800">
-        <span className="mx-4 text-sm text-neutral-500 dark:text-academy-textMain/50 font-medium">{t('login.or') || 'ou'}</span>
+      {/* Google et Facebook sont inaccessibles depuis ici : les boutons menaient
+          à un échec de connexion. On annonce leur retour plutôt que de laisser
+          le visiteur buter dessus. */}
+      <div className="mb-6 rounded-xl border border-academy-border bg-academy-surface dark:bg-white/[0.04] px-4 py-3 text-center">
+        <p className="text-[13px] font-bold text-academy-textMain/75">Inscription avec Google et Facebook</p>
+        <p className="mt-0.5 text-[12px] text-academy-textMain/55">Bientôt disponible. En attendant, utilisez votre e-mail ou votre téléphone.</p>
       </div>
 
       {/* 2. Le Formulaire */}

@@ -266,45 +266,15 @@ export default function LoginModal({ onClose, onSuccess }) {
           {/* ── Connexion sociale ── */}
           {!isForgot && (
             <div className="px-6 pt-5">
-              {/* Le bouton officiel Google est imposé par le SDK : on l'aligne
-                  sur la largeur du bouton Facebook et on suit le thème actif. */}
-              <div ref={googleWrapRef} className="w-full flex justify-center">
-                <GoogleLogin
-                  onSuccess={handleGoogleSuccess}
-                  onError={() => toastError('Échec de la connexion Google')}
-                  useOneTap
-                  theme="outline"
-                  shape="pill"
-                  size="large"
-                  text="continue_with"
-                  width={String(googleWidth)}
-                />
+              {/* Google et Facebook sont inaccessibles depuis ici : les boutons
+                  menaient à un échec de connexion. On annonce leur retour plutôt
+                  que de laisser le visiteur buter dessus. */}
+              <div className="rounded-xl border border-academy-border bg-academy-surface dark:bg-white/[0.04] px-4 py-3 text-center">
+                <p className="text-[13px] font-bold text-academy-textMain/75">Connexion Google et Facebook</p>
+                <p className="mt-0.5 text-[12px] text-academy-textMain/55">Bientôt disponible. En attendant, utilisez votre e-mail ou votre téléphone.</p>
               </div>
 
-              <button
-                type="button"
-                onClick={handleFacebookLogin}
-                disabled={loading}
-                className="mt-2.5 w-full h-10 flex items-center justify-center gap-2.5 rounded-full
-                           bg-academy-surface dark:bg-white/[0.04] border border-academy-border
-                           text-academy-textMain text-sm font-semibold
-                           hover:border-academy-textMain/25 hover:bg-academy-textMain/[0.04]
-                           active:scale-[0.99] transition-all
-                           disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="#1877F2" aria-hidden="true">
-                  <path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/>
-                </svg>
-                Continuer avec Facebook
-              </button>
-
-              <div className="my-5 flex items-center gap-3">
-                <span className="h-px flex-1 bg-academy-border" />
-                <span className="text-[11px] uppercase tracking-[0.14em] text-academy-textMain/35 font-bold">
-                  {t('login.or') || 'ou'}
-                </span>
-                <span className="h-px flex-1 bg-academy-border" />
-              </div>
+              <div className="my-5 h-px bg-academy-border" />
             </div>
           )}
 
