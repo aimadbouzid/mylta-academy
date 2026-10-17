@@ -304,34 +304,81 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* COACHING EN LIGNE */}
-        {siteSettings.coaching?.enabled && (
-          <section className="py-10 lg:py-14 border-t border-academy-border">
-            <div className="section-container">
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 rounded-2xl border border-academy-border bg-white/60 dark:bg-academy-surfaceDark p-6 sm:p-8">
-                <div>
-                  <h2 className="font-display font-black text-2xl sm:text-3xl text-academy-textMain tracking-tight mb-2">{siteSettings.coaching.title}</h2>
-                  <p className="text-academy-textMain/60 text-sm sm:text-base font-medium mb-3">{siteSettings.coaching.subtitle}</p>
-                  <div className="flex flex-wrap gap-2">
-                    {[...new Set((siteSettings.coaching.topics || []).map(tp => tp.category || tp.label))].map(name => (
-                      <span key={name} className="text-xs font-bold px-3 py-1 rounded-full border border-academy-border text-academy-textMain/70">{name}</span>
-                    ))}
-                  </div>
+        {/* COACHING : en ligne et en présentiel, deux tickets côte à côte */}
+        {(siteSettings.coaching?.enabled || siteSettings.inPerson?.enabled) && (() => {
+          const co = siteSettings.coaching || {}
+          const ip = siteSettings.inPerson || {}
+          const money = (n) => `${Number(n).toLocaleString('fr-FR')} DA`
+          const perDay = Math.ceil((ip.program || []).length / 3) || 1
+          const days = [0, 1, 2].map(d => (ip.program || []).slice(d * perDay, (d + 1) * perDay)).filter(d => d.length)
+          const Ticket = ({ stub, to, title, text, facts, children, cta }) => (
+            <Link to={to} className="group flex bg-white dark:bg-academy-surfaceDark border border-academy-border rounded-2xl overflow-hidden hover:border-academy-textMain/25 hover:shadow-sm transition-all">
+              <span className="shrink-0 flex items-center px-3 bg-academy-primary text-academy-onPrimary">
+                <span className="[writing-mode:vertical-rl] rotate-180 text-[10px] font-black uppercase tracking-[0.25em]">{stub}</span>
+              </span>
+              <span className="border-l-2 border-dashed border-academy-border" />
+              <div className="flex-1 min-w-0 flex flex-col">
+                <div className="px-4 pt-4 sm:px-5">
+                  <h3 className="font-display font-black text-xl leading-tight text-academy-textMain">{title}</h3>
+                  <p className="mt-1 text-[13px] text-academy-textMain/60 leading-snug">{text}</p>
                 </div>
-                <div className="shrink-0 flex flex-col sm:flex-row gap-2">
-                  <Link to="/coaching" className="inline-flex items-center justify-center gap-2 py-3 px-6 rounded-md bg-academy-primary text-academy-onPrimary text-sm font-bold hover:opacity-90 transition-opacity">
-                    En ligne <ArrowRight size={15} />
-                  </Link>
-                  {siteSettings.inPerson?.enabled && (
-                    <Link to="/coaching-presentiel" className="inline-flex items-center justify-center gap-2 py-3 px-6 rounded-md border-2 border-academy-primary text-academy-primary text-sm font-bold hover:bg-academy-primary/5 transition-colors">
-                      En présentiel <ArrowRight size={15} />
-                    </Link>
+                <dl className="mt-3 grid grid-cols-3 gap-px bg-academy-border border-y border-academy-border">
+                  {facts.map(([k, v]) => (
+                    <div key={k} className="bg-white dark:bg-academy-surfaceDark px-3 py-2">
+                      <dt className="text-[9px] font-bold uppercase tracking-[0.18em] text-academy-textMain/45">{k}</dt>
+                      <dd className="font-bold text-[13px] leading-tight text-academy-textMain">{v}</dd>
+                    </div>
+                  ))}
+                </dl>
+                <div className="flex-1 px-4 py-3 sm:px-5">{children}</div>
+                <div className="px-4 pb-4 sm:px-5">
+                  <span className="inline-flex items-center gap-1.5 text-sm font-bold border-b-2 border-academy-textMain text-academy-textMain group-hover:text-academy-primary group-hover:border-academy-primary transition-colors">
+                    {cta} <ArrowRight size={15} />
+                  </span>
+                </div>
+              </div>
+            </Link>
+          )
+          return (
+            <section className="py-10 lg:py-14 border-t border-academy-border">
+              <div className="section-container">
+                <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-academy-primary">Coaching</p>
+                <h2 className="mt-1 font-display font-black text-2xl sm:text-3xl text-academy-textMain tracking-tight">Apprenez avec un coach, en ligne ou en vrai</h2>
+                <p className="mt-1 text-sm sm:text-base text-academy-textMain/60 max-w-2xl">Débutants bienvenus : on part de zéro et on avance sur votre propre projet.</p>
+
+                <div className="mt-5 grid md:grid-cols-2 gap-3 sm:gap-4">
+                  {co.enabled && (
+                    <Ticket stub="En ligne" to="/coaching" title={co.title || 'Coaching en ligne'} text={co.subtitle} cta="Choisir mon pack"
+                            facts={[['Durée', co.formats?.[0]?.duration || '2h30'], ['Format', 'Visio'], ['Quand', '7 j / 7']]}>
+                      <ol className="space-y-1.5">
+                        {(co.topics || []).slice(0, 4).map((tp, i) => (
+                          <li key={tp.id || i} className="flex gap-2.5 text-[13.5px] font-semibold leading-snug text-academy-textMain">
+                            <span className="font-mono text-[11px] text-academy-primary pt-0.5">{String(i + 1).padStart(2, '0')}</span>{tp.label}
+                          </li>
+                        ))}
+                      </ol>
+                      <p className="mt-2 text-xs text-academy-textMain/50">Seul ou avec vos amis, dans le même appel.</p>
+                    </Ticket>
+                  )}
+                  {ip.enabled && (
+                    <Ticket stub="Présentiel" to="/coaching-presentiel" title={ip.title || 'Formation en présentiel'} text="3 jours en petit groupe, chez notre partenaire Camden à Béjaïa." cta="Voir les dates"
+                            facts={[['Durée', '3 jours'], ['Lieu', 'Béjaïa'], ['Prix', ip.price ? money(ip.price) : '—']]}>
+                      <ol className="space-y-1.5">
+                        {days.map((items, d) => (
+                          <li key={d} className="flex gap-2.5 text-[13.5px] leading-snug text-academy-textMain">
+                            <span className="shrink-0 font-mono text-[11px] font-bold text-academy-primary pt-0.5">J{d + 1}</span>
+                            <span className="font-semibold">{items.join(' · ')}</span>
+                          </li>
+                        ))}
+                      </ol>
+                      {Number(ip.studentPrice) > 0 && <p className="mt-2 text-xs font-bold text-academy-textMain/70">Étudiants : {money(ip.studentPrice)} avec la carte étudiante</p>}
+                    </Ticket>
                   )}
                 </div>
               </div>
-            </div>
-          </section>
-        )}
+            </section>
+          )
+        })()}
 
         {/* FEATURES */}
         <section id="mission" className="pt-4 lg:pt-6 pb-10 lg:pb-12 bg-academy-surfaceDark/40 relative border-t border-academy-border overflow-hidden">
