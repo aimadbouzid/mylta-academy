@@ -8,6 +8,25 @@ let io
 const userSockets = new Map()
 // Set of socketIds for unauthenticated guest visitors
 const guestSockets = new Set()
+// Nombre de sockets invités ouverts par adresse IP.
+const guestsByIp = new Map()
+
+// Plafonds des connexions anonymes. Chaque socket ouvert consomme de la mémoire
+// et un descripteur de fichier : sans plafond, un script peut en ouvrir des
+// milliers et faire tomber le serveur. Le plafond par IP empêche en plus qu'une
+// seule machine occupe tout le quota global au détriment des vrais visiteurs.
+const MAX_GUEST_SOCKETS = 1000
+const MAX_GUEST_SOCKETS_PER_IP = 15
+
+// Derrière un reverse proxy (Nginx, Cloudflare, Railway), `handshake.address`
+// est l'adresse du proxy : TOUS les visiteurs partageraient alors le même
+// compteur et seuls les 15 premiers obtiendraient un socket. On lit donc
+// X-Forwarded-For en premier, comme le fait Express avec `trust proxy`.
+const socketIp = (socket) => {
+  const fwd = socket.handshake.headers?.['x-forwarded-for']
+  if (fwd) return String(fwd).split(',')[0].trim()
+  return socket.handshake.address || socket.request.connection.remoteAddress || '127.0.0.1'
+}
 
 const initSocket = (server, allowedOrigins) => {
   io = new Server(server, {
@@ -66,6 +85,17 @@ const initSocket = (server, allowedOrigins) => {
     const userId = socket.user?.userId
 
     if (isGuest) {
+      const ip = socketIp(socket)
+      const fromThisIp = guestsByIp.get(ip) || 0
+
+      if (guestSockets.size >= MAX_GUEST_SOCKETS || fromThisIp >= MAX_GUEST_SOCKETS_PER_IP) {
+        console.warn(`🚧 Connexion invité refusée (IP ${ip}) : ${fromThisIp} depuis cette IP, ${guestSockets.size} au total.`)
+        socket.disconnect(true)
+        return
+      }
+
+      socket.guestIp = ip
+      guestsByIp.set(ip, fromThisIp + 1)
       guestSockets.add(socket.id)
       console.log(`👁️ Guest connected (Socket: ${socket.id}) | Total guests: ${guestSockets.size}`)
     } else if (userId) {
@@ -115,9 +145,23 @@ const initSocket = (server, allowedOrigins) => {
       }, 1000)
     }
 
-    // Live click tracking handler
+    // Live click tracking handler.
+    // Plafond par socket : la route HTTP équivalente est limitée à 60 appels
+    // par minute, mais rien ne bridait ce canal — un visiteur anonyme pouvait
+    // émettre « track_click » en boucle et faire grossir la table ClickLog
+    // sans limite, jusqu'à saturer la base et le pool de connexions.
+    let clickWindowStart = Date.now()
+    let clicksInWindow = 0
+
     socket.on('track_click', async (data) => {
       try {
+        const now = Date.now()
+        if (now - clickWindowStart > 60_000) {
+          clickWindowStart = now
+          clicksInWindow = 0
+        }
+        if (++clicksInWindow > 60) return
+
         const { pageUrl, elementText, elementTag, elementId } = data || {}
         if (!pageUrl) return
 
@@ -166,6 +210,11 @@ const initSocket = (server, allowedOrigins) => {
     socket.on('disconnect', () => {
       if (isGuest) {
         guestSockets.delete(socket.id)
+        if (socket.guestIp) {
+          const left = (guestsByIp.get(socket.guestIp) || 1) - 1
+          if (left > 0) guestsByIp.set(socket.guestIp, left)
+          else guestsByIp.delete(socket.guestIp)
+        }
         console.log(`👁️ Guest disconnected (Socket: ${socket.id}) | Total guests: ${guestSockets.size}`)
       } else if (userId) {
         const sockets = userSockets.get(userId)

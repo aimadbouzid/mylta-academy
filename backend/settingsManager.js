@@ -353,18 +353,48 @@ function upgradeCoaching(saved) {
   return merged
 }
 
+// Cache mémoire des réglages. `/api/config/site` est appelé à chaque chargement
+// de page par chaque visiteur : sans cache, chaque appel faisait une lecture
+// disque SYNCHRONE (readFileSync + JSON.parse + fusion profonde), qui bloque
+// l'unique fil d'exécution de Node. Quelques centaines de visiteurs simultanés
+// — ou un simple script — suffisaient à figer toute l'API.
+// Le cache est invalidé par la date de modification du fichier, donc une
+// modification faite à la main sur settings.json est prise en compte elle aussi.
+let settingsCache = null
+let settingsCacheMtime = 0
+
+function invalidateSettingsCache() {
+  settingsCache = null
+  settingsCacheMtime = 0
+}
+
 function getSettings() {
+  try {
+    if (settingsCache) {
+      let mtime = 0
+      try { mtime = fs.statSync(settingsPath).mtimeMs } catch { /* fichier absent : on relit */ }
+      if (mtime && mtime === settingsCacheMtime) return settingsCache
+    }
+    return (settingsCache = readSettingsFromDisk())
+  } catch (err) {
+    console.error('Erreur lecture settings.json:', err)
+    return defaultSettings
+  }
+}
+
+function readSettingsFromDisk() {
   try {
     if (!fs.existsSync(settingsPath)) {
       const dir = path.dirname(settingsPath)
       if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true })
       const initial = { ...defaultSettings, settingsVersion: SETTINGS_VERSION }
       fs.writeFileSync(settingsPath, JSON.stringify(initial, null, 2))
+      try { settingsCacheMtime = fs.statSync(settingsPath).mtimeMs } catch { settingsCacheMtime = 0 }
       return initial
     }
     const data = fs.readFileSync(settingsPath, 'utf8')
     const parsed = JSON.parse(data)
-    return migrateSettings(parsed, {
+    const result = migrateSettings(parsed, {
       ...defaultSettings,
       ...parsed,
       hero: { ...defaultSettings.hero, ...(parsed.hero || {}) },
@@ -390,6 +420,8 @@ function getSettings() {
         ? parsed.upcomingCourses
         : defaultSettings.upcomingCourses,
     })
+    try { settingsCacheMtime = fs.statSync(settingsPath).mtimeMs } catch { settingsCacheMtime = 0 }
+    return result
   } catch (err) {
     console.error('Erreur lecture settings.json:', err)
     return defaultSettings
@@ -463,6 +495,7 @@ function updateSettings(newSettings) {
     const dir = path.dirname(settingsPath)
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true })
     fs.writeFileSync(settingsPath, JSON.stringify(updated, null, 2))
+    invalidateSettingsCache()
     return updated
   } catch (err) {
     console.error('Erreur écriture settings.json:', err)
@@ -470,4 +503,4 @@ function updateSettings(newSettings) {
   }
 }
 
-module.exports = { getSettings, updateSettings }
+module.exports = { getSettings, updateSettings, invalidateSettingsCache }

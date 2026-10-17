@@ -449,19 +449,32 @@ app.post('/api/analytics/track-click', trackClickLimiter, async (req, res) => {
 const { getSettings } = require('./settingsManager')
 
 // ─── Configuration Publique (cachable 5 min) ─────────────────
-app.get('/api/config/intro-video', (req, res) => {
+// Routes publiques déclarées directement sur `app` : les limiteurs montés par
+// préfixe (/api/auth, /api/courses…) ne les couvrent pas. Sans ce plafond,
+// /api/config/* et /api/health étaient interrogeables sans aucune limite —
+// /api/health ouvre une requête en base à chaque appel, de quoi épuiser le
+// pool de connexions avec un simple script.
+const publicReadLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 120, // un visiteur normal appelle ces routes quelques fois par page
+  message: { error: t('errors.rate_limited', 'fr'), code: 'RATE_LIMITED' },
+  standardHeaders: true,
+  legacyHeaders: false,
+})
+
+app.get('/api/config/intro-video', publicReadLimiter, (req, res) => {
   const settings = getSettings()
   res.setHeader('Cache-Control', 'public, max-age=300')
   res.json({ introVideoUrl: settings.introVideoUrl })
 })
 
-app.get('/api/config/mission', (req, res) => {
+app.get('/api/config/mission', publicReadLimiter, (req, res) => {
   const settings = getSettings()
   res.setHeader('Cache-Control', 'public, max-age=300')
   res.json({ mission: settings.mission })
 })
 
-app.get('/api/config/site', (req, res) => {
+app.get('/api/config/site', publicReadLimiter, (req, res) => {
   const all = getSettings()
   // Le code du QR d'inscription ne doit jamais être public.
   const { joinCode, ...inPerson } = all.inPerson || {}
@@ -472,7 +485,7 @@ app.get('/api/config/site', (req, res) => {
 })
 
 // ─── Health Check (vérifie aussi la DB) ──────────────────────
-app.get('/api/health', async (req, res) => {
+app.get('/api/health', publicReadLimiter, async (req, res) => {
   const startTime = Date.now()
   try {
     // Use parameterized $queryRaw instead of $queryRawUnsafe (OWASP: Injection prevention)
