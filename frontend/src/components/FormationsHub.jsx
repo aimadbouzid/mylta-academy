@@ -23,7 +23,7 @@ function Card({ kicker, title, text, facts, next, nextLabel = 'Prochaine', to, c
   const ink = solid ? 'text-white' : 'text-academy-textMain'
   const soft = solid ? 'text-white/75' : 'text-academy-textMain/60'
   return (
-    <Link to={to} className={`group flex flex-col overflow-hidden border rounded-2xl ${solid ? 'hover:shadow-lg hover:shadow-blue-600/25' : 'hover:border-academy-textMain/30 hover:shadow-sm'} transition-all ${surface}`}>
+    <Link to={to} className={`group flex flex-col overflow-hidden border rounded-2xl ${solid ? 'hover:shadow-sm' : 'hover:border-academy-textMain/30 hover:shadow-sm'} transition-all ${surface}`}>
       {/* Chaque formation porte sa couleur, du bandeau jusqu'au bouton : les
           trois cartes se ressemblaient trop pour se distinguer d'un coup d'œil. */}
       <span aria-hidden="true" className={`block h-1.5 w-full ${accent}`} />
@@ -98,8 +98,8 @@ export default function FormationsHub({ coaching, inPerson, express }) {
           to="/coaching-presentiel" cta="Voir les dates" />
   )
   if (express?.enabled) cards.push(
-    <Card key="1j" solid accent="bg-white/25" accentText="text-white" button="bg-white text-blue-700" kicker="Présentiel · chaque samedi"
-          badge="Nouveau" surface="bg-gradient-to-br from-blue-600 to-indigo-700 border-blue-600 shadow-md shadow-blue-600/20"
+    <Card key="1j" solid accent="bg-white/25" accentText="text-white" button="bg-white text-[#1e3a8a]" kicker="Présentiel · chaque samedi"
+          badge="Nouveau" surface="bg-[#1e3a8a] border-[#1e3a8a]"
           title="Montage vidéo en 1 jour"
           text="On filme, on monte, vous repartez avec votre vidéo terminée le jour même."
           facts={[['Horaires', `${hourShort(express.startTime)}–${hourShort(express.endTime)}`], ['Lieu', 'Viga Center'], ['Prix', money(express.price)]]}

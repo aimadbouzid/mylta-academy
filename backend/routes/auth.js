@@ -15,6 +15,7 @@ const { validateEmail } = require('../middleware/security')
 const { ensureCsrfToken, CSRF_HEADER_NAME } = require('../middleware/csrf')
 const prisma = require('../prisma')
 const { phoneToEmail } = require('../utils/phoneAccount')
+const { registrationsForPhone, phoneOfUser } = require('../utils/registrations')
 const { authenticate, checkAccountLock, recordFailedLogin, resetFailedLogin } = require('../middleware/auth')
 const { t } = require('../i18n')
 const { sendResetPasswordEmail, sendVerificationEmail, isMailerConfigured } = require('../utils/mailer')
@@ -925,6 +926,17 @@ router.put('/notifications/read', authenticate, async (req, res, next) => {
 })
 
 // ─── GET /api/auth/my-courses (paginé) ────────────────────────
+// ─── GET /api/auth/my-registrations ───────────────────────────
+// Inscriptions (coaching, présentiel, samedi) faites avec le numéro du compte.
+router.get('/my-registrations', authenticate, async (req, res, next) => {
+  try {
+    const phone = phoneOfUser(req.user)
+    res.json({ registrations: phone ? await registrationsForPhone(phone) : [] })
+  } catch (err) {
+    next(err)
+  }
+})
+
 router.get('/my-courses', authenticate, async (req, res, next) => {
   try {
     const page = Math.max(1, parseInt(req.query.page) || 1)

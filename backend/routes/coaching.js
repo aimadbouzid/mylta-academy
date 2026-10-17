@@ -3,6 +3,7 @@ const { z } = require('zod')
 const prisma = require('../prisma')
 const { getSettings } = require('../settingsManager')
 const { notifyOwner } = require('../utils/notifyOwner')
+const { notifyRegistration, describe } = require('../utils/registrations')
 
 const router = express.Router()
 
@@ -169,6 +170,7 @@ router.post('/book', async (req, res, next) => {
       },
     })
 
+    notifyRegistration(phone, describe.coaching(booking))
     notifyOwner(
       `🎓 Nouvelle réservation coaching en ligne n°${booking.id}\n` +
       `Nom : ${fullName}\nTél : ${phone}\nSujet : ${topic.label}\n` +

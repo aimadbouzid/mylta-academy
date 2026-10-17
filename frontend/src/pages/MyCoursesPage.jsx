@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import {
   Play, BookOpen, Clock, CheckCircle2, Award, TrendingUp,
-  Sparkles, Shield, Compass, HelpCircle, ArrowRight, Zap, GraduationCap
+  Sparkles, Shield, Compass, HelpCircle, ArrowRight, Zap, GraduationCap, CalendarCheck
 } from 'lucide-react'
 import Navbar from '../components/Navbar'
 import SEOHead from '../components/SEOHead'
@@ -44,6 +44,7 @@ export default function MyCoursesPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [activeTab, setActiveTab] = useState('in-progress') // 'in-progress' | 'all' | 'guide'
+  const [registrations, setRegistrations] = useState([])
   const navigate = useNavigate()
 
   const fetchMyCourses = async () => {
@@ -62,6 +63,7 @@ export default function MyCoursesPage() {
   useEffect(() => {
     fetchMyCourses()
     checkAuth().catch(() => {})
+    api.get('/auth/my-registrations').then(({ data }) => setRegistrations(data.registrations || [])).catch(() => {})
   }, [])
 
   // Calcul des statistiques globales du dashboard
@@ -101,6 +103,31 @@ export default function MyCoursesPage() {
               Retrouvez toutes vos formations débloquées ci-dessous. Reprenez votre apprentissage là où vous l'avez laissé.
             </p>
           </div>
+
+          {/* Inscriptions faites avec le numéro du compte (coaching, présentiel, samedi). */}
+          {registrations.length > 0 && (
+            <section className="space-y-3">
+              <h2 className="font-display font-bold text-xl text-academy-textMain">Mes inscriptions</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {registrations.map(r => (
+                  <div key={r.id} className="flex gap-3 p-4 bg-white dark:bg-academy-surfaceDark border border-academy-border rounded-2xl">
+                    <span className="shrink-0 w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center">
+                      <CalendarCheck size={20} />
+                    </span>
+                    <div className="min-w-0">
+                      <p className="font-bold text-sm text-academy-textMain leading-snug">{r.title}</p>
+                      {r.date && <p className="text-[13px] text-academy-textMain/70">{r.date}{r.time ? ` · ${r.time}` : ''}</p>}
+                      {r.detail && <p className="text-[13px] text-academy-textMain/55">{r.detail}</p>}
+                      <span className={`inline-flex items-center gap-1 mt-1.5 px-2 py-0.5 rounded-full text-[11px] font-bold ${r.status === 'CONFIRMED' ? 'bg-emerald-500/10 text-emerald-600' : 'bg-amber-500/10 text-amber-600'}`}>
+                        <CheckCircle2 size={12} />
+                        {r.status === 'CONFIRMED' ? 'Confirmée' : 'Inscription enregistrée'}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
 
           {loading && <LoadingGrid count={4} />}
           {error && <ErrorState message={error} onRetry={fetchMyCourses} />}

@@ -378,3 +378,9 @@ section {
     animation: none !important;
   }
 }
+
+/* iPhone : Safari zoome la page quand on touche un champ de moins de 16px.
+   Règle limitée à iOS (-webkit-touch-callout) : Android et ordinateur inchangés. */
+@supports (-webkit-touch-callout: none) {
+  input, select, textarea { font-size: 16px !important; }
+}

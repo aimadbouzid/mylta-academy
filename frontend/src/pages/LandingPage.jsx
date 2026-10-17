@@ -221,7 +221,7 @@ export default function LandingPage() {
 
         {siteSettings.contest?.enabled && !(siteSettings.contest.endDate && siteSettings.contest.endDate < new Date().toISOString().slice(0, 10)) && (
           <section className="section-container pt-4">
-            <Link to="/concours" className="group relative flex max-w-3xl mx-auto bg-white border border-academy-border rounded-xl overflow-hidden hover:border-academy-textMain/30 transition-colors">
+            <Link to="/concours" className="group relative flex max-w-3xl lg:max-w-none mx-auto bg-white border border-academy-border rounded-xl overflow-hidden hover:border-academy-textMain/30 transition-colors">
               {/* Talon de ticket */}
               <span className="shrink-0 flex items-center px-1.5 sm:px-2 bg-academy-primary text-academy-onPrimary">
                 <span className="[writing-mode:vertical-rl] rotate-180 text-[8px] font-bold uppercase tracking-[0.12em]">Concours</span>

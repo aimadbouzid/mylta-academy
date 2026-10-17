@@ -3,6 +3,7 @@ const { z } = require('zod')
 const prisma = require('../prisma')
 const { getSettings } = require('../settingsManager')
 const { notifyOwner } = require('../utils/notifyOwner')
+const { notifyRegistration, describe } = require('../utils/registrations')
 const crypto = require('crypto')
 const fs = require('fs')
 const path = require('path')
@@ -124,6 +125,7 @@ router.post('/register', async (req, res, next) => {
     if (!sessionId) {
       const registration = await prisma.inPersonRegistration.create({ data })
       notify(registration.id, null)
+      notifyRegistration(phone, describe.inPerson(registration))
       return res.status(201).json({ registration: { id: registration.id, session: null } })
     }
 
@@ -147,6 +149,7 @@ router.post('/register', async (req, res, next) => {
     })
 
     notify(result.id, result.session)
+    notifyRegistration(phone, describe.inPerson({ ...data, formation: '', session: result.session }))
     res.status(201).json({ registration: result })
   } catch (err) {
     if (err instanceof SessionError) return res.status(err.status).json({ error: err.message })
@@ -226,6 +229,7 @@ router.post('/express/register', async (req, res, next) => {
       })
     })
 
+    notifyRegistration(phone, describe.inPerson(result))
     notifyOwner(
       `🎬 Formation 1 jour — inscription n°${result.id}\nNom : ${fullName}\nTél : ${phone}\nSamedi : ${day} (${cfg.startTime}–${cfg.endTime})\nAcompte : ${cfg.deposit} DA en attente` +
       (message ? `\nMessage : ${message}` : '')

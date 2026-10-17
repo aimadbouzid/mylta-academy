@@ -22,7 +22,7 @@ async function createPhoneAccount({ fullName, phone }) {
     throw new AccountExistsError('Un compte existe déjà pour ce numéro. Connectez-vous avec votre numéro et votre mot de passe.')
   }
   const password = generatePassword()
-  await prisma.user.create({
+  const user = await prisma.user.create({
     data: {
       email,
       password: await argon2.hash(password),
@@ -32,6 +32,8 @@ async function createPhoneAccount({ fullName, phone }) {
       emailVerified: true,
     },
   })
+  // Chargé ici pour éviter une dépendance circulaire avec registrations.js.
+  await require('./registrations').notifyExistingRegistrations(user.id, phone)
   return { login: phoneDigits(phone), password }
 }
 
