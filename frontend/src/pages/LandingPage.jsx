@@ -270,7 +270,6 @@ export default function LandingPage() {
                 <h2 className="font-display font-black text-3xl sm:text-4xl text-academy-textMain tracking-tight">
                   {t('landing.our_courses')}
                 </h2>
-                {t('landing.choose_path') && <p className="text-academy-textMain/60 text-sm sm:text-base mt-1 font-medium">{t('landing.choose_path')}</p>}
               </div>
               <Link to="/courses" className="group flex items-center gap-1.5 text-sm font-bold text-academy-textMain hover:text-academy-primary transition-colors bg-white dark:bg-academy-surfaceDark hover:bg-red-50 px-5 py-2.5 rounded-full border border-academy-border shadow-sm w-fit">
                 {t('landing.view_all')} <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
