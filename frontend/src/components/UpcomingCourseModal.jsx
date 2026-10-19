@@ -1,7 +1,6 @@
 import { useEffect } from 'react'
 import { X, Check, MessageCircle } from 'lucide-react'
 import { useSiteSettings } from '../context/SiteSettingsContext'
-import { formatPrice, discountOf } from './UpcomingCourseCard'
 
 // Fiche d'une formation à venir : contenu détaillé + être prévenu sur WhatsApp.
 export default function UpcomingCourseModal({ course, onClose }) {
@@ -17,7 +16,6 @@ export default function UpcomingCourseModal({ course, onClose }) {
   }, [onClose])
 
   if (!course) return null
-  const discount = discountOf(course)
   const notifyUrl = whatsappNumber
     ? `https://wa.me/${whatsappNumber.replace(/\D/g, '')}?text=${encodeURIComponent(`Bonjour Mylta Academy, je souhaite être prévenu(e) dès que la formation « ${course.title} » sera disponible.`)}`
     : null
@@ -47,16 +45,7 @@ export default function UpcomingCourseModal({ course, onClose }) {
             {course.description && <p className="mt-1.5 text-academy-textMain/70 leading-relaxed">{course.description}</p>}
           </div>
 
-          {Number(course.price) > 0 && (
-            <div className="rounded-lg border border-academy-border bg-academy-surface p-3">
-              <p className="text-[10px] font-black uppercase tracking-wider text-academy-textMain/60 mb-0.5">Prix de lancement</p>
-              <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-                <span className="text-lg font-black">{formatPrice(course.price)}</span>
-                {Number(course.oldPrice) > Number(course.price) && <span className="text-xs text-academy-textMain/45 line-through">{formatPrice(course.oldPrice)}</span>}
-                {discount > 0 && <span className="text-[10px] font-black text-white bg-neutral-900 rounded-full px-1.5 py-0.5">-{discount}%</span>}
-              </div>
-            </div>
-          )}
+          {/* Plus de prix de lancement : l'accès viendra du club. */}
 
           {(course.program || []).length > 0 && (
             <div>

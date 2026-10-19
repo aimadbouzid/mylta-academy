@@ -120,33 +120,12 @@ export default React.memo(function CourseCard({ course }) {
         {/* Divider */}
         <div className="hidden sm:block border-t border-academy-border mb-4" />
 
-        {/* Prix + CTA */}
+        {/* Les formations ne s'achètent plus à l'unité : plus de prix sur la
+            carte, l'accès vient de l'appartenance au club. */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 mt-auto">
-          {course.discountPrice && course.discountPrice < course.price ? (
-            <div className="flex flex-col">
-              <div className="flex items-center gap-1 mb-0.5">
-                <span className="text-academy-textMain/40 text-[8px] sm:text-xs line-through font-bold">
-                  {course.price.toLocaleString('fr-DZ')} DA
-                </span>
-                <span className="px-1 py-[0.5px] rounded-full bg-red-100 dark:bg-white/10 text-red-600 dark:text-white text-[8px] sm:text-[9px] font-black scale-90 origin-left">
-                  -{Math.round(((course.price - course.discountPrice) / course.price) * 100)}%
-                </span>
-              </div>
-              <div className="flex items-baseline gap-0.5">
-                <span className="font-display font-black text-xs xs:text-sm sm:text-xl text-academy-textMain tracking-tight">
-                  {course.discountPrice.toLocaleString('fr-DZ')}
-                </span>
-                <span className="text-[9px] sm:text-xs font-black text-academy-primary">DA</span>
-              </div>
-            </div>
-          ) : (
-            <div className="flex items-baseline gap-0.5">
-              <span className="font-display font-black text-xs xs:text-sm sm:text-xl text-academy-textMain tracking-tight">
-                {(course.price || 0).toLocaleString('fr-DZ')}
-              </span>
-              <span className="text-[9px] sm:text-xs font-black text-academy-primary">DA</span>
-            </div>
-          )}
+          <span className={`inline-flex items-center gap-1 text-[9px] sm:text-xs font-bold ${course.hasAccess ? 'text-green-600' : 'text-academy-textMain/55'}`}>
+            {course.hasAccess ? 'Accès ouvert' : 'Réservé aux membres'}
+          </span>
 
           <button
             className={`flex items-center justify-center gap-1 px-2.5 py-1.5 sm:px-4 sm:py-2.5 rounded-lg sm:rounded-full text-[9px] sm:text-xs font-bold

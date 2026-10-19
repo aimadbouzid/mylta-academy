@@ -1,13 +1,9 @@
 import { Lock } from 'lucide-react'
 
-export const formatPrice = (n) => `${Number(n).toLocaleString('fr-FR')} DA`
-export const discountOf = (c) => (Number(c.oldPrice) > Number(c.price) && Number(c.price) > 0
-  ? Math.round((1 - c.price / c.oldPrice) * 100) : 0)
 
-// Formation annoncée mais pas encore ouverte : prix affiché, fiche consultable,
-// achat impossible tant qu'elle n'est pas en ligne.
+// Formation annoncée mais pas encore ouverte : fiche consultable, accès fermé
+// tant qu'elle n'est pas en ligne.
 export default function UpcomingCourseCard({ course, onDetails }) {
-  const discount = discountOf(course)
   return (
     <article
       className="relative flex flex-col card-academy overflow-hidden h-full cursor-pointer transition-transform hover:-translate-y-1"
@@ -40,20 +36,10 @@ export default function UpcomingCourseCard({ course, onDetails }) {
           </p>
         )}
 
-        {Number(course.price) > 0 && (
-          <div className="mt-auto mb-2 sm:mb-3">
-            {Number(course.oldPrice) > Number(course.price) && (
-              <div className="flex items-center gap-1.5">
-                <span className="text-[10px] sm:text-xs text-academy-textMain/40 line-through font-semibold">{formatPrice(course.oldPrice)}</span>
-                {discount > 0 && <span className="text-[9px] sm:text-[11px] font-black text-academy-textMain bg-academy-textMain/10 rounded px-1">-{discount}%</span>}
-              </div>
-            )}
-            <span className="font-black text-sm sm:text-lg text-academy-textMain">{formatPrice(course.price)}</span>
-          </div>
-        )}
+        {/* Plus de prix : les formations s'ouvrent par le club, pas à l'achat. */}
 
         <button type="button" onClick={(e) => { e.stopPropagation(); onDetails?.(course) }}
-                className={`${Number(course.price) > 0 ? '' : 'mt-auto '}w-full py-1.5 sm:py-2 rounded-lg border border-neutral-500 dark:border-white/60 text-[10px] sm:text-xs font-semibold text-neutral-700 dark:text-white hover:bg-neutral-900/5 dark:hover:bg-white/10 transition-colors`}>
+                className={`mt-auto w-full py-1.5 sm:py-2 rounded-lg border border-neutral-500 dark:border-white/60 text-[10px] sm:text-xs font-semibold text-neutral-700 dark:text-white hover:bg-neutral-900/5 dark:hover:bg-white/10 transition-colors`}>
           Détails
         </button>
       </div>
