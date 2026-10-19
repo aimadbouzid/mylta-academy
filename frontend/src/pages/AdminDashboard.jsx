@@ -683,6 +683,8 @@ function SiteCMSConfigTab() {
   const [bannerIcon, setBannerIcon] = useState('sparkles')
   const [bannerLinkUrl, setBannerLinkUrl] = useState('')
   const [bannerLinkText, setBannerLinkText] = useState('')
+  // Message posé au visiteur dès son arrivée sur l'accueil.
+  const [welcome, setWelcome] = useState({ enabled: true, title: '', subtitle: '', notifyEnabled: true })
 
   useEffect(() => {
     api.get('/admin/config')
@@ -697,6 +699,7 @@ function SiteCMSConfigTab() {
           setMissionTitle(data.mission.title || '')
           setMissionSubtitle(data.mission.subtitle || '')
         }
+        if (data.welcome) setWelcome({ enabled: data.welcome.enabled !== false, title: data.welcome.title || '', subtitle: data.welcome.subtitle || '', notifyEnabled: data.welcome.notifyEnabled !== false })
         if (Array.isArray(data.testimonials)) setTestimonials(data.testimonials)
         if (Array.isArray(data.faq)) setFaq(data.faq)
         if (Array.isArray(data.learningPoints)) setLearningPoints(data.learningPoints)
@@ -725,6 +728,7 @@ function SiteCMSConfigTab() {
         introVideoUrl,
         hero: { phrases: phrasesArray, subtitle: heroSubtitle },
         mission: { title: missionTitle, subtitle: missionSubtitle },
+        welcome,
         testimonials,
         faq,
         learningPoints,
@@ -879,6 +883,31 @@ function SiteCMSConfigTab() {
           <label className="text-neutral-400 text-sm font-medium mb-2 block">Sous-titre Hero</label>
           <textarea value={heroSubtitle} onChange={e => setHeroSubtitle(e.target.value)} rows={2} className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-neutral-600 focus:border-white/40 outline-none transition-all resize-none" />
         </div>
+      </div>
+
+      {/* Message d'accueil : première chose que voit un visiteur, donc pilotable
+          sans passer par le code. */}
+      <div className="bg-neutral-900/40 backdrop-blur-xl border border-white/5 rounded-3xl p-8 space-y-6 shadow-2xl">
+        <h3 className="font-display font-bold text-xl text-white flex items-center gap-3 border-b border-white/5 pb-4">
+          <Compass className="text-sky-500" size={22} /> Message d&apos;accueil du visiteur
+        </h3>
+        <label className="flex items-center gap-3 text-sm font-bold text-white cursor-pointer">
+          <input type="checkbox" checked={welcome.enabled} onChange={e => setWelcome({ ...welcome, enabled: e.target.checked })} className="w-4 h-4" />
+          Afficher le message à l&apos;arrivée sur le site
+        </label>
+        <div>
+          <label className="text-neutral-400 text-sm font-medium mb-2 block">Titre</label>
+          <input value={welcome.title} onChange={e => setWelcome({ ...welcome, title: e.target.value })} placeholder="Choisissez votre formation" className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-neutral-600 focus:border-sky-500 outline-none transition-all" />
+        </div>
+        <div>
+          <label className="text-neutral-400 text-sm font-medium mb-2 block">Sous-titre (vide = aucun)</label>
+          <input value={welcome.subtitle} onChange={e => setWelcome({ ...welcome, subtitle: e.target.value })} placeholder="Trois façons d'apprendre. Laquelle vous va ?" className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-neutral-600 focus:border-sky-500 outline-none transition-all" />
+        </div>
+        <label className="flex items-center gap-3 text-sm font-bold text-white cursor-pointer">
+          <input type="checkbox" checked={welcome.notifyEnabled} onChange={e => setWelcome({ ...welcome, notifyEnabled: e.target.checked })} className="w-4 h-4" />
+          Proposer « Me prévenir de la prochaine » (nom, prénom, numéro)
+        </label>
+        <p className="text-xs text-neutral-500">Les formations proposées sont celles qui sont activées. Le message est reposé à chaque nouvelle visite.</p>
       </div>
 
       {/* Mission Section CMS */}

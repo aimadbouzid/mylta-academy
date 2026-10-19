@@ -21,19 +21,38 @@ export default function WelcomeChoice() {
   const [phone, setPhone] = useState('')
   const [sending, setSending] = useState(false)
   const [error, setError] = useState('')
+  // null tant qu'on ne sait pas s'il reste des dates présentielles.
+  const [hasDates, setHasDates] = useState(null)
+
+  const welcome = settings?.welcome || {}
+  const notifyEnabled = welcome.notifyEnabled !== false
+
+  // Annoncer « 3 jours » sans aucune date ouverte envoie le visiteur sur une
+  // page qui n'a rien à lui vendre : on le dit avant qu'il clique.
+  useEffect(() => {
+    if (!settings?.inPerson?.enabled) return
+    api.get('/in-person/sessions')
+      .then(({ data }) => setHasDates((data.sessions || []).some(x => x.seatsLeft > 0)))
+      .catch(() => setHasDates(true))
+  }, [settings?.inPerson?.enabled])
 
   const choices = [
     settings?.coaching?.enabled && { to: '/coaching', label: 'Coaching en ligne', note: 'En visio, 7 j / 7' },
-    settings?.inPerson?.enabled && { to: '/coaching-presentiel', label: 'Formation 3 jours', note: 'À Béjaïa, en petit groupe' },
+    settings?.inPerson?.enabled && {
+      to: '/coaching-presentiel',
+      label: 'Formation 3 jours',
+      note: hasDates === false ? 'Dates bientôt annoncées' : 'À Béjaïa, en petit groupe',
+    },
     settings?.express?.enabled && { to: '/formation-1-jour', label: 'Montage vidéo en 1 jour', note: 'Un samedi, vidéo terminée' },
   ].filter(Boolean)
 
   useEffect(() => {
+    if (welcome.enabled === false) return
     if (choices.length < 2) return
     try { if (sessionStorage.getItem(SEEN)) return } catch { return }
     const t = setTimeout(() => setOpen(true), 1200)
     return () => clearTimeout(t)
-  }, [choices.length])
+  }, [choices.length, welcome.enabled])
 
   const close = () => {
     setOpen(false)
@@ -78,8 +97,10 @@ export default function WelcomeChoice() {
       <div className="relative w-full max-w-[18rem] bg-white rounded-2xl p-4">
         {view === 'choices' && (
           <>
-            <h2 className="font-display font-black text-lg text-academy-textMain">Choisissez votre formation</h2>
-            <p className="mt-0.5 text-xs text-academy-textMain/60">Trois façons d'apprendre. Laquelle vous va ?</p>
+            <h2 className="font-display font-black text-lg text-academy-textMain">{welcome.title || 'Choisissez votre formation'}</h2>
+            {(welcome.subtitle ?? "Trois façons d'apprendre. Laquelle vous va ?") && (
+              <p className="mt-0.5 text-xs text-academy-textMain/60">{welcome.subtitle ?? "Trois façons d'apprendre. Laquelle vous va ?"}</p>
+            )}
             <div className="mt-3 space-y-1.5">
               {choices.map(c => (
                 <button type="button" key={c.to} onClick={() => { close(); navigate(c.to) }}
@@ -90,11 +111,11 @@ export default function WelcomeChoice() {
               ))}
               {/* Aucune des trois ne tombe au bon moment : plutôt que de perdre
                   ce visiteur, on lui prend ses coordonnées pour la prochaine. */}
-              <button type="button" onClick={() => setView('notify')}
+              {notifyEnabled && <button type="button" onClick={() => setView('notify')}
                       className="w-full rounded-lg border-2 border-dashed border-academy-border p-2.5 text-left hover:border-academy-primary transition-colors">
                 <span className="block font-bold text-sm text-academy-textMain">Me prévenir de la prochaine</span>
                 <span className="block text-xs text-academy-textMain/60">Laissez votre numéro, on vous écrit</span>
-              </button>
+              </button>}
             </div>
             <button type="button" onClick={close} className="mt-2 w-full py-2 text-[13px] font-bold text-academy-textMain/60 hover:text-academy-textMain">
               Annuler

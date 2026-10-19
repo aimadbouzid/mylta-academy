@@ -310,6 +310,14 @@ const defaultSettings = {
       'Places limitées',
     ],
   },
+  // Message posé au visiteur dès son arrivée sur l'accueil.
+  welcome: {
+    enabled: true,
+    title: 'Choisissez votre formation',
+    subtitle: "Trois façons d'apprendre. Laquelle vous va ?",
+    // Proposer de laisser ses coordonnées quand aucune date ne convient.
+    notifyEnabled: true,
+  },
   modules: {
     instructorEnabled: false,
     resourcesEnabled: false,
@@ -419,6 +427,7 @@ function readSettingsFromDisk() {
       coaching: upgradeCoaching(parsed.coaching),
       inPerson: { ...defaultSettings.inPerson, ...(parsed.inPerson || {}) },
       contest: { ...defaultSettings.contest, ...(parsed.contest || {}) },
+      welcome: { ...defaultSettings.welcome, ...(parsed.welcome || {}) },
       express: { ...defaultSettings.express, ...(parsed.express || {}) },
       // Liste vide = choix de l'admin ; liste sans id = ancien format, remplacé par les défauts
       upcomingCourses: Array.isArray(parsed.upcomingCourses) && (parsed.upcomingCourses.length === 0 || parsed.upcomingCourses.some(c => c.id))
