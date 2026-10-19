@@ -58,8 +58,8 @@ function Card({ ModeIcon, mode, aside, title, text, facts, next, nextLabel = 'Pr
 
         {next && <p className={`mt-1 text-xs ${soft}`}>{nextLabel} : <span className={`font-semibold ${ink}`}>{next}</span></p>}
 
-        <span className={`mt-2.5 inline-flex items-center justify-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-bold shadow-sm transition-opacity group-hover:opacity-90 ${button}`}>
-          {cta} <ArrowRight size={14} className="transition-transform group-hover:translate-x-0.5" />
+        <span className={`mt-3 flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-bold shadow-md transition-opacity group-hover:opacity-90 ${button}`}>
+          {cta} <ArrowRight size={16} className="transition-transform group-hover:translate-x-0.5" />
         </span>
       </div>
     </Link>

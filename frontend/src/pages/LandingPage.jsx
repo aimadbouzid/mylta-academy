@@ -233,7 +233,7 @@ export default function LandingPage() {
                   <span className="block font-display font-black text-sm sm:text-base leading-tight text-academy-textMain">{siteSettings.contest.title}</span>
                   <span className="block text-xs text-academy-textMain/55 mt-0.5">Présentiel ou en ligne · tirage au sort</span>
                 </span>
-                <span className="shrink-0 text-sm font-bold text-academy-textMain border-b-2 border-academy-textMain group-hover:border-academy-primary group-hover:text-academy-primary transition-colors">Participer</span>
+                <span className="shrink-0 inline-flex items-center gap-1.5 rounded-lg bg-academy-primary text-academy-onPrimary px-4 py-2.5 text-sm font-bold shadow-sm group-hover:opacity-90 transition-opacity">Participer <ArrowRight size={16} className="group-hover:translate-x-0.5 transition-transform" /></span>
               </span>
             </Link>
           </section>
@@ -251,7 +251,7 @@ export default function LandingPage() {
                 <span className="block font-display font-black text-sm sm:text-base leading-tight text-academy-textMain">Trois formations gratuites à l'université de Béjaïa</span>
                 <span className="block text-xs text-academy-textMain/55 mt-0.5">Club scientifique · Targa Ouzemmour · inscription libre</span>
               </span>
-              <span className="shrink-0 text-sm font-bold text-academy-textMain border-b-2 border-academy-textMain group-hover:border-academy-primary group-hover:text-academy-primary transition-colors">M'inscrire</span>
+              <span className="shrink-0 inline-flex items-center gap-1.5 rounded-lg bg-academy-textMain text-academy-surface px-4 py-2.5 text-sm font-bold shadow-sm group-hover:opacity-90 transition-opacity">M'inscrire <ArrowRight size={16} className="group-hover:translate-x-0.5 transition-transform" /></span>
             </span>
           </Link>
         </section>
