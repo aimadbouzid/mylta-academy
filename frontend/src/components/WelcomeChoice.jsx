@@ -5,10 +5,11 @@ import { useSiteSettings } from '../context/SiteSettingsContext'
 import api from '../api/axios'
 
 // Premier écran du visiteur : la question qu'il se pose vraiment en arrivant,
-// « laquelle des trois ? ». Reposée à chaque visite, mais une seule fois par
-// visite : sessionStorage se vide quand l'onglet se ferme, donc le visiteur ne
-// la revoit pas en naviguant d'une page à l'autre.
+// « laquelle des trois ? ». Posée une fois, puis plus avant quatre heures : le
+// visiteur qui revient dans la journée n'est pas repris par la manche, celui
+// qui revient le lendemain se la voit reposer.
 const SEEN = 'mylta_welcome_seen'
+const REPEAT_MS = 4 * 60 * 60 * 1000
 
 export default function WelcomeChoice() {
   const { settings } = useSiteSettings()
@@ -49,14 +50,17 @@ export default function WelcomeChoice() {
   useEffect(() => {
     if (welcome.enabled === false) return
     if (choices.length < 2) return
-    try { if (sessionStorage.getItem(SEEN)) return } catch { return }
+    try {
+      const last = Number(localStorage.getItem(SEEN))
+      if (last && Date.now() - last < REPEAT_MS) return
+    } catch { return }
     const t = setTimeout(() => setOpen(true), 1200)
     return () => clearTimeout(t)
   }, [choices.length, welcome.enabled])
 
   const close = () => {
     setOpen(false)
-    try { sessionStorage.setItem(SEEN, '1') } catch { /* navigation privée : on repropose plus tard */ }
+    try { localStorage.setItem(SEEN, String(Date.now())) } catch { /* navigation privée : on repropose plus tard */ }
   }
 
   useEffect(() => {
