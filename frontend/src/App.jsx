@@ -16,7 +16,6 @@ function ScrollToTop() {
   return null
 }
 import Toast from './components/Toast'
-import InstallPWA from './components/InstallPWA'
 import ProtectedAdminRoute from './pages/ProtectedAdminRoute'
 import NotFoundPage from './components/NotFoundPage'
 import WhatsAppButton from './components/WhatsAppButton'
@@ -195,9 +194,6 @@ export default function App() {
 
           {/* Système de notifications toast — global */}
           <Toast />
-          
-          {/* PWA Install Prompt */}
-          <InstallPWA />
         </div>
       </div>
       </InAppBrowserGuard>
