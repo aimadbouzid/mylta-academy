@@ -22,6 +22,7 @@ Disallow: /my-courses
 Disallow: /watch/
 Disallow: /payment/
 Disallow: /reset-password
+Disallow: /club/admin
 
 # API et fichiers internes
 Disallow: /api/
@@ -45,6 +46,7 @@ router.get('/sitemap.xml', async (req, res, next) => {
       { url: '/courses', priority: '0.9', changefreq: 'daily' },
       { url: '/coaching', priority: '0.8', changefreq: 'weekly' },
       { url: '/coaching-presentiel', priority: '0.8', changefreq: 'weekly' },
+      { url: '/club', priority: '0.7', changefreq: 'weekly' },
     ]
 
     const coursePages = courses.map(c => ({

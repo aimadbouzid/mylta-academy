@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import jsQR from 'jsqr'
-import { Camera, CameraOff, Check, Lock, RefreshCw, Search, UserCheck, Users, X } from 'lucide-react'
+import { Camera, CameraOff, Check, Download, Lock, RefreshCw, Search, UserCheck, Users, X } from 'lucide-react'
 import SEOHead from '../components/SEOHead'
 import api from '../api/axios'
 
@@ -63,6 +63,31 @@ export default function ClubAdminPage() {
     } finally {
       setBusy(false)
     }
+  }
+
+  // Export de la liste : un club tient souvent sa feuille de présence à part,
+  // et veut pouvoir l'ouvrir dans Excel ou l'imprimer avant la séance.
+  const exportCsv = () => {
+    const lignes = [
+      ['Prénom', 'Nom', 'Téléphone', 'Formation', 'Inscrit le', 'Présent'],
+      ...(data?.registrations || []).map(r => [
+        r.firstName,
+        r.lastName,
+        r.phone,
+        data.counts.find(c => c.slug === r.training)?.title || r.training,
+        when(r.createdAt),
+        r.checkedInAt ? 'oui' : 'non',
+      ]),
+    ]
+    // Point-virgule et BOM : Excel en français ouvre le fichier en colonnes,
+    // avec les accents intacts.
+    const csv = '﻿' + lignes.map(l => l.map(v => `"${String(v).replace(/"/g, '""')}"`).join(';')).join('\r\n')
+    const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }))
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `inscriptions-club-${new Date().toISOString().slice(0, 10)}.csv`
+    a.click()
+    URL.revokeObjectURL(url)
   }
 
   const signOut = () => {
@@ -239,7 +264,11 @@ export default function ClubAdminPage() {
               <p className="flex items-center gap-2 text-[14px] font-bold text-academy-textMain/70">
                 <Users size={16} className="text-academy-primary" /> {data.total} inscription{data.total > 1 ? 's' : ''} · {data.present} présent{data.present > 1 ? 's' : ''}
               </p>
-              <label className="sm:ml-auto relative w-full sm:w-64">
+              <button type="button" onClick={exportCsv} disabled={!data.total}
+                      className="sm:ml-auto inline-flex items-center justify-center gap-2 rounded-xl border border-academy-border bg-white dark:bg-academy-surfaceDark px-4 py-2.5 text-[13px] font-bold disabled:opacity-50">
+                <Download size={15} /> Exporter la liste
+              </button>
+              <label className="relative w-full sm:w-64">
                 <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-academy-textMain/40" />
                 <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Chercher un nom, un numéro"
                        className="w-full rounded-xl border border-academy-border bg-white dark:bg-academy-surfaceDark pl-9 pr-3 py-2.5 text-[15px] outline-none focus:border-academy-primary transition-colors" />
