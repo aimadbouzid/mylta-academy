@@ -25,6 +25,7 @@ import { useAuth } from '../context/AuthContext'
 import { useLanguage } from '../context/LanguageContext'
 import api from '../api/axios'
 import ReviewModal from '../components/ReviewModal'
+import WelcomeChoice from '../components/WelcomeChoice'
 import { testimonialsData } from '../data/testimonialsData'
 
 const FEATURE_STYLES = [
@@ -489,6 +490,7 @@ export default function LandingPage() {
         </footer>
       </div>
 
+      <WelcomeChoice />
       {loginOpen  && <LoginModal   onClose={() => setLoginOpen(false)} onSuccess={() => setLoginOpen(false)} />}
       {upcomingOpen && <UpcomingCourseModal course={upcomingOpen} onClose={() => setUpcomingOpen(null)} />}
       {payModal   && <PaymentModal course={payModal} onClose={() => setPayModal(null)} />}
