@@ -239,6 +239,23 @@ export default function LandingPage() {
           </section>
         )}
 
+        {/* Formations gratuites au club scientifique de l'université de Béjaïa :
+            un seul lien à partager au club, qui mène à l'inscription. */}
+        <section className="section-container pt-4">
+          <Link to="/club" className="group relative flex max-w-3xl lg:max-w-none mx-auto bg-white border border-academy-border rounded-xl overflow-hidden hover:border-academy-textMain/30 transition-colors">
+            <span className="shrink-0 flex items-center px-1.5 sm:px-2 bg-academy-textMain text-academy-surface">
+              <span className="[writing-mode:vertical-rl] rotate-180 text-[8px] font-bold uppercase tracking-[0.12em]">Gratuit</span>
+            </span>
+            <span className="flex-1 min-w-0 flex items-center justify-between gap-3 px-4 py-3.5">
+              <span className="min-w-0">
+                <span className="block font-display font-black text-sm sm:text-base leading-tight text-academy-textMain">Trois formations gratuites à l'université de Béjaïa</span>
+                <span className="block text-xs text-academy-textMain/55 mt-0.5">Club scientifique · Targa Ouzemmour · inscription libre</span>
+              </span>
+              <span className="shrink-0 text-sm font-bold text-academy-textMain border-b-2 border-academy-textMain group-hover:border-academy-primary group-hover:text-academy-primary transition-colors">M'inscrire</span>
+            </span>
+          </Link>
+        </section>
+
         <FormationsHub coaching={siteSettings.coaching} inPerson={siteSettings.inPerson} express={siteSettings.express} />
 
         <CamdenPartner />

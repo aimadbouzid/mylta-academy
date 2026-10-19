@@ -37,6 +37,7 @@ const coachingRoutes = require('./routes/coaching')
 const inPersonRoutes = require('./routes/inPerson')
 const reviewsRoutes = require('./routes/reviews')
 const contestRoutes = require('./routes/contest')
+const clubRoutes = require('./routes/club')
 
 // ─── App & Config ─────────────────────────────────────────────
 const app    = express()
@@ -383,6 +384,11 @@ app.use('/api/in-person', apiLimiter, inPersonRoutes)
 app.use('/api/reviews', apiLimiter, reviewsRoutes)
 app.use('/api/contest/enter', coachingBookLimiter)
 app.use('/api/contest', apiLimiter, contestRoutes)
+// Club scientifique de l'université : inscription publique bridée comme les
+// autres formulaires ouverts, consultation réservée aux organisateurs.
+app.use('/api/club/register', coachingBookLimiter)
+app.use('/api/club/access', authLimiter)
+app.use('/api/club', apiLimiter, clubRoutes)
 
 // ─── Analytics Public Track Click Route ──────────────────────
 // Endpoint non authentifié qui écrit en base : sans limite, n'importe qui peut

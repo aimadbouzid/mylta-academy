@@ -469,3 +469,21 @@ model SiteReview {
 
   @@index([status, createdAt])
 }
+
+// Inscriptions aux formations gratuites données au club scientifique de
+// l'université de Béjaïa (Targa Ouzemmour). Table à part : les organisateurs
+// y accèdent avec leur propre mot de passe, sans rien voir du reste du site.
+model ClubRegistration {
+  id        Int      @id @default(autoincrement())
+  firstName String
+  lastName  String
+  phone     String
+  training  String // slug : voir backend/utils/clubTrainings.js
+  ip        String?
+  createdAt DateTime @default(now())
+
+  // Un même numéro ne s'inscrit qu'une fois par formation, mais peut
+  // s'inscrire aux trois.
+  @@unique([phone, training])
+  @@index([training, createdAt])
+}
