@@ -1,7 +1,10 @@
 import { useState } from 'react'
 import { MapPin, Phone, Navigation, Map as MapIcon, Car, Footprints } from 'lucide-react'
+import { useSiteSettings } from '../context/SiteSettingsContext'
 
-// Lieu de la formation présentielle (partenaire Camden International Institute, Béjaïa).
+// Lieu de la formation présentielle (partenaire Camden International Institute,
+// Béjaïa). Le nom et l'adresse sont modifiables en administration ; les valeurs
+// ci-dessous servent de repli, et les coordonnées GPS restent ici.
 const PLACE = {
   partner: 'Camden International Institute',
   logo: '/camden-logo.jpg',
@@ -39,9 +42,12 @@ const directionsUrl = (mode) =>
   `https://www.google.com/maps/dir/?api=1&origin=${PLACE.from.lat},${PLACE.from.lng}&destination=${PLACE.to.lat},${PLACE.to.lng}&travelmode=${mode}`
 
 export default function TrainingLocation() {
+  const { settings } = useSiteSettings()
   const [routeId, setRouteId] = useState('car')
   const [showMap, setShowMap] = useState(false)
   const route = ROUTES[routeId]
+  const partner = settings?.inPerson?.venue || PLACE.partner
+  const address = settings?.inPerson?.venueAddress || PLACE.address
 
   return (
     <section className="bg-white border border-academy-border rounded-2xl p-5 sm:p-6 shadow-sm space-y-5">
@@ -52,17 +58,17 @@ export default function TrainingLocation() {
 
       {/* Partenariat */}
       <div className="flex items-center gap-3 rounded-xl border border-academy-border bg-academy-surface/60 p-3">
-        <img src={PLACE.logo} alt={PLACE.partner} width="84" height="56" loading="lazy"
+        <img src={PLACE.logo} alt={partner} width="84" height="56" loading="lazy"
              className="w-[84px] h-14 object-contain rounded-lg bg-white p-1 shrink-0" />
         <div className="min-w-0">
           <p className="text-[11px] font-bold uppercase tracking-wide text-academy-textMain/50">En partenariat avec</p>
-          <p className="font-bold leading-snug">{PLACE.partner}</p>
+          <p className="font-bold leading-snug">{partner}</p>
           <p className="text-xs text-academy-textMain/60">Mylta Academy × Camden</p>
         </div>
       </div>
 
       <div className="space-y-1.5 text-sm">
-        <p className="flex gap-2"><MapPin size={17} className="text-academy-primary shrink-0 mt-0.5" /> {PLACE.address}</p>
+        <p className="flex gap-2"><MapPin size={17} className="text-academy-primary shrink-0 mt-0.5" /> {address}</p>
         <a href={`tel:${PLACE.phone.replace(/\s/g, '')}`} className="flex gap-2 font-semibold hover:text-academy-primary">
           <Phone size={16} className="text-academy-primary shrink-0 mt-0.5" /> {PLACE.phone}
         </a>
