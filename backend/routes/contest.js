@@ -6,6 +6,16 @@ const { notifyOwner } = require('../utils/notifyOwner')
 
 const router = express.Router()
 
+// Les 113 premiers tickets ont été distribués avant l'inscription en ligne :
+// le premier participant du site reçoit le n° 114.
+const TICKETS_BEFORE = 113
+const ticketCount = async () => TICKETS_BEFORE + await prisma.contestEntry.count()
+
+// GET /api/contest/next — numéro du prochain ticket
+router.get('/next', async (req, res, next) => {
+  try { res.json({ next: await ticketCount() + 1 }) } catch (err) { next(err) }
+})
+
 const entrySchema = z.object({
   fullName: z.string().trim().min(3).max(80),
   phone: z.string().trim().regex(/^\+?[0-9 ]{8,20}$/),
@@ -31,15 +41,16 @@ router.post('/enter', async (req, res, next) => {
     const exists = await prisma.contestEntry.findUnique({ where: { phone: digits } })
     if (exists) return res.status(409).json({ error: 'Ce numéro participe déjà. Bonne chance !' })
 
-    await prisma.contestEntry.create({
+    const entry = await prisma.contestEntry.create({
       data: {
         fullName, city, phone: digits,
         prize: (contest.prizes || []).includes(prize) ? prize : '',
         ip: String(req.ip || '').slice(0, 45),
       },
     })
-    notifyOwner(`🎁 Concours — nouveau participant : ${fullName} (${phone})${prize ? ` · ${prize}` : ''}`)
-    res.status(201).json({ ok: true })
+    const ticket = TICKETS_BEFORE + await prisma.contestEntry.count({ where: { id: { lte: entry.id } } })
+    notifyOwner(`🎁 Concours — ticket n°${ticket} : ${fullName} (${phone})${prize ? ` · ${prize}` : ''}`)
+    res.status(201).json({ ok: true, ticket })
   } catch (err) { next(err) }
 })
 

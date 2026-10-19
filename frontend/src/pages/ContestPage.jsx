@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import SEOHead from '../components/SEOHead'
@@ -18,6 +18,11 @@ export default function ContestPage() {
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
   const [done, setDone] = useState(false)
+  const [ticket, setTicket] = useState(null)
+
+  useEffect(() => {
+    api.get('/contest/next').then(({ data }) => setTicket(data.next)).catch(() => {})
+  }, [])
 
   const today = new Date().toISOString().slice(0, 10)
   const open = c?.enabled && !(c.endDate && c.endDate < today)
@@ -27,7 +32,8 @@ export default function ContestPage() {
     setError('')
     setBusy(true)
     try {
-      await api.post('/contest/enter', { fullName, phone, city, prize, website })
+      const { data } = await api.post('/contest/enter', { fullName, phone, city, prize, website })
+      if (data.ticket) setTicket(data.ticket)
       setDone(true)
     } catch (err) {
       setError(err.response?.data?.error || 'La participation a échoué. Réessayez.')
@@ -37,7 +43,7 @@ export default function ContestPage() {
   }
 
   const prizes = c?.prizes || []
-  const ticketNo = String(phone.replace(/\D/g, '').slice(-4) || '0000').padStart(4, '0')
+  const ticketNo = ticket ? String(ticket).padStart(4, '0') : '····'
 
   return (
     <>
