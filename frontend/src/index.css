@@ -384,3 +384,33 @@ section {
 @supports (-webkit-touch-callout: none) {
   input, select, textarea { font-size: 16px !important; }
 }
+
+/* Bouton lumineux : halo coloré qui respire + reflet qui traverse le bouton.
+   Couleur du halo via --glow (blanc par défaut). */
+.btn-glow {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  animation: btn-glow 2.6s ease-in-out infinite;
+}
+.btn-glow::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(110deg, transparent 30%, rgb(255 255 255 / 0.45) 50%, transparent 70%);
+  transform: translateX(-120%);
+  animation: btn-shine 3.2s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes btn-glow {
+  0%, 100% { box-shadow: 0 0 10px 0 var(--glow, rgb(255 255 255 / 0.35)); }
+  50% { box-shadow: 0 0 22px 3px var(--glow, rgb(255 255 255 / 0.6)); }
+}
+@keyframes btn-shine {
+  0%, 55% { transform: translateX(-120%); }
+  100% { transform: translateX(120%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .btn-glow, .btn-glow::after { animation: none; }
+}
