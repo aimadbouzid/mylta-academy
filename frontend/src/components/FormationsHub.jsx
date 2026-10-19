@@ -30,7 +30,7 @@ function Card({ ModeIcon, mode, aside, title, text, facts, next, nextLabel = 'Pr
       )}
       <span aria-hidden="true" className={`absolute inset-0 ${overlay}`} />
 
-      <div className="relative p-5 sm:p-6 lg:p-7 sm:max-w-[60%]">
+      <div className="relative p-4 sm:p-5 sm:max-w-[60%]">
         <p className="flex flex-wrap items-center gap-2">
           <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-black uppercase tracking-[0.12em] ${chip}`}>
             <ModeIcon size={13} /> {mode}
@@ -39,17 +39,17 @@ function Card({ ModeIcon, mode, aside, title, text, facts, next, nextLabel = 'Pr
           {badge && <span className={`rounded-full border px-2.5 py-0.5 text-[10px] font-black uppercase tracking-[0.1em] ${chip} bg-transparent`}>{badge}</span>}
         </p>
 
-        <h3 className={`mt-2.5 font-display font-black text-2xl sm:text-3xl leading-[1.05] tracking-tight ${ink}`}>{title}</h3>
-        {text && <p className={`mt-1.5 text-sm leading-snug ${soft}`}>{text}</p>}
+        <h3 className={`mt-2 font-display font-black text-xl sm:text-2xl leading-[1.05] tracking-tight ${ink}`}>{title}</h3>
+        {text && <p className={`mt-1 text-[13px] leading-snug ${soft}`}>{text}</p>}
 
-        <dl className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1.5">
+        <dl className="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-1.5">
           {facts.map(([label, value, Icon], i) => (
             <span key={label} className="inline-flex items-center gap-3">
               {i > 0 && <span aria-hidden="true" className={`h-4 w-px ${divider}`} />}
               <span className="inline-flex items-center gap-1.5">
                 <Icon size={15} className={soft} aria-hidden="true" />
                 <dt className="sr-only">{label}</dt>
-                <dd className={`font-bold text-[15px] ${ink}`}>{value}</dd>
+                <dd className={`font-bold text-sm ${ink}`}>{value}</dd>
               </span>
             </span>
           ))}
@@ -57,8 +57,8 @@ function Card({ ModeIcon, mode, aside, title, text, facts, next, nextLabel = 'Pr
 
         {next && <p className={`mt-2 text-[13px] ${soft}`}>{nextLabel} : <span className={`font-semibold ${ink}`}>{next}</span></p>}
 
-        <span className={`mt-4 inline-flex items-center justify-center gap-2 rounded-full px-6 py-2.5 text-sm font-bold shadow-sm transition-opacity group-hover:opacity-90 ${button}`}>
-          {cta} <ArrowRight size={16} className="transition-transform group-hover:translate-x-0.5" />
+        <span className={`mt-3 inline-flex items-center justify-center gap-2 rounded-full px-5 py-2 text-[13px] font-bold shadow-sm transition-opacity group-hover:opacity-90 ${button}`}>
+          {cta} <ArrowRight size={15} className="transition-transform group-hover:translate-x-0.5" />
         </span>
       </div>
     </Link>
@@ -96,10 +96,10 @@ export default function FormationsHub({ coaching, inPerson, express }) {
   )
   if (inPerson?.enabled) cards.push(
     <Card key="3j" ModeIcon={Users} mode="Présentiel" aside="3 jours"
-          surface="bg-[#fdf2f2]" ink="text-academy-textMain" soft="text-academy-textMain/60" divider="bg-academy-textMain/15"
-          chip="bg-academy-primary text-white" button="bg-academy-primary text-white"
+          surface="bg-academy-primary" ink="text-white" soft="text-white/75" divider="bg-white/25"
+          chip="border border-white/40 text-white" button="bg-white text-academy-primary"
           image="/cards/presentiel.jpg"
-          overlay="bg-gradient-to-r from-[#fdf2f2] via-[#fdf2f2]/92 to-[#fdf2f2]/10"
+          overlay="bg-gradient-to-r from-academy-primary via-academy-primary/90 to-academy-primary/30"
           title={inPerson.title || 'Formation en présentiel'}
           text={`Une formation complète et pratique, chez Camden à Béjaïa.${Number(inPerson.studentPrice) > 0 ? ` Étudiants : ${money(inPerson.studentPrice)}.` : ''}`}
           facts={[['Lieu', 'Camden', MapPin], ['Prix', inPerson.price ? money(inPerson.price) : '—', Coins]]}
@@ -123,7 +123,7 @@ export default function FormationsHub({ coaching, inPerson, express }) {
   return (
     <section className="section-container py-8 lg:py-12">
       <h2 className="font-display font-black text-2xl sm:text-3xl tracking-tight text-academy-textMain">Choisissez votre façon d'apprendre</h2>
-      <div className="mt-5 space-y-3 sm:space-y-4">{cards}</div>
+      <div className="mt-4 space-y-2.5 sm:space-y-3">{cards}</div>
     </section>
   )
 }
