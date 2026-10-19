@@ -41,21 +41,21 @@ export default function WelcomeChoice() {
   if (!open) return null
 
   return createPortal(
-    <div className="fixed inset-0 z-[200] flex items-end sm:items-center justify-center" role="dialog" aria-modal="true" aria-label="Choisissez votre formation">
+    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-label="Choisissez votre formation">
       <div className="absolute inset-0 bg-black/50" onClick={close} />
-      <div className="relative w-full sm:max-w-sm bg-white rounded-t-2xl sm:rounded-2xl p-5">
-        <h2 className="font-display font-black text-xl text-academy-textMain">Choisissez votre formation</h2>
-        <p className="mt-1 text-[13px] text-academy-textMain/60">Trois façons d'apprendre. Laquelle vous va ?</p>
-        <div className="mt-4 space-y-2">
+      <div className="relative w-full max-w-[18rem] bg-white rounded-2xl p-4">
+        <h2 className="font-display font-black text-lg text-academy-textMain">Choisissez votre formation</h2>
+        <p className="mt-0.5 text-xs text-academy-textMain/60">Trois façons d'apprendre. Laquelle vous va ?</p>
+        <div className="mt-3 space-y-1.5">
           {choices.map(c => (
             <button type="button" key={c.to} onClick={() => { close(); navigate(c.to) }}
-                    className="w-full rounded-xl border-2 border-academy-border p-3 text-left hover:border-academy-primary transition-colors">
-              <span className="block font-bold text-[15px] text-academy-textMain">{c.label}</span>
-              <span className="block text-[13px] text-academy-textMain/60">{c.note}</span>
+                    className="w-full rounded-lg border-2 border-academy-border p-2.5 text-left hover:border-academy-primary transition-colors">
+              <span className="block font-bold text-sm text-academy-textMain">{c.label}</span>
+              <span className="block text-xs text-academy-textMain/60">{c.note}</span>
             </button>
           ))}
         </div>
-        <button type="button" onClick={close} className="mt-3 w-full py-2.5 text-sm font-bold text-academy-textMain/60 hover:text-academy-textMain">
+        <button type="button" onClick={close} className="mt-2 w-full py-2 text-[13px] font-bold text-academy-textMain/60 hover:text-academy-textMain">
           Annuler
         </button>
       </div>
