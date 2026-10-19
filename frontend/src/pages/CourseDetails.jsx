@@ -1,16 +1,11 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
-import {
-  Play, CheckCircle, Clock, Star, ArrowLeft, Shield, Video,
-  Award, BookOpen, Sparkles, Check, HelpCircle, GraduationCap, ShieldCheck
-} from 'lucide-react'
+import { Play, CheckCircle, Clock, Star, ArrowLeft, Shield, Video, Award, BookOpen, Sparkles, Check, HelpCircle, GraduationCap, ShieldCheck, Lock } from 'lucide-react'
 import Navbar from '../components/Navbar'
 import SEOHead from '../components/SEOHead'
-import PaymentModal from '../components/PaymentModal'
 import { useSiteSettings } from '../context/SiteSettingsContext'
 import api from '../api/axios'
 import { useLanguage } from '../context/LanguageContext'
-import { useAuth } from '../context/AuthContext'
 
 // --- Composant Compte à Rebours ---
 function Countdown({ endsAt }) {
@@ -56,28 +51,10 @@ export default function CourseDetails() {
   const { t } = useLanguage()
   const { id } = useParams()
   const navigate = useNavigate()
-  const { user, checkAuth } = useAuth()
   const [course, setCourse] = useState(null)
   const [loading, setLoading] = useState(true)
   // Repli si la miniature ne se charge pas (fichier absent, chemin obsolète)
   const [thumbFailed, setThumbFailed] = useState(false)
-  const [showPayment, setShowPayment] = useState(false)
-  const [unlocking, setUnlocking] = useState(false)
-
-  const handleUnlockFree = async () => {
-    setUnlocking(true)
-    try {
-      await api.post('/payments/unlock-free', { courseId: course.id })
-      // Refresh course access and user credits
-      const { data } = await api.get(`/courses/${id}`)
-      setCourse(data)
-      await checkAuth()
-    } catch (err) {
-      console.error(err)
-    } finally {
-      setUnlocking(false)
-    }
-  }
   const [learningPoints, setLearningPoints] = useState([
     "Maîtrise complète des concepts théoriques et pratiques du domaine.",
     "Études de cas réelles et exercices concrètement applicables.",
@@ -163,39 +140,14 @@ export default function CourseDetails() {
         <Navbar />
 
         <div className="pt-32 sm:pt-36 lg:pt-40 pb-32 lg:pb-24 flex-1 relative">
-          {showPayment && <PaymentModal course={course} onClose={() => setShowPayment(false)} />}
-
-          {/* Sticky Bottom Bar for Mobile */}
+          {/* Barre du bas sur téléphone : les formations ne s'achètent plus à
+              l'unité, c'est l'appartenance au club qui les ouvre. */}
           {!course.hasAccess && (
-            <div className="fixed bottom-0 left-0 right-0 z-50 px-5 py-4 bg-red-950/20 border-red-900/20 backdrop-blur-2xl border-t border-academy-border/50 lg:hidden flex items-center justify-between shadow-[0_-10px_40px_rgba(0,0,0,0.08)]" style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom))' }}>
-              <div className="flex flex-col">
-                 <div className="text-academy-textMain/50 text-[10px] uppercase font-black tracking-widest mb-1">{t('course_details.unique_price')}</div>
-                 {isDiscountActive ? (
-                   <div className="flex items-center gap-2.5">
-                     <span className="text-2xl sm:text-3xl font-display font-black text-academy-textMain leading-none tracking-tighter">
-                       {course.discountPrice.toLocaleString('fr-DZ')} <span className="text-sm sm:text-base font-bold text-academy-primary">DA</span>
-                     </span>
-                     <div className="flex flex-col items-start -mt-0.5">
-                       <span className="text-[10px] text-academy-textMain/40 line-through font-bold leading-none">{course.price.toLocaleString('fr-DZ')} DA</span>
-                       <span className="text-[9px] font-black text-red-500 uppercase mt-0.5 bg-red-50 dark:bg-red-500/10 px-1 rounded-sm">{t('course_details.promo')}</span>
-                     </div>
-                   </div>
-                 ) : (
-                   <div className="flex items-baseline gap-1">
-                     <span className="text-2xl sm:text-3xl font-display font-black text-academy-textMain leading-none tracking-tighter">{(course.price || 0).toLocaleString('fr-DZ')}</span>
-                     <span className="text-sm font-bold text-academy-primary">DA</span>
-                   </div>
-                 )}
-              </div>
-              <div className="flex gap-2">
-                {user && user.freeCoursesEarned > 0 && (
-                  <button onClick={handleUnlockFree} disabled={unlocking} className="bg-gradient-to-r from-green-500 to-emerald-600 text-white py-3.5 px-4 text-xs font-bold rounded-2xl shadow-md active:scale-95 transition-all">
-                    {unlocking ? '...' : `Gratuit (${user.freeCoursesEarned})`}
-                  </button>
-                )}
-                <button onClick={() => setShowPayment(true)} className="btn-primary py-3.5 px-5 text-xs shadow-soft-lg active:scale-95 transition-transform flex-shrink-0">
-                  {t('course_details.join')}
-                </button>
+            <div className="fixed bottom-0 left-0 right-0 z-50 px-5 py-4 bg-white/95 dark:bg-academy-surfaceDark/95 backdrop-blur-2xl border-t border-academy-border/50 lg:hidden flex items-center gap-3 shadow-[0_-10px_40px_rgba(0,0,0,0.08)]" style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom))' }}>
+              <Lock size={20} className="shrink-0 text-academy-primary" />
+              <div className="min-w-0">
+                <p className="font-bold text-sm leading-tight">Réservé aux membres du club</p>
+                <p className="text-xs text-academy-textMain/60 leading-snug">Contactez-nous pour rejoindre le club.</p>
               </div>
             </div>
           )}
@@ -350,61 +302,15 @@ export default function CourseDetails() {
                       </div>
                     ) : (
                       <>
-                        <div className="mb-6 bg-white dark:bg-academy-surfaceDark border border-academy-border/60 rounded-3xl p-6 sm:p-8 text-center shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative overflow-hidden group">
-                           {/* Effet lumineux d'arrière-plan */}
-                           <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-bl from-red-500/10 to-transparent rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none transition-transform duration-700 group-hover:scale-110"></div>
-                           <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-red-500/5 to-transparent rounded-full blur-3xl -ml-16 -mb-16 pointer-events-none transition-transform duration-700 group-hover:scale-110"></div>
-                           
-                           <span className="inline-block px-4 py-1.5 bg-academy-surfaceDark/50 text-academy-textMain/60 text-[10px] font-black tracking-[0.2em] uppercase rounded-full mb-6 border border-academy-border/50">
-                             {t('course_details.access_price')}
-                           </span>
-                           
-                           {isDiscountActive ? (
-                             <div className="flex flex-col items-center justify-center gap-3">
-                               <div className="flex items-center gap-3">
-                                 <span className="px-3 py-1 rounded-xl bg-gradient-to-r from-red-500 to-red-600 text-white text-[11px] font-black tracking-wider shadow-[0_4px_12px_rgba(239,68,68,0.3)] uppercase">
-                                   {t('course_details.promo')} -{Math.round(((course.price - course.discountPrice) / course.price) * 100)}%
-                                 </span>
-                                 <span className="text-base text-academy-textMain/40 line-through font-bold decoration-2">
-                                   {course.price.toLocaleString('fr-DZ')} DA
-                                 </span>
-                               </div>
-                               <div className="flex items-baseline gap-1.5 relative">
-                                 <span className="text-5xl sm:text-6xl font-display font-black tracking-tighter text-academy-textMain leading-none drop-shadow-sm">
-                                   {course.discountPrice.toLocaleString('fr-DZ')}
-                                 </span>
-                                 <span className="text-lg font-black text-academy-primary pt-2">DA</span>
-                               </div>
-                             </div>
-                           ) : (
-                             <div className="flex items-baseline justify-center gap-1.5 relative">
-                               <span className="text-5xl sm:text-6xl font-display font-black tracking-tighter text-academy-textMain leading-none drop-shadow-sm">
-                                 {(course.price || 0).toLocaleString('fr-DZ')}
-                               </span>
-                               <span className="text-lg font-black text-academy-primary pt-2">DA</span>
-                             </div>
-                           )}
+                        <div className="mb-4 bg-white dark:bg-academy-surfaceDark border-2 border-academy-border rounded-3xl p-6 text-center">
+                          <span className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-academy-primary/10 text-academy-primary mb-3">
+                            <Lock size={22} />
+                          </span>
+                          <p className="font-display font-black text-xl leading-tight">Réservé aux membres du club</p>
+                          <p className="mt-1.5 text-sm text-academy-textMain/60 leading-snug">
+                            Les formations ne se vendent plus à l'unité : l'accès vient de l'appartenance au club. Contactez-nous pour en faire partie.
+                          </p>
                         </div>
-
-                        {user && user.freeCoursesEarned > 0 && (
-                          <button
-                            onClick={handleUnlockFree}
-                            disabled={unlocking}
-                            className="w-full relative overflow-hidden group bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white py-4 px-6 rounded-2xl text-base font-bold flex items-center justify-center gap-2 transition-all duration-300 shadow-md hover:shadow-lg hover:-translate-y-0.5 active:scale-[0.98] mb-3 disabled:opacity-50"
-                          >
-                            <Award size={18} />
-                            {unlocking ? 'Déblocage...' : `Débloquer gratuitement (${user.freeCoursesEarned} ${user.freeCoursesEarned > 1 ? 'crédits' : 'crédit'})`}
-                          </button>
-                        )}
-
-                        <button
-                          onClick={() => setShowPayment(true)}
-                          className="w-full relative overflow-hidden group bg-academy-textMain hover:bg-black text-white py-4.5 px-6 rounded-2xl text-base font-bold flex items-center justify-center gap-2 transition-all duration-300 shadow-[0_8px_20px_rgba(0,0,0,0.1)] hover:shadow-[0_12px_25px_rgba(0,0,0,0.15)] hover:-translate-y-0.5 active:scale-[0.98]"
-                        >
-                          <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
-                          <Sparkles size={18} />
-                          {t('course_details.buy_course')}
-                        </button>
                       </>
                     )}
 

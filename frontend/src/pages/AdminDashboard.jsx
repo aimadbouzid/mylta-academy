@@ -23,6 +23,7 @@ import AdminPayoutsTab from '../components/admin/AdminPayoutsTab'
 import AdminCoachingTab from '../components/admin/AdminCoachingTab'
 import AdminInPersonTab from '../components/admin/AdminInPersonTab'
 import AdminReviewsPanel from '../components/admin/AdminReviewsPanel'
+import AdminClubTab from '../components/admin/AdminClubTab'
 import AdminUpcomingTab from '../components/admin/AdminUpcomingTab'
 import api from '../api/axios'
 import { useLanguage } from '../context/LanguageContext'
@@ -1881,6 +1882,7 @@ export default function AdminDashboard() {
     { id: 'courses',  icon: BookOpen, label: 'Formations en ligne' },
     { id: 'upcoming', icon: Clock, label: 'Formations à venir' },
     { id: 'certificates', icon: Award, label: 'Certificats' },
+    { id: 'club', icon: Users, label: 'Membres du club' },
     { id: 'coupons', icon: Ticket, label: 'Codes promo' },
     ...(instructorsOn ? [
       { group: 'Formateurs' },
@@ -1900,6 +1902,7 @@ export default function AdminDashboard() {
     { id: 'overview', icon: LayoutDashboard, label: 'Accueil' },
     { id: 'receipts', icon: ClipboardCheck, label: 'Paiements', badge: stats?.pendingReceipts > 0 ? stats.pendingReceipts : null },
     { id: 'in_person', icon: Users, label: 'Présentiel' },
+    { id: 'club', icon: Users, label: 'Club' },
     { id: 'coaching', icon: CalendarDays, label: 'En ligne' },
   ]
 
@@ -2456,6 +2459,7 @@ export default function AdminDashboard() {
           )}
 
           {/* SETTINGS (VIDÉO D'ACCUEIL & CMS) */}
+          {tab === 'club' && <AdminClubTab />}
           {tab === 'site_cms' && <><SiteCMSConfigTab /><AdminReviewsPanel /></>}
           {tab === 'coupons' && <AdminCouponsTab />}
           {tab === 'payouts' && <AdminPayoutsTab />}

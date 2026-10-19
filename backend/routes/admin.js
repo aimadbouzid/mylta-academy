@@ -1636,6 +1636,51 @@ router.get('/users/students', async (req, res, next) => {
   } catch (err) { next(err) }
 })
 
+// ─── GET /api/admin/club — Membres du club et candidats ────────────
+// Le club remplace l'achat à l'unité : c'est lui qui ouvre les formations,
+// et c'est l'administration qui décide qui en fait partie.
+router.get('/club', async (req, res, next) => {
+  try {
+    const q = String(req.query.q || '').trim()
+    const users = await prisma.user.findMany({
+      where: {
+        role: { not: 'ADMIN' },
+        ...(q ? { OR: [{ name: { contains: q, mode: 'insensitive' } }, { email: { contains: q, mode: 'insensitive' } }] } : {}),
+      },
+      select: { id: true, name: true, email: true, isClubMember: true, clubSince: true, createdAt: true },
+      orderBy: [{ isClubMember: 'desc' }, { createdAt: 'desc' }],
+      take: 200,
+    })
+    res.json({ users, membersCount: users.filter(u => u.isClubMember).length })
+  } catch (err) { next(err) }
+})
+
+// ─── PUT /api/admin/club/:id — Faire entrer ou sortir du club ────────────
+router.put('/club/:id', async (req, res, next) => {
+  try {
+    const userId = validateId(req.params.id)
+    if (!userId) return res.status(400).json({ error: 'ID invalide' })
+    const isMember = req.body?.isClubMember === true
+
+    const target = await prisma.user.findUnique({ where: { id: userId }, select: { role: true } })
+    if (!target) return res.status(404).json({ error: 'Compte introuvable.' })
+    if (target.role === 'ADMIN') return res.status(400).json({ error: 'Un administrateur a déjà accès à tout.' })
+
+    const user = await prisma.user.update({
+      where: { id: userId },
+      data: { isClubMember: isMember, clubSince: isMember ? new Date() : null },
+      select: { id: true, name: true, email: true, isClubMember: true, clubSince: true },
+    })
+    console.log(JSON.stringify({
+      event: isMember ? 'CLUB_MEMBER_ADDED' : 'CLUB_MEMBER_REMOVED',
+      adminEmail: req.user.email,
+      targetUserId: userId,
+      timestamp: new Date().toISOString(),
+    }))
+    res.json({ user })
+  } catch (err) { next(err) }
+})
+
 // ─── GET /api/admin/coupons — Lister les coupons ────────────
 router.get('/coupons', async (req, res, next) => {
   try {

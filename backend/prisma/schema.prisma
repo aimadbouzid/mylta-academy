@@ -41,6 +41,11 @@ model User {
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
 
+  // Accès aux formations : réservé aux membres du club, que l'admin coche
+  // lui-même. Un achat passé continue de donner accès à son cours.
+  isClubMember        Boolean   @default(false)
+  clubSince           DateTime?
+
   // Referral System Fields
   referralCode      String? @unique
   referredById      Int?

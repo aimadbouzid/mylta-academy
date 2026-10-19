@@ -9,6 +9,7 @@ const prisma = require('../prisma')
 const { authenticate } = require('../middleware/auth')
 const { t } = require('../i18n')
 const { validateId } = require('../middleware/security')
+const { accessReasonFor, hasCourseAccess, accessContext, contextGrants } = require('../utils/courseAccess')
 const { getIO } = require('../socket')
 const { logSecurityEvent } = require('../utils/securityLogger')
 const rateLimit = require('express-rate-limit')
@@ -61,16 +62,12 @@ router.get('/', async (req, res, next) => {
     ])
 
     // Vérifier si l'utilisateur authentifié a accès
-    let purchasedCourseIds = new Set()
+    let access = { isClubMember: false, isAdmin: false, purchased: new Set() }
     const token = req.cookies?.token || (req.headers.authorization?.startsWith('Bearer ') ? req.headers.authorization.split(' ')[1] : null)
     if (token) {
       try {
         const { userId } = jwt.verify(token, process.env.JWT_SECRET)
-        const receipts = await prisma.receipt.findMany({
-          where: { userId, status: 'APPROVED' },
-          select: { courseId: true },
-        })
-        receipts.forEach(r => purchasedCourseIds.add(r.courseId))
+        access = await accessContext(userId)
       } catch (_) { /* Token invalide, ignorer */ }
     }
 
@@ -94,7 +91,7 @@ router.get('/', async (req, res, next) => {
         studentsCount: c._count.receipts,  // Vrais compteurs, plus de fake data
         rating: ratingAvg || 0,
         reviewsCount: c.reviews.length,
-        hasAccess: purchasedCourseIds.has(c.id),
+        hasAccess: contextGrants(access, c.id),
         instructorId: c.instructorId,
         instructor: c.instructor || null,
       }
@@ -158,19 +155,15 @@ router.get('/:id', async (req, res, next) => {
     if (token) {
       try {
         const { userId } = jwt.verify(token, process.env.JWT_SECRET)
-        const [user, receipt, progress] = await Promise.all([
-          prisma.user.findUnique({ where: { id: userId }, select: { role: true } }),
-          prisma.receipt.findFirst({
-            where: { userId, courseId, status: 'APPROVED' },
-          }),
+        const [reason, progress] = await Promise.all([
+          accessReasonFor(userId, courseId),
           prisma.lessonProgress.findMany({
             where: { userId, lesson: { courseId } },
           }),
         ])
-        if (receipt || user?.role === 'ADMIN') {
+        if (reason) {
           hasAccess = true
-          // L'achat prime : un admin qui a réellement acheté reste un acheteur.
-          accessReason = receipt ? 'PURCHASE' : 'ADMIN'
+          accessReason = reason
           userProgress = progress.map(p => p.lessonId)
         }
       } catch (_) { /* Token invalide */ }
@@ -238,10 +231,9 @@ router.post('/:id/progress', authenticate, progressLimiter, async (req, res, nex
     }
 
     // Vérifier l'accès et suspension
-    const receipt = await prisma.receipt.findFirst({
-      where: { userId, courseId, status: 'APPROVED' },
-    })
-    if (!receipt) return res.status(403).json({ error: t('courses.access_denied', req.lang) })
+    if (!(await hasCourseAccess(userId, courseId))) {
+      return res.status(403).json({ error: t('courses.access_denied', req.lang) })
+    }
 
     // Verrou séquentiel : Impossible de terminer une vidéo si la précédente n'est pas terminée
     if (isCompleted) {
@@ -304,10 +296,9 @@ router.post('/:id/rate', authenticate, async (req, res, next) => {
       return res.status(400).json({ error: t('courses.rating_invalid', req.lang) })
     }
 
-    const receipt = await prisma.receipt.findFirst({
-      where: { userId, courseId, status: 'APPROVED' },
-    })
-    if (!receipt) return res.status(403).json({ error: t('courses.must_buy_to_rate', req.lang) })
+    if (!(await hasCourseAccess(userId, courseId))) {
+      return res.status(403).json({ error: t('courses.must_buy_to_rate', req.lang) })
+    }
 
     const review = await prisma.courseReview.upsert({
       where: { userId_courseId: { userId, courseId } },
@@ -332,12 +323,9 @@ router.post('/:id/reviews', authenticate, async (req, res, next) => {
 
     const userId = req.user.id
 
-    // Vérifier si l'utilisateur a acheté la formation (et l'a potentiellement terminée)
-    const receipt = await prisma.receipt.findFirst({
-      where: { userId, courseId, status: 'APPROVED' },
-    })
-    if (!receipt) {
-      return res.status(403).json({ error: 'Vous devez acheter cette formation pour la noter.' })
+    // Seuls les inscrits notent : membres du club et anciens acheteurs.
+    if (!(await hasCourseAccess(userId, courseId))) {
+      return res.status(403).json({ error: 'Cette formation est réservée aux membres du club.' })
     }
 
     // Créer ou mettre à jour l'avis (Upsert)
