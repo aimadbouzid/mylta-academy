@@ -30,35 +30,36 @@ function Card({ ModeIcon, mode, aside, title, text, facts, next, nextLabel = 'Pr
       )}
       <span aria-hidden="true" className={`absolute inset-0 ${overlay}`} />
 
-      <div className="relative p-4 sm:p-5 sm:max-w-[60%]">
+      <div className="relative p-3.5 sm:p-4 sm:max-w-[60%]">
         <p className="flex flex-wrap items-center gap-2">
           <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-black uppercase tracking-[0.12em] ${chip}`}>
             <ModeIcon size={13} /> {mode}
           </span>
           {aside && <span className={`text-[11px] font-black uppercase tracking-[0.14em] ${soft}`}>{aside}</span>}
-          {badge && <span className={`rounded-full border px-2.5 py-0.5 text-[10px] font-black uppercase tracking-[0.1em] ${chip} bg-transparent`}>{badge}</span>}
+          {/* Sur téléphone, ce badge passait à la ligne et rallongeait la carte. */}
+          {badge && <span className={`hidden sm:inline-block rounded-full border px-2.5 py-0.5 text-[10px] font-black uppercase tracking-[0.1em] ${chip} bg-transparent`}>{badge}</span>}
         </p>
 
-        <h3 className={`mt-2 font-display font-black text-xl sm:text-2xl leading-[1.05] tracking-tight ${ink}`}>{title}</h3>
+        <h3 className={`mt-1.5 font-display font-black text-lg sm:text-xl leading-[1.1] tracking-tight ${ink}`}>{title}</h3>
         {text && <p className={`mt-1 text-[13px] leading-snug ${soft}`}>{text}</p>}
 
-        <dl className="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-1.5">
+        <dl className="mt-1.5 flex flex-wrap items-center gap-x-2.5 gap-y-1">
           {facts.map(([label, value, Icon], i) => (
             <span key={label} className="inline-flex items-center gap-3">
               {i > 0 && <span aria-hidden="true" className={`h-4 w-px ${divider}`} />}
               <span className="inline-flex items-center gap-1.5">
                 <Icon size={15} className={soft} aria-hidden="true" />
                 <dt className="sr-only">{label}</dt>
-                <dd className={`font-bold text-sm ${ink}`}>{value}</dd>
+                <dd className={`font-bold text-[13px] ${ink}`}>{value}</dd>
               </span>
             </span>
           ))}
         </dl>
 
-        {next && <p className={`mt-2 text-[13px] ${soft}`}>{nextLabel} : <span className={`font-semibold ${ink}`}>{next}</span></p>}
+        {next && <p className={`mt-1 text-xs ${soft}`}>{nextLabel} : <span className={`font-semibold ${ink}`}>{next}</span></p>}
 
-        <span className={`mt-3 inline-flex items-center justify-center gap-2 rounded-full px-5 py-2 text-[13px] font-bold shadow-sm transition-opacity group-hover:opacity-90 ${button}`}>
-          {cta} <ArrowRight size={15} className="transition-transform group-hover:translate-x-0.5" />
+        <span className={`mt-2.5 inline-flex items-center justify-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-bold shadow-sm transition-opacity group-hover:opacity-90 ${button}`}>
+          {cta} <ArrowRight size={14} className="transition-transform group-hover:translate-x-0.5" />
         </span>
       </div>
     </Link>
@@ -90,18 +91,16 @@ export default function FormationsHub({ coaching, inPerson, express }) {
           image="/cards/coaching.jpg"
           overlay="bg-gradient-to-r from-neutral-950/95 via-neutral-950/45 to-transparent"
           title={coaching.title || 'Coaching en ligne'}
-          text="Un accompagnement personnalisé pour progresser à votre rythme."
           facts={[['Durée', coaching.formats?.[0]?.duration || '2h30', Clock], ['Quand', '7 j / 7', CalendarDays]]}
           to="/coaching" cta="Choisir mon pack" />
   )
   if (inPerson?.enabled) cards.push(
     <Card key="3j" ModeIcon={Users} mode="Présentiel" aside="3 jours"
-          surface="bg-gradient-to-br from-[#d13b36] via-academy-primary to-[#6d1414]" ink="text-white" soft="text-white/75" divider="bg-white/25"
+          surface="bg-gradient-to-br from-[#e8554d] via-academy-primary to-[#5e0f0f]" ink="text-white" soft="text-white/75" divider="bg-white/25"
           chip="border border-white/40 text-white" button="bg-white text-academy-primary"
           image="/cards/presentiel.jpg"
-          overlay="bg-gradient-to-r from-[#8c1f1b]/90 via-[#8c1f1b]/35 to-transparent"
+          overlay="bg-gradient-to-r from-[#5e0f0f]/85 via-[#5e0f0f]/25 to-transparent"
           title={inPerson.title || 'Formation en présentiel'}
-          text={`Une formation complète et pratique, chez Camden à Béjaïa.${Number(inPerson.studentPrice) > 0 ? ` Étudiants : ${money(inPerson.studentPrice)}.` : ''}`}
           facts={[['Lieu', 'Camden', MapPin], ['Prix', inPerson.price ? money(inPerson.price) : '—', Coins]]}
           next={session ? `${range3(session.date)}${session.startTime ? (Number(session.startTime.slice(0, 2)) < 12 ? ' · matin' : ' · soir') : ''}` : inPerson.datesNotice ? 'dates bientôt annoncées' : null}
           to="/coaching-presentiel" cta="Voir les dates" />
@@ -113,7 +112,6 @@ export default function FormationsHub({ coaching, inPerson, express }) {
           image="/cards/express.jpg"
           overlay="bg-gradient-to-r from-[#0d1842]/95 via-[#0d1842]/40 to-transparent"
           title="Montage vidéo en 1 jour"
-          text="Une journée intensive pour repartir avec votre vidéo terminée."
           facts={[['Horaires', `${hourShort(express.startTime)}–${hourShort(express.endTime)}`, Clock], ['Lieu', 'Viga Center', MapPin], ['Prix', money(express.price), Coins]]}
           next={saturday ? short(saturday, { weekday: 'long', day: 'numeric', month: 'long' }) : null}
           to="/formation-1-jour" cta="Réserver mon samedi" />
