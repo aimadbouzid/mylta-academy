@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import jsQR from 'jsqr'
-import { Camera, CameraOff, Check, Download, Lock, RefreshCw, Search, UserCheck, Users, X } from 'lucide-react'
+import { Camera, CameraOff, Check, Download, ImagePlus, Lock, Plus, RefreshCw, Search, Trash2, UserCheck, Users, X } from 'lucide-react'
 import SEOHead from '../components/SEOHead'
 import api from '../api/axios'
 
@@ -28,6 +28,11 @@ export default function ClubAdminPage() {
   const [scanning, setScanning] = useState(false)
   const [scanError, setScanError] = useState('')
   const [result, setResult] = useState(null)
+  const [groups, setGroups] = useState([])
+  const [newName, setNewName] = useState('')
+  const [newLogo, setNewLogo] = useState('')
+  const [groupBusy, setGroupBusy] = useState(false)
+  const [groupError, setGroupError] = useState('')
   const videoRef = useRef(null)
   const lastScan = useRef({ code: '', at: 0 })
 
@@ -47,7 +52,7 @@ export default function ClubAdminPage() {
     }
   }
 
-  useEffect(() => { if (token) load(token) }, [token])
+  useEffect(() => { if (token) { load(token); loadGroups(token) } }, [token])
 
   const signIn = async (e) => {
     e.preventDefault()
@@ -65,16 +70,93 @@ export default function ClubAdminPage() {
     }
   }
 
+  // Compression dans le navigateur, avant l'envoi : un logo part à 320 px en
+  // WebP, quelques dizaines de kilo-octets. Rien à installer sur le serveur,
+  // et la connexion de l'organisateur n'est pas sollicitée pour rien.
+  const compress = (file) => new Promise((resolve, reject) => {
+    const img = new Image()
+    const url = URL.createObjectURL(file)
+    img.onload = () => {
+      URL.revokeObjectURL(url)
+      const scale = Math.min(1, 320 / Math.max(img.width, img.height))
+      const canvas = document.createElement('canvas')
+      canvas.width = Math.max(1, Math.round(img.width * scale))
+      canvas.height = Math.max(1, Math.round(img.height * scale))
+      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height)
+      // Safari ancien ne connaît pas le WebP en sortie et rend un PNG : le
+      // serveur accepte les deux, la ligne suivante n'a rien à vérifier.
+      resolve(canvas.toDataURL('image/webp', 0.82))
+    }
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('image')) }
+    img.src = url
+  })
+
+  const loadGroups = async (t = token) => {
+    try {
+      const { data } = await api.get('/club/groups/all', { headers: { Authorization: `Bearer ${t}` } })
+      setGroups(data.groups || [])
+    } catch { /* la liste reste telle quelle */ }
+  }
+
+  const pickLogo = async (file) => {
+    if (!file) return
+    setGroupError('')
+    try { setNewLogo(await compress(file)) } catch { setGroupError('Image illisible.') }
+  }
+
+  const addGroup = async (e) => {
+    e.preventDefault()
+    setGroupError('')
+    setGroupBusy(true)
+    try {
+      await api.post('/club/groups', { name: newName, logo: newLogo }, auth)
+      setNewName('')
+      setNewLogo('')
+      loadGroups()
+    } catch (err) {
+      setGroupError(err.response?.data?.error || "Ajout impossible.")
+    } finally {
+      setGroupBusy(false)
+    }
+  }
+
+  const patchGroup = async (id, body) => {
+    setGroupError('')
+    try {
+      await api.patch(`/club/groups/${id}`, body, auth)
+      loadGroups()
+    } catch (err) {
+      setGroupError(err.response?.data?.error || 'Modification impossible.')
+    }
+  }
+
+  const removeGroup = async (g) => {
+    if (!window.confirm(`Retirer « ${g.name} » de la liste ? Les inscrits gardent leur club.`)) return
+    setGroupError('')
+    try {
+      await api.delete(`/club/groups/${g.id}`, auth)
+      loadGroups()
+    } catch (err) {
+      setGroupError(err.response?.data?.error || 'Suppression impossible.')
+    }
+  }
+
+  const replaceLogo = async (g, file) => {
+    if (!file) return
+    try { await patchGroup(g.id, { logo: await compress(file) }) } catch { setGroupError('Image illisible.') }
+  }
+
   // Export de la liste : un club tient souvent sa feuille de présence à part,
   // et veut pouvoir l'ouvrir dans Excel ou l'imprimer avant la séance.
   const exportCsv = () => {
     const lignes = [
-      ['Prénom', 'Nom', 'Téléphone', 'Formation', 'Inscrit le', 'Présent'],
+      ['Prénom', 'Nom', 'Téléphone', 'Formation', 'Club', 'Inscrit le', 'Présent'],
       ...(data?.registrations || []).map(r => [
         r.firstName,
         r.lastName,
         r.phone,
         data.counts.find(c => c.slug === r.training)?.title || r.training,
+        r.club || '',
         when(r.createdAt),
         r.checkedInAt ? 'oui' : 'non',
       ]),
@@ -248,6 +330,56 @@ export default function ClubAdminPage() {
           )}
         </section>
 
+        {/* Clubs étudiants : ce sont eux que l'étudiant choisit en s'inscrivant.
+            Le logo est réduit dans le navigateur avant d'être envoyé. */}
+        <section className="mt-4 rounded-2xl border border-academy-border bg-white dark:bg-academy-surfaceDark p-4 sm:p-5">
+          <h2 className="font-display font-black text-[17px]">Clubs étudiants</h2>
+          <p className="text-[13px] text-academy-textMain/60">Ils apparaissent sur la page d'inscription, logo compris.</p>
+
+          {groups.length > 0 && (
+            <ul className="mt-3 grid gap-2">
+              {groups.map(g => (
+                <li key={g.id} className="flex items-center gap-3 rounded-xl border border-academy-border p-2.5">
+                  {g.logo
+                    ? <img src={g.logo} alt="" className="h-11 w-11 shrink-0 rounded-lg object-cover" />
+                    : <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-academy-textMain/[0.06] text-[13px] font-black text-academy-textMain/45">{g.name.slice(0, 2).toUpperCase()}</span>}
+                  <span className="min-w-0 flex-1">
+                    <span className="block font-bold text-[15px] leading-tight truncate">{g.name}</span>
+                    <span className="block text-[12px] text-academy-textMain/55">{g.active ? 'Visible à l’inscription' : 'Masqué'}</span>
+                  </span>
+                  <label className="shrink-0 cursor-pointer rounded-lg border border-academy-border p-2" title="Changer le logo">
+                    <ImagePlus size={15} />
+                    <input type="file" accept="image/*" className="hidden" onChange={e => replaceLogo(g, e.target.files?.[0])} />
+                  </label>
+                  <button type="button" onClick={() => patchGroup(g.id, { active: !g.active })}
+                          className={`shrink-0 rounded-lg px-2.5 py-2 text-[12px] font-bold ${g.active ? 'bg-academy-textMain text-academy-surface' : 'border border-academy-border'}`}>
+                    {g.active ? 'Visible' : 'Masqué'}
+                  </button>
+                  <button type="button" onClick={() => removeGroup(g)} title="Retirer"
+                          className="shrink-0 rounded-lg border border-academy-border p-2 text-red-600"><Trash2 size={15} /></button>
+                </li>
+              ))}
+            </ul>
+          )}
+
+          <form onSubmit={addGroup} className="mt-3 flex flex-col sm:flex-row sm:items-center gap-2">
+            <label className="flex shrink-0 cursor-pointer items-center gap-2 rounded-xl border border-academy-border px-3 py-2.5 text-[13px] font-bold">
+              {newLogo
+                ? <img src={newLogo} alt="" className="h-6 w-6 rounded object-cover" />
+                : <ImagePlus size={15} />}
+              {newLogo ? 'Logo prêt' : 'Logo'}
+              <input type="file" accept="image/*" className="hidden" onChange={e => pickLogo(e.target.files?.[0])} />
+            </label>
+            <input value={newName} onChange={e => setNewName(e.target.value)} placeholder="Nom du club" maxLength={60}
+                   className="w-full rounded-xl border border-academy-border bg-academy-surface px-4 py-2.5 text-[15px] outline-none focus:border-academy-primary transition-colors" />
+            <button type="submit" disabled={groupBusy || newName.trim().length < 2}
+                    className="shrink-0 inline-flex items-center justify-center gap-1.5 rounded-xl bg-academy-primary text-white px-4 py-2.5 text-[14px] font-bold disabled:opacity-50">
+              <Plus size={15} /> Ajouter
+            </button>
+          </form>
+          {groupError && <p className="mt-2 text-[13px] font-semibold text-red-600">{groupError}</p>}
+        </section>
+
         {!data ? <p className="mt-6 text-sm text-academy-textMain/60">Chargement…</p> : (
           <>
             <div className="mt-5 grid gap-3 grid-cols-1 sm:grid-cols-3">
@@ -285,7 +417,7 @@ export default function ClubAdminPage() {
                     <div className="min-w-0">
                       <p className="font-bold text-[15px] leading-tight">{r.firstName} {r.lastName}</p>
                       <a href={`tel:${r.phone}`} className="block mt-0.5 text-[14px] tabular-nums text-academy-textMain/70">{phoneFr(r.phone)}</a>
-                      <p className="mt-1 text-[13px] text-academy-textMain/55">{data.counts.find(c => c.slug === r.training)?.title || r.training}</p>
+                      <p className="mt-1 text-[13px] text-academy-textMain/55">{data.counts.find(c => c.slug === r.training)?.title || r.training}{r.club ? ` · ${r.club}` : ''}</p>
                     </div>
                     <button type="button" onClick={() => checkIn({ id: r.id })}
                             className={`shrink-0 rounded-xl px-3 py-2 text-[13px] font-bold ${r.checkedInAt ? 'bg-green-600 text-white' : 'border border-academy-border'}`}>
@@ -303,19 +435,21 @@ export default function ClubAdminPage() {
                     <th className="px-4 py-3 font-bold">Nom</th>
                     <th className="px-4 py-3 font-bold">Téléphone</th>
                     <th className="px-4 py-3 font-bold">Formation</th>
+                    <th className="px-4 py-3 font-bold">Club</th>
                     <th className="px-4 py-3 font-bold">Inscrit le</th>
                     <th className="px-4 py-3 font-bold text-right">Entrée</th>
                   </tr>
                 </thead>
                 <tbody>
                   {rows.length === 0 && (
-                    <tr><td colSpan={5} className="px-4 py-6 text-center text-academy-textMain/55">Aucune inscription.</td></tr>
+                    <tr><td colSpan={6} className="px-4 py-6 text-center text-academy-textMain/55">Aucune inscription.</td></tr>
                   )}
                   {rows.map(r => (
                     <tr key={r.id} className="border-b border-academy-border/60 last:border-0">
                       <td className="px-4 py-3 font-semibold">{r.firstName} {r.lastName}</td>
                       <td className="px-4 py-3 tabular-nums"><a href={`tel:${r.phone}`} className="hover:text-academy-primary">{phoneFr(r.phone)}</a></td>
                       <td className="px-4 py-3">{data.counts.find(c => c.slug === r.training)?.title || r.training}</td>
+                      <td className="px-4 py-3 text-academy-textMain/70">{r.club || '—'}</td>
                       <td className="px-4 py-3 text-academy-textMain/60">{when(r.createdAt)}</td>
                       <td className="px-4 py-3 text-right">
                         <button type="button" onClick={() => checkIn({ id: r.id })}

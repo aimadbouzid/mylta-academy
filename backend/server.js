@@ -58,8 +58,10 @@ if (isProd && (!process.env.JWT_SECRET || process.env.JWT_SECRET.length < 32 || 
 // ─── Créer les dossiers nécessaires ───────────────────────────
 const uploadDir = path.join(__dirname, 'uploads', 'receipts')
 const introDir  = path.join(__dirname, 'uploads', 'intro')
+const clubsDir  = path.join(__dirname, 'uploads', 'clubs')
 if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true })
 if (!fs.existsSync(introDir))  fs.mkdirSync(introDir, { recursive: true })
+if (!fs.existsSync(clubsDir))  fs.mkdirSync(clubsDir, { recursive: true })
 
 // ─── Rate Limiters (tiered by sensitivity) ───────────────────
 const apiLimiter = rateLimit({
@@ -340,6 +342,13 @@ app.use('/uploads/thumbnails', express.static(path.join(__dirname, 'uploads/thum
   },
 }))
 app.use('/uploads/intro', express.static(path.join(__dirname, 'uploads/intro'), {
+  maxAge: '7d',
+  setHeaders: (res) => {
+    res.setHeader('X-Content-Type-Options', 'nosniff')
+  },
+}))
+// Logos des clubs étudiants : publics, affichés sur la page d'inscription.
+app.use('/uploads/clubs', express.static(path.join(__dirname, 'uploads/clubs'), {
   maxAge: '7d',
   setHeaders: (res) => {
     res.setHeader('X-Content-Type-Options', 'nosniff')

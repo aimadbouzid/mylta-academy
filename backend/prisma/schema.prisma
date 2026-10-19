@@ -479,6 +479,9 @@ model ClubRegistration {
   lastName  String
   phone     String
   training  String // slug : voir backend/utils/clubTrainings.js
+  // Club étudiant d'appartenance, choisi à l'inscription. On garde le nom et
+  // non l'identifiant : la liste reste lisible même si le club est retiré.
+  club      String @default("")
   // Jeton du QR code remis à l'inscription : c'est lui que l'organisateur
   // scanne à l'entrée. Court, imprononçable, sans rapport avec l'identité.
   token       String    @unique
@@ -490,4 +493,14 @@ model ClubRegistration {
   // s'inscrire aux trois.
   @@unique([phone, training])
   @@index([training, createdAt])
+}
+
+// Clubs étudiants proposés au moment de l'inscription. Les organisateurs les
+// créent eux-mêmes depuis leur espace, logo compris.
+model ClubGroup {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  logo      String   @default("") // /uploads/clubs/<fichier>.webp
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
 }

@@ -10,6 +10,8 @@
 // ============================================================
 
 const crypto = require('crypto')
+const fs = require('fs')
+const path = require('path')
 const express = require('express')
 const jwt = require('jsonwebtoken')
 const { z } = require('zod')
@@ -24,8 +26,38 @@ const registerSchema = z.object({
   lastName: z.string().trim().min(2).max(40),
   phone: z.string().trim().regex(/^\+?[0-9 ]{8,20}$/),
   training: z.enum(SLUGS),
+  club: z.string().trim().max(60).optional().default(''),
   website: z.string().optional(), // piège à robots
 })
+
+// ─── Logos des clubs ─────────────────────────────────────────
+// L'image arrive déjà réduite et recompressée par le navigateur de
+// l'organisateur : le serveur n'a donc pas besoin de sharp ni d'un binaire
+// natif. Il vérifie le format, plafonne la taille, et écrit le fichier.
+const CLUBS_DIR = path.join(__dirname, '..', 'uploads', 'clubs')
+const LOGO_TYPES = { 'image/webp': 'webp', 'image/jpeg': 'jpg', 'image/png': 'png' }
+const LOGO_MAX_BYTES = 400 * 1024
+
+const saveLogo = (dataUrl) => {
+  const match = /^data:([^;]+);base64,(.+)$/s.exec(String(dataUrl || ''))
+  if (!match) throw Object.assign(new Error('bad-image'), { status: 400 })
+  const ext = LOGO_TYPES[match[1]]
+  if (!ext) throw Object.assign(new Error('bad-type'), { status: 400 })
+  const buffer = Buffer.from(match[2], 'base64')
+  if (!buffer.length || buffer.length > LOGO_MAX_BYTES) throw Object.assign(new Error('too-big'), { status: 413 })
+
+  fs.mkdirSync(CLUBS_DIR, { recursive: true })
+  const name = `${Date.now().toString(36)}-${crypto.randomBytes(5).toString('hex')}.${ext}`
+  fs.writeFileSync(path.join(CLUBS_DIR, name), buffer)
+  return `/uploads/clubs/${name}`
+}
+
+// Le fichier remplacé ou supprimé ne sert plus à rien : on le retire, sans
+// faire échouer l'opération si le disque a déjà été nettoyé à la main.
+const dropLogo = (logo) => {
+  if (!logo?.startsWith('/uploads/clubs/')) return
+  try { fs.unlinkSync(path.join(CLUBS_DIR, path.basename(logo))) } catch { /* déjà absent */ }
+}
 
 // Comparaison à durée constante : un mot de passe ne se devine pas au
 // chronomètre, même sur un espace aussi modeste que celui-ci.
@@ -58,6 +90,84 @@ const readToken = (raw) => String(raw || '').trim().replace(QR_PREFIX, '').trim(
 // GET /api/club/trainings — la liste, pour la page publique
 router.get('/trainings', (req, res) => res.json({ trainings: TRAININGS, qrPrefix: QR_PREFIX }))
 
+// GET /api/club/groups — les clubs proposés à l'inscription
+router.get('/groups', async (req, res, next) => {
+  try {
+    const groups = await prisma.clubGroup.findMany({
+      where: { active: true },
+      orderBy: { name: 'asc' },
+      select: { id: true, name: true, logo: true },
+    })
+    res.json({ groups })
+  } catch (err) { next(err) }
+})
+
+// ─── Gestion des clubs, réservée aux organisateurs ───────────
+router.get('/groups/all', requireOrganizer, async (req, res, next) => {
+  try {
+    const groups = await prisma.clubGroup.findMany({ orderBy: { name: 'asc' } })
+    res.json({ groups })
+  } catch (err) { next(err) }
+})
+
+router.post('/groups', requireOrganizer, async (req, res, next) => {
+  try {
+    const name = String(req.body?.name || '').trim().slice(0, 60)
+    if (name.length < 2) return res.status(400).json({ error: 'Donnez un nom au club.' })
+    const taken = await prisma.clubGroup.findUnique({ where: { name } })
+    if (taken) return res.status(409).json({ error: 'Ce club existe déjà.' })
+
+    const logo = req.body?.logo ? saveLogo(req.body.logo) : ''
+    const group = await prisma.clubGroup.create({ data: { name, logo } })
+    res.status(201).json({ group })
+  } catch (err) {
+    if (err.status === 400) return res.status(400).json({ error: "Image illisible. Choisissez une photo JPEG, PNG ou WebP." })
+    if (err.status === 413) return res.status(413).json({ error: 'Image trop lourde.' })
+    next(err)
+  }
+})
+
+router.patch('/groups/:id', requireOrganizer, async (req, res, next) => {
+  try {
+    const id = Number(req.params.id)
+    const group = await prisma.clubGroup.findUnique({ where: { id } })
+    if (!group) return res.status(404).json({ error: 'Club introuvable.' })
+
+    const data = {}
+    if (typeof req.body?.name === 'string') {
+      const name = req.body.name.trim().slice(0, 60)
+      if (name.length < 2) return res.status(400).json({ error: 'Donnez un nom au club.' })
+      data.name = name
+    }
+    if (typeof req.body?.active === 'boolean') data.active = req.body.active
+    if (req.body?.logo) {
+      data.logo = saveLogo(req.body.logo)
+      dropLogo(group.logo)
+    }
+
+    const saved = await prisma.clubGroup.update({ where: { id }, data })
+    res.json({ group: saved })
+  } catch (err) {
+    if (err.code === 'P2002') return res.status(409).json({ error: 'Ce nom est déjà pris.' })
+    if (err.status === 400) return res.status(400).json({ error: "Image illisible. Choisissez une photo JPEG, PNG ou WebP." })
+    if (err.status === 413) return res.status(413).json({ error: 'Image trop lourde.' })
+    next(err)
+  }
+})
+
+router.delete('/groups/:id', requireOrganizer, async (req, res, next) => {
+  try {
+    const id = Number(req.params.id)
+    const group = await prisma.clubGroup.findUnique({ where: { id } })
+    if (!group) return res.status(404).json({ error: 'Club introuvable.' })
+    // Les inscriptions gardent le nom du club : retirer un club de la liste
+    // n'efface personne.
+    await prisma.clubGroup.delete({ where: { id } })
+    dropLogo(group.logo)
+    res.json({ ok: true })
+  } catch (err) { next(err) }
+})
+
 // POST /api/club/register — un numéro ne s'inscrit qu'une fois par formation
 router.post('/register', async (req, res, next) => {
   try {
@@ -65,7 +175,7 @@ router.post('/register', async (req, res, next) => {
     if (!parsed.success) {
       return res.status(400).json({ error: 'Vérifiez votre nom, votre prénom et votre numéro de téléphone.' })
     }
-    const { firstName, lastName, phone, training, website } = parsed.data
+    const { firstName, lastName, phone, training, club, website } = parsed.data
     if (website) return res.status(201).json({ ok: true })
 
     const digits = phone.replace(/\D/g, '')
@@ -80,7 +190,7 @@ router.post('/register', async (req, res, next) => {
 
     const created = await prisma.clubRegistration.create({
       data: {
-        firstName, lastName, phone: digits, training,
+        firstName, lastName, phone: digits, training, club,
         token: newToken(),
         ip: String(req.ip || '').slice(0, 45),
       },

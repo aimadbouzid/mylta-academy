@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import QRCode from 'qrcode'
-import { CalendarClock, Check, Download, GraduationCap, MapPin, QrCode } from 'lucide-react'
+import { CalendarClock, Check, Download, GraduationCap, MapPin, QrCode, Users } from 'lucide-react'
 import Navbar from '../components/Navbar'
 import SEOHead from '../components/SEOHead'
 import api from '../api/axios'
@@ -11,6 +11,8 @@ import api from '../api/axios'
 
 export default function ClubPage() {
   const [trainings, setTrainings] = useState(null)
+  const [groups, setGroups] = useState([])
+  const [club, setClub] = useState('')
   const [picked, setPicked] = useState('')
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
@@ -26,6 +28,9 @@ export default function ClubPage() {
     api.get('/club/trainings')
       .then(({ data }) => setTrainings(data.trainings || []))
       .catch(() => setTrainings([]))
+    api.get('/club/groups')
+      .then(({ data }) => setGroups(data.groups || []))
+      .catch(() => setGroups([]))
   }, [])
 
   const submit = async (e) => {
@@ -33,7 +38,7 @@ export default function ClubPage() {
     setError('')
     setBusy(true)
     try {
-      const { data } = await api.post('/club/register', { firstName, lastName, phone, training: picked, website })
+      const { data } = await api.post('/club/register', { firstName, lastName, phone, training: picked, club, website })
       // Le QR code se dessine ici, dans le navigateur : rien à télécharger
       // depuis le serveur, et il s'affiche même avec une connexion lente.
       const image = data.qr ? await QRCode.toDataURL(data.qr, { width: 520, margin: 1, color: { dark: '#111214', light: '#ffffff' } }) : ''
@@ -52,6 +57,7 @@ export default function ClubPage() {
   const again = () => {
     setDone('')
     setPicked('')
+    setClub('')
     setQr('')
     setAlready(false)
     setError('')
@@ -140,6 +146,30 @@ export default function ClubPage() {
             </div>
             <input className={`${field} mt-2.5`} type="tel" inputMode="tel" placeholder="Numéro de téléphone — ex. 06 12 34 56 78"
                    value={phone} onChange={e => setPhone(e.target.value)} required />
+
+            {/* Les clubs sont créés par les organisateurs : la question
+                n'apparaît que s'il y en a au moins un à proposer. */}
+            {groups.length > 0 && (
+              <>
+                <h2 className="mt-7 font-display font-black text-xl">3. Votre club</h2>
+                <div className="mt-3 grid gap-2 grid-cols-2 sm:grid-cols-3">
+                  {groups.map(g => (
+                    <button type="button" key={g.id} onClick={() => setClub(g.name)}
+                            className={`flex flex-col items-center gap-2 rounded-xl border-2 p-3 text-center transition-colors ${club === g.name ? 'border-academy-primary bg-academy-primary/5' : 'border-academy-border bg-white dark:bg-academy-surfaceDark'}`}>
+                      {g.logo
+                        ? <img src={g.logo} alt="" className="h-12 w-12 rounded-lg object-cover" loading="lazy" />
+                        : <span className="flex h-12 w-12 items-center justify-center rounded-lg bg-academy-textMain/[0.06] text-[15px] font-black text-academy-textMain/50">{g.name.slice(0, 2).toUpperCase()}</span>}
+                      <span className="text-[13px] font-bold leading-tight">{g.name}</span>
+                    </button>
+                  ))}
+                  <button type="button" onClick={() => setClub('Aucun')}
+                          className={`flex flex-col items-center justify-center gap-2 rounded-xl border-2 p-3 text-center transition-colors ${club === 'Aucun' ? 'border-academy-primary bg-academy-primary/5' : 'border-academy-border bg-white dark:bg-academy-surfaceDark'}`}>
+                    <span className="flex h-12 w-12 items-center justify-center rounded-lg bg-academy-textMain/[0.06] text-academy-textMain/40"><Users size={20} /></span>
+                    <span className="text-[13px] font-bold leading-tight">Aucun club</span>
+                  </button>
+                </div>
+              </>
+            )}
 
             {/* Piège à robots : invisible pour un humain, rempli par les scripts. */}
             <input type="text" value={website} onChange={e => setWebsite(e.target.value)} tabIndex={-1} autoComplete="off"
