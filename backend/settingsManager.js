@@ -12,7 +12,7 @@ const defaultSettings = {
       'Marketing & E-Commerce',
       'Design & Entrepreneuriat'
     ],
-    subtitle: 'Des cours structurés et concrètement utiles. Payez facilement dans votre devise locale :'
+    subtitle: "L'IA, la vidéo et le web, en pratique. En ligne ou à Béjaïa."
   },
   mission: {
     title: "Propulser l'excellence et la confiance de chaque apprenant en Algérie",

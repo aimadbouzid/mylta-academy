@@ -636,7 +636,7 @@ export const translations = {
         'Business & Entrepreneuriat'
       ],
       hero_title: 'Les compétences d\'aujourd\'hui, le succès de demain',
-      hero_subtitle: 'Des cours structurés, concrets et conçus par des experts. Accédez aux meilleures formations et payez facilement via Edahabia, CIB, CCP, BaridiMob ou RedotPay.'
+      hero_subtitle: "L'IA, la vidéo et le web, en pratique. En ligne ou à Béjaïa."
     }
   },
 
@@ -1277,7 +1277,7 @@ export const translations = {
         'Business & Entrepreneurship'
       ],
       hero_title: 'Today\'s skills, tomorrow\'s success',
-      hero_subtitle: 'Structured, practical courses designed by experts. Access the best training and pay easily via Edahabia, CIB, CCP, BaridiMob or RedotPay.'
+      hero_subtitle: 'AI, video and web, hands-on. Online or in Béjaïa.'
     }
   },
 
@@ -1909,7 +1909,7 @@ export const translations = {
         'الأعمال وريادة الأعمال'
       ],
       hero_title: 'مهارات اليوم، نجاح الغد',
-      hero_subtitle: 'دورات منظمة وعملية ومصممة من قبل خبراء. احصل على أفضل التدريبات وادفع بسهولة عبر البطاقة الذهبية، CIB، البريد، بريدي موب أو RedotPay.'
+      hero_subtitle: 'الذكاء الاصطناعي والفيديو والويب، بشكل عملي. عبر الإنترنت أو في بجاية.'
     }
   }
 }

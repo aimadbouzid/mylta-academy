@@ -129,7 +129,7 @@ export default function LandingPage() {
 
               {/* Sous-titre */}
               <p className="text-sm sm:text-base lg:text-lg text-academy-textMain/70 font-medium leading-snug sm:leading-relaxed mb-4 lg:mb-8 max-w-xl mx-auto lg:mx-0">
-                {landingData.hero_subtitle || siteSettings.hero?.subtitle || "Des cours structurés, concrets et conçus par des experts. Accédez aux meilleures formations et payez facilement via CCP ou BaridiMob."}
+                {landingData.hero_subtitle || siteSettings.hero?.subtitle || "L'IA, la vidéo et le web, en pratique. En ligne ou à Béjaïa."}
               </p>
 
               {/* Boutons d'action — volontairement sobres : pas de dégradé,

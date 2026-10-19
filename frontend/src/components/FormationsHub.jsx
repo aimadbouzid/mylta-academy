@@ -86,10 +86,10 @@ export default function FormationsHub({ coaching, inPerson, express }) {
 
   const cards = []
   if (coaching?.enabled) cards.push(
-    <Card key="online" accent="bg-academy-textMain" accentText="text-academy-textMain" button="bg-academy-textMain text-academy-surface" surface="bg-white dark:bg-academy-surfaceDark border-academy-textMain" kicker="En ligne · depuis chez vous"
+    <Card key="online" accent="bg-academy-textMain" accentText="text-academy-textMain" button="bg-academy-textMain text-academy-surface" surface="bg-white dark:bg-academy-surfaceDark border-academy-textMain" kicker="En ligne"
           title={coaching.title || 'Coaching en ligne'}
           text="Un coach en visio pour apprendre l'IA ou créer votre site. Seul ou avec vos amis."
-          facts={[['Durée', coaching.formats?.[0]?.duration || '2h30'], ['Format', 'Visio'], ['Quand', '7 j / 7']]}
+          facts={[['Durée', coaching.formats?.[0]?.duration || '2h30'], ['Quand', '7 j / 7']]}
           nextLabel="Au choix" next={`${(coaching.topics || []).length} packs`}
           to="/coaching" cta="Choisir mon pack" />
   )
@@ -97,7 +97,7 @@ export default function FormationsHub({ coaching, inPerson, express }) {
     <Card key="3j" accent="bg-academy-primary" accentText="text-academy-primary" button="bg-academy-primary text-white" surface="bg-white dark:bg-academy-surfaceDark border-academy-primary" kicker="Présentiel · 3 jours"
           title={inPerson.title || 'Formation en présentiel'}
           text={`En petit groupe chez Camden, à Béjaïa.${Number(inPerson.studentPrice) > 0 ? ` Étudiants : ${money(inPerson.studentPrice)}.` : ''}`}
-          facts={[['Durée', '3 jours'], ['Lieu', 'Camden'], ['Prix', inPerson.price ? money(inPerson.price) : '—']]}
+          facts={[['Lieu', 'Camden'], ['Prix', inPerson.price ? money(inPerson.price) : '—']]}
           next={session ? `${range3(session.date)}${session.startTime ? (Number(session.startTime.slice(0, 2)) < 12 ? ' · matin' : ' · soir') : ''}` : inPerson.datesNotice ? 'dates bientôt annoncées' : null}
           to="/coaching-presentiel" cta="Voir les dates" />
   )
@@ -114,8 +114,7 @@ export default function FormationsHub({ coaching, inPerson, express }) {
 
   return (
     <section className="section-container py-8 lg:py-12">
-      <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-academy-primary">Avec un formateur, en direct</p>
-      <h2 className="mt-1 font-display font-black text-2xl sm:text-3xl tracking-tight text-academy-textMain">Choisissez votre façon d'apprendre</h2>
+      <h2 className="font-display font-black text-2xl sm:text-3xl tracking-tight text-academy-textMain">Choisissez votre façon d'apprendre</h2>
       <div className="mt-5 grid gap-3 sm:gap-4 md:grid-cols-3">{cards}</div>
     </section>
   )
