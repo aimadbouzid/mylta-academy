@@ -22,45 +22,51 @@ function Card({ ModeIcon, mode, aside, title, text, facts, next, nextLabel = 'Pr
                 surface, ink, soft, chip, button, divider, image, badge, overlay }) {
   return (
     <Link to={to} className={`group relative block overflow-hidden rounded-2xl ${surface}`}>
-      {/* La photo occupe la moitié droite sur grand écran, tout le fond sur
-          téléphone : le dégradé garde le texte lisible dans les deux cas. */}
+      {/* La photo tient la moitié droite du bandeau ; le dégradé la recouvre
+          côté texte pour garder le titre lisible. */}
       {image && (
         <span aria-hidden="true" className="absolute inset-y-0 right-0 w-full sm:w-3/5 bg-cover bg-center"
               style={{ backgroundImage: `url(${image})` }} />
       )}
       <span aria-hidden="true" className={`absolute inset-0 ${overlay}`} />
 
-      <div className="relative p-3.5 sm:p-4 sm:max-w-[60%]">
-        <p className="flex flex-wrap items-center gap-2">
-          <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-black uppercase tracking-[0.12em] ${chip}`}>
-            <ModeIcon size={13} /> {mode}
-          </span>
-          {aside && <span className={`text-[11px] font-black uppercase tracking-[0.14em] ${soft}`}>{aside}</span>}
-          {/* Sur téléphone, ce badge passait à la ligne et rallongeait la carte. */}
-          {badge && <span className={`hidden sm:inline-block rounded-full border px-2.5 py-0.5 text-[10px] font-black uppercase tracking-[0.1em] ${chip} bg-transparent`}>{badge}</span>}
-        </p>
-
-        <h3 className={`mt-1.5 font-display font-black text-lg sm:text-xl leading-[1.1] tracking-tight ${ink}`}>{title}</h3>
-        {text && <p className={`mt-1 text-[13px] leading-snug ${soft}`}>{text}</p>}
-
-        <dl className="mt-1.5 flex flex-wrap items-center gap-x-2.5 gap-y-1">
-          {facts.map(([label, value, Icon], i) => (
-            <span key={label} className="inline-flex items-center gap-3">
-              {i > 0 && <span aria-hidden="true" className={`h-4 w-px ${divider}`} />}
-              <span className="inline-flex items-center gap-1.5">
-                <Icon size={15} className={soft} aria-hidden="true" />
-                <dt className="sr-only">{label}</dt>
-                <dd className={`font-bold text-[13px] ${ink}`}>{value}</dd>
-              </span>
+      {/* Sur grand écran le bandeau se lit en deux temps : qui et quoi à
+          gauche, les chiffres et l'action à droite. Tout tassé à gauche, la
+          moitié droite restait vide. */}
+      <div className="relative p-3.5 sm:p-4 sm:max-w-[60%] lg:max-w-none lg:flex lg:items-center lg:justify-between lg:gap-8 lg:px-6 lg:py-5">
+        <div className="lg:min-w-0">
+          <p className="flex flex-wrap items-center gap-2">
+            <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-black uppercase tracking-[0.12em] ${chip}`}>
+              <ModeIcon size={13} /> {mode}
             </span>
-          ))}
-        </dl>
+            {aside && <span className={`text-[11px] font-black uppercase tracking-[0.14em] ${soft}`}>{aside}</span>}
+            {/* Sur téléphone, ce badge passait à la ligne et rallongeait la carte. */}
+            {badge && <span className={`hidden sm:inline-block rounded-full border px-2.5 py-0.5 text-[10px] font-black uppercase tracking-[0.1em] ${chip} bg-transparent`}>{badge}</span>}
+          </p>
 
-        {next && <p className={`mt-1 text-xs ${soft}`}>{nextLabel} : <span className={`font-semibold ${ink}`}>{next}</span></p>}
+          <h3 className={`mt-1.5 font-display font-black text-lg sm:text-xl lg:text-2xl leading-[1.1] tracking-tight ${ink}`}>{title}</h3>
+          {text && <p className={`mt-1 text-[13px] leading-snug ${soft}`}>{text}</p>}
+          {next && <p className={`mt-1 text-xs ${soft}`}>{nextLabel} : <span className={`font-semibold ${ink}`}>{next}</span></p>}
+        </div>
 
-        <span className={`mt-2.5 inline-flex self-start items-center justify-center gap-1.5 btn-glow rounded-lg px-3.5 py-2 text-[13px] font-bold transition-opacity group-hover:opacity-90 ${button}`}>
-          {cta} <ArrowRight size={14} className="transition-transform group-hover:translate-x-0.5" />
-        </span>
+        <div className="lg:flex lg:shrink-0 lg:items-center lg:gap-6">
+          <dl className="mt-1.5 flex flex-wrap items-center gap-x-2.5 gap-y-1 lg:mt-0">
+            {facts.map(([label, value, Icon], i) => (
+              <span key={label} className="inline-flex items-center gap-3">
+                {i > 0 && <span aria-hidden="true" className={`h-4 w-px ${divider}`} />}
+                <span className="inline-flex items-center gap-1.5">
+                  <Icon size={15} className={soft} aria-hidden="true" />
+                  <dt className="sr-only">{label}</dt>
+                  <dd className={`font-bold text-[13px] lg:text-sm ${ink}`}>{value}</dd>
+                </span>
+              </span>
+            ))}
+          </dl>
+
+          <span className={`mt-2.5 lg:mt-0 inline-flex shrink-0 items-center justify-center gap-1.5 btn-glow rounded-lg px-3.5 py-2 text-[13px] font-bold transition-opacity group-hover:opacity-90 ${button}`}>
+            {cta} <ArrowRight size={14} className="transition-transform group-hover:translate-x-0.5" />
+          </span>
+        </div>
       </div>
     </Link>
   )
