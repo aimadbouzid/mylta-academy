@@ -17,8 +17,8 @@
     "db:create-admin": "cd backend && npm run db:create-admin",
     "db:studio": "cd backend && npx prisma studio",
     "db:reset": "cd backend && npm run db:reset",
-    "start:pm2": "npx pm2 start ecosystem.config.js --env production",
-    "pm2:logs": "npx pm2 logs mylta",
-    "pm2:reload": "npx pm2 reload mylta"
+    "start:pm2": "npx pm2 start deploy/ecosystem.config.js",
+    "pm2:logs": "npx pm2 logs mylta-academy-api",
+    "pm2:reload": "npx pm2 reload deploy/ecosystem.config.js --update-env"
   }
 }
