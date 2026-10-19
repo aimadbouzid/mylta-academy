@@ -1681,6 +1681,96 @@ router.put('/club/:id', async (req, res, next) => {
   } catch (err) { next(err) }
 })
 
+// ─── Organisateurs du club universitaire ────────────────────
+// Leur compte n'ouvre que /club/admin : inscriptions, événements et
+// pointage du club scientifique. Ni les élèves de l'académie, ni les
+// paiements, ni les réglages. Créés ici plutôt qu'en ligne de commande.
+
+const organizerSchema = z.object({
+  name: z.string().trim().min(3).max(60),
+  login: z.string().trim().toLowerCase().regex(/^[a-z0-9._-]{3,30}$/),
+  password: z.string().min(12).max(200),
+})
+
+router.get('/club-organizers', async (req, res, next) => {
+  try {
+    const organizers = await prisma.clubOrganizer.findMany({
+      // Jamais le mot de passe, même haché.
+      select: { id: true, name: true, login: true, active: true, lastSeenAt: true, createdAt: true },
+      orderBy: [{ active: 'desc' }, { name: 'asc' }],
+    })
+    res.json({ organizers })
+  } catch (err) { next(err) }
+})
+
+router.post('/club-organizers', async (req, res, next) => {
+  try {
+    const parsed = organizerSchema.safeParse(req.body)
+    if (!parsed.success) {
+      return res.status(400).json({ error: "Nom, identifiant (3 à 30 caractères : lettres, chiffres, . _ -) et mot de passe de 12 caractères minimum." })
+    }
+    const { name, login, password } = parsed.data
+    const taken = await prisma.clubOrganizer.findUnique({ where: { login }, select: { id: true } })
+    if (taken) return res.status(409).json({ error: 'Cet identifiant est déjà pris.' })
+
+    const organizer = await prisma.clubOrganizer.create({
+      data: { name, login, password: await argon2.hash(password) },
+      select: { id: true, name: true, login: true, active: true, lastSeenAt: true, createdAt: true },
+    })
+    console.log(JSON.stringify({
+      event: 'CLUB_ORGANIZER_CREATED', adminEmail: req.user.email,
+      login, timestamp: new Date().toISOString(),
+    }))
+    res.status(201).json({ organizer })
+  } catch (err) { next(err) }
+})
+
+router.put('/club-organizers/:id', async (req, res, next) => {
+  try {
+    const id = validateId(req.params.id)
+    if (!id) return res.status(400).json({ error: 'ID invalide' })
+    const current = await prisma.clubOrganizer.findUnique({ where: { id }, select: { id: true, login: true } })
+    if (!current) return res.status(404).json({ error: 'Organisateur introuvable.' })
+
+    const data = {}
+    if (typeof req.body?.active === 'boolean') data.active = req.body.active
+    if (typeof req.body?.name === 'string') {
+      const name = req.body.name.trim()
+      if (name.length < 3 || name.length > 60) return res.status(400).json({ error: 'Nom trop court ou trop long.' })
+      data.name = name
+    }
+    if (typeof req.body?.password === 'string' && req.body.password) {
+      if (req.body.password.length < 12) return res.status(400).json({ error: 'Mot de passe de 12 caractères minimum.' })
+      data.password = await argon2.hash(req.body.password)
+    }
+    if (!Object.keys(data).length) return res.status(400).json({ error: 'Rien à modifier.' })
+
+    const organizer = await prisma.clubOrganizer.update({
+      where: { id }, data,
+      select: { id: true, name: true, login: true, active: true, lastSeenAt: true, createdAt: true },
+    })
+    console.log(JSON.stringify({
+      event: data.password ? 'CLUB_ORGANIZER_PASSWORD_RESET' : 'CLUB_ORGANIZER_UPDATED',
+      adminEmail: req.user.email, login: current.login, timestamp: new Date().toISOString(),
+    }))
+    res.json({ organizer })
+  } catch (err) { next(err) }
+})
+
+router.delete('/club-organizers/:id', async (req, res, next) => {
+  try {
+    const id = validateId(req.params.id)
+    if (!id) return res.status(400).json({ error: 'ID invalide' })
+    const gone = await prisma.clubOrganizer.deleteMany({ where: { id } })
+    if (!gone.count) return res.status(404).json({ error: 'Organisateur introuvable.' })
+    console.log(JSON.stringify({
+      event: 'CLUB_ORGANIZER_DELETED', adminEmail: req.user.email,
+      organizerId: id, timestamp: new Date().toISOString(),
+    }))
+    res.json({ ok: true })
+  } catch (err) { next(err) }
+})
+
 // ─── GET /api/admin/coupons — Lister les coupons ────────────
 router.get('/coupons', async (req, res, next) => {
   try {
