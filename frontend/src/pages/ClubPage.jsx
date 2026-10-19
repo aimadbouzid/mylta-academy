@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import QRCode from 'qrcode'
-import { CalendarClock, Check, Download, GraduationCap, MapPin, QrCode, Users } from 'lucide-react'
+import { ArrowRight, CalendarClock, CalendarDays, Check, Download, GraduationCap, MapPin, QrCode, Users } from 'lucide-react'
 import Navbar from '../components/Navbar'
 import SEOHead from '../components/SEOHead'
 import api from '../api/axios'
@@ -8,6 +9,12 @@ import api from '../api/axios'
 // Formations gratuites données au club scientifique de l'université de Béjaïa
 // (Targa Ouzemmour). Le visiteur choisit une formation, laisse son nom et son
 // numéro : l'inscription est enregistrée aussitôt, sans compte ni paiement.
+
+const longDate = (iso) => {
+  if (!iso) return ''
+  const d = new Date(`${iso}T12:00:00`).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })
+  return d.charAt(0).toUpperCase() + d.slice(1)
+}
 
 export default function ClubPage() {
   const [trainings, setTrainings] = useState(null)
@@ -23,8 +30,12 @@ export default function ClubPage() {
   const [done, setDone] = useState('')
   const [already, setAlready] = useState(false)
   const [qr, setQr] = useState('')
+  const [events, setEvents] = useState([])
 
   useEffect(() => {
+    api.get('/club/events')
+      .then(({ data }) => setEvents(data.events || []))
+      .catch(() => setEvents([]))
     api.get('/club/trainings')
       .then(({ data }) => setTrainings(data.trainings || []))
       .catch(() => setTrainings([]))
@@ -185,6 +196,37 @@ export default function ClubPage() {
               Gratuit, sans paiement ni création de compte. Votre numéro sert uniquement à vous prévenir de la date.
             </p>
           </form>
+        )}
+
+        {/* Ce que le club organise en plus des trois formations : open days,
+            ateliers, rencontres. Rien ne s'affiche tant qu'il n'y a rien. */}
+        {events.length > 0 && (
+          <section className="mt-12">
+            <h2 className="font-display font-black text-2xl tracking-tight">Prochains événements</h2>
+            <div className="mt-4 space-y-3">
+              {events.map(ev => (
+                <Link key={ev.slug} to={`/club/evenement/${ev.slug}`}
+                      className="group flex gap-4 rounded-2xl border border-academy-border bg-white dark:bg-academy-surfaceDark p-4 hover:border-academy-primary/50 transition-colors">
+                  {ev.poster && (
+                    <img src={ev.poster} alt="" loading="lazy" aria-hidden="true"
+                         className="hidden sm:block w-28 h-20 shrink-0 rounded-xl object-cover" />
+                  )}
+                  <div className="min-w-0 flex-1">
+                    <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px] font-bold text-academy-textMain/60">
+                      <span className="flex items-center gap-1.5"><CalendarDays size={14} className="text-academy-primary" /> {longDate(ev.date)}</span>
+                      {ev.startTime && <span>{ev.startTime.replace(':', 'h')}</span>}
+                      {ev.place && <span className="truncate">{ev.place}</span>}
+                    </p>
+                    <p className="mt-1 font-display font-black text-lg leading-tight">{ev.title}</p>
+                    {ev.summary && <p className="mt-0.5 text-[13px] text-academy-textMain/60 leading-snug line-clamp-2">{ev.summary}</p>}
+                    <span className="mt-2 inline-flex items-center gap-1.5 text-[13px] font-bold text-academy-primary">
+                      {ev.seatsLeft === 0 ? 'Complet' : 'Voir et réserver'} <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
+                    </span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
         )}
 
         {/* Qui anime : un visage et un parcours valent mieux qu'un nom seul,

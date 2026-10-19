@@ -3,6 +3,7 @@ import jsQR from 'jsqr'
 import { Camera, CameraOff, Check, Download, ImagePlus, Lock, Plus, RefreshCw, Search, Trash2, UserCheck, Users, X } from 'lucide-react'
 import SEOHead from '../components/SEOHead'
 import api from '../api/axios'
+import ClubEventsPanel from '../components/ClubEventsPanel'
 
 // Espace des organisateurs du club scientifique : un mot de passe partagé,
 // et rien d'autre que les inscrits aux trois formations. Volontairement séparé
@@ -73,12 +74,12 @@ export default function ClubAdminPage() {
   // Compression dans le navigateur, avant l'envoi : un logo part à 320 px en
   // WebP, quelques dizaines de kilo-octets. Rien à installer sur le serveur,
   // et la connexion de l'organisateur n'est pas sollicitée pour rien.
-  const compress = (file) => new Promise((resolve, reject) => {
+  const compress = (file, maxSide = 320) => new Promise((resolve, reject) => {
     const img = new Image()
     const url = URL.createObjectURL(file)
     img.onload = () => {
       URL.revokeObjectURL(url)
-      const scale = Math.min(1, 320 / Math.max(img.width, img.height))
+      const scale = Math.min(1, maxSide / Math.max(img.width, img.height))
       const canvas = document.createElement('canvas')
       canvas.width = Math.max(1, Math.round(img.width * scale))
       canvas.height = Math.max(1, Math.round(img.height * scale))
@@ -329,6 +330,8 @@ export default function ClubAdminPage() {
             </div>
           )}
         </section>
+
+        <ClubEventsPanel auth={auth} compress={compress} />
 
         {/* Clubs étudiants : ce sont eux que l'étudiant choisit en s'inscrivant.
             Le logo est réduit dans le navigateur avant d'être envoyé. */}

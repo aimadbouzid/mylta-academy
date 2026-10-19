@@ -502,6 +502,51 @@ model ClubRegistration {
 
 // Clubs étudiants proposés au moment de l'inscription. Les organisateurs les
 // créent eux-mêmes depuis leur espace, logo compris.
+// Événement du club : open day, atelier, rencontre. Publié par les
+// organisateurs depuis /club/admin, visible sur la page publique du club.
+model ClubEvent {
+  id        Int     @id @default(autoincrement())
+  slug      String  @unique // identifiant lisible dans l'URL
+  title     String
+  summary   String  @default("") // une ou deux phrases sous le titre
+  date      String // AAAA-MM-JJ, comme les sessions présentiel
+  startTime String  @default("")
+  endTime   String  @default("")
+  place     String  @default("")
+  poster    String  @default("") // /uploads/clubs/<fichier>
+  // 0 = pas de limite de places. Au-delà, l'inscription se ferme d'elle-même.
+  capacity  Int     @default(0)
+  // Tant qu'il n'est pas publié, l'événement ne se voit que des organisateurs.
+  published Boolean @default(false)
+  // Déroulé de la journée : [{ time: "09:00", label: "Accueil" }, …]
+  programme Json    @default("[]")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  registrations ClubEventRegistration[]
+
+  @@index([date])
+}
+
+model ClubEventRegistration {
+  id        Int       @id @default(autoincrement())
+  eventId   Int
+  event     ClubEvent @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  firstName String
+  lastName  String
+  phone     String
+  club      String    @default("")
+  // Même billet que les trois formations : un jeton court, scanné à l'entrée.
+  token       String    @unique
+  checkedInAt DateTime?
+  ip          String?
+  createdAt   DateTime  @default(now())
+
+  // Un numéro ne s'inscrit qu'une fois par événement.
+  @@unique([phone, eventId])
+  @@index([eventId, createdAt])
+}
+
 model ClubGroup {
   id        Int      @id @default(autoincrement())
   name      String   @unique

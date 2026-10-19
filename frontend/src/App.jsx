@@ -52,6 +52,7 @@ const JoinPage = React.lazy(() => import('./pages/JoinPage'))
 const ContestPage = React.lazy(() => import('./pages/ContestPage'))
 const ClubPage = React.lazy(() => import('./pages/ClubPage'))
 const ClubAdminPage = React.lazy(() => import('./pages/ClubAdminPage'))
+const ClubEventPage = React.lazy(() => import('./pages/ClubEventPage'))
 const ExpressPage = React.lazy(() => import('./pages/ExpressPage'))
 
 const SuspenseFallback = () => (
@@ -139,6 +140,7 @@ export default function App() {
               {/* Club scientifique de l'université : inscription publique, et
                   espace des organisateurs sous son propre mot de passe. */}
               <Route path="/club" element={<ClubPage />} />
+              <Route path="/club/evenement/:slug" element={<ClubEventPage />} />
               <Route path="/club/admin" element={<ClubAdminPage />} />
               <Route path="/formation-1-jour" element={<ExpressPage />} />
               <Route path="/resources" element={<ModuleRoute moduleName="resourcesEnabled"><ResourcesPage /></ModuleRoute>} />
