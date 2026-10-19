@@ -27,7 +27,7 @@ function Card({ kicker, title, text, facts, next, nextLabel = 'Prochaine', to, c
       {/* Chaque formation porte sa couleur, du bandeau jusqu'au bouton : les
           trois cartes se ressemblaient trop pour se distinguer d'un coup d'œil. */}
       <span aria-hidden="true" className={`block h-1.5 w-full ${accent}`} />
-      <div className="flex flex-1 flex-col p-5 lg:p-6">
+      <div className="flex flex-1 flex-col p-4 sm:p-5 lg:p-6">
       {/* Le mode — en ligne ou présentiel — décide si la formation est
           accessible au visiteur : il doit se lire d'un coup d'œil. */}
       <p className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.12em]">
@@ -38,10 +38,14 @@ function Card({ kicker, title, text, facts, next, nextLabel = 'Prochaine', to, c
         {rest.length > 0 && <span className={solid ? 'text-white/70' : 'text-academy-textMain/50'}>{rest.join(' · ')}</span>}
         {badge && <span className={`ml-auto shrink-0 rounded-full border px-2 py-0.5 text-[10px] tracking-[0.1em] ${solid ? 'border-white/40 text-white' : `border-current ${accentText}`}`}>{badge}</span>}
       </p>
-      <h3 className={`mt-1 font-display font-black text-2xl sm:text-[26px] leading-[1.1] lg:min-h-[2.2em] tracking-tight ${ink}`}>{title}</h3>
-      <p className={`mt-1.5 text-[13px] lg:text-sm ${soft} leading-snug lg:min-h-[2.75em]`}>{text}</p>
+      <h3 className={`mt-1 font-display font-black text-xl sm:text-[26px] leading-[1.1] lg:min-h-[2.2em] tracking-tight ${ink}`}>{title}</h3>
+      {/* Sur téléphone les trois cartes s'empilent : la description et la
+          prochaine date repoussaient la troisième hors de l'écran. Le mode, le
+          titre, les chiffres clés et le bouton suffisent à choisir ; le détail
+          attend la page de la formation. */}
+      <p className={`hidden sm:block mt-1.5 text-[13px] lg:text-sm ${soft} leading-snug lg:min-h-[2.75em]`}>{text}</p>
 
-      <dl className="mt-3 lg:mt-4 flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] lg:text-sm">
+      <dl className="mt-2 sm:mt-3 lg:mt-4 flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] lg:text-sm">
         {facts.map(([k, v], i) => (
           <span key={k} className="inline-flex items-center gap-2">
             {i > 0 && <span aria-hidden="true" className={solid ? 'text-white/40' : 'text-academy-textMain/25'}>·</span>}
@@ -51,9 +55,9 @@ function Card({ kicker, title, text, facts, next, nextLabel = 'Prochaine', to, c
         ))}
       </dl>
 
-      {next && <p className={`mt-2 text-[13px] lg:text-sm ${soft}`}>{nextLabel} : <span className={`font-semibold ${solid ? 'text-white' : 'text-academy-textMain/80'}`}>{next}</span></p>}
+      {next && <p className={`hidden sm:block mt-2 text-[13px] lg:text-sm ${soft}`}>{nextLabel} : <span className={`font-semibold ${solid ? 'text-white' : 'text-academy-textMain/80'}`}>{next}</span></p>}
 
-      <span className="mt-auto pt-4 lg:pt-5">
+      <span className="mt-auto pt-3 sm:pt-4 lg:pt-5">
         <span className={`flex w-full items-center justify-center gap-1.5 py-2 px-4 rounded-lg text-[13px] font-semibold shadow-sm group-hover:opacity-90 transition-opacity ${button}`}>
           {cta} <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
         </span>
