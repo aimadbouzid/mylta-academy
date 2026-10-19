@@ -502,6 +502,20 @@ model ClubRegistration {
 
 // Clubs étudiants proposés au moment de l'inscription. Les organisateurs les
 // créent eux-mêmes depuis leur espace, logo compris.
+// Organisateur du club : un compte nominatif pour l'espace /club/admin.
+// Il ne donne accès qu'au club — ni aux élèves de l'académie, ni aux
+// paiements, ni aux réglages du site. Séparé du modèle User pour cette
+// raison : un organisateur n'est pas un compte de l'académie.
+model ClubOrganizer {
+  id        Int      @id @default(autoincrement())
+  name      String
+  login     String   @unique // identifiant court, en minuscules
+  password  String // haché avec argon2, jamais en clair
+  active    Boolean  @default(true)
+  lastSeenAt DateTime?
+  createdAt DateTime @default(now())
+}
+
 // Événement du club : open day, atelier, rencontre. Publié par les
 // organisateurs depuis /club/admin, visible sur la page publique du club.
 model ClubEvent {

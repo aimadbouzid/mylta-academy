@@ -18,6 +18,7 @@ const { z } = require('zod')
 const prisma = require('../prisma')
 const { TRAININGS, SLUGS } = require('../utils/clubTrainings')
 const { notifyOwner } = require('../utils/notifyOwner')
+const argon2 = require('argon2')
 
 const router = express.Router()
 
@@ -202,16 +203,36 @@ router.post('/register', async (req, res, next) => {
 })
 
 // POST /api/club/access — mot de passe partagé des organisateurs
-router.post('/access', (req, res) => {
-  const expected = process.env.CLUB_ADMIN_PASSWORD
-  if (!expected) {
-    return res.status(503).json({ error: "L'espace organisateurs n'est pas encore configuré." })
-  }
-  if (!sameSecret(req.body?.password || '', expected)) {
-    return res.status(401).json({ error: 'Mot de passe incorrect.' })
-  }
-  const token = jwt.sign({ scope: 'club' }, process.env.JWT_SECRET, { expiresIn: '12h' })
-  res.json({ token })
+// Deux façons d'entrer : un compte nominatif (identifiant + mot de passe), ou
+// le mot de passe partagé d'avant les comptes, gardé pour ne pas couper
+// l'accès à ceux qui l'utilisent déjà.
+router.post('/access', async (req, res, next) => {
+  try {
+    const login = String(req.body?.login || '').trim().toLowerCase()
+    const password = String(req.body?.password || '')
+
+    if (login) {
+      const who = await prisma.clubOrganizer.findUnique({ where: { login } })
+      // Même réponse et même temps de calcul qu'un mot de passe faux : un
+      // identifiant inexistant ne doit pas se repérer à la réponse.
+      const ok = who && who.active && await argon2.verify(who.password, password).catch(() => false)
+      if (!ok) return res.status(401).json({ error: 'Identifiant ou mot de passe incorrect.' })
+
+      prisma.clubOrganizer.update({ where: { id: who.id }, data: { lastSeenAt: new Date() } }).catch(() => {})
+      const token = jwt.sign({ scope: 'club', who: who.name }, process.env.JWT_SECRET, { expiresIn: '12h' })
+      return res.json({ token, name: who.name })
+    }
+
+    const expected = process.env.CLUB_ADMIN_PASSWORD
+    if (!expected) {
+      return res.status(503).json({ error: "L'espace organisateurs n'est pas encore configuré." })
+    }
+    if (!sameSecret(password, expected)) {
+      return res.status(401).json({ error: 'Mot de passe incorrect.' })
+    }
+    const token = jwt.sign({ scope: 'club' }, process.env.JWT_SECRET, { expiresIn: '12h' })
+    res.json({ token })
+  } catch (err) { next(err) }
 })
 
 // GET /api/club/registrations — compteurs et liste, réservés aux organisateurs

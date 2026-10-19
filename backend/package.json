@@ -16,7 +16,8 @@
     "db:studio": "npx prisma studio",
     "db:seed": "node prisma/seed.js",
     "db:reset": "npx prisma migrate reset --force && node prisma/seed.js",
-    "db:create-admin": "node scripts/create-admin.js"
+    "db:create-admin": "node scripts/create-admin.js",
+    "club:organizer": "node scripts/create-club-organizer.js"
   },
   "dependencies": {
     "@prisma/client": "^5.15.0",

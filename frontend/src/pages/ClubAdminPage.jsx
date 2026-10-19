@@ -21,6 +21,7 @@ const strip = (s) => String(s).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerC
 
 export default function ClubAdminPage() {
   const [token, setToken] = useState(() => { try { return localStorage.getItem(KEY) || '' } catch { return '' } })
+  const [login, setLogin] = useState('')
   const [password, setPassword] = useState('')
   const [data, setData] = useState(null)
   const [busy, setBusy] = useState(false)
@@ -60,7 +61,7 @@ export default function ClubAdminPage() {
     setError('')
     setBusy(true)
     try {
-      const { data } = await api.post('/club/access', { password })
+      const { data } = await api.post('/club/access', login.trim() ? { login: login.trim(), password } : { password })
       try { localStorage.setItem(KEY, data.token) } catch { /* navigation privée */ }
       setToken(data.token)
       setPassword('')
@@ -253,9 +254,14 @@ export default function ClubAdminPage() {
           <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-academy-primary/10 text-academy-primary"><Lock size={22} /></span>
           <h1 className="mt-3 font-display font-black text-xl">Espace organisateurs</h1>
           <p className="mt-1 text-[13px] text-academy-textMain/60">Inscriptions et entrées des formations du club scientifique.</p>
-          <input type="password" value={password} onChange={e => setPassword(e.target.value)} required autoFocus
-                 placeholder="Mot de passe"
+          {/* Identifiant facultatif : laissé vide, c'est le mot de passe
+              partagé d'avant les comptes nominatifs qui ouvre l'espace. */}
+          <input type="text" value={login} onChange={e => setLogin(e.target.value)} autoFocus
+                 placeholder="Identifiant (laissez vide si vous n'en avez pas)" autoComplete="username"
                  className="mt-5 w-full rounded-xl border border-academy-border bg-academy-surface px-4 py-3 text-[16px] outline-none focus:border-academy-primary transition-colors" />
+          <input type="password" value={password} onChange={e => setPassword(e.target.value)} required
+                 placeholder="Mot de passe" autoComplete="current-password"
+                 className="mt-2.5 w-full rounded-xl border border-academy-border bg-academy-surface px-4 py-3 text-[16px] outline-none focus:border-academy-primary transition-colors" />
           {error && <p className="mt-3 text-[13px] font-semibold text-red-600">{error}</p>}
           <button type="submit" disabled={busy}
                   className="mt-4 w-full rounded-xl bg-academy-textMain text-academy-surface py-3 text-[15px] font-bold disabled:opacity-50">
