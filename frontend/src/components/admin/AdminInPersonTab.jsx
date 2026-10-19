@@ -356,6 +356,14 @@ export default function AdminInPersonTab() {
           Afficher le nombre de places restantes (« il reste 7 places »)
         </label>
         <p className="text-xs text-neutral-500 -mt-2">Le prix d'une session, s'il est renseigné, remplace ce prix par défaut. Pensez à indiquer « Acompte reçu » quand un inscrit vous envoie son reçu.</p>
+        <label className="flex items-center gap-2 text-sm font-bold cursor-pointer">
+          <input type="checkbox" checked={cfg.recapEnabled !== false} onChange={e => setCfg({ ...cfg, recapEnabled: e.target.checked })} className="w-4 h-4" />
+          Rappeler programme, date et lieu après le choix de la date
+        </label>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div><label className={label}>Lieu de la formation</label><input className={input} value={cfg.venue || ''} onChange={e => setCfg({ ...cfg, venue: e.target.value })} /></div>
+          <div><label className={label}>Adresse du lieu</label><input className={input} value={cfg.venueAddress || ''} onChange={e => setCfg({ ...cfg, venueAddress: e.target.value })} /></div>
+        </div>
         <ListEditor title="Ce que vous allez apprendre (programme)" items={cfg.program} placeholder="Un point du programme" onChange={program => setCfg({ ...cfg, program })} />
         <ListEditor title="Bon à savoir" items={cfg.infos} placeholder="Une information pratique" onChange={infos => setCfg({ ...cfg, infos })} />
         <button type="button" onClick={saveTexts} disabled={busy} className="flex items-center gap-2 px-6 py-3 bg-emerald-600 hover:bg-emerald-500 rounded-xl font-bold transition-colors disabled:opacity-60">

@@ -295,6 +295,11 @@ const defaultSettings = {
       'Images & voix off IA',
       'Vos propres vidéos',
     ],
+    // Récapitulatif montré une fois la date choisie : programme, date et lieu
+    // sous les yeux avant de remplir le profil et les coordonnées.
+    recapEnabled: true,
+    venue: 'Camden International Institute',
+    venueAddress: 'Cité Douanière Bir Slam, Promo Ceram Bt D1 W, Béjaïa',
     // Étiquettes très courtes, en grille de 3 en haut de la page.
     infos: [
       '3 jours',
