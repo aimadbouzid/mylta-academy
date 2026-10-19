@@ -4,8 +4,9 @@ import { useNavigate } from 'react-router-dom'
 import { useSiteSettings } from '../context/SiteSettingsContext'
 
 // Premier écran du visiteur : la question qu'il se pose vraiment en arrivant,
-// « laquelle des trois ? ». Posée une seule fois par navigateur, et refusable :
-// un visiteur qui vient lire la page ne doit pas avoir à batailler.
+// « laquelle des trois ? ». Reposée à chaque visite, mais une seule fois par
+// visite : sessionStorage se vide quand l'onglet se ferme, donc le visiteur ne
+// la revoit pas en naviguant d'une page à l'autre.
 const SEEN = 'mylta_welcome_seen'
 
 export default function WelcomeChoice() {
@@ -21,14 +22,14 @@ export default function WelcomeChoice() {
 
   useEffect(() => {
     if (choices.length < 2) return
-    try { if (localStorage.getItem(SEEN)) return } catch { return }
+    try { if (sessionStorage.getItem(SEEN)) return } catch { return }
     const t = setTimeout(() => setOpen(true), 1200)
     return () => clearTimeout(t)
   }, [choices.length])
 
   const close = () => {
     setOpen(false)
-    try { localStorage.setItem(SEEN, '1') } catch { /* navigation privée : on repropose plus tard */ }
+    try { sessionStorage.setItem(SEEN, '1') } catch { /* navigation privée : on repropose plus tard */ }
   }
 
   useEffect(() => {
