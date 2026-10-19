@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
-import { CalendarClock, Check, GraduationCap, MapPin } from 'lucide-react'
+import QRCode from 'qrcode'
+import { CalendarClock, Check, Download, GraduationCap, MapPin, QrCode } from 'lucide-react'
 import Navbar from '../components/Navbar'
 import SEOHead from '../components/SEOHead'
 import api from '../api/axios'
@@ -18,6 +19,8 @@ export default function ClubPage() {
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
   const [done, setDone] = useState('')
+  const [already, setAlready] = useState(false)
+  const [qr, setQr] = useState('')
 
   useEffect(() => {
     api.get('/club/trainings')
@@ -30,7 +33,12 @@ export default function ClubPage() {
     setError('')
     setBusy(true)
     try {
-      await api.post('/club/register', { firstName, lastName, phone, training: picked, website })
+      const { data } = await api.post('/club/register', { firstName, lastName, phone, training: picked, website })
+      // Le QR code se dessine ici, dans le navigateur : rien à télécharger
+      // depuis le serveur, et il s'affiche même avec une connexion lente.
+      const image = data.qr ? await QRCode.toDataURL(data.qr, { width: 520, margin: 1, color: { dark: '#111214', light: '#ffffff' } }) : ''
+      setQr(image)
+      setAlready(Boolean(data.already))
       setDone(trainings.find(t => t.slug === picked)?.title || '')
     } catch (err) {
       setError(err.response?.data?.error || "L'inscription a échoué. Réessayez.")
@@ -44,6 +52,8 @@ export default function ClubPage() {
   const again = () => {
     setDone('')
     setPicked('')
+    setQr('')
+    setAlready(false)
     setError('')
   }
 
@@ -70,12 +80,32 @@ export default function ClubPage() {
         </div>
 
         {done ? (
-          <div className="mt-8 rounded-2xl border-2 border-green-600/30 bg-green-50 p-6 text-center">
+          <div className="mt-8 rounded-2xl border-2 border-green-600/30 bg-green-50 p-5 sm:p-6 text-center">
             <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-600 text-white"><Check size={26} /></span>
-            <h2 className="mt-3 font-display font-black text-xl">Inscription enregistrée</h2>
+            <h2 className="mt-3 font-display font-black text-xl">{already ? 'Vous êtes déjà inscrit' : 'Inscription enregistrée'}</h2>
             <p className="mt-1.5 text-[15px] text-academy-textMain/70">
               Votre place à « {done} » est réservée. On vous prévient par téléphone dès que la date est fixée.
             </p>
+
+            {/* Le billet d'entrée : l'organisateur le scanne à la porte.
+                Une capture d'écran suffit, le réseau n'est pas garanti sur place. */}
+            {qr && (
+              <div className="mt-5 rounded-2xl bg-white border border-academy-border p-5">
+                <p className="flex items-center justify-center gap-1.5 text-[12px] font-black uppercase tracking-[0.12em] text-academy-primary">
+                  <QrCode size={14} /> Votre billet d'entrée
+                </p>
+                <img src={qr} alt="QR code d'entrée" className="mx-auto mt-3 w-44 sm:w-52 h-auto" />
+                <p className="mt-3 text-[13px] text-academy-textMain/65 leading-snug">
+                  Gardez-le : <strong className="font-bold text-academy-textMain">faites une capture d'écran</strong> ou enregistrez l'image.
+                  Il sera scanné à l'entrée de la formation.
+                </p>
+                <a href={qr} download={`billet-${done.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.png`}
+                   className="mt-3 inline-flex items-center gap-1.5 rounded-xl border border-academy-border px-4 py-2 text-[13px] font-bold hover:border-academy-textMain/40 transition-colors">
+                  <Download size={14} /> Enregistrer l'image
+                </a>
+              </div>
+            )}
+
             <button type="button" onClick={again}
                     className="mt-4 rounded-xl bg-academy-textMain text-academy-surface px-5 py-2.5 text-sm font-bold">
               M'inscrire à une autre formation
@@ -126,6 +156,28 @@ export default function ClubPage() {
             </p>
           </form>
         )}
+
+        {/* Qui anime : un visage et un parcours valent mieux qu'un nom seul,
+            pour des étudiants qui s'inscrivent à une formation gratuite. */}
+        <section className="mt-12 rounded-2xl border border-academy-border bg-white dark:bg-academy-surfaceDark p-5 sm:p-6">
+          <div className="flex flex-col sm:flex-row sm:items-start gap-5">
+            <img src="/aimad-bouzidi.webp" alt="Aimad Bouzidi" width="160" height="160" loading="lazy"
+                 className="w-28 h-28 sm:w-40 sm:h-40 shrink-0 rounded-2xl object-cover object-top mx-auto sm:mx-0" />
+            <div className="min-w-0 text-center sm:text-left">
+              <p className="text-[11px] font-black uppercase tracking-[0.18em] text-academy-primary">Votre formateur</p>
+              <h2 className="mt-1 font-display font-black text-2xl leading-tight">Aimad Bouzidi</h2>
+              <p className="mt-1 text-[14px] font-semibold text-academy-textMain/75">
+                Filmmaker · Fondateur de Mylta Academy et Mylta Creative · Créateur de contenu sur l'intelligence artificielle
+              </p>
+              <p className="mt-3 text-[14px] text-academy-textMain/65 leading-relaxed">
+                Je forme depuis Béjaïa à la vidéo au smartphone, à l'IA et au web. Plus de 170 personnes
+                sont déjà passées par mes formations, en ligne et en présentiel, et Mylta Academy est
+                partenaire du Camden International Institute. Ces trois séances au club scientifique
+                reprennent, gratuitement, ce que j'enseigne le reste de l'année.
+              </p>
+            </div>
+          </div>
+        </section>
       </main>
     </div>
   )

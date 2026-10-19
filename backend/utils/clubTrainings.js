@@ -9,7 +9,7 @@ const TRAININGS = [
   {
     slug: 'vibe-coding',
     title: 'Vibe Coding',
-    text: "Créer un site ou une application en dialoguant avec l'IA, sans savoir coder.",
+    text: "Créer un site web, une landing page ou votre propre outil en dialoguant avec l'IA : les bases, la méthode et tout ce qu'il faut pour vous lancer sans savoir coder.",
     date: '',
   },
   {

@@ -48,8 +48,15 @@ const requireOrganizer = (req, res, next) => {
   }
 }
 
+// Jeton du QR code : court, aléatoire, sans lien avec l'identité de la
+// personne. Préfixé dans le QR pour qu'un scan étranger soit rejeté tout de
+// suite, et qu'un appareil photo ordinaire affiche quelque chose de parlant.
+const QR_PREFIX = 'MYLTA-CLUB:'
+const newToken = () => crypto.randomBytes(8).toString('hex')
+const readToken = (raw) => String(raw || '').trim().replace(QR_PREFIX, '').trim()
+
 // GET /api/club/trainings — la liste, pour la page publique
-router.get('/trainings', (req, res) => res.json({ trainings: TRAININGS }))
+router.get('/trainings', (req, res) => res.json({ trainings: TRAININGS, qrPrefix: QR_PREFIX }))
 
 // POST /api/club/register — un numéro ne s'inscrit qu'une fois par formation
 router.post('/register', async (req, res, next) => {
@@ -65,14 +72,22 @@ router.post('/register', async (req, res, next) => {
     const exists = await prisma.clubRegistration.findUnique({
       where: { phone_training: { phone: digits, training } },
     })
-    if (exists) return res.status(409).json({ error: 'Ce numéro est déjà inscrit à cette formation.' })
+    // Déjà inscrit : on renvoie son billet plutôt qu'une erreur sèche. La
+    // plupart de ceux qui recommencent ont simplement perdu leur QR code.
+    if (exists) {
+      return res.status(200).json({ ok: true, already: true, token: exists.token, qr: QR_PREFIX + exists.token })
+    }
 
-    await prisma.clubRegistration.create({
-      data: { firstName, lastName, phone: digits, training, ip: String(req.ip || '').slice(0, 45) },
+    const created = await prisma.clubRegistration.create({
+      data: {
+        firstName, lastName, phone: digits, training,
+        token: newToken(),
+        ip: String(req.ip || '').slice(0, 45),
+      },
     })
     const label = TRAININGS.find(t => t.slug === training)?.title || training
     notifyOwner(`🎓 Club université — ${firstName} ${lastName} (${phone}) s'inscrit à « ${label} »`)
-    res.status(201).json({ ok: true })
+    res.status(201).json({ ok: true, token: created.token, qr: QR_PREFIX + created.token })
   } catch (err) { next(err) }
 })
 
@@ -93,14 +108,44 @@ router.post('/access', (req, res) => {
 router.get('/registrations', requireOrganizer, async (req, res, next) => {
   try {
     const rows = await prisma.clubRegistration.findMany({ orderBy: { createdAt: 'desc' } })
-    const counts = TRAININGS.map(t => ({
-      ...t,
-      count: rows.filter(r => r.training === t.slug).length,
-    }))
+    const counts = TRAININGS.map(t => {
+      const mine = rows.filter(r => r.training === t.slug)
+      return { ...t, count: mine.length, present: mine.filter(r => r.checkedInAt).length }
+    })
     res.json({
       total: rows.length,
+      present: rows.filter(r => r.checkedInAt).length,
       counts,
       registrations: rows.map(({ ip, ...r }) => r),
+    })
+  } catch (err) { next(err) }
+})
+
+// POST /api/club/checkin — pointage à l'entrée, par scan du QR ou à la main.
+// `present` absent : on bascule. Présent/absent se corrige autant de fois
+// qu'il le faut, une erreur de scan n'enferme personne.
+router.post('/checkin', requireOrganizer, async (req, res, next) => {
+  try {
+    const { token, id, present } = req.body || {}
+    const where = token ? { token: readToken(token) } : id ? { id: Number(id) } : null
+    if (!where || (where.token === '' ) || (where.id !== undefined && !Number.isInteger(where.id))) {
+      return res.status(400).json({ error: 'QR code illisible.' })
+    }
+
+    const row = await prisma.clubRegistration.findUnique({ where })
+    if (!row) return res.status(404).json({ error: "Ce QR code ne correspond à aucune inscription." })
+
+    const next_ = typeof present === 'boolean' ? present : !row.checkedInAt
+    const saved = await prisma.clubRegistration.update({
+      where: { id: row.id },
+      data: { checkedInAt: next_ ? new Date() : null },
+    })
+    const label = TRAININGS.find(t => t.slug === saved.training)?.title || saved.training
+    res.json({
+      ok: true,
+      present: Boolean(saved.checkedInAt),
+      alreadyIn: next_ && Boolean(row.checkedInAt),
+      registration: { id: saved.id, firstName: saved.firstName, lastName: saved.lastName, training: saved.training, trainingTitle: label, checkedInAt: saved.checkedInAt },
     })
   } catch (err) { next(err) }
 })

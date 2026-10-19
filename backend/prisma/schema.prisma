@@ -479,6 +479,10 @@ model ClubRegistration {
   lastName  String
   phone     String
   training  String // slug : voir backend/utils/clubTrainings.js
+  // Jeton du QR code remis à l'inscription : c'est lui que l'organisateur
+  // scanne à l'entrée. Court, imprononçable, sans rapport avec l'identité.
+  token       String    @unique
+  checkedInAt DateTime? // pointage à l'entrée ; null tant que la personne n'est pas venue
   ip        String?
   createdAt DateTime @default(now())
 
