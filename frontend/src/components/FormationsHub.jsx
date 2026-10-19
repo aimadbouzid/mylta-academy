@@ -85,10 +85,10 @@ export default function FormationsHub({ coaching, inPerson, express }) {
   const cards = []
   if (coaching?.enabled) cards.push(
     <Card key="online" ModeIcon={Monitor} mode="En ligne"
-          surface="bg-neutral-950" ink="text-white" soft="text-white/70" divider="bg-white/25"
+          surface="bg-gradient-to-br from-neutral-950 via-neutral-900 to-red-950" ink="text-white" soft="text-white/70" divider="bg-white/25"
           chip="border border-white/30 text-white" button="bg-white text-neutral-950"
           image="/cards/coaching.jpg"
-          overlay="bg-gradient-to-r from-neutral-950 via-neutral-950/90 to-red-900/40"
+          overlay="bg-gradient-to-r from-neutral-950/95 via-neutral-950/45 to-transparent"
           title={coaching.title || 'Coaching en ligne'}
           text="Un accompagnement personnalisé pour progresser à votre rythme."
           facts={[['Durée', coaching.formats?.[0]?.duration || '2h30', Clock], ['Quand', '7 j / 7', CalendarDays]]}
@@ -96,10 +96,10 @@ export default function FormationsHub({ coaching, inPerson, express }) {
   )
   if (inPerson?.enabled) cards.push(
     <Card key="3j" ModeIcon={Users} mode="Présentiel" aside="3 jours"
-          surface="bg-academy-primary" ink="text-white" soft="text-white/75" divider="bg-white/25"
+          surface="bg-gradient-to-br from-[#d13b36] via-academy-primary to-[#6d1414]" ink="text-white" soft="text-white/75" divider="bg-white/25"
           chip="border border-white/40 text-white" button="bg-white text-academy-primary"
           image="/cards/presentiel.jpg"
-          overlay="bg-gradient-to-r from-academy-primary via-academy-primary/90 to-academy-primary/30"
+          overlay="bg-gradient-to-r from-[#8c1f1b]/90 via-[#8c1f1b]/35 to-transparent"
           title={inPerson.title || 'Formation en présentiel'}
           text={`Une formation complète et pratique, chez Camden à Béjaïa.${Number(inPerson.studentPrice) > 0 ? ` Étudiants : ${money(inPerson.studentPrice)}.` : ''}`}
           facts={[['Lieu', 'Camden', MapPin], ['Prix', inPerson.price ? money(inPerson.price) : '—', Coins]]}
@@ -108,10 +108,10 @@ export default function FormationsHub({ coaching, inPerson, express }) {
   )
   if (express?.enabled) cards.push(
     <Card key="1j" ModeIcon={Users} mode="Présentiel" aside="chaque samedi" badge="Nouveau"
-          surface="bg-[#13245c]" ink="text-white" soft="text-white/70" divider="bg-white/25"
+          surface="bg-gradient-to-br from-[#0d1842] via-[#1e3a8a] to-[#2f6fe4]" ink="text-white" soft="text-white/70" divider="bg-white/25"
           chip="border border-white/40 text-white" button="bg-white text-[#13245c]"
           image="/cards/express.jpg"
-          overlay="bg-gradient-to-r from-[#13245c] via-[#13245c]/90 to-[#13245c]/30"
+          overlay="bg-gradient-to-r from-[#0d1842]/95 via-[#0d1842]/40 to-transparent"
           title="Montage vidéo en 1 jour"
           text="Une journée intensive pour repartir avec votre vidéo terminée."
           facts={[['Horaires', `${hourShort(express.startTime)}–${hourShort(express.endTime)}`, Clock], ['Lieu', 'Viga Center', MapPin], ['Prix', money(express.price), Coins]]}
