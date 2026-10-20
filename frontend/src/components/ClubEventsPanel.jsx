@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { CalendarPlus, Check, Image as ImageIcon, Pencil, Plus, Trash2, Users, X } from 'lucide-react'
 import api from '../api/axios'
+import { EVENT_TEMPLATES } from './clubTemplates'
 
 // Événements du club, tenus par les organisateurs : open day, atelier,
 // rencontre. Chacun porte son affiche, son déroulé heure par heure et ses
@@ -49,6 +50,12 @@ export default function ClubEventsPanel({ auth, compress }) {
   useEffect(() => { load() }, [load])
 
   const openNew = () => { setForm({ ...EMPTY }); setEditId(null); setPosterPreview(''); setError('') }
+  const useTemplate = (t) => setForm(f => ({
+    ...(f || EMPTY),
+    kind: t.kind, title: t.title, summary: t.summary,
+    startTime: t.startTime, endTime: t.endTime,
+    programme: t.programme.map(p => ({ ...p })),
+  }))
   const openEdit = (ev) => {
     setForm({
       title: ev.title, summary: ev.summary, date: ev.date, startTime: ev.startTime,
@@ -139,6 +146,25 @@ export default function ClubEventsPanel({ auth, compress }) {
             <p className="font-bold text-[15px]">{editId ? "Modifier l'événement" : 'Nouvel événement'}</p>
             <button type="button" onClick={close} aria-label="Fermer" className="rounded-lg p-1.5 hover:bg-academy-textMain/5"><X size={16} /></button>
           </div>
+
+          {/* Partir d'une page blanche décourage : on propose des formats
+              courants, déjà remplis, qu'il reste à ajuster. */}
+          {!editId && (
+            <div>
+              <label className={label}>Partir d&apos;un modèle</label>
+              <div className="flex flex-wrap gap-1.5">
+                {EVENT_TEMPLATES.map(t => (
+                  <button type="button" key={t.id} onClick={() => useTemplate(t)} title={t.hint}
+                          className="rounded-full border border-academy-border px-3 py-1.5 text-[13px] font-semibold hover:border-academy-primary hover:text-academy-primary transition-colors">
+                    {t.label}
+                  </button>
+                ))}
+              </div>
+              <p className="mt-1.5 text-[12px] text-academy-textMain/55">
+                Le modèle remplit le titre, le résumé, les horaires et le programme. Tout reste modifiable.
+              </p>
+            </div>
+          )}
 
           <div>
             <label className={label}>Titre</label>

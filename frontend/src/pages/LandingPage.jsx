@@ -248,8 +248,8 @@ export default function LandingPage() {
             </span>
             <span className="flex-1 min-w-0 flex items-center justify-between gap-3 px-4 py-3.5">
               <span className="min-w-0">
-                <span className="block font-display font-black text-sm sm:text-base leading-tight text-academy-textMain">Trois formations gratuites à l'université de Béjaïa</span>
-                <span className="block text-xs text-academy-textMain/55 mt-0.5">Club scientifique · Targa Ouzemmour · inscription libre</span>
+                <span className="block font-display font-black text-sm sm:text-base leading-tight text-academy-textMain">Formations gratuites à l'université de Béjaïa</span>
+                <span className="block text-xs text-academy-textMain/55 mt-0.5">Club scientifique · Targa Ouzemmour</span>
               </span>
               <span className="shrink-0 inline-flex items-center gap-1.5 btn-glow [--glow:rgb(30_64_175_/_0.45)] rounded-lg bg-academy-textMain text-academy-surface px-3 py-1.5 text-[13px] font-bold group-hover:opacity-90 transition-opacity">M'inscrire <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" /></span>
             </span>

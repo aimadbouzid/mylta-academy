@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { GraduationCap, Pencil, Plus, Trash2, X } from 'lucide-react'
 import api from '../api/axios'
+import { TRAINING_TEMPLATES } from './clubTemplates'
 
 // Les séances proposées sur la page du club. Elles étaient écrites dans le
 // code : les organisateurs les modifient maintenant eux-mêmes, en ajoutent,
@@ -97,6 +98,20 @@ export default function ClubTrainingsPanel({ auth }) {
             <p className="font-bold text-[15px]">{editId ? 'Modifier la formation' : 'Nouvelle formation'}</p>
             <button type="button" onClick={close} aria-label="Fermer" className="rounded-lg p-1.5 hover:bg-academy-textMain/5"><X size={16} /></button>
           </div>
+          {!editId && (
+            <div>
+              <label className={label}>Partir d&apos;un sujet</label>
+              <div className="flex flex-wrap gap-1.5">
+                {TRAINING_TEMPLATES.map(t => (
+                  <button type="button" key={t.id} onClick={() => setForm(f => ({ ...f, title: t.title, text: t.text }))}
+                          className="rounded-full border border-academy-border px-3 py-1.5 text-[13px] font-semibold hover:border-academy-primary hover:text-academy-primary transition-colors">
+                    {t.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
           <div>
             <label className={label}>Titre</label>
             <input className={input} required minLength={3} maxLength={100} value={form.title}

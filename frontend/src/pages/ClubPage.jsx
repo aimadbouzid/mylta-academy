@@ -81,14 +81,14 @@ export default function ClubPage() {
   return (
     <div className="min-h-screen bg-academy-surface">
       <SEOHead title="Formations gratuites — Club scientifique, Université de Béjaïa"
-               description="Trois formations gratuites au club scientifique de l'université de Béjaïa (Targa Ouzemmour) : Vibe Coding, Partenariat & clients, Filmer & monter au smartphone. Inscription en une minute." />
+               description="Formations et événements gratuits du club scientifique de l'université de Béjaïa (Targa Ouzemmour). Inscription en une minute." />
       <Navbar />
 
       <main className="section-container pt-28 pb-16 max-w-3xl mx-auto">
         <p className="text-[11px] font-black uppercase tracking-[0.2em] text-academy-primary">Club scientifique · Université de Béjaïa</p>
-        <h1 className="mt-2 font-display font-black text-3xl sm:text-4xl leading-[1.1] tracking-tight">Trois formations gratuites, à Targa Ouzemmour</h1>
+        <h1 className="mt-2 font-display font-black text-3xl sm:text-4xl leading-[1.1] tracking-tight">Formations gratuites, à Targa Ouzemmour</h1>
         <p className="mt-3 text-[15px] text-academy-textMain/70 leading-relaxed">
-          En partenariat avec le club scientifique de l'université de Béjaïa, j'anime trois
+          En partenariat avec le club scientifique de l'université de Béjaïa, j'anime des
           formations ouvertes aux étudiants. L'entrée est libre et l'inscription gratuite :
           il suffit de laisser votre nom et votre numéro pour réserver votre place.
         </p>

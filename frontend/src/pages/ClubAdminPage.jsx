@@ -22,6 +22,7 @@ const strip = (s) => String(s).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerC
 
 export default function ClubAdminPage() {
   const [token, setToken] = useState(() => { try { return localStorage.getItem(KEY) || '' } catch { return '' } })
+  const [view, setView] = useState('inscriptions')
   const [login, setLogin] = useState('')
   const [password, setPassword] = useState('')
   const [data, setData] = useState(null)
@@ -307,8 +308,22 @@ export default function ClubAdminPage() {
 
         {error && <p className="mt-4 rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-[14px] font-semibold text-red-700">{error}</p>}
 
+        {/* Un onglet à la fois : elle tient le club depuis son téléphone, et
+            cinq sections empilées l'obligeaient à scroller pour tout. */}
+        <nav className="mt-4 -mx-4 sm:mx-0 px-4 sm:px-0 flex gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          {[['inscriptions', 'Inscriptions'], ['formations', 'Formations'], ['evenements', 'Événements'], ['clubs', 'Clubs']].map(([id, text]) => (
+            <button type="button" key={id} onClick={() => setView(id)}
+                    className={`shrink-0 rounded-full px-4 py-2.5 text-[13px] font-bold transition-colors ${view === id
+                      ? 'bg-academy-textMain text-academy-surface'
+                      : 'border border-academy-border bg-white dark:bg-academy-surfaceDark text-academy-textMain/75'}`}>
+              {text}
+            </button>
+          ))}
+        </nav>
+
         {/* Pointage à l'entrée */}
-        <section className="mt-5 rounded-2xl border border-academy-border bg-white dark:bg-academy-surfaceDark p-4 sm:p-5">
+        {view === 'inscriptions' && (
+        <section className="mt-4 rounded-2xl border border-academy-border bg-white dark:bg-academy-surfaceDark p-4 sm:p-5">
           <div className="flex items-center justify-between gap-3">
             <div className="min-w-0">
               <h2 className="font-display font-black text-[17px]">Pointage à l'entrée</h2>
@@ -337,12 +352,14 @@ export default function ClubAdminPage() {
             </div>
           )}
         </section>
+        )}
 
-        <ClubTrainingsPanel auth={auth} />
-        <ClubEventsPanel auth={auth} compress={compress} />
+        {view === 'formations' && <ClubTrainingsPanel auth={auth} />}
+        {view === 'evenements' && <ClubEventsPanel auth={auth} compress={compress} />}
 
         {/* Clubs étudiants : ce sont eux que l'étudiant choisit en s'inscrivant.
             Le logo est réduit dans le navigateur avant d'être envoyé. */}
+        {view === 'clubs' && (
         <section className="mt-4 rounded-2xl border border-academy-border bg-white dark:bg-academy-surfaceDark p-4 sm:p-5">
           <h2 className="font-display font-black text-[17px]">Clubs étudiants</h2>
           <p className="text-[13px] text-academy-textMain/60">Ils apparaissent sur la page d'inscription, logo compris.</p>
@@ -390,8 +407,9 @@ export default function ClubAdminPage() {
           </form>
           {groupError && <p className="mt-2 text-[13px] font-semibold text-red-600">{groupError}</p>}
         </section>
+        )}
 
-        {!data ? <p className="mt-6 text-sm text-academy-textMain/60">Chargement…</p> : (
+        {view === 'inscriptions' && (!data ? <p className="mt-6 text-sm text-academy-textMain/60">Chargement…</p> : (
           <>
             <div className="mt-5 grid gap-3 grid-cols-1 sm:grid-cols-3">
               {data.counts.map(c => (
@@ -474,7 +492,7 @@ export default function ClubAdminPage() {
               </table>
             </div>
           </>
-        )}
+        ))}
       </main>
     </div>
   )
