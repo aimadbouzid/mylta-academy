@@ -4,6 +4,7 @@ import { Camera, CameraOff, Check, Download, ImagePlus, Lock, Plus, RefreshCw, S
 import SEOHead from '../components/SEOHead'
 import api from '../api/axios'
 import ClubEventsPanel from '../components/ClubEventsPanel'
+import ClubTrainingsPanel from '../components/ClubTrainingsPanel'
 
 // Espace des organisateurs du club scientifique : un mot de passe partagé,
 // et rien d'autre que les inscrits aux trois formations. Volontairement séparé
@@ -337,6 +338,7 @@ export default function ClubAdminPage() {
           )}
         </section>
 
+        <ClubTrainingsPanel auth={auth} />
         <ClubEventsPanel auth={auth} compress={compress} />
 
         {/* Clubs étudiants : ce sont eux que l'étudiant choisit en s'inscrivant.

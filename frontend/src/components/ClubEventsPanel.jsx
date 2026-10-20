@@ -8,8 +8,19 @@ import api from '../api/axios'
 
 const EMPTY = {
   title: '', summary: '', date: '', startTime: '', endTime: '',
-  place: '', capacity: 0, published: false, programme: [], poster: undefined,
+  place: '', kind: 'open-day', capacity: 0, published: false, programme: [], poster: undefined,
 }
+
+// Ce que le club organise, du plus courant au plus rare.
+const KINDS = [
+  ['open-day', 'Open day'],
+  ['seminaire', 'Séminaire'],
+  ['conference', 'Conférence'],
+  ['atelier', 'Atelier'],
+  ['formation', 'Formation'],
+  ['autre', 'Autre'],
+]
+const kindLabel = (k) => (KINDS.find(([v]) => v === k) || KINDS[0])[1]
 
 const longDate = (iso) => {
   if (!iso) return ''
@@ -41,7 +52,7 @@ export default function ClubEventsPanel({ auth, compress }) {
   const openEdit = (ev) => {
     setForm({
       title: ev.title, summary: ev.summary, date: ev.date, startTime: ev.startTime,
-      endTime: ev.endTime, place: ev.place, capacity: ev.capacity,
+      endTime: ev.endTime, place: ev.place, kind: ev.kind || 'open-day', capacity: ev.capacity,
       published: ev.published, programme: ev.programme || [], poster: undefined,
     })
     setEditId(ev.id)
@@ -159,6 +170,13 @@ export default function ClubEventsPanel({ auth, compress }) {
             </div>
           </div>
 
+          <div>
+            <label className={label}>Nature</label>
+            <select className={input} value={form.kind} onChange={e => setForm(f => ({ ...f, kind: e.target.value }))}>
+              {KINDS.map(([value, text]) => <option key={value} value={value}>{text}</option>)}
+            </select>
+          </div>
+
           <div className="grid gap-3 sm:grid-cols-2">
             <div>
               <label className={label}>Lieu</label>
@@ -240,7 +258,7 @@ export default function ClubEventsPanel({ auth, compress }) {
                     </span>
                   </p>
                   <p className="mt-0.5 text-[13px] text-academy-textMain/60">
-                    {longDate(ev.date)}{ev.startTime ? ` · ${ev.startTime.replace(':', 'h')}` : ''}{ev.place ? ` · ${ev.place}` : ''}
+                    {kindLabel(ev.kind)} · {longDate(ev.date)}{ev.startTime ? ` · ${ev.startTime.replace(':', 'h')}` : ''}{ev.place ? ` · ${ev.place}` : ''}
                   </p>
                   <p className="mt-0.5 text-[13px] font-semibold">
                     {ev.registered} inscrit{ev.registered > 1 ? 's' : ''}

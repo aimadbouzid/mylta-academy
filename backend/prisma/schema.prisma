@@ -502,6 +502,23 @@ model ClubRegistration {
 
 // Clubs étudiants proposés au moment de l'inscription. Les organisateurs les
 // créent eux-mêmes depuis leur espace, logo compris.
+// Les séances du club : les trois formations gratuites au départ, puis tout
+// ce que les organisateurs ajoutent. Elles étaient écrites dans le code, donc
+// intouchables sans déploiement ; elles vivent maintenant en base.
+model ClubTraining {
+  id        Int      @id @default(autoincrement())
+  slug      String   @unique // repris dans ClubRegistration.training
+  title     String
+  text      String   @default("")
+  date      String   @default("") // vide = « date bientôt annoncée »
+  active    Boolean  @default(true)
+  position  Int      @default(0) // ordre d'affichage
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([active, position])
+}
+
 // Organisateur du club : un compte nominatif pour l'espace /club/admin.
 // Il ne donne accès qu'au club — ni aux élèves de l'académie, ni aux
 // paiements, ni aux réglages du site. Séparé du modèle User pour cette
@@ -527,6 +544,8 @@ model ClubEvent {
   startTime String  @default("")
   endTime   String  @default("")
   place     String  @default("")
+  // Nature de la rencontre : open-day, seminaire, conference, atelier, autre.
+  kind      String  @default("open-day")
   poster    String  @default("") // /uploads/clubs/<fichier>
   // 0 = pas de limite de places. Au-delà, l'inscription se ferme d'elle-même.
   capacity  Int     @default(0)

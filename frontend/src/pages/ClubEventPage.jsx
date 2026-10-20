@@ -16,6 +16,7 @@ const longDate = (iso) => {
   return d.charAt(0).toUpperCase() + d.slice(1)
 }
 const hour = (t) => (t || '').replace(':', 'h')
+const KIND = { 'open-day': 'Open day', seminaire: 'Séminaire', conference: 'Conférence', atelier: 'Atelier', formation: 'Formation', autre: '' }
 
 export default function ClubEventPage() {
   const { slug } = useParams()
@@ -100,7 +101,12 @@ export default function ClubEventPage() {
                className="mt-4 w-full rounded-2xl border border-academy-border object-cover max-h-80" />
         )}
 
-        <h1 className="mt-5 font-display font-black text-3xl sm:text-4xl leading-[1.1] tracking-tight">{event.title}</h1>
+        {KIND[event.kind] && (
+          <p className="mt-4 inline-block rounded-full bg-academy-primary/10 px-3 py-1 text-[11px] font-black uppercase tracking-[0.12em] text-academy-primary">
+            {KIND[event.kind]}
+          </p>
+        )}
+        <h1 className="mt-2 font-display font-black text-3xl sm:text-4xl leading-[1.1] tracking-tight">{event.title}</h1>
         {event.summary && <p className="mt-2 text-[15px] text-academy-textMain/70 leading-snug">{event.summary}</p>}
 
         <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-[14px] font-semibold text-academy-textMain/75">

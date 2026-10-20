@@ -10,6 +10,8 @@ import api from '../api/axios'
 // (Targa Ouzemmour). Le visiteur choisit une formation, laisse son nom et son
 // numéro : l'inscription est enregistrée aussitôt, sans compte ni paiement.
 
+const KIND = { 'open-day': 'Open day', seminaire: 'Séminaire', conference: 'Conférence', atelier: 'Atelier', formation: 'Formation', autre: '' }
+
 const longDate = (iso) => {
   if (!iso) return ''
   const d = new Date(`${iso}T12:00:00`).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })
@@ -213,6 +215,7 @@ export default function ClubPage() {
                   )}
                   <div className="min-w-0 flex-1">
                     <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px] font-bold text-academy-textMain/60">
+                      {KIND[ev.kind] && <span className="text-academy-primary">{KIND[ev.kind]}</span>}
                       <span className="flex items-center gap-1.5"><CalendarDays size={14} className="text-academy-primary" /> {longDate(ev.date)}</span>
                       {ev.startTime && <span>{ev.startTime.replace(':', 'h')}</span>}
                       {ev.place && <span className="truncate">{ev.place}</span>}

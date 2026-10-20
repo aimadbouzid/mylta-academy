@@ -26,7 +26,7 @@ const registerSchema = z.object({
   firstName: z.string().trim().min(2).max(40),
   lastName: z.string().trim().min(2).max(40),
   phone: z.string().trim().regex(/^\+?[0-9 ]{8,20}$/),
-  training: z.enum(SLUGS),
+  training: z.string().trim().min(1).max(60), // vérifié en base : la liste n'est plus figée
   club: z.string().trim().max(60).optional().default(''),
   website: z.string().optional(), // piège à robots
 })
@@ -89,7 +89,19 @@ const newToken = () => crypto.randomBytes(8).toString('hex')
 const readToken = (raw) => String(raw || '').trim().replace(QR_PREFIX, '').trim()
 
 // GET /api/club/trainings — la liste, pour la page publique
-router.get('/trainings', (req, res) => res.json({ trainings: TRAININGS, qrPrefix: QR_PREFIX }))
+router.get('/trainings', async (req, res, next) => {
+  try {
+    const rows = await prisma.clubTraining.findMany({
+      where: { active: true },
+      orderBy: [{ position: 'asc' }, { id: 'asc' }],
+      select: { slug: true, title: true, text: true, date: true },
+    })
+    // Repli sur la liste d'origine tant que la table n'a pas été peuplée :
+    // la page d'inscription ne doit jamais se retrouver vide.
+    res.setHeader('Cache-Control', 'no-store')
+    res.json({ trainings: rows.length ? rows : TRAININGS, qrPrefix: QR_PREFIX })
+  } catch (err) { next(err) }
+})
 
 // GET /api/club/groups — les clubs proposés à l'inscription
 router.get('/groups', async (req, res, next) => {
@@ -179,6 +191,12 @@ router.post('/register', async (req, res, next) => {
     const { firstName, lastName, phone, training, club, website } = parsed.data
     if (website) return res.status(201).json({ ok: true })
 
+    const known = await prisma.clubTraining.findUnique({ where: { slug: training }, select: { active: true } })
+    const stillStatic = !known && SLUGS.includes(training)
+    if (!stillStatic && (!known || !known.active)) {
+      return res.status(400).json({ error: 'Cette formation n\'est plus proposée.' })
+    }
+
     const digits = phone.replace(/\D/g, '')
     const exists = await prisma.clubRegistration.findUnique({
       where: { phone_training: { phone: digits, training } },
@@ -239,7 +257,11 @@ router.post('/access', async (req, res, next) => {
 router.get('/registrations', requireOrganizer, async (req, res, next) => {
   try {
     const rows = await prisma.clubRegistration.findMany({ orderBy: { createdAt: 'desc' } })
-    const counts = TRAININGS.map(t => {
+    const list = await prisma.clubTraining.findMany({
+      orderBy: [{ position: 'asc' }, { id: 'asc' }],
+      select: { slug: true, title: true, text: true, date: true, active: true },
+    })
+    const counts = (list.length ? list : TRAININGS).map(t => {
       const mine = rows.filter(r => r.training === t.slug)
       return { ...t, count: mine.length, present: mine.filter(r => r.checkedInAt).length }
     })
@@ -302,6 +324,87 @@ router.post('/checkin', requireOrganizer, async (req, res, next) => {
   } catch (err) { next(err) }
 })
 
+// ─── Les formations du club, tenues par les organisateurs ────
+
+const trainingSchema = z.object({
+  title: z.string().trim().min(3).max(100),
+  text: z.string().trim().max(500),
+  date: z.string().trim().max(60),
+  active: z.boolean(),
+  position: z.number().int().min(0).max(99),
+})
+
+router.get('/trainings-admin', requireOrganizer, async (req, res, next) => {
+  try {
+    const trainings = await prisma.clubTraining.findMany({ orderBy: [{ position: 'asc' }, { id: 'asc' }] })
+    const counts = await prisma.clubRegistration.groupBy({ by: ['training'], _count: { _all: true } })
+    const bySlug = Object.fromEntries(counts.map(c => [c.training, c._count._all]))
+    res.json({ trainings: trainings.map(t => ({ ...t, registered: bySlug[t.slug] || 0 })) })
+  } catch (err) { next(err) }
+})
+
+router.post('/trainings-admin', requireOrganizer, async (req, res, next) => {
+  try {
+    const parsed = trainingSchema.partial().required({ title: true }).safeParse(req.body)
+    if (!parsed.success) return res.status(400).json({ error: 'Donnez au moins un titre (3 caractères minimum).' })
+    const data = parsed.data
+
+    const base = slugify(data.title) || 'formation'
+    let slug = base
+    for (let i = 2; await prisma.clubTraining.findUnique({ where: { slug }, select: { id: true } }); i++) slug = `${base}-${i}`
+
+    const last = await prisma.clubTraining.findFirst({ orderBy: { position: 'desc' }, select: { position: true } })
+    const training = await prisma.clubTraining.create({
+      data: {
+        slug,
+        title: data.title,
+        text: data.text ?? '',
+        date: data.date ?? '',
+        active: data.active ?? true,
+        position: data.position ?? (last ? last.position + 1 : 0),
+      },
+    })
+    res.status(201).json({ training: { ...training, registered: 0 } })
+  } catch (err) { next(err) }
+})
+
+router.patch('/trainings-admin/:id', requireOrganizer, async (req, res, next) => {
+  try {
+    const id = Number(req.params.id)
+    if (!Number.isInteger(id)) return res.status(400).json({ error: 'Identifiant invalide.' })
+    const parsed = trainingSchema.partial().safeParse(req.body)
+    if (!parsed.success) return res.status(400).json({ error: 'Vérifiez les informations saisies.' })
+    if (!Object.keys(parsed.data).length) return res.status(400).json({ error: 'Rien à modifier.' })
+
+    // Le slug ne bouge jamais : les inscriptions déjà prises y font référence,
+    // et le renommer les détacherait de leur formation.
+    const training = await prisma.clubTraining.update({ where: { id }, data: parsed.data })
+    res.json({ training })
+  } catch (err) {
+    if (err.code === 'P2025') return res.status(404).json({ error: 'Formation introuvable.' })
+    next(err)
+  }
+})
+
+router.delete('/trainings-admin/:id', requireOrganizer, async (req, res, next) => {
+  try {
+    const id = Number(req.params.id)
+    if (!Number.isInteger(id)) return res.status(400).json({ error: 'Identifiant invalide.' })
+    const training = await prisma.clubTraining.findUnique({ where: { id } })
+    if (!training) return res.status(404).json({ error: 'Formation introuvable.' })
+
+    // Une formation qui a des inscrits ne se supprime pas : on la désactive,
+    // sinon leurs inscriptions pointeraient vers un intitulé disparu.
+    const taken = await prisma.clubRegistration.count({ where: { training: training.slug } })
+    if (taken > 0) {
+      const off = await prisma.clubTraining.update({ where: { id }, data: { active: false } })
+      return res.json({ training: off, kept: true, registered: taken })
+    }
+    await prisma.clubTraining.delete({ where: { id } })
+    res.json({ ok: true })
+  } catch (err) { next(err) }
+})
+
 // ════════════════════════════════════════════════════════════
 // ÉVÉNEMENTS DU CLUB — open days, ateliers, rencontres
 // ════════════════════════════════════════════════════════════
@@ -326,6 +429,7 @@ const eventShape = {
   startTime: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/).or(z.literal('')),
   endTime: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/).or(z.literal('')),
   place: z.string().trim().max(120),
+  kind: z.enum(['open-day', 'seminaire', 'conference', 'atelier', 'formation', 'autre']),
   capacity: z.number().int().min(0).max(5000),
   published: z.boolean(),
   programme: programmeSchema,
@@ -340,7 +444,7 @@ const patchEventSchema = z.object(eventShape).partial()
 const publicEvent = (e, taken = 0) => ({
   id: e.id, slug: e.slug, title: e.title, summary: e.summary,
   date: e.date, startTime: e.startTime, endTime: e.endTime,
-  place: e.place, poster: e.poster, capacity: e.capacity,
+  place: e.place, kind: e.kind, poster: e.poster, capacity: e.capacity,
   programme: Array.isArray(e.programme) ? e.programme : [],
   seatsLeft: e.capacity > 0 ? Math.max(0, e.capacity - taken) : null,
   registered: taken,
@@ -458,6 +562,7 @@ router.post('/events-admin', requireOrganizer, async (req, res, next) => {
         startTime: data.startTime ?? '',
         endTime: data.endTime ?? '',
         place: data.place ?? '',
+        kind: data.kind ?? 'open-day',
         capacity: data.capacity ?? 0,
         published: data.published ?? false,
         programme: data.programme ?? [],
