@@ -19,9 +19,9 @@ const range3 = (iso) => {
 const hourShort = (t) => (t || '').replace(/^0/, '').replace(':00', 'h').replace(':', 'h')
 
 function Card({ ModeIcon, mode, aside, title, text, facts, next, nextLabel = 'Prochaine', to, cta,
-                surface, ink, soft, chip, button, divider, image, badge, overlay }) {
+                surface, ink, soft, chip, button, divider, image, badge, overlay, spine, tray }) {
   return (
-    <Link to={to} className={`group relative block overflow-hidden rounded-2xl ${surface}`}>
+    <Link to={to} className={`group relative block overflow-hidden rounded-2xl shadow-[0_1px_2px_rgba(0,0,0,0.04)] hover:shadow-[0_12px_28px_rgba(0,0,0,0.10)] hover:-translate-y-0.5 transition-all duration-300 ${surface}`}>
       {/* La photo tient la moitié droite du bandeau ; le dégradé la recouvre
           côté texte pour garder le titre lisible. */}
       {image && (
@@ -29,11 +29,12 @@ function Card({ ModeIcon, mode, aside, title, text, facts, next, nextLabel = 'Pr
               style={{ backgroundImage: `url(${image})` }} />
       )}
       <span aria-hidden="true" className={`absolute inset-0 ${overlay}`} />
+      <span aria-hidden="true" className={`absolute inset-y-0 left-0 w-1.5 ${spine}`} />
 
       {/* Sur grand écran le bandeau se lit en deux temps : qui et quoi à
           gauche, les chiffres et l'action à droite. Tout tassé à gauche, la
           moitié droite restait vide. */}
-      <div className="relative p-3.5 sm:p-4 sm:max-w-[60%] lg:max-w-none lg:flex lg:items-center lg:justify-between lg:gap-8 lg:px-6 lg:py-5">
+      <div className="relative pl-5 pr-4 py-4 sm:pl-6 sm:pr-5 sm:py-5 sm:max-w-[60%] lg:max-w-none lg:flex lg:items-center lg:justify-between lg:gap-10 lg:pl-8 lg:pr-7 lg:py-7">
         <div className="lg:min-w-0">
           <p className="flex flex-wrap items-center gap-2">
             <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-black uppercase tracking-[0.12em] ${chip}`}>
@@ -44,27 +45,27 @@ function Card({ ModeIcon, mode, aside, title, text, facts, next, nextLabel = 'Pr
             {badge && <span className={`hidden sm:inline-block rounded-full px-2.5 py-0.5 text-[10px] font-black uppercase tracking-[0.1em] ${chip}`}>{badge}</span>}
           </p>
 
-          <h3 className={`mt-1.5 font-display font-black text-lg sm:text-xl lg:text-2xl leading-[1.1] tracking-tight ${ink}`}>{title}</h3>
+          <h3 className={`mt-2 font-display font-black text-xl sm:text-2xl lg:text-[28px] leading-[1.08] tracking-tight ${ink}`}>{title}</h3>
           {text && <p className={`mt-1 text-[13px] leading-snug ${soft}`}>{text}</p>}
-          {next && <p className={`mt-1 text-xs ${soft}`}>{nextLabel} : <span className={`font-semibold ${ink}`}>{next}</span></p>}
+          {next && <p className={`mt-1.5 text-[13px] ${soft}`}>{nextLabel} : <span className={`font-semibold ${ink}`}>{next}</span></p>}
         </div>
 
         <div className="lg:flex lg:shrink-0 lg:items-center lg:gap-6">
-          <dl className="mt-1.5 flex flex-wrap items-center gap-x-2.5 gap-y-1 lg:mt-0">
+          <dl className={`mt-3 lg:mt-0 inline-flex flex-wrap items-center gap-x-3 gap-y-1.5 rounded-xl px-3.5 py-2.5 ${tray}`}>
             {facts.map(([label, value, Icon], i) => (
               <span key={label} className="inline-flex items-center gap-3">
                 {i > 0 && <span aria-hidden="true" className={`h-4 w-px ${divider}`} />}
                 <span className="inline-flex items-center gap-1.5">
                   <Icon size={15} className={soft} aria-hidden="true" />
                   <dt className="sr-only">{label}</dt>
-                  <dd className={`font-bold text-[13px] lg:text-sm ${ink}`}>{value}</dd>
+                  <dd className={`font-bold text-sm lg:text-[15px] ${ink}`}>{value}</dd>
                 </span>
               </span>
             ))}
           </dl>
 
-          <span className={`mt-2.5 lg:mt-0 inline-flex shrink-0 items-center justify-center gap-1.5 btn-glow rounded-lg px-3.5 py-2 text-[13px] font-bold transition-opacity group-hover:opacity-90 ${button}`}>
-            {cta} <ArrowRight size={14} className="transition-transform group-hover:translate-x-0.5" />
+          <span className={`mt-3 lg:mt-0 inline-flex shrink-0 items-center justify-center gap-2 btn-glow rounded-xl px-5 py-3 text-sm font-bold shadow-sm transition-opacity group-hover:opacity-90 ${button}`}>
+            {cta} <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
           </span>
         </div>
       </div>
@@ -95,6 +96,7 @@ export default function FormationsHub({ coaching, inPerson, express }) {
           surface="bg-white dark:bg-academy-surfaceDark border-2 border-academy-textMain/15 hover:border-academy-textMain/40"
           ink="text-academy-textMain" soft="text-academy-textMain/60" divider="bg-academy-textMain/15"
           chip="bg-academy-textMain text-academy-surface" button="bg-academy-textMain text-academy-surface"
+          spine="bg-academy-textMain" tray="bg-academy-textMain/[0.04]"
           image="/cards/coaching.jpg"
           overlay="bg-gradient-to-r from-white via-white/85 to-transparent dark:from-academy-surfaceDark dark:via-academy-surfaceDark/85"
           title={coaching.title || 'Coaching en ligne'}
@@ -106,6 +108,7 @@ export default function FormationsHub({ coaching, inPerson, express }) {
           surface="bg-white dark:bg-academy-surfaceDark border-2 border-academy-primary/30 hover:border-academy-primary"
           ink="text-academy-textMain" soft="text-academy-textMain/60" divider="bg-academy-textMain/15"
           chip="bg-academy-primary text-white" button="bg-academy-primary text-white"
+          spine="bg-academy-primary" tray="bg-academy-primary/[0.06]"
           image="/cards/presentiel.jpg"
           overlay="bg-gradient-to-r from-white via-white/85 to-transparent dark:from-academy-surfaceDark dark:via-academy-surfaceDark/85"
           title={inPerson.title || 'Formation en présentiel'}
@@ -118,6 +121,7 @@ export default function FormationsHub({ coaching, inPerson, express }) {
           surface="bg-white dark:bg-academy-surfaceDark border-2 border-[#2f6fe4]/30 hover:border-[#2f6fe4]"
           ink="text-academy-textMain" soft="text-academy-textMain/60" divider="bg-academy-textMain/15"
           chip="bg-[#2f6fe4] text-white" button="bg-[#2f6fe4] text-white"
+          spine="bg-[#2f6fe4]" tray="bg-[#2f6fe4]/[0.07]"
           image="/cards/express.jpg"
           overlay="bg-gradient-to-r from-white via-white/85 to-transparent dark:from-academy-surfaceDark dark:via-academy-surfaceDark/85"
           title="Montage vidéo en 1 jour"
