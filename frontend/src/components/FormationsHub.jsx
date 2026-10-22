@@ -41,7 +41,7 @@ function Card({ ModeIcon, mode, aside, title, text, facts, next, nextLabel = 'Pr
             </span>
             {aside && <span className={`text-[11px] font-black uppercase tracking-[0.14em] ${soft}`}>{aside}</span>}
             {/* Sur téléphone, ce badge passait à la ligne et rallongeait la carte. */}
-            {badge && <span className={`hidden sm:inline-block rounded-full border px-2.5 py-0.5 text-[10px] font-black uppercase tracking-[0.1em] ${chip} bg-transparent`}>{badge}</span>}
+            {badge && <span className={`hidden sm:inline-block rounded-full px-2.5 py-0.5 text-[10px] font-black uppercase tracking-[0.1em] ${chip}`}>{badge}</span>}
           </p>
 
           <h3 className={`mt-1.5 font-display font-black text-lg sm:text-xl lg:text-2xl leading-[1.1] tracking-tight ${ink}`}>{title}</h3>
@@ -92,20 +92,22 @@ export default function FormationsHub({ coaching, inPerson, express }) {
   const cards = []
   if (coaching?.enabled) cards.push(
     <Card key="online" ModeIcon={Monitor} mode="En ligne"
-          surface="bg-gradient-to-br from-neutral-950 via-neutral-900 to-red-950" ink="text-white" soft="text-white/70" divider="bg-white/25"
-          chip="border border-white/30 text-white" button="bg-white text-neutral-950"
+          surface="bg-white dark:bg-academy-surfaceDark border-2 border-academy-textMain/15 hover:border-academy-textMain/40"
+          ink="text-academy-textMain" soft="text-academy-textMain/60" divider="bg-academy-textMain/15"
+          chip="bg-academy-textMain text-academy-surface" button="bg-academy-textMain text-academy-surface"
           image="/cards/coaching.jpg"
-          overlay="bg-gradient-to-r from-neutral-950/95 via-neutral-950/45 to-transparent"
+          overlay="bg-gradient-to-r from-white via-white/85 to-transparent dark:from-academy-surfaceDark dark:via-academy-surfaceDark/85"
           title={coaching.title || 'Coaching en ligne'}
           facts={[['Durée', coaching.formats?.[0]?.duration || '2h30', Clock], ['Quand', '7 j / 7', CalendarDays]]}
           to="/coaching" cta="Choisir mon pack" />
   )
   if (inPerson?.enabled) cards.push(
     <Card key="3j" ModeIcon={Users} mode="Présentiel" aside="3 jours"
-          surface="bg-gradient-to-br from-[#e8554d] via-academy-primary to-[#5e0f0f]" ink="text-white" soft="text-white/75" divider="bg-white/25"
-          chip="border border-white/40 text-white" button="bg-white text-academy-primary"
+          surface="bg-white dark:bg-academy-surfaceDark border-2 border-academy-primary/30 hover:border-academy-primary"
+          ink="text-academy-textMain" soft="text-academy-textMain/60" divider="bg-academy-textMain/15"
+          chip="bg-academy-primary text-white" button="bg-academy-primary text-white"
           image="/cards/presentiel.jpg"
-          overlay="bg-gradient-to-r from-[#5e0f0f]/85 via-[#5e0f0f]/25 to-transparent"
+          overlay="bg-gradient-to-r from-white via-white/85 to-transparent dark:from-academy-surfaceDark dark:via-academy-surfaceDark/85"
           title={inPerson.title || 'Formation en présentiel'}
           facts={[['Lieu', 'Camden', MapPin], ['Prix', inPerson.price ? money(inPerson.price) : '—', Coins]]}
           next={session ? `${range3(session.date)}${session.startTime ? (Number(session.startTime.slice(0, 2)) < 12 ? ' · matin' : ' · soir') : ''}` : inPerson.datesNotice ? 'dates bientôt annoncées' : null}
@@ -113,10 +115,11 @@ export default function FormationsHub({ coaching, inPerson, express }) {
   )
   if (express?.enabled) cards.push(
     <Card key="1j" ModeIcon={Users} mode="Présentiel" aside="chaque samedi" badge="Nouveau"
-          surface="bg-gradient-to-br from-[#0d1842] via-[#1e3a8a] to-[#2f6fe4]" ink="text-white" soft="text-white/70" divider="bg-white/25"
-          chip="border border-white/40 text-white" button="bg-white text-[#13245c]"
+          surface="bg-white dark:bg-academy-surfaceDark border-2 border-[#2f6fe4]/30 hover:border-[#2f6fe4]"
+          ink="text-academy-textMain" soft="text-academy-textMain/60" divider="bg-academy-textMain/15"
+          chip="bg-[#2f6fe4] text-white" button="bg-[#2f6fe4] text-white"
           image="/cards/express.jpg"
-          overlay="bg-gradient-to-r from-[#0d1842]/95 via-[#0d1842]/40 to-transparent"
+          overlay="bg-gradient-to-r from-white via-white/85 to-transparent dark:from-academy-surfaceDark dark:via-academy-surfaceDark/85"
           title="Montage vidéo en 1 jour"
           facts={[['Horaires', `${hourShort(express.startTime)}–${hourShort(express.endTime)}`, Clock], ['Lieu', 'Viga Center', MapPin], ['Prix', money(express.price), Coins]]}
           next={saturday ? short(saturday, { weekday: 'long', day: 'numeric', month: 'long' }) : null}
