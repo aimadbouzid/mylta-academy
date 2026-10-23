@@ -547,8 +547,21 @@ if (isProd) {
       'telegrambot', 'skypeuripreview', 'pinterest', 'vkshare'
     ]
 
-    // Servir les fichiers statiques (JS, CSS, images) sauf index.html
-    app.use(express.static(frontendDist, { index: false, maxAge: '1y', immutable: true }))
+    // Deux régimes de cache, jamais un seul pour tout le dossier :
+    //  - /assets : noms hachés par Vite (LandingPage-Dnh9EP8f.js). Un nouveau
+    //    build donne un nouveau nom, donc le cache d'un an est sans risque.
+    //  - le reste (sw.js, registerSW.js, manifest, workbox, icônes) : noms
+    //    fixes. Servis un an « immutable », ils gelaient le service worker :
+    //    après un déploiement, le navigateur gardait l'ancien, qui servait
+    //    l'ancien index.html, qui réclamait des fichiers disparus — et le site
+    //    affichait « Une erreur s'est produite ».
+    app.use('/assets', express.static(path.join(frontendDist, 'assets'), {
+      index: false, maxAge: '1y', immutable: true, fallthrough: false,
+    }))
+    app.use(express.static(frontendDist, {
+      index: false,
+      setHeaders: (res) => res.setHeader('Cache-Control', 'no-cache'),
+    }))
 
     app.get('*', async (req, res, next) => {
       // Ce catch-all est monté avant le 404 JSON de '/api/*' (plus bas dans le
@@ -558,11 +571,18 @@ if (isProd) {
       // route API manquante d'une page existante.
       if (req.path.startsWith('/api/')) return next()
 
+      // Un fichier introuvable (extension .js, .css, .png…) doit répondre 404.
+      // Renvoyer index.html avec un 200, c'était donner du HTML au navigateur
+      // qui attendait un module JavaScript : il refusait de l'exécuter et
+      // l'application plantait au lieu de se recharger.
+      if (path.extname(req.path)) return res.status(404).type('text/plain').send('Not found')
+
       const ua = (req.headers['user-agent'] || '').toLowerCase()
       const isBot = botUserAgents.some(bot => ua.includes(bot))
 
       // Si ce n'est pas un bot social, on envoie le index.html normal (CSR)
       if (!isBot) {
+        res.setHeader('Cache-Control', 'no-cache')
         return res.sendFile(path.join(frontendDist, 'index.html'))
       }
 

@@ -1,29 +1,65 @@
 import React from 'react'
 import { AlertTriangle, RefreshCw, Home } from 'lucide-react'
 
+// Après un déploiement, une page chargée avant réclame des fichiers JS qui
+// n'existent plus. Ce n'est pas un bug à montrer au visiteur : recharger
+// récupère la nouvelle version. Les navigateurs formulent l'erreur chacun à
+// leur façon, d'où la liste.
+const CHUNK_ERROR = /Failed to fetch dynamically imported module|Importing a module script failed|error loading dynamically imported module|Loading (CSS )?chunk .* failed|ChunkLoadError|MIME type|Unable to preload CSS/i
+// Même clé que le garde de main.jsx : jamais plus d'un rechargement toutes
+// les 10 s, pour ne pas boucler si le fichier manque vraiment.
+const RELOAD_KEY = 'mylta_chunk_reload'
+
+const reloadOnce = () => {
+  try {
+    const last = Number(sessionStorage.getItem(RELOAD_KEY) || 0)
+    if (Date.now() - last < 10000) return false
+    sessionStorage.setItem(RELOAD_KEY, String(Date.now()))
+  } catch { /* stockage indisponible : on recharge quand même */ }
+  window.location.reload()
+  return true
+}
+
 /**
  * ErrorBoundary
- * Capture les erreurs React et affiche un écran de récupération élégant
- * en conservant le thème sombre/doré de la plateforme.
+ * Capture les erreurs React. Une version périmée du site se répare seule par
+ * un rechargement ; seule une vraie erreur affiche l'écran de récupération.
  * En production: brancher sur un service de monitoring (Sentry, etc.)
  */
 class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props)
-    this.state = { hasError: false, error: null }
+    this.state = { hasError: false, error: null, reloading: false }
   }
 
   static getDerivedStateFromError(error) {
-    return { hasError: true, error }
+    return { hasError: true, error, reloading: CHUNK_ERROR.test(String(error?.message || error)) }
   }
 
   componentDidCatch(error, info) {
+    if (this.state.reloading) {
+      // Si le rechargement a déjà été tenté il y a moins de 10 s, le fichier
+      // manque vraiment : on affiche l'écran d'erreur plutôt que de boucler.
+      if (!reloadOnce()) this.setState({ reloading: false })
+      return
+    }
     // TODO production: Sentry.captureException(error, { extra: info })
     console.error('🚨 [ErrorBoundary]', error, info.componentStack)
   }
 
   render() {
     if (!this.state.hasError) return this.props.children
+
+    // Version périmée : on recharge sans alarmer le visiteur.
+    if (this.state.reloading) {
+      return (
+        <div className="min-h-screen bg-academy-surface flex items-center justify-center p-6">
+          <p className="flex items-center gap-2 text-sm font-semibold text-academy-textMain/60">
+            <RefreshCw size={16} className="animate-spin" /> Mise à jour du site…
+          </p>
+        </div>
+      )
+    }
 
     return (
       <div className="min-h-screen bg-academy-surface flex items-center justify-center p-6">
@@ -62,7 +98,7 @@ class ErrorBoundary extends React.Component {
 
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <button
-              onClick={() => this.setState({ hasError: false, error: null })}
+              onClick={() => window.location.reload()}
               className="btn-primary"
             >
               <RefreshCw size={16} />
