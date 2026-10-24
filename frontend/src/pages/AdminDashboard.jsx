@@ -9,7 +9,7 @@ import {
   XCircle, Plus, Trash2, Globe, GlobeLock,
   GraduationCap, AlertCircle, X, Edit3, Film, Info, HelpCircle, Upload, Save, MessageSquare, Compass, Sparkles,
   Radio, RefreshCw, Search, Activity, MousePointer, BarChart2, Award, ChevronRight, Mail, Settings,
-  Ticket, CreditCard, CalendarDays
+  Ticket, CreditCard, CalendarDays, Zap
 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
@@ -25,6 +25,7 @@ import AdminInPersonTab from '../components/admin/AdminInPersonTab'
 import AdminReviewsPanel from '../components/admin/AdminReviewsPanel'
 import AdminClubTab from '../components/admin/AdminClubTab'
 import AdminClubOrganizersTab from '../components/admin/AdminClubOrganizersTab'
+import AdminLiveTab from '../components/admin/AdminLiveTab'
 import AdminUpcomingTab from '../components/admin/AdminUpcomingTab'
 import api from '../api/axios'
 import { useLanguage } from '../context/LanguageContext'
@@ -1876,6 +1877,7 @@ export default function AdminDashboard() {
   const SIDEBAR = [
     { group: 'Essentiel' },
     { id: 'overview', icon: LayoutDashboard, label: 'Tableau de bord' },
+    { id: 'live', icon: Zap, label: 'MYLTA LIVE', badge: 'Nouveau' },
     { id: 'receipts', icon: ClipboardCheck, label: 'Paiements à valider', badge: stats?.pendingReceipts > 0 ? stats.pendingReceipts : null },
     { id: 'in_person', icon: Users, label: 'Coaching présentiel' },
     { id: 'coaching', icon: CalendarDays, label: 'Coaching en ligne' },
@@ -2464,6 +2466,7 @@ export default function AdminDashboard() {
           {/* SETTINGS (VIDÉO D'ACCUEIL & CMS) */}
           {tab === 'club' && <AdminClubTab />}
           {tab === 'club_uni' && <AdminClubOrganizersTab />}
+          {tab === 'live' && <AdminLiveTab />}
           {tab === 'site_cms' && <><SiteCMSConfigTab /><AdminReviewsPanel /></>}
           {tab === 'coupons' && <AdminCouponsTab />}
           {tab === 'payouts' && <AdminPayoutsTab />}

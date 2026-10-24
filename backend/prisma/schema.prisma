@@ -587,3 +587,90 @@ model ClubGroup {
   active    Boolean  @default(true)
   createdAt DateTime @default(now())
 }
+
+// ─────────────────────────────────────────────
+// MYLTA LIVE — Conférences interactives
+// Session: titre, description, statut (draft|live|ended)
+// Participant: email, nom affiché, score
+// Question: texte, type (poll|quiz|freeform), options, réponse correcte
+// Answer: réponse du participant
+// Vote: vote du participant
+// ─────────────────────────────────────────────
+model LiveSession {
+  id              String   @id @default(cuid())
+  title           String
+  description     String?
+  status          String   @default("draft") // draft | live | ended
+  maxParticipants Int?
+  createdBy       String   // userId (Int)
+  createdAt       DateTime @default(now())
+  startedAt       DateTime?
+  endedAt         DateTime?
+
+  questions    LiveQuestion[]
+  votes        LiveVote[]
+  participants LiveParticipant[]
+
+  @@index([createdBy, status])
+}
+
+model LiveParticipant {
+  id          String   @id @default(cuid())
+  sessionId   String
+  session     LiveSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  email       String
+  displayName String
+  joinedAt    DateTime @default(now())
+  score       Int      @default(0)
+
+  answers LiveAnswer[]
+  votes   LiveVote[]
+
+  @@unique([sessionId, email])
+  @@index([sessionId])
+}
+
+model LiveQuestion {
+  id            String   @id @default(cuid())
+  sessionId     String
+  session       LiveSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  text          String
+  type          String   @default("poll") // poll | quiz | freeform
+  options       String[] // JSON: ["A", "B", "C"]
+  correctAnswer String?
+  createdAt     DateTime @default(now())
+
+  answers LiveAnswer[]
+  votes   LiveVote[]
+
+  @@index([sessionId, createdAt])
+}
+
+model LiveAnswer {
+  id            String   @id @default(cuid())
+  questionId    String
+  question      LiveQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  participantId String
+  participant   LiveParticipant @relation(fields: [participantId], references: [id], onDelete: Cascade)
+  answer        String
+  isCorrect     Boolean?
+  answeredAt    DateTime @default(now())
+
+  @@unique([questionId, participantId])
+  @@index([questionId, answeredAt])
+}
+
+model LiveVote {
+  id            String   @id @default(cuid())
+  questionId    String
+  question      LiveQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  sessionId     String
+  session       LiveSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  participantId String
+  participant   LiveParticipant @relation(fields: [participantId], references: [id], onDelete: Cascade)
+  option        String   // "A", "B", "C", etc.
+  votedAt       DateTime @default(now())
+
+  @@unique([questionId, participantId])
+  @@index([sessionId, votedAt])
+}

@@ -15,7 +15,7 @@ const rateLimit  = require('express-rate-limit')
 const cookieParser = require('cookie-parser')
 const jwt        = require('jsonwebtoken')
 const prisma     = require('./prisma')
-const { initSocket } = require('./socket')
+const { initSocket, initLiveNamespace } = require('./socket')
 const { initCron } = require('./cron/cleanupReceipts')
 
 const { httpLogger, errorHandler } = require('./middleware/errorHandler')
@@ -369,6 +369,11 @@ app.use('/api/payments/edahabia/webhook', webhookLimiter)
 app.use('/api/payments/chargily/webhook', webhookLimiter)
 app.use('/api/payments/stripe/webhook', webhookLimiter)
 app.use('/api/payments/paypal/webhook', webhookLimiter)
+// MYLTA LIVE (admin) : monté avant /api/admin pour que son préfixe plus
+// spécifique soit toujours essayé en premier, sans dépendre d'un éventuel
+// next() dans adminRoutes.
+const { router: liveRoutes, adminRouter: liveAdminRoutes } = require('./routes/live')
+app.use('/api/admin/live', adminLimiter, authenticate, isAdmin, liveAdminRoutes)
 app.use('/api/admin', adminLimiter, adminRoutes)
 app.use('/api/instructor', apiLimiter, instructorRoutes)
 
@@ -398,6 +403,18 @@ app.use('/api/contest', apiLimiter, contestRoutes)
 app.use('/api/club/register', coachingBookLimiter)
 app.use('/api/club/access', authLimiter)
 app.use('/api/club', apiLimiter, clubRoutes)
+
+// MYLTA LIVE (public) : un participant répond/vote souvent en quelques
+// minutes, jamais en boucle — plafond resserré comme les autres formulaires
+// ouverts sans compte.
+const liveLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 60,
+  message: { error: 'Trop de requêtes. Réessayez dans un instant.', code: 'LIVE_RATE_LIMITED' },
+  standardHeaders: true,
+  legacyHeaders: false,
+})
+app.use('/api/live', liveLimiter, liveRoutes)
 
 // ─── Analytics Public Track Click Route ──────────────────────
 // Endpoint non authentifié qui écrit en base : sans limite, n'importe qui peut
@@ -733,7 +750,8 @@ async function main() {
     console.log('\x1b[32m✅ Prisma connecté\x1b[0m')
 
     server = app.listen(PORT, () => {
-      initSocket(server, allowedOrigins)
+      const io = initSocket(server, allowedOrigins)
+      initLiveNamespace(io)
       initCron()
       
       console.log('\n' + '═'.repeat(55))

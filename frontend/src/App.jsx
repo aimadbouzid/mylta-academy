@@ -53,6 +53,8 @@ const ContestPage = React.lazy(() => import('./pages/ContestPage'))
 const ClubPage = React.lazy(() => import('./pages/ClubPage'))
 const ClubAdminPage = React.lazy(() => import('./pages/ClubAdminPage'))
 const ClubEventPage = React.lazy(() => import('./pages/ClubEventPage'))
+const LiveParticipantPage = React.lazy(() => import('./pages/LiveParticipantPage'))
+const LiveDisplayPage = React.lazy(() => import('./pages/LiveDisplayPage'))
 const ExpressPage = React.lazy(() => import('./pages/ExpressPage'))
 
 const SuspenseFallback = () => (
@@ -142,6 +144,8 @@ export default function App() {
               <Route path="/club" element={<ClubPage />} />
               <Route path="/club/evenement/:slug" element={<ClubEventPage />} />
               <Route path="/club/admin" element={<ClubAdminPage />} />
+              <Route path="/live/:sessionId" element={<LiveParticipantPage />} />
+              <Route path="/live/:sessionId/ecran" element={<LiveDisplayPage />} />
               <Route path="/formation-1-jour" element={<ExpressPage />} />
               <Route path="/resources" element={<ModuleRoute moduleName="resourcesEnabled"><ResourcesPage /></ModuleRoute>} />
               <Route path="/ressources" element={<ModuleRoute moduleName="resourcesEnabled"><ResourcesPage /></ModuleRoute>} />

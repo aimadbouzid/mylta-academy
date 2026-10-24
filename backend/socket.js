@@ -239,10 +239,80 @@ const getIO = () => {
   return io
 }
 
+// ─────────────────────────────────────────────
+// MYLTA LIVE — namespace séparé du socket principal.
+// Le plafond "15 sockets par IP" du namespace par défaut vise les visiteurs
+// anonymes du site ; en amphi, des dizaines d'étudiants partagent la même IP
+// de campus et seraient bloqués. Ici, chaque participant porte un jeton
+// propre à la session (scope "live") : la limite se fait par session
+// (maxParticipants), pas par IP.
+// ─────────────────────────────────────────────
+let liveIO
+
+const initLiveNamespace = (ioServer) => {
+  liveIO = ioServer.of('/live')
+
+  liveIO.use((socket, next) => {
+    try {
+      const token = socket.handshake.auth?.token || socket.handshake.query?.token
+      if (!token) return next(new Error('Jeton manquant'))
+
+      const decoded = jwt.verify(token, process.env.JWT_SECRET)
+      if (decoded.scope !== 'live' && decoded.scope !== 'live-display') {
+        return next(new Error('Jeton invalide pour ce canal'))
+      }
+
+      socket.liveAuth = {
+        scope: decoded.scope, // 'live' (participant/organisateur) | 'live-display' (grand écran)
+        sessionId: decoded.sessionId,
+        participantId: decoded.participantId || null,
+        isOrganizer: !!decoded.isOrganizer
+      }
+      next()
+    } catch (err) {
+      next(new Error('Jeton invalide'))
+    }
+  })
+
+  liveIO.on('connection', (socket) => {
+    const { sessionId, participantId, isOrganizer, scope } = socket.liveAuth
+
+    // Chaque session a ses propres rooms : les diffusions ne fuitent jamais
+    // vers une autre conférence qui tournerait au même moment.
+    socket.join(`live_session_${sessionId}`)
+    if (isOrganizer) socket.join(`live_admin_${sessionId}`)
+
+    console.log(`🟢 [LIVE] ${scope === 'live-display' ? 'Écran' : isOrganizer ? 'Organisateur' : 'Participant'} connecté — session ${sessionId}`)
+
+    // Un participant signale sa présence : utile pour afficher le compteur
+    // de connectés côté organisateur sans attendre un vote.
+    socket.on('live:presence', () => {
+      liveIO.to(`live_admin_${sessionId}`).emit('live:participant_online', { participantId })
+    })
+
+    socket.on('disconnect', () => {
+      if (participantId) {
+        liveIO.to(`live_admin_${sessionId}`).emit('live:participant_offline', { participantId })
+      }
+    })
+  })
+
+  return liveIO
+}
+
+const getLiveIO = () => {
+  if (!liveIO) {
+    throw new Error('Le namespace /live n\'est pas initialisé !')
+  }
+  return liveIO
+}
+
 module.exports = {
   initSocket,
   getIO,
   userSockets,
-  guestSockets
+  guestSockets,
+  initLiveNamespace,
+  getLiveIO
 }
 
