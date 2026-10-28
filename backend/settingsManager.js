@@ -1,4 +1,5 @@
 const fs = require('fs')
+const { CURRICULUM, PROGRAM_SHORT } = require('./curriculum')
 const path = require('path')
 
 const settingsPath = path.join(__dirname, 'uploads', 'settings.json')
@@ -251,7 +252,7 @@ const defaultSettings = {
   },
   // Formation accélérée d'un jour, chaque samedi matin, chez Viga Center (Béjaïa).
   express: {
-    enabled: true,
+    enabled: false, // formation d'un jour : coupée tant qu'aucune date n'est programmée
     title: 'Montage vidéo au smartphone en 1 jour',
     subtitle: "Formation accélérée : on filme le matin, on monte ensemble, et vous repartez avec votre vidéo terminée le jour même.",
     price: 6000,
@@ -278,23 +279,18 @@ const defaultSettings = {
     enabled: true,
     title: 'Formation IA & Montage Vidéo',
     subtitle: "Filmez, montez et utilisez l'IA comme un pro, depuis votre smartphone. 3 jours en présentiel, en petit groupe.",
-    price: 13000,   // prix de la formation (DA) — repris par défaut pour chaque session
-    studentPrice: 10000, // tarif étudiant (carte étudiante obligatoire) ; 0 = pas de tarif étudiant
-    oldPrice: 16000, // prix barré affiché à côté (offre de lancement) ; 0 = pas de prix barré
+    price: 22000,   // prix de la formation (DA) — repris par défaut pour chaque session
+    studentPrice: 0, // tarif étudiant (carte étudiante obligatoire) ; 0 = pas de tarif étudiant
+    oldPrice: 0, // prix barré affiché à côté (offre de lancement) ; 0 = pas de prix barré
     deposit: 3000,  // acompte obligatoire pour réserver sa place
     // Message affiché au-dessus des sessions (vide = rien) : utile tant que les dates ne sont pas définitives.
-    datesNotice: "La formation dure 3 jours de suite, du dimanche au jeudi. Choisissez le matin ou le soir.",
+    datesNotice: "Session unique : les 12, 13 et 14 novembre 2026. Les places partent vite.",
     showSeats: false,
     joinCode: '', // code secret du QR d'inscription sur place (vide = QR désactivé) // afficher « il reste N places » sur les sessions (désactivé par défaut)
     // Titres courts : affichés en cartes compactes (2 par ligne sur téléphone).
-    program: [
-      'Filmer au smartphone',
-      'Monter sur CapCut',
-      'UGC & vidéos courtes',
-      "Scripts avec l'IA",
-      'Images & voix off IA',
-      'Vos propres vidéos',
-    ],
+    program: PROGRAM_SHORT,
+    // Programme détaillé jour par jour, en français, anglais et arabe.
+    curriculum: CURRICULUM,
     // Récapitulatif montré une fois la date choisie : programme, date et lieu
     // sous les yeux avant de remplir le profil et les coordonnées.
     recapEnabled: true,
@@ -306,7 +302,7 @@ const defaultSettings = {
       'Petit groupe',
       '100 % mobile',
       'Débutants OK',
-      '+100 formés',
+      '+170 formés',
       'Places limitées',
     ],
   },
@@ -318,9 +314,17 @@ const defaultSettings = {
     // Proposer de laisser ses coordonnées quand aucune date ne convient.
     notifyEnabled: true,
   },
+  // Message affiché aux visiteurs à leur arrivée sur le site, puis masqué
+  // automatiquement au bout de 5 secondes (une fois par visite).
+  welcomeMessage: {
+    enabled: true,
+    text: 'Bienvenue sur Mylta Academy 👋',
+  },
   modules: {
     instructorEnabled: false,
     resourcesEnabled: false,
+    // Bandeau de consentement aux cookies : désactivé par défaut.
+    cookieBannerEnabled: false,
     // Redirige les visiteurs venus d'Instagram/TikTok/Facebook (navigateur
     // intégré) vers Chrome/Safari — voir InAppBrowserGuard côté frontend.
     inAppBrowserGuardEnabled: true
@@ -424,8 +428,13 @@ function readSettingsFromDisk() {
         },
       },
       modules: { ...defaultSettings.modules, ...(parsed.modules || {}) },
+      welcomeMessage: { ...defaultSettings.welcomeMessage, ...(parsed.welcomeMessage || {}) },
       coaching: upgradeCoaching(parsed.coaching),
-      inPerson: { ...defaultSettings.inPerson, ...(parsed.inPerson || {}) },
+      inPerson: {
+        ...defaultSettings.inPerson,
+        ...(parsed.inPerson || {}),
+        curriculum: { ...defaultSettings.inPerson.curriculum, ...(parsed.inPerson?.curriculum || {}) },
+      },
       contest: { ...defaultSettings.contest, ...(parsed.contest || {}) },
       welcome: { ...defaultSettings.welcome, ...(parsed.welcome || {}) },
       express: { ...defaultSettings.express, ...(parsed.express || {}) },
@@ -446,7 +455,7 @@ function readSettingsFromDisk() {
 // les valeurs par défaut au premier démarrage, donc un simple changement de
 // défaut ne l'atteint pas). Appliqué une fois : le prochain enregistrement admin
 // écrit settingsVersion à jour.
-const SETTINGS_VERSION = 11
+const SETTINGS_VERSION = 12
 const OLD_BANNER_TEXTS = ["🚀 Promo exceptionnelle : -50% sur toutes les formations ! Inscrivez-vous vite."]
 
 function migrateSettings(parsed, merged) {
@@ -487,6 +496,21 @@ function migrateSettings(parsed, merged) {
     'Du dimanche au jeudi, de 8h30 à 12h30, chez Camden à Béjaïa : 3 matinées de suite.',
   ].includes(merged.inPerson?.datesNotice)) {
     merged.inPerson = { ...merged.inPerson, datesNotice: defaultSettings.inPerson.datesNotice }
+  }
+  if ((parsed.settingsVersion || 1) < 12) {
+    // Session unique des 12-14 novembre 2026 : nouveau tarif, programme détaillé,
+    // et formation d'un jour coupée faute de date programmée.
+    merged.inPerson = {
+      ...merged.inPerson,
+      price: 22000,
+      studentPrice: 0,
+      oldPrice: 0,
+      program: PROGRAM_SHORT,
+      curriculum: CURRICULUM,
+      datesNotice: defaultSettings.inPerson.datesNotice,
+      infos: defaultSettings.inPerson.infos,
+    }
+    merged.express = { ...merged.express, enabled: false }
   }
   merged.settingsVersion = SETTINGS_VERSION
   return merged

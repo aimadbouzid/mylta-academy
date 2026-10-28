@@ -7,6 +7,8 @@ import SEOHead from '../components/SEOHead'
 import api from '../api/axios'
 import { useSiteSettings } from '../context/SiteSettingsContext'
 import StepIndicator from '../components/StepIndicator'
+import Curriculum from '../components/Curriculum'
+import SessionCountdown from '../components/SessionCountdown'
 import { formatDate } from '../utils/sessionDates'
 import { PAYMENT_INFO } from '../config/paymentConfig'
 
@@ -270,31 +272,7 @@ export default function InPersonPage() {
                       </ul>
                     )}
 
-                    {(cfg.program || []).length > 0 && (() => {
-                      // Le programme est réparti sur les 3 jours de la formation.
-                      const perDay = Math.ceil(cfg.program.length / 3)
-                      const days = [0, 1, 2].map(d => cfg.program.slice(d * perDay, (d + 1) * perDay)).filter(d => d.length)
-                      return (
-                        <div>
-                          <h2 className="font-display font-black text-xl mb-3">Le programme</h2>
-                          <ol className="space-y-0 border-t border-academy-border">
-                            {days.map((items, d) => (
-                              <li key={d} className="flex gap-4 py-3 border-b border-academy-border">
-                                <div className="shrink-0 w-14 text-center">
-                                  <span className="block text-[10px] font-bold uppercase tracking-[0.15em] text-academy-textMain/45">Jour</span>
-                                  <span className="block font-display font-black text-2xl leading-none text-academy-primary">{d + 1}</span>
-                                </div>
-                                <ul className="flex-1 space-y-1.5 pt-0.5">
-                                  {items.map((p, i) => (
-                                    <li key={i} className="text-[14.5px] font-semibold leading-snug">{p}</li>
-                                  ))}
-                                </ul>
-                              </li>
-                            ))}
-                          </ol>
-                        </div>
-                      )
-                    })()}
+                    <Curriculum curriculum={cfg.curriculum} />
 
                     {price > 0 && <PriceBox />}
                     <button type="button" onClick={() => goTo(1)} className={primaryBtn}>
@@ -386,6 +364,8 @@ export default function InPersonPage() {
                         </a>
                       </div>
                     )}
+                    {selected && <SessionCountdown date={selected.date} startTime={selected.startTime} />}
+
                     <button type="button" disabled={sessions === null} onClick={() => goTo(2)} className={primaryBtn}>
                       Continuer <ArrowRight size={18} />
                     </button>

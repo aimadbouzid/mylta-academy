@@ -37,6 +37,60 @@ export function Fold({ title, children, defaultOpen = false }) {
   )
 }
 
+// Programme détaillé : un jour par bloc, en texte simple.
+//   Jour 1 | Titre de la journée | Objectif de la journée
+//   - un point du programme
+const CURRICULUM_LANGS = [['fr', 'Français'], ['en', 'English'], ['ar', 'العربية']]
+
+const curriculumToText = (days = []) => days
+  .map(d => [`${d.day || ''} | ${d.title || ''} | ${d.goal || ''}`, ...(d.items || []).map(i => `- ${i}`)].join('\n'))
+  .join('\n\n')
+
+const textToCurriculum = (text) => {
+  const days = []
+  for (const line of String(text).split('\n')) {
+    const l = line.trim()
+    if (!l) continue
+    if (l.startsWith('-')) {
+      if (days.length) days[days.length - 1].items.push(l.replace(/^-\s*/, ''))
+      continue
+    }
+    const [day = '', title = '', goal = ''] = l.split('|').map(x => x.trim())
+    days.push({ day, title, goal, items: [] })
+  }
+  return days
+}
+
+function CurriculumEditor({ curriculum, onChange }) {
+  const [lang, setLang] = useState('fr')
+  const days = curriculum?.[lang] || []
+  return (
+    <div>
+      <div className="flex items-center justify-between gap-2 mb-1.5">
+        <p className={label + ' !mb-0'}>Programme détaillé ({days.length} jours)</p>
+        <div className="flex gap-1">
+          {CURRICULUM_LANGS.map(([id, name]) => (
+            <button type="button" key={id} onClick={() => setLang(id)}
+                    className={`px-2.5 py-1 rounded-lg text-[11px] font-bold ${lang === id ? 'bg-white text-black' : 'bg-white/10 text-neutral-300 hover:bg-white/15'}`}>
+              {name}
+            </button>
+          ))}
+        </div>
+      </div>
+      <textarea
+        dir={lang === 'ar' ? 'rtl' : 'ltr'}
+        className={`${input} font-mono text-[12px] leading-relaxed`}
+        rows={14}
+        value={curriculumToText(days)}
+        onChange={e => onChange({ ...curriculum, [lang]: textToCurriculum(e.target.value) })}
+      />
+      <p className="text-[11px] text-neutral-500 mt-1">
+        Une ligne par journée : <span className="font-mono">Jour 1 | Titre | Objectif</span>, puis une ligne par point commençant par <span className="font-mono">-</span>. Chaque langue se modifie séparément.
+      </p>
+    </div>
+  )
+}
+
 function ListEditor({ title, items, onChange, placeholder }) {
   return (
     <div>
@@ -93,6 +147,9 @@ export default function AdminInPersonTab() {
         studentPrice: Math.max(0, parseInt(cfg.studentPrice, 10) || 0),
         oldPrice: Math.max(0, parseInt(cfg.oldPrice, 10) || 0),
         program: cfg.program.filter(p => p.trim()),
+        curriculum: Object.fromEntries(Object.entries(cfg.curriculum || {}).map(([k, days]) => [
+          k, (days || []).filter(d => d.title?.trim()).map(d => ({ ...d, items: (d.items || []).filter(i => i.trim()) })),
+        ])),
         infos: cfg.infos.filter(p => p.trim()),
       }
       const { data } = await api.put('/admin/config', { inPerson })
@@ -364,7 +421,8 @@ export default function AdminInPersonTab() {
           <div><label className={label}>Lieu de la formation</label><input className={input} value={cfg.venue || ''} onChange={e => setCfg({ ...cfg, venue: e.target.value })} /></div>
           <div><label className={label}>Adresse du lieu</label><input className={input} value={cfg.venueAddress || ''} onChange={e => setCfg({ ...cfg, venueAddress: e.target.value })} /></div>
         </div>
-        <ListEditor title="Ce que vous allez apprendre (programme)" items={cfg.program} placeholder="Un point du programme" onChange={program => setCfg({ ...cfg, program })} />
+        <CurriculumEditor curriculum={cfg.curriculum} onChange={curriculum => setCfg({ ...cfg, curriculum })} />
+        <ListEditor title="Titres courts (vidéo de présentation et récapitulatif)" items={cfg.program} placeholder="Un point du programme" onChange={program => setCfg({ ...cfg, program })} />
         <ListEditor title="Bon à savoir" items={cfg.infos} placeholder="Une information pratique" onChange={infos => setCfg({ ...cfg, infos })} />
         <button type="button" onClick={saveTexts} disabled={busy} className="flex items-center gap-2 px-6 py-3 bg-emerald-600 hover:bg-emerald-500 rounded-xl font-bold transition-colors disabled:opacity-60">
           <Save size={16} /> Enregistrer la page
