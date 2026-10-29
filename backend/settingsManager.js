@@ -282,16 +282,30 @@ const defaultSettings = {
     enabled: true,
     account: 'mylta_academy',
     posts: [
-      { code: 'DWpCNGujkSK', tag: 'formation' },
-      { code: 'DezndQSRtPL', tag: 'formation' },
-      { code: 'DWmeuonjvT4', tag: 'formation' },
-      { code: 'DYDNp7mxWYj', tag: 'formation' },
+      // Montages réalisés par les participants
+      { code: 'DYF2xxdObBG', tag: 'etudiant' },
+      { code: 'DYDNp7mxWYj', tag: 'etudiant' },
+      // Ce qu'on peut faire avec un simple téléphone
+      { code: 'DewhFfGImBu', tag: 'resultat' },
+      { code: 'De9wHBzIAzT', tag: 'resultat' },
+      { code: 'DfAXYCiIhaw', tag: 'resultat' },
+      { code: 'DemxAWiNOIV', tag: 'resultat' },
+      { code: 'Dd7LIJXNV3R', tag: 'resultat' },
+      { code: 'DeH2QlpNP3v', tag: 'resultat' },
+      { code: 'DbYozZKNbBx', tag: 'resultat' },
+      { code: 'DdzcnG3RDxa', tag: 'resultat' },
+      { code: 'DbbQ3wPNajS', tag: 'resultat' },
+      { code: 'Dai1yA1tenL', tag: 'resultat' },
+      // Témoignages
       { code: 'DagXSsyxM0R', tag: 'temoignage' },
       { code: 'Demu9U-xV_k', tag: 'temoignage' },
       { code: 'DemuVpbR48t', tag: 'temoignage' },
+      // En formation
+      { code: 'DWpCNGujkSK', tag: 'formation' },
+      { code: 'DezndQSRtPL', tag: 'formation' },
+      { code: 'DWmeuonjvT4', tag: 'formation' },
       { code: 'DYIEBulNSgo', tag: 'formation' },
       { code: 'DXAWM3zDmim', tag: 'formation' },
-      { code: 'DYF2xxdObBG', tag: 'ia' },
     ],
   },
   inPerson: {
@@ -477,7 +491,7 @@ function readSettingsFromDisk() {
 // les valeurs par défaut au premier démarrage, donc un simple changement de
 // défaut ne l'atteint pas). Appliqué une fois : le prochain enregistrement admin
 // écrit settingsVersion à jour.
-const SETTINGS_VERSION = 16
+const SETTINGS_VERSION = 17
 const OLD_BANNER_TEXTS = ["🚀 Promo exceptionnelle : -50% sur toutes les formations ! Inscrivez-vous vite."]
 
 function migrateSettings(parsed, merged) {
@@ -545,7 +559,7 @@ function migrateSettings(parsed, merged) {
     // Programme réécrit : chaque point devient un titre court suivi d'un détail.
     merged.inPerson = { ...merged.inPerson, curriculum: CURRICULUM }
   }
-  if ((parsed.settingsVersion || 1) < 16) {
+  if ((parsed.settingsVersion || 1) < 17) {
     merged.instagram = { ...defaultSettings.instagram, ...(parsed.instagram || {}), posts: defaultSettings.instagram.posts }
   }
   merged.settingsVersion = SETTINGS_VERSION

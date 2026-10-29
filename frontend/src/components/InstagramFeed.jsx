@@ -8,11 +8,18 @@ import ReelPlayer from './ReelPlayer'
 
 const TAGS = [
   { id: 'all', label: 'Tout' },
-  { id: 'formation', label: 'En formation' },
+  { id: 'etudiant', label: 'Fait par nos étudiants' },
+  { id: 'resultat', label: 'Fait au téléphone' },
   { id: 'temoignage', label: 'Témoignages' },
-  { id: 'ia', label: 'IA' },
+  { id: 'formation', label: 'En formation' },
 ]
-const TAG_LABEL = { formation: 'En formation', temoignage: 'Témoignage', ia: 'IA' }
+const TAG_LABEL = {
+  etudiant: 'Fait par un étudiant',
+  resultat: 'Fait au téléphone',
+  temoignage: 'Témoignage',
+  formation: 'En formation',
+  ia: 'IA',
+}
 
 function Post({ code, tag, video, poster, hidden }) {
   const ref = useRef(null)
