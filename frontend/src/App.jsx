@@ -23,6 +23,7 @@ import InAppBrowserGuard from './components/InAppBrowserGuard'
 import ClickTracker from './components/ClickTracker'
 import FacebookPixel from './components/FacebookPixel'
 import CookieBanner from './components/CookieBanner'
+import WelcomeMessage from './components/WelcomeMessage'
 import { Loader } from 'lucide-react'
 import { useSiteSettings } from './context/SiteSettingsContext'
 import { useSocket } from './context/SocketContext'
@@ -198,8 +199,11 @@ export default function App() {
             </Routes>
           </Suspense>
 
-          {/* Cookie Consent Banner */}
-          <CookieBanner />
+          {/* Message d'accueil (5 s) */}
+          <WelcomeMessage />
+
+          {/* Cookie Consent Banner — désactivable depuis l'administration */}
+          {settings?.modules?.cookieBannerEnabled === true && <CookieBanner />}
 
           {/* WhatsApp Button */}
           {!(pathname.startsWith('/admin') || pathname.startsWith('/instructor')) && <WhatsAppButton />}

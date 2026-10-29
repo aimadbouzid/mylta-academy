@@ -314,7 +314,7 @@ const defaultSettings = {
     subtitle: "Filmez, montez et utilisez l'IA comme un pro, depuis votre smartphone. 3 jours en présentiel, en petit groupe.",
     price: 22000,   // prix de la formation (DA) — repris par défaut pour chaque session
     studentPrice: 0, // tarif étudiant (carte étudiante obligatoire) ; 0 = pas de tarif étudiant
-    oldPrice: 0, // prix barré affiché à côté (offre de lancement) ; 0 = pas de prix barré
+    oldPrice: 35000, // prix barré affiché à côté (offre de lancement) ; 0 = pas de prix barré
     deposit: 3000,  // acompte obligatoire pour réserver sa place
     // Message affiché au-dessus des sessions (vide = rien) : utile tant que les dates ne sont pas définitives.
     datesNotice: "Session unique : les 12, 13 et 14 novembre 2026. Les places partent vite.",
@@ -327,6 +327,14 @@ const defaultSettings = {
     // Récapitulatif montré une fois la date choisie : programme, date et lieu
     // sous les yeux avant de remplir le profil et les coordonnées.
     recapEnabled: true,
+    // Trois formateurs, un par spécialité : c'est ce qui justifie le prix.
+    coaches: [
+      { role: 'Montage vidéo', desc: 'CapCut, rythme, sous-titres, étalonnage' },
+      { role: 'Contenu UGC', desc: 'Filmer un produit pour une marque et le facturer' },
+      { role: 'Face caméra', desc: 'Parler avec aisance, voix, regard, présence' },
+    ],
+    // Numéro WhatsApp des inscriptions : celui de l'académie, pas celui du lieu.
+    whatsappNumber: '213795103743',
     venue: 'Camden International Institute',
     venueAddress: 'Cité Douanière Bir Slam, Promo Ceram Bt D1 W, Béjaïa',
     // Étiquettes très courtes, en grille de 3 en haut de la page.
@@ -491,7 +499,7 @@ function readSettingsFromDisk() {
 // les valeurs par défaut au premier démarrage, donc un simple changement de
 // défaut ne l'atteint pas). Appliqué une fois : le prochain enregistrement admin
 // écrit settingsVersion à jour.
-const SETTINGS_VERSION = 17
+const SETTINGS_VERSION = 18
 const OLD_BANNER_TEXTS = ["🚀 Promo exceptionnelle : -50% sur toutes les formations ! Inscrivez-vous vite."]
 
 function migrateSettings(parsed, merged) {
@@ -561,6 +569,14 @@ function migrateSettings(parsed, merged) {
   }
   if ((parsed.settingsVersion || 1) < 17) {
     merged.instagram = { ...defaultSettings.instagram, ...(parsed.instagram || {}), posts: defaultSettings.instagram.posts }
+  }
+  if ((parsed.settingsVersion || 1) < 18) {
+    merged.inPerson = {
+      ...merged.inPerson,
+      oldPrice: 35000,
+      coaches: defaultSettings.inPerson.coaches,
+      whatsappNumber: defaultSettings.inPerson.whatsappNumber,
+    }
   }
   merged.settingsVersion = SETTINGS_VERSION
   return merged

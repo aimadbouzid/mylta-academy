@@ -410,7 +410,7 @@ export default function LandingPage() {
         </section>
 
         {/* FAQ SECTION */}
-        <section className="py-8 lg:py-12 border-t border-academy-border relative overflow-hidden">
+        <section id="faq" className="scroll-mt-28 py-8 lg:py-12 border-t border-academy-border relative overflow-hidden">
           <div className="absolute top-[20%] left-[-10%] w-[50vw] h-[50vw] rounded-full bg-academy-primary/25 dark:bg-academy-primary/[0.08] pointer-events-none select-none z-0" style={{ filter: 'blur(130px)', WebkitFilter: 'blur(130px)' }} />
           <div className="section-container relative z-10">
             <div className="max-w-2xl mx-auto">

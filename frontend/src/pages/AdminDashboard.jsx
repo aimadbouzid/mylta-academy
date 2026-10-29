@@ -390,7 +390,8 @@ function SettingsTab() {
   const { t } = useLanguage()
   const { success: toastSuccess, error: toastError } = useToast()
   const [videoUrl, setVideoUrl] = useState('')
-  const [modules, setModules] = useState({ instructorEnabled: true, resourcesEnabled: true, inAppBrowserGuardEnabled: true, clubBannerEnabled: false })
+  const [modules, setModules] = useState({ instructorEnabled: true, resourcesEnabled: true, inAppBrowserGuardEnabled: true, cookieBannerEnabled: false, clubBannerEnabled: false })
+  const [welcomeMessage, setWelcomeMessage] = useState({ enabled: true, text: '' })
   const [loading, setLoading] = useState(false)
   const [uploading, setUploading] = useState(false)
 
@@ -405,6 +406,9 @@ function SettingsTab() {
     api.get('/admin/config')
       .then(res => {
         setVideoUrl(res.data?.introVideoUrl || '')
+        if (res.data?.welcomeMessage) {
+          setWelcomeMessage(res.data.welcomeMessage)
+        }
         if (res.data?.modules) {
           setModules(res.data.modules)
         }
@@ -453,7 +457,7 @@ function SettingsTab() {
     e.preventDefault()
     setLoading(true)
     try {
-      await api.put('/admin/config', { introVideoUrl: videoUrl, modules })
+      await api.put('/admin/config', { introVideoUrl: videoUrl, modules, welcomeMessage })
       toastSuccess('Configuration mise à jour avec succès !')
       if (typeof window !== 'undefined' && window.dispatchEvent) {
         window.dispatchEvent(new Event('configUpdated'))
@@ -546,6 +550,22 @@ function SettingsTab() {
 
             <div className="flex items-center justify-between p-4 bg-black/20 rounded-xl border border-white/5">
               <div>
+                <p className="text-white font-medium">Redirection navigateur externe</p>
+                <p className="text-neutral-400 text-xs">Depuis Instagram, TikTok, Facebook… rouvrir automatiquement le site dans Chrome/Safari plutôt que le navigateur intégré de l'app.</p>
+              </div>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  className="sr-only peer"
+                  checked={modules.inAppBrowserGuardEnabled !== false}
+                  onChange={(e) => setModules({...modules, inAppBrowserGuardEnabled: e.target.checked})}
+                />
+                <div className="w-11 h-6 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
+              </label>
+            </div>
+
+            <div className="flex items-center justify-between p-4 bg-black/20 rounded-xl border border-white/5">
+              <div>
                 <p className="text-white font-medium">Bandeau « Formations gratuites — université de Béjaïa »</p>
                 <p className="text-neutral-400 text-xs">Afficher le lien vers le club scientifique sur la page d'accueil.</p>
               </div>
@@ -562,18 +582,44 @@ function SettingsTab() {
 
             <div className="flex items-center justify-between p-4 bg-black/20 rounded-xl border border-white/5">
               <div>
-                <p className="text-white font-medium">Redirection navigateur externe</p>
-                <p className="text-neutral-400 text-xs">Depuis Instagram, TikTok, Facebook… rouvrir automatiquement le site dans Chrome/Safari plutôt que le navigateur intégré de l'app.</p>
+                <p className="text-white font-medium">Bandeau cookies</p>
+                <p className="text-neutral-400 text-xs">Afficher la demande de consentement aux cookies à l'arrivée sur le site.</p>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input
                   type="checkbox"
                   className="sr-only peer"
-                  checked={modules.inAppBrowserGuardEnabled !== false}
-                  onChange={(e) => setModules({...modules, inAppBrowserGuardEnabled: e.target.checked})}
+                  checked={modules.cookieBannerEnabled === true}
+                  onChange={(e) => setModules({...modules, cookieBannerEnabled: e.target.checked})}
                 />
                 <div className="w-11 h-6 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
               </label>
+            </div>
+
+            <div className="p-4 bg-black/20 rounded-xl border border-white/5 space-y-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-white font-medium">Message d'accueil</p>
+                  <p className="text-neutral-400 text-xs">Affiché à l'arrivée sur le site, puis masqué au bout de 5 secondes.</p>
+                </div>
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    className="sr-only peer"
+                    checked={welcomeMessage.enabled !== false}
+                    onChange={(e) => setWelcomeMessage({...welcomeMessage, enabled: e.target.checked})}
+                  />
+                  <div className="w-11 h-6 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
+                </label>
+              </div>
+              <input
+                type="text"
+                value={welcomeMessage.text || ''}
+                onChange={(e) => setWelcomeMessage({...welcomeMessage, text: e.target.value})}
+                maxLength={120}
+                placeholder="Bienvenue sur Mylta Academy 👋"
+                className="w-full bg-black/30 border border-white/10 rounded-lg px-3 py-2.5 text-white text-sm placeholder:text-neutral-600 focus:outline-none focus:border-blue-500"
+              />
             </div>
 
             <div className="flex justify-end pt-2">

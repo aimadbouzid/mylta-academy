@@ -627,7 +627,14 @@ export const translations = {
         { question: "Combien de temps faut-il pour voir des résultats ?", answer: "Vous appliquez dès les premiers modules. La plupart de nos étudiants voient des résultats en 2 à 4 semaines." },
         { question: "Est-ce que j'obtiens un certificat ?", answer: "Oui : un certificat nominatif Mylta Academy une fois tous les modules terminés." },
         { question: "Puis-je accéder aux cours à tout moment ?", answer: "Oui, 24h/24, à votre rythme, sans date d'expiration." },
-        { question: "Que faire si j'ai des questions ou si je reste bloqué ?", answer: "Posez votre question sous la leçon ou écrivez au support, on vous répond." }
+        { question: "Que faire si j'ai des questions ou si je reste bloqué ?", answer: "Posez votre question sous la leçon ou écrivez au support, on vous répond." },
+        { question: "Combien ça coûte ?", answer: "Le prix dépend de la formule : les formations en ligne sont affichées sur chaque fiche, et le prix du coaching vous est confirmé sur WhatsApp après votre demande. Un tarif étudiant existe pour le présentiel, sur présentation de la carte." },
+        { question: "Comment puis-je payer ?", answer: "Edahabia, CIB, CCP, BaridiMob ou RedotPay. Vous envoyez le reçu depuis le site, et l'accès est débloqué après vérification." },
+        { question: "Les formations sont-elles en darija ou en français ?", answer: "Les explications mélangent darija et français, comme à l'oral entre nous. Le vocabulaire technique est toujours expliqué simplement." },
+        { question: "Où se passe la formation en présentiel ?", answer: "À Béjaïa, en petit groupe. L'adresse exacte et l'itinéraire vous sont envoyés sur WhatsApp après la réservation." },
+        { question: "Faut-il un ordinateur ?", answer: "Non. La formation présentiel se suit à 100 % au smartphone. Pour créer un site ou une application en ligne, un ordinateur est plus confortable mais pas obligatoire." },
+        { question: "Puis-je être remboursé ?", answer: "L'acompte du présentiel réserve votre place : il reste acquis si vous ne venez pas, mais il est reportable sur une autre session si vous prévenez à l'avance sur WhatsApp." },
+        { question: "Comment vous contacter rapidement ?", answer: "Le bouton WhatsApp en bas à droite de l'écran. C'est le moyen le plus rapide, on répond 7 jours sur 7." }
       ],
       hero_phrases: [
         'Marketing & E-Commerce',

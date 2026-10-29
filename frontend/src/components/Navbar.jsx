@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { GraduationCap, BookOpen, LayoutDashboard, LogOut, User, Menu, X, Bell, Settings, PlayCircle, CheckCircle2, AlertTriangle, Info, Home, Users, Target, Globe, Gift, Award, CalendarDays, Clapperboard } from 'lucide-react'
+import { GraduationCap, BookOpen, LayoutDashboard, LogOut, User, Menu, X, Bell, Settings, PlayCircle, CheckCircle2, AlertTriangle, Info, Home, Users, Target, Globe, Gift, Award, CalendarDays, Clapperboard, HelpCircle } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { useLanguage } from '../context/LanguageContext'
 import { useSiteSettings } from '../context/SiteSettingsContext'
@@ -63,6 +63,25 @@ export default function Navbar({ onLoginClick }) {
   const [unreadCount, setUnreadCount] = useState(0)
 
   const navigate = useNavigate()
+
+  // « Questions » pointe vers la section FAQ de l'accueil. Depuis une autre
+  // page, on y revient d'abord, puis on attend que la section soit montée :
+  // l'accueil est chargé à la demande, elle n'existe pas immédiatement.
+  const goToFaq = (e) => {
+    e.preventDefault()
+    setMobileOpen(false)
+
+    const scrollToFaq = (triesLeft = 40) => {
+      const el = document.getElementById('faq')
+      if (el) return el.scrollIntoView({ behavior: 'smooth' })
+      if (triesLeft > 0) requestAnimationFrame(() => scrollToFaq(triesLeft - 1))
+    }
+
+    if (window.location.pathname === '/') return scrollToFaq()
+    navigate('/')
+    scrollToFaq()
+  }
+
 
   // Fetch notifications (60s polling + pause when tab is hidden)
   useEffect(() => {
@@ -157,6 +176,9 @@ export default function Navbar({ onLoginClick }) {
               <Link to="/mission" className="px-3 py-2 whitespace-nowrap rounded-full text-[13px] font-bold text-neutral-600 dark:text-academy-textMain/60 hover:text-black hover:bg-white hover:shadow-xs transition-all flex items-center gap-1.5">
                 <Target size={15} /> {t('nav.mission')}
               </Link>
+              <a href="/#faq" onClick={goToFaq} className="px-3 py-2 whitespace-nowrap rounded-full text-[13px] font-bold text-neutral-600 dark:text-academy-textMain/60 hover:text-black hover:bg-white hover:shadow-xs transition-all flex items-center gap-1.5">
+                <HelpCircle size={15} /> Questions
+              </a>
               {settings?.modules?.resourcesEnabled !== false && (
                 <Link to="/resources" className="px-3 py-2 whitespace-nowrap rounded-full text-[13px] font-bold text-neutral-600 dark:text-academy-textMain/60 hover:text-black hover:bg-white hover:shadow-xs transition-all flex items-center gap-1.5">
                   <Gift size={15} /> {t('nav.resources') || "Ressources"}
@@ -379,6 +401,9 @@ export default function Navbar({ onLoginClick }) {
               <Link to="/" onClick={() => setMobileOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl text-neutral-700 dark:text-academy-textMain/75 font-bold hover:bg-black/5 hover:text-black transition-colors">
                 <Home size={16} /> Accueil
               </Link>
+              <a href="/#faq" onClick={goToFaq} className="flex items-center gap-3 px-4 py-3 rounded-xl text-neutral-700 dark:text-academy-textMain/75 font-bold hover:bg-black/5 hover:text-black transition-colors">
+                <HelpCircle size={16} /> Questions
+              </a>
               <Link to="/courses" onClick={() => setMobileOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl text-neutral-700 dark:text-academy-textMain/75 font-bold hover:bg-black/5 hover:text-black transition-colors">
                 <BookOpen size={16} /> {t('nav.courses')}
               </Link>
