@@ -180,8 +180,8 @@ export default function PresentationReel() {
             </h3>
             <span className="wipe block mt-[2.4cqw] h-[0.25cqw] w-[14cqw] bg-red-500" style={{ animationDelay: `${0.3 + titleWords.length * 0.09}s` }} />
             <div className="mt-[2.6cqw] flex flex-wrap gap-[1.4cqw]">
-              {['3 jours', 'Petit groupe', '100 % smartphone', 'Chez Camden'].map((c, i) => (
-                <span key={c} className="pop rounded-full border border-white/15 bg-white/[0.06] px-[2.2cqw] py-[0.8cqw] text-[2.6cqw] font-semibold" style={{ animationDelay: `${0.75 + i * 0.12}s` }}>{c}</span>
+              {['3 jours', 'Petit groupe', 'Chez Camden'].map((c, i) => (
+                <span key={c} className="pop rounded-full border border-white/15 bg-white/[0.06] px-[1.8cqw] py-[0.6cqw] text-[2.1cqw] font-semibold" style={{ animationDelay: `${0.75 + i * 0.12}s` }}>{c}</span>
               ))}
             </div>
           </div>

@@ -475,8 +475,8 @@ export const translations = {
       install_btn: "Installer l'application"
     },
     landing: {
-      discover_courses: "Découvrir nos formations",
-      download_guide: "Télécharger le guide",
+      discover_courses: "Nos formations",
+      download_guide: "Le guide",
       intro_video: "Vidéo de présentation",
       watch_video: "Ouvrir la vidéo",
       local_payment: "Paiement local :",
@@ -1116,8 +1116,8 @@ export const translations = {
       install_btn: "Install the application"
     },
     landing: {
-      discover_courses: "Discover our courses",
-      download_guide: "Download the guide",
+      discover_courses: "Our courses",
+      download_guide: "The guide",
       intro_video: "Introduction video",
       watch_video: "Open the video",
       local_payment: "Local payment:",
@@ -1749,7 +1749,7 @@ export const translations = {
     },
     landing: {
       discover_courses: "اكتشف دوراتنا",
-      download_guide: "تحميل الدليل",
+      download_guide: "الدليل",
       intro_video: "فيديو تعريفي",
       watch_video: "افتح الفيديو",
       local_payment: "الدفع المحلي:",
