@@ -1,28 +1,17 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, MapPin } from 'lucide-react'
 import api from '../api/axios'
 
-// Pub de la formation présentielle en haut du fil d'accueil : la date, le prix
-// et le nombre de jours restants, pour donner envie de réserver tout de suite.
+// Annonce de la formation présentielle en tête de l'accueil : les trois jours,
+// le compte à rebours jusqu'au début, le lieu et le prix.
 
-const MONTHS = ['janv.', 'févr.', 'mars', 'avril', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.']
-
-// « 12 → 14 novembre » : la formation dure trois jours de suite.
-function range(iso) {
-  const [y, m, d] = iso.split('-').map(Number)
-  const end = new Date(y, m - 1, d + 2)
-  const sameMonth = end.getMonth() === m - 1
-  const month = new Date(y, m - 1, d).toLocaleDateString('fr-FR', { month: 'long' })
-  return sameMonth
-    ? `${d} → ${end.getDate()} ${month}`
-    : `${d} ${MONTHS[m - 1]} → ${end.getDate()} ${MONTHS[end.getMonth()]}`
-}
-
-const daysLeft = (iso) => Math.ceil((new Date(`${iso}T08:00:00+01:00`) - Date.now()) / 86400000)
+const UNITS = [['jours', 86400000], ['h', 3600000], ['min', 60000], ['s', 1000]]
+const cap = (x) => x.charAt(0).toUpperCase() + x.slice(1)
 
 export default function FormationAd({ inPerson }) {
   const [session, setSession] = useState(null)
+  const [now, setNow] = useState(() => Date.now())
 
   useEffect(() => {
     if (!inPerson?.enabled) return
@@ -31,37 +20,80 @@ export default function FormationAd({ inPerson }) {
       .catch(() => {})
   }, [inPerson?.enabled])
 
+  useEffect(() => {
+    if (!session) return
+    const t = setInterval(() => setNow(Date.now()), 1000)
+    return () => clearInterval(t)
+  }, [session])
+
   if (!inPerson?.enabled || !session) return null
-  const left = daysLeft(session.date)
+
+  const [y, m, d] = session.date.split('-').map(Number)
+  const days = [0, 1, 2].map(i => {
+    const dt = new Date(y, m - 1, d + i)
+    return { num: dt.getDate(), weekday: dt.toLocaleDateString('fr-FR', { weekday: 'short' }).replace('.', '') }
+  })
+  const month = cap(new Date(y, m - 1, d + 2).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' }))
   const price = Number(session.price) || Number(inPerson.price) || 0
+  const hour = (t) => (t || '').replace(':', 'h')
+
+  let left = Math.max(0, new Date(`${session.date}T${session.startTime || '08:30'}:00+01:00`) - now)
+  const countdown = UNITS.map(([u, ms]) => {
+    const v = Math.floor(left / ms)
+    left -= v * ms
+    return [u, v]
+  })
 
   return (
     <section className="section-container pt-4">
-      <Link to="/coaching-presentiel"
-            className="group relative flex max-w-3xl lg:max-w-none mx-auto bg-white border-2 border-academy-primary rounded-xl overflow-hidden hover:shadow-md transition-shadow">
-        <span className="shrink-0 flex flex-col items-center justify-center px-2.5 sm:px-3 bg-academy-primary text-academy-onPrimary">
-          <span className="font-display font-black text-xl leading-none">{session.date.slice(8, 10)}</span>
-          <span className="text-[9px] font-bold uppercase tracking-[0.1em]">{MONTHS[Number(session.date.slice(5, 7)) - 1]}</span>
-        </span>
-        <span className="border-l-2 border-dashed border-academy-border" />
-        <span className="flex-1 min-w-0 flex items-center justify-between gap-3 px-4 py-3.5">
-          <span className="min-w-0">
-            <span className="block text-[10px] font-bold uppercase tracking-[0.15em] text-academy-primary">
-              Formation présentielle · {range(session.date)}
-            </span>
-            <span className="block font-display font-black text-sm sm:text-base leading-tight text-academy-textMain mt-0.5">
-              Filmer, monter et utiliser l'IA sur smartphone
-            </span>
-            <span className="block text-xs text-academy-textMain/55 mt-0.5">
-              3 jours chez Camden, Béjaïa · {price.toLocaleString('fr-FR')} DA
-              {left > 0 && left <= 30 && <> · <b className="text-academy-primary">plus que {left} j</b></>}
-            </span>
-          </span>
-          <span className="shrink-0 inline-flex items-center gap-1.5 btn-glow [--glow:rgb(200_40_40_/_0.55)] rounded-lg bg-academy-primary text-academy-onPrimary px-3 py-1.5 text-[13px] font-bold group-hover:opacity-90 transition-opacity">
-            Réserver <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
-          </span>
-        </span>
-      </Link>
+      <div className="max-w-3xl lg:max-w-none mx-auto rounded-2xl bg-academy-textMain text-academy-surface overflow-hidden">
+        <div className="p-5 sm:p-7">
+          <div className="sm:flex sm:items-start sm:justify-between sm:gap-8">
+            <div className="min-w-0">
+              <p className="text-[11px] font-bold uppercase tracking-[0.2em] opacity-60">
+                Formation présentielle · Béjaïa
+              </p>
+              <h2 className="mt-1.5 font-display font-black text-2xl sm:text-4xl leading-[1.05] tracking-tight">
+                Filmer, monter et utiliser l'IA sur smartphone
+              </h2>
+
+              <ol className="mt-4 flex gap-2 max-w-xs">
+                {days.map(day => (
+                  <li key={day.num} className="flex-1 text-center rounded-lg bg-academy-surface/10 py-2">
+                    <span className="block text-[10px] font-bold uppercase tracking-[0.12em] opacity-60">{day.weekday}</span>
+                    <span className="block font-display font-black text-xl leading-none mt-0.5">{day.num}</span>
+                  </li>
+                ))}
+              </ol>
+              <p className="mt-2 text-[13.5px] opacity-75">
+                {month} · {hour(session.startTime)} – {hour(session.endTime)}
+              </p>
+              <p className="mt-0.5 text-[13.5px] opacity-75 flex items-center gap-1.5">
+                <MapPin size={14} className="shrink-0 opacity-70" /> {session.place || 'Camden International Institute'}
+              </p>
+            </div>
+
+            {/* Compte à rebours jusqu'au premier jour */}
+            <div className="mt-5 sm:mt-0 shrink-0 sm:text-right">
+              <p className="text-[10px] font-bold uppercase tracking-[0.18em] opacity-55">Il reste</p>
+              <div className="mt-1.5 flex gap-1.5 sm:justify-end">
+                {countdown.map(([u, v]) => (
+                  <span key={u} className="w-[4.1rem] rounded-lg bg-academy-surface/10 py-2 text-center">
+                    <span className="block font-display font-black text-xl leading-none tabular-nums">{String(v).padStart(2, '0')}</span>
+                    <span className="block text-[9px] uppercase tracking-wider opacity-55 mt-1">{u}</span>
+                  </span>
+                ))}
+              </div>
+              <p className="mt-3 font-display font-black text-2xl">{price.toLocaleString('fr-FR')} DA</p>
+            </div>
+          </div>
+
+          <Link to="/coaching-presentiel"
+                className="group mt-5 inline-flex items-center gap-2 rounded-lg bg-academy-primary text-academy-onPrimary px-5 py-2.5 text-sm font-bold hover:opacity-90 transition-opacity">
+            Réserver ma place <ArrowRight size={16} className="group-hover:translate-x-0.5 transition-transform" />
+          </Link>
+        </div>
+      </div>
     </section>
   )
 }

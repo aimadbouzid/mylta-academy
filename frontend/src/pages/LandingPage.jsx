@@ -138,17 +138,17 @@ export default function LandingPage() {
               <div className="flex flex-row gap-3 justify-center lg:justify-start mb-4 lg:mb-8">
                 <Link
                   to="/courses"
-                  className="group inline-flex items-center justify-center gap-2 py-3 px-6 rounded-md bg-academy-textMain text-academy-surface text-sm font-semibold hover:opacity-90 transition-opacity"
+                  className="group inline-flex items-center justify-center gap-1.5 py-2 px-4 rounded-md bg-academy-textMain text-academy-surface text-[13px] font-semibold hover:opacity-90 transition-opacity"
                 >
                   {t('landing.discover_courses')}
-                  <ArrowRight size={16} className="opacity-60 group-hover:translate-x-0.5 transition-transform" />
+                  <ArrowRight size={14} className="opacity-60 group-hover:translate-x-0.5 transition-transform" />
                 </Link>
                 <a
                   href="/guide-aimad-bouzidi.pdf"
                   download
-                  className="inline-flex items-center justify-center gap-2 py-3 px-6 rounded-md border border-academy-border text-academy-textMain text-sm font-semibold hover:bg-academy-textMain/[0.04] transition-colors"
+                  className="inline-flex items-center justify-center gap-1.5 py-2 px-4 rounded-md border border-academy-border text-academy-textMain text-[13px] font-semibold hover:bg-academy-textMain/[0.04] transition-colors"
                 >
-                  <Download size={16} className="opacity-60" />
+                  <Download size={14} className="opacity-60" />
                   {t('landing.download_guide')}
                 </a>
               </div>
@@ -262,7 +262,8 @@ export default function LandingPage() {
         </section>
         )}
 
-        <FormationsHub coaching={siteSettings.coaching} inPerson={siteSettings.inPerson} express={siteSettings.express} />
+        {/* Le présentiel a déjà son annonce en tête : ici, seulement les autres formules. */}
+        <FormationsHub coaching={siteSettings.coaching} express={siteSettings.express} />
 
         <CamdenPartner />
 

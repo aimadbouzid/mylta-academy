@@ -208,7 +208,7 @@ const defaultSettings = {
   // weekdays : 0 = dimanche … 6 = samedi. timeSlots vide = date seule.
   coaching: {
     version: 7,
-    enabled: true,
+    enabled: false, // coaching en ligne : coupé, la priorité est au présentiel
     title: 'Coaching en ligne',
     subtitle: "Seul ou avec vos amis, un coach vous accompagne pour apprendre l'IA ou créer votre site.",
     // Étiquettes très courtes, en grille de 3 en haut de la page.
@@ -239,7 +239,7 @@ const defaultSettings = {
   // places) sont en base ; ici, uniquement les textes de la page.
   // Concours « gagnez une formation gratuite » : inscription sur /concours, tirage au sort dans l'admin.
   contest: {
-    enabled: true,
+    enabled: false, // concours « formation gratuite » : coupé tant qu'aucun tirage n'est prévu
     title: 'Gagnez une formation gratuite !',
     text: "Tentez votre chance : une formation offerte, en présentiel ou en ligne. Tirage au sort parmi les inscrits.",
     prizes: ['Formation en présentiel', 'Coaching en ligne'],
@@ -457,7 +457,7 @@ function readSettingsFromDisk() {
 // les valeurs par défaut au premier démarrage, donc un simple changement de
 // défaut ne l'atteint pas). Appliqué une fois : le prochain enregistrement admin
 // écrit settingsVersion à jour.
-const SETTINGS_VERSION = 13
+const SETTINGS_VERSION = 14
 const OLD_BANNER_TEXTS = ["🚀 Promo exceptionnelle : -50% sur toutes les formations ! Inscrivez-vous vite."]
 
 function migrateSettings(parsed, merged) {
@@ -516,6 +516,10 @@ function migrateSettings(parsed, merged) {
   }
   if ((parsed.settingsVersion || 1) < 13) {
     merged.modules = { ...merged.modules, clubBannerEnabled: false }
+  }
+  if ((parsed.settingsVersion || 1) < 14) {
+    merged.coaching = { ...merged.coaching, enabled: false }
+    merged.contest = { ...merged.contest, enabled: false }
   }
   merged.settingsVersion = SETTINGS_VERSION
   return merged
