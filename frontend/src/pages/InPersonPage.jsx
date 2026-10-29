@@ -272,7 +272,17 @@ export default function InPersonPage() {
                       </ul>
                     )}
 
-                    <Curriculum curriculum={cfg.curriculum} />
+                    {/* Aperçu court : une ligne par journée, le détail reste plus bas. */}
+                    {(cfg.curriculum?.fr || []).length > 0 && (
+                      <ol className="divide-y divide-academy-border border-y border-academy-border">
+                        {(cfg.curriculum.fr).map((d, i) => (
+                          <li key={i} className="flex gap-3 py-2.5">
+                            <span className="shrink-0 font-mono text-[11px] font-bold text-academy-primary pt-0.5">J{i + 1}</span>
+                            <span className="text-[14px] font-semibold leading-snug">{d.title}</span>
+                          </li>
+                        ))}
+                      </ol>
+                    )}
 
                     {price > 0 && <PriceBox />}
                     <button type="button" onClick={() => goTo(1)} className={primaryBtn}>
@@ -281,6 +291,11 @@ export default function InPersonPage() {
                     <p className="text-center text-sm">
                       Vous préférez à distance ? <Link to="/coaching" className="font-bold text-academy-primary underline underline-offset-2">Coaching en ligne</Link>
                     </p>
+                  </section>
+                )}
+                {step === 0 && (
+                  <section className={`${card} mt-4`}>
+                    <Curriculum curriculum={cfg.curriculum} />
                   </section>
                 )}
                 {step === 0 && <div className="mt-4"><TrainingLocation /></div>}

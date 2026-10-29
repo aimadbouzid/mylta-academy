@@ -327,7 +327,9 @@ const defaultSettings = {
     cookieBannerEnabled: false,
     // Redirige les visiteurs venus d'Instagram/TikTok/Facebook (navigateur
     // intégré) vers Chrome/Safari — voir InAppBrowserGuard côté frontend.
-    inAppBrowserGuardEnabled: true
+    inAppBrowserGuardEnabled: true,
+    // Bandeau « Formations gratuites à l'université de Béjaïa » sur l'accueil.
+    clubBannerEnabled: false
   }
 }
 
@@ -455,7 +457,7 @@ function readSettingsFromDisk() {
 // les valeurs par défaut au premier démarrage, donc un simple changement de
 // défaut ne l'atteint pas). Appliqué une fois : le prochain enregistrement admin
 // écrit settingsVersion à jour.
-const SETTINGS_VERSION = 12
+const SETTINGS_VERSION = 13
 const OLD_BANNER_TEXTS = ["🚀 Promo exceptionnelle : -50% sur toutes les formations ! Inscrivez-vous vite."]
 
 function migrateSettings(parsed, merged) {
@@ -511,6 +513,9 @@ function migrateSettings(parsed, merged) {
       infos: defaultSettings.inPerson.infos,
     }
     merged.express = { ...merged.express, enabled: false }
+  }
+  if ((parsed.settingsVersion || 1) < 13) {
+    merged.modules = { ...merged.modules, clubBannerEnabled: false }
   }
   merged.settingsVersion = SETTINGS_VERSION
   return merged

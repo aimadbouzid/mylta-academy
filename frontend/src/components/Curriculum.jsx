@@ -20,7 +20,7 @@ const UI = {
 export default function Curriculum({ curriculum }) {
   const { currentLang } = useLanguage()
   const [lang, setLang] = useState(currentLang)
-  const [openDay, setOpenDay] = useState(0)
+  const [openDay, setOpenDay] = useState(-1)
 
   // La langue du site reste le point de départ : si le visiteur la change, le programme suit.
   useEffect(() => { setLang(currentLang) }, [currentLang])

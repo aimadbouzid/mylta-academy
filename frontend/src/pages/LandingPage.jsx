@@ -13,6 +13,7 @@ import UpcomingCourseModal from '../components/UpcomingCourseModal'
 import LoginModal from '../components/LoginModal'
 import PaymentModal from '../components/PaymentModal'
 import FormationsHub from '../components/FormationsHub'
+import FormationAd from '../components/FormationAd'
 import PresentationReel from '../components/PresentationReel'
 import CamdenPartner from '../components/CamdenPartner'
 import IntroVideoModal from '../components/IntroVideoModal'
@@ -220,6 +221,8 @@ export default function LandingPage() {
           </div>
         </section>
 
+        <FormationAd inPerson={siteSettings.inPerson} />
+
         {siteSettings.contest?.enabled && !(siteSettings.contest.endDate && siteSettings.contest.endDate < new Date().toISOString().slice(0, 10)) && (
           <section className="section-container pt-4">
             <Link to="/concours" className="group relative flex max-w-3xl lg:max-w-none mx-auto bg-white border border-academy-border rounded-xl overflow-hidden hover:border-academy-textMain/30 transition-colors">
@@ -240,7 +243,9 @@ export default function LandingPage() {
         )}
 
         {/* Formations gratuites au club scientifique de l'université de Béjaïa :
-            un seul lien à partager au club, qui mène à l'inscription. */}
+            un seul lien à partager au club, qui mène à l'inscription.
+            Masqué tant que « Bandeau université » est coupé dans les réglages. */}
+        {siteSettings.modules?.clubBannerEnabled === true && (
         <section className="section-container pt-4">
           <Link to="/club" className="group relative flex max-w-3xl lg:max-w-none mx-auto bg-white border border-academy-border rounded-xl overflow-hidden hover:border-academy-textMain/30 transition-colors">
             <span className="shrink-0 flex items-center px-1.5 sm:px-2 bg-academy-textMain text-academy-surface">
@@ -255,6 +260,7 @@ export default function LandingPage() {
             </span>
           </Link>
         </section>
+        )}
 
         <FormationsHub coaching={siteSettings.coaching} inPerson={siteSettings.inPerson} express={siteSettings.express} />
 
