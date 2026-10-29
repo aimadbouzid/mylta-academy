@@ -56,6 +56,7 @@ const shortRange = (date) => {
   const label = `${day(start)}${start.getMonth() === end.getMonth() ? '' : ` ${month(start)}`} → ${day(end)} ${month(end)}`
   return label.charAt(0).toUpperCase() + label.slice(1)
 }
+const cap = (x) => x.charAt(0).toUpperCase() + x.slice(1)
 const hours = (s) => (s.startTime ? `${hour(s.startTime)}${s.endTime ? ` – ${hour(s.endTime)}` : ''}` : '')
 const money = (n, cur) => `${Number(n).toLocaleString('fr-FR')} ${cur || 'DA'}`
 
@@ -93,6 +94,20 @@ export default function InPersonPage() {
   useEffect(() => { if (cfg?.enabled) loadSessions() }, [cfg?.enabled])
 
   const selected = sessions?.find(s => s.id === sessionId)
+
+  // En-tête : les trois jours de la prochaine session ouverte, avec l'horaire.
+  const headlineSession = selected || sessions?.find(x => x.seatsLeft > 0) || sessions?.[0]
+  const headline = (() => {
+    if (!headlineSession?.date) return null
+    const [y, m, d] = headlineSession.date.split('-').map(Number)
+    const days = [0, 1, 2].map(i => {
+      const dt = new Date(y, m - 1, d + i)
+      return { num: dt.getDate(), weekday: dt.toLocaleDateString('fr-FR', { weekday: 'short' }).replace('.', '') }
+    })
+    const last = new Date(y, m - 1, d + 2)
+    const month = cap(last.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' }))
+    return { days, month, hours: hours(headlineSession) || '' }
+  })()
   const [isStudent, setIsStudent] = useState(false)
   const [studentCard, setStudentCard] = useState('')
   const studentPrice = Number(cfg?.studentPrice) || 0
@@ -156,25 +171,33 @@ export default function InPersonPage() {
   const radio = (active) => `mt-1 w-4 h-4 rounded-full border-2 shrink-0 ${active ? 'border-academy-primary bg-academy-primary shadow-[inset_0_0_0_3px_white]' : 'border-academy-textMain/30'}`
   const primaryBtn = 'w-full py-4 rounded-xl bg-academy-primary text-academy-onPrimary font-bold text-lg flex items-center justify-center gap-2 transition-opacity hover:opacity-90 disabled:opacity-40'
 
+  // Prix : un bloc sobre, à filets, comme l'en-tête — pas de carte colorée.
   const PriceBox = () => (
-    <div className="rounded-xl border-2 border-academy-primary/30 bg-academy-primary/5 p-4">
-      {oldPrice > 0 && (
-        <p className="text-xs font-black uppercase tracking-wider text-academy-primary mb-1">Offre de lancement</p>
-      )}
-      <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
-        <span className="text-2xl font-black">{money(price, currency)}</span>
+    <div className="border-y-2 border-academy-textMain py-4">
+      <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-academy-textMain/50">
+        {oldPrice > 0 ? 'Offre de lancement' : studentRate ? 'Tarif étudiant' : 'Prix de la formation'}
+      </p>
+      <div className="mt-1 flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
+        <span className="font-display font-black text-3xl tracking-tight">{money(price, currency)}</span>
         {oldPrice > 0 && <span className="text-sm text-academy-textMain/45 line-through">{money(oldPrice, currency)}</span>}
-        {discount > 0 && <span className="text-xs font-black text-white bg-emerald-600 rounded-full px-2 py-0.5">-{discount}%</span>}
+        {discount > 0 && <span className="text-[11px] font-black text-academy-surface bg-academy-textMain rounded px-1.5 py-0.5">-{discount}%</span>}
       </div>
       {studentPrice > 0 && !studentRate && (
-        <p className="mt-1 text-sm font-bold">🎓 Étudiants : {money(studentPrice, currency)} <span className="font-normal text-academy-textMain/60">(avec carte étudiante)</span></p>
+        <p className="mt-1 text-[13.5px]">
+          <b>Étudiants : {money(studentPrice, currency)}</b> <span className="text-academy-textMain/55">avec la carte étudiante</span>
+        </p>
       )}
-      {studentRate && <p className="mt-1 text-xs font-black uppercase tracking-wider text-academy-textMain/60">Tarif étudiant</p>}
       {deposit > 0 && (
-        <div className="mt-3 pt-3 border-t border-academy-primary/15 space-y-1 text-sm">
-          <div className="flex justify-between gap-4"><span className="font-bold text-academy-primary">Acompte pour réserver</span><span className="font-black">{money(deposit, currency)}</span></div>
-          <div className="flex justify-between gap-4 text-academy-textMain/60"><span>Reste à payer ensuite</span><span>{money(Math.max(0, price - deposit), currency)}</span></div>
-        </div>
+        <dl className="mt-3 pt-3 border-t border-academy-border space-y-1.5 text-[13.5px]">
+          <div className="flex justify-between gap-4">
+            <dt className="font-bold">Acompte pour réserver</dt>
+            <dd className="font-black tabular-nums">{money(deposit, currency)}</dd>
+          </div>
+          <div className="flex justify-between gap-4 text-academy-textMain/60">
+            <dt>Reste à payer ensuite</dt>
+            <dd className="tabular-nums">{money(Math.max(0, price - deposit), currency)}</dd>
+          </div>
+        </dl>
       )}
     </div>
   )
@@ -247,11 +270,31 @@ export default function InPersonPage() {
               </div>
             ) : (
               <>
-                <div className="text-center mb-6">
-                  <p className="text-xs font-black uppercase tracking-widest text-academy-primary mb-2">Coaching présentiel</p>
-                  <h1 className="font-display font-black text-3xl sm:text-5xl tracking-tight mb-2">{cfg.title}</h1>
-                  <p className="text-academy-textMain/60 sm:text-lg">{cfg.subtitle}</p>
-                </div>
+                <header className="mb-6">
+                  <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-academy-primary">
+                    Formation présentielle · {(cfg.venueAddress || '').split(',').pop().trim() || 'Béjaïa'}
+                  </p>
+                  <h1 className="mt-1.5 font-display font-black text-[2rem] sm:text-5xl leading-[1.02] tracking-tight">{cfg.title}</h1>
+                  <p className="mt-2 text-[15px] sm:text-lg text-academy-textMain/65 leading-relaxed max-w-xl">{cfg.subtitle}</p>
+
+                  {/* Les trois jours, l'horaire et le lieu : l'essentiel avant tout le reste. */}
+                  {headline && (
+                    <div className="mt-5 border-y-2 border-academy-textMain py-4">
+                      <ol className="flex gap-2">
+                        {headline.days.map(d => (
+                          <li key={d.num} className="flex-1 text-center rounded-lg bg-academy-textMain text-academy-surface py-2">
+                            <span className="block text-[10px] font-bold uppercase tracking-[0.12em] opacity-70">{d.weekday}</span>
+                            <span className="block font-display font-black text-2xl leading-none mt-0.5">{d.num}</span>
+                          </li>
+                        ))}
+                      </ol>
+                      <p className="mt-2.5 font-bold text-[15px]">{headline.month}</p>
+                      <p className="text-[13.5px] text-academy-textMain/65">
+                        {headline.hours}{cfg.venue ? ` · ${cfg.venue}` : ''}
+                      </p>
+                    </div>
+                  )}
+                </header>
 
                 <StepIndicator steps={STEPS} current={step} onGo={goTo} />
 
@@ -265,11 +308,9 @@ export default function InPersonPage() {
                 {step === 0 && (
                   <section className={`${card} space-y-5`}>
                     {(cfg.infos || []).length > 0 && (
-                      <ul className="grid grid-cols-3 gap-px rounded-xl overflow-hidden border border-academy-border bg-academy-border">
-                        {cfg.infos.map((info, i) => (
-                          <li key={i} className="bg-white px-1.5 py-2.5 text-center text-[12px] sm:text-[13px] font-bold leading-tight flex items-center justify-center">{info}</li>
-                        ))}
-                      </ul>
+                      <p className="text-[13px] font-semibold text-academy-textMain/55 leading-relaxed">
+                        {cfg.infos.join('  ·  ')}
+                      </p>
                     )}
 
                     {/* Aperçu court : une ligne par journée, le détail reste plus bas. */}
