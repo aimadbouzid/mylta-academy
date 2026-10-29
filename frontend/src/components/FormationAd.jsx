@@ -46,15 +46,15 @@ export default function FormationAd({ inPerson }) {
     <section className="section-container pt-4">
       <div className="max-w-3xl lg:max-w-none mx-auto rounded-2xl bg-academy-textMain text-academy-surface p-5 sm:p-8">
         <p className="text-[11px] font-bold uppercase tracking-[0.2em] opacity-60">
-          Formation présentielle · Béjaïa · {session.capacity || 10} places
+          Formation IA & Montage Vidéo · Béjaïa · {session.capacity || 10} places
         </p>
 
         {/* La promesse, pas la liste des sujets. */}
         <h2 className="mt-2 font-display font-black text-[1.75rem] sm:text-5xl leading-[1.04] tracking-tight">
-          En 3 jours, vous filmez, montez<br className="hidden sm:block" /> et publiez comme un pro.
+          En 3 jours, vous filmez, montez<br className="hidden sm:block" /> et faites travailler l'IA.
         </h2>
         <p className="mt-2.5 text-[15px] sm:text-lg opacity-70 max-w-xl">
-          Avec votre téléphone. Même si vous partez de zéro.
+          Tout sur votre téléphone : tournage, montage, scripts, voix off et images par l'IA. Même en partant de zéro.
         </p>
 
         <div className="mt-6 sm:flex sm:items-end sm:justify-between sm:gap-10">

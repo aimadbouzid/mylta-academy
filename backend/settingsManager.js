@@ -457,7 +457,7 @@ function readSettingsFromDisk() {
 // les valeurs par défaut au premier démarrage, donc un simple changement de
 // défaut ne l'atteint pas). Appliqué une fois : le prochain enregistrement admin
 // écrit settingsVersion à jour.
-const SETTINGS_VERSION = 14
+const SETTINGS_VERSION = 15
 const OLD_BANNER_TEXTS = ["🚀 Promo exceptionnelle : -50% sur toutes les formations ! Inscrivez-vous vite."]
 
 function migrateSettings(parsed, merged) {
@@ -520,6 +520,10 @@ function migrateSettings(parsed, merged) {
   if ((parsed.settingsVersion || 1) < 14) {
     merged.coaching = { ...merged.coaching, enabled: false }
     merged.contest = { ...merged.contest, enabled: false }
+  }
+  if ((parsed.settingsVersion || 1) < 15) {
+    // Programme réécrit : chaque point devient un titre court suivi d'un détail.
+    merged.inPerson = { ...merged.inPerson, curriculum: CURRICULUM }
   }
   merged.settingsVersion = SETTINGS_VERSION
   return merged

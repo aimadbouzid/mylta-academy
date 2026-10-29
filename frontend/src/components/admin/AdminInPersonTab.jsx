@@ -42,8 +42,10 @@ export function Fold({ title, children, defaultOpen = false }) {
 //   - un point du programme
 const CURRICULUM_LANGS = [['fr', 'Français'], ['en', 'English'], ['ar', 'العربية']]
 
+const itemToText = (i) => (typeof i === 'string' ? i : [i.t, i.d].filter(Boolean).join(' | '))
+
 const curriculumToText = (days = []) => days
-  .map(d => [`${d.day || ''} | ${d.title || ''} | ${d.goal || ''}`, ...(d.items || []).map(i => `- ${i}`)].join('\n'))
+  .map(d => [`${d.day || ''} | ${d.title || ''} | ${d.goal || ''}`, ...(d.items || []).map(i => `- ${itemToText(i)}`)].join('\n'))
   .join('\n\n')
 
 const textToCurriculum = (text) => {
@@ -52,7 +54,10 @@ const textToCurriculum = (text) => {
     const l = line.trim()
     if (!l) continue
     if (l.startsWith('-')) {
-      if (days.length) days[days.length - 1].items.push(l.replace(/^-\s*/, ''))
+      if (days.length) {
+        const [t = '', d = ''] = l.replace(/^-\s*/, '').split('|').map(x => x.trim())
+        days[days.length - 1].items.push({ t, d })
+      }
       continue
     }
     const [day = '', title = '', goal = ''] = l.split('|').map(x => x.trim())
@@ -85,7 +90,7 @@ function CurriculumEditor({ curriculum, onChange }) {
         onChange={e => onChange({ ...curriculum, [lang]: textToCurriculum(e.target.value) })}
       />
       <p className="text-[11px] text-neutral-500 mt-1">
-        Une ligne par journée : <span className="font-mono">Jour 1 | Titre | Objectif</span>, puis une ligne par point commençant par <span className="font-mono">-</span>. Chaque langue se modifie séparément.
+        Une ligne par journée : <span className="font-mono">Jour 1 | Titre | Objectif</span>, puis une ligne par point : <span className="font-mono">- Titre du point | détail</span>. Chaque langue se modifie séparément.
       </p>
     </div>
   )
@@ -148,7 +153,10 @@ export default function AdminInPersonTab() {
         oldPrice: Math.max(0, parseInt(cfg.oldPrice, 10) || 0),
         program: cfg.program.filter(p => p.trim()),
         curriculum: Object.fromEntries(Object.entries(cfg.curriculum || {}).map(([k, days]) => [
-          k, (days || []).filter(d => d.title?.trim()).map(d => ({ ...d, items: (d.items || []).filter(i => i.trim()) })),
+          k, (days || []).filter(d => d.title?.trim()).map(d => ({
+            ...d,
+            items: (d.items || []).map(i => (typeof i === 'string' ? { t: i, d: '' } : i)).filter(i => i.t?.trim()),
+          })),
         ])),
         infos: cfg.infos.filter(p => p.trim()),
       }

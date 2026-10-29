@@ -71,13 +71,20 @@ export default function Curriculum({ curriculum }) {
                 <span aria-hidden="true" className={`shrink-0 mt-1 text-academy-textMain/40 transition-transform ${open ? 'rotate-45' : ''}`}>+</span>
               </button>
               {open && (
-                <ul className="pb-4 ps-14 space-y-1.5">
-                  {(d.items || []).map((it, j) => (
-                    <li key={j} className="flex gap-2.5 text-[13.5px] leading-snug">
-                      <span className="shrink-0 font-mono text-[10px] text-academy-primary pt-1">{String(j + 1).padStart(2, '0')}</span>
-                      <span className="font-medium">{it}</span>
-                    </li>
-                  ))}
+                <ul className="pb-4 ps-14 space-y-2.5">
+                  {(d.items || []).map((it, j) => {
+                    const title = typeof it === 'string' ? it : it.t
+                    const detail = typeof it === 'string' ? '' : it.d
+                    return (
+                      <li key={j} className="flex gap-2.5">
+                        <span className="shrink-0 font-mono text-[10px] text-academy-primary pt-1">{String(j + 1).padStart(2, '0')}</span>
+                        <span className="min-w-0">
+                          <span className="block font-bold text-[14px] leading-snug">{title}</span>
+                          {detail && <span className="block text-[13px] text-academy-textMain/60 leading-snug mt-0.5">{detail}</span>}
+                        </span>
+                      </li>
+                    )
+                  })}
                 </ul>
               )}
             </div>
