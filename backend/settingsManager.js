@@ -275,6 +275,25 @@ const defaultSettings = {
     ],
     results: ['Votre vidéo terminée, prête à publier', 'La méthode pour filmer et monter seul', 'Une attestation de participation'],
   },
+  // Publications Instagram montrées sur l'accueil : preuve que la formation existe
+  // vraiment. On ne garde que le code du post ; l'affichage passe par l'intégration
+  // officielle d'Instagram, donc rien n'est copié ni hébergé ici.
+  instagram: {
+    enabled: true,
+    account: 'mylta_academy',
+    posts: [
+      { code: 'DWpCNGujkSK', tag: 'formation' },
+      { code: 'DezndQSRtPL', tag: 'formation' },
+      { code: 'DWmeuonjvT4', tag: 'formation' },
+      { code: 'DYDNp7mxWYj', tag: 'formation' },
+      { code: 'DagXSsyxM0R', tag: 'temoignage' },
+      { code: 'Demu9U-xV_k', tag: 'temoignage' },
+      { code: 'DemuVpbR48t', tag: 'temoignage' },
+      { code: 'DYIEBulNSgo', tag: 'formation' },
+      { code: 'DXAWM3zDmim', tag: 'formation' },
+      { code: 'DYF2xxdObBG', tag: 'ia' },
+    ],
+  },
   inPerson: {
     enabled: true,
     title: 'Formation IA & Montage Vidéo',
@@ -438,6 +457,7 @@ function readSettingsFromDisk() {
         curriculum: { ...defaultSettings.inPerson.curriculum, ...(parsed.inPerson?.curriculum || {}) },
       },
       contest: { ...defaultSettings.contest, ...(parsed.contest || {}) },
+      instagram: { ...defaultSettings.instagram, ...(parsed.instagram || {}) },
       welcome: { ...defaultSettings.welcome, ...(parsed.welcome || {}) },
       express: { ...defaultSettings.express, ...(parsed.express || {}) },
       // Liste vide = choix de l'admin ; liste sans id = ancien format, remplacé par les défauts
@@ -457,7 +477,7 @@ function readSettingsFromDisk() {
 // les valeurs par défaut au premier démarrage, donc un simple changement de
 // défaut ne l'atteint pas). Appliqué une fois : le prochain enregistrement admin
 // écrit settingsVersion à jour.
-const SETTINGS_VERSION = 15
+const SETTINGS_VERSION = 16
 const OLD_BANNER_TEXTS = ["🚀 Promo exceptionnelle : -50% sur toutes les formations ! Inscrivez-vous vite."]
 
 function migrateSettings(parsed, merged) {
@@ -524,6 +544,9 @@ function migrateSettings(parsed, merged) {
   if ((parsed.settingsVersion || 1) < 15) {
     // Programme réécrit : chaque point devient un titre court suivi d'un détail.
     merged.inPerson = { ...merged.inPerson, curriculum: CURRICULUM }
+  }
+  if ((parsed.settingsVersion || 1) < 16) {
+    merged.instagram = { ...defaultSettings.instagram, ...(parsed.instagram || {}), posts: defaultSettings.instagram.posts }
   }
   merged.settingsVersion = SETTINGS_VERSION
   return merged
