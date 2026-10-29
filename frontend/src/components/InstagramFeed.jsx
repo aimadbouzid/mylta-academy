@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Instagram, Play } from 'lucide-react'
+import ReelPlayer from './ReelPlayer'
 
 // Publications Instagram de l'académie, montrées sur l'accueil.
 // L'intégration officielle d'Instagram n'est chargée que lorsque la carte
@@ -13,7 +14,7 @@ const TAGS = [
 ]
 const TAG_LABEL = { formation: 'En formation', temoignage: 'Témoignage', ia: 'IA' }
 
-function Post({ code, tag, hidden }) {
+function Post({ code, tag, video, poster, hidden }) {
   const ref = useRef(null)
   const [visible, setVisible] = useState(false)
 
@@ -28,7 +29,12 @@ function Post({ code, tag, hidden }) {
   return (
     <article ref={ref} className={`snap-start shrink-0 w-[270px] sm:w-[300px] ${hidden ? 'hidden' : ''}`}>
       <div className="relative rounded-xl overflow-hidden border border-academy-border bg-white h-[440px]">
-        {visible ? (
+        {/* Vidéo hébergée ici : elle démarre seule, sans attendre Instagram. */}
+        {video ? (
+          <a href={`https://www.instagram.com/p/${code}/`} target="_blank" rel="noopener noreferrer" className="block w-full h-full">
+            <ReelPlayer src={video} poster={poster} className="w-full h-full" />
+          </a>
+        ) : visible ? (
           <iframe
             src={`https://www.instagram.com/p/${code}/embed/`}
             title={`Publication Instagram ${code}`}
@@ -87,7 +93,8 @@ export default function InstagramFeed({ instagram }) {
 
         <div className="mt-4 flex gap-3 overflow-x-auto snap-x snap-mandatory hide-scrollbar pb-1">
           {instagram.posts.map(p => (
-            <Post key={p.code} code={p.code} tag={p.tag} hidden={tag !== 'all' && p.tag !== tag} />
+            <Post key={p.code} code={p.code} tag={p.tag} video={p.video} poster={p.poster}
+                  hidden={tag !== 'all' && p.tag !== tag} />
           ))}
         </div>
       </div>
