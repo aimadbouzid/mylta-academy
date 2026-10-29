@@ -212,8 +212,9 @@ export default function InPersonPage() {
     <>
       <SEOHead
         title={`${cfg?.title || 'Coaching présentiel'} | Mylta Academy`}
-        description="Formation en présentiel de 3 jours : filmer, monter sur CapCut et utiliser l'IA comme un pro depuis votre smartphone. Petit groupe, places limitées."
+        description="Les 12, 13 et 14 novembre à Béjaïa : filmer, monter sur CapCut et faire travailler l'IA depuis votre smartphone. 3 jours en présentiel, 10 places."
         canonicalPath="/coaching-presentiel"
+        ogImage="/og-formation.png"
       />
       <div className="min-h-screen bg-transparent text-academy-textMain flex flex-col">
         <Navbar />

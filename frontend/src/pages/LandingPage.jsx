@@ -95,8 +95,9 @@ export default function LandingPage() {
     <>
       <SEOHead
         title="Formation Premium en Algérie"
-        description="Mylta Academy — Formations pratiques en Marketing Digital, Tech et Business. Paiement par CCP et BaridiMob."
+        description="Formation IA & Montage Vidéo, les 12, 13 et 14 novembre à Béjaïa. Filmer, monter et utiliser l'IA sur smartphone. 3 jours en présentiel, 10 places."
         canonicalPath="/"
+        ogImage="/og-formation.png"
       />
 
       <div className="min-h-screen bg-academy-surface overflow-hidden relative">
