@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import api from '../api/axios'
+import { getSessions } from '../api/sessions'
 
 // Annonce de la formation, dessinée comme un billet d'évènement imprimé :
 // papier crème tramé, souche rouge « ENTRÉE » sur la tranche, bords dentelés,
@@ -16,9 +17,6 @@ const ROUGE = '#c0392f'
 
 // Trame d'imprimerie : des points fins, comme l'impression d'un vrai ticket.
 const TRAME = `radial-gradient(${ENCRE}1f 0.7px, transparent 0.8px)`
-// Dentelure : une rangée de demi-cercles mordus dans le bord de la carte.
-const dentelure = (cote) =>
-  `radial-gradient(circle at 50% ${cote === 'haut' ? '0' : '100%'}, transparent 0 5px, ${PAPIER} 5.5px)`
 
 const cap = (x) => x.charAt(0).toUpperCase() + x.slice(1)
 const hour = (t) => (t || '').replace(':', 'h')
@@ -29,8 +27,8 @@ export default function FormationAd({ inPerson }) {
 
   useEffect(() => {
     if (!inPerson?.enabled) return
-    api.get('/in-person/sessions')
-      .then(({ data }) => setSession((data.sessions || []).find(s => s.seatsLeft > 0) || null))
+    getSessions()
+      .then(list => setSession(list.find(s => s.seatsLeft > 0) || null))
       .catch(() => {})
   }, [inPerson?.enabled])
 
@@ -65,12 +63,6 @@ export default function FormationAd({ inPerson }) {
         className="relative mx-auto max-w-3xl lg:max-w-none overflow-hidden rounded-[3px] shadow-soft-lg"
         style={{ background: PAPIER, backgroundImage: TRAME, backgroundSize: '4px 4px', color: ENCRE }}
       >
-        {/* Bords dentelés : ce que laisse une découpe de billetterie. */}
-        <span aria-hidden="true" className="absolute inset-x-0 top-0 h-[6px] z-10"
-              style={{ backgroundImage: dentelure('haut'), backgroundSize: '14px 6px' }} />
-        <span aria-hidden="true" className="absolute inset-x-0 bottom-0 h-[6px] z-10"
-              style={{ backgroundImage: dentelure('bas'), backgroundSize: '14px 6px' }} />
-
         <div className="flex">
           {/* Souche d'entrée, sur la tranche. */}
           <div className="relative shrink-0 w-8 sm:w-11 flex items-center justify-center"

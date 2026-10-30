@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowRight, Clock, CalendarDays, MapPin, Coins, Monitor, Users } from 'lucide-react'
 import api from '../api/axios'
+import { getSessions } from '../api/sessions'
 
 // Accueil : les trois façons de se former, en bandeaux larges. Chaque carte
 // porte sa couleur et, si le fichier existe, une photo au fond à droite.
@@ -79,8 +80,8 @@ export default function FormationsHub({ coaching, inPerson, express }) {
 
   useEffect(() => {
     if (!inPerson?.enabled) return
-    api.get('/in-person/sessions')
-      .then(({ data }) => setSession((data.sessions || []).find(s => s.seatsLeft > 0) || null))
+    getSessions()
+      .then(list => setSession(list.find(s => s.seatsLeft > 0) || null))
       .catch(() => {})
   }, [inPerson?.enabled])
   useEffect(() => {

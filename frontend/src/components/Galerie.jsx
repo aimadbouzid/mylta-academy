@@ -37,6 +37,36 @@ function Row({ items }) {
     return () => { el.removeEventListener('scroll', update); window.removeEventListener('resize', update) }
   }, [])
 
+  // Au premier passage à l'écran, la rangée glisse puis revient : le geste dit
+  // « ça se fait glisser » mieux qu'une phrase, et il ne se produit qu'une fois.
+  //
+  // L'animation est en CSS, sur le contenu de la rangée, et non en JavaScript
+  // sur la position de défilement : l'accroche « obligatoire » annule tout
+  // défilement programmé, et une animation CSS reste fluide même quand le fil
+  // principal est occupé à décoder les vidéos.
+  const [montrerGeste, setMontrerGeste] = useState(false)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return
+
+    let fait = false
+    const verifier = () => {
+      if (fait) return
+      const r = el.getBoundingClientRect()
+      if (r.bottom < 0 || r.top > window.innerHeight * 0.85) return
+      if (el.scrollWidth <= el.clientWidth + 20) return
+      fait = true
+      window.removeEventListener('scroll', verifier)
+      setMontrerGeste(true)
+    }
+
+    verifier()
+    window.addEventListener('scroll', verifier, { passive: true })
+    return () => window.removeEventListener('scroll', verifier)
+  }, [])
+
   const nudge = (dir) => {
     const el = ref.current
     if (!el) return
@@ -48,6 +78,7 @@ function Row({ items }) {
       <div ref={ref}
            className="flex gap-3 overflow-x-auto hide-scrollbar pb-1 snap-x snap-mandatory
                       overscroll-x-contain [-webkit-overflow-scrolling:touch]">
+        <div className={`flex gap-3 ${montrerGeste ? 'geste-glisser' : ''}`}>
         {items.map(item => (
           <article key={item.src} className="shrink-0 w-[118px] sm:w-[150px] snap-start">
             <div className="rounded-xl overflow-hidden border border-academy-border bg-black aspect-[9/16]">
@@ -63,7 +94,21 @@ function Row({ items }) {
             )}
           </article>
         ))}
+        </div>
       </div>
+
+      <style>{`
+        @keyframes geste-glisser { 0%, 12%, 100% { transform: translateX(0) } 48% { transform: translateX(-56px) } }
+        .geste-glisser { animation: geste-glisser 1.5s cubic-bezier(.4,0,.2,1) both; }
+        @media (prefers-reduced-motion: reduce) { .geste-glisser { animation: none } }
+      `}</style>
+
+      {/* Le contenu s'efface sur le bord droit : la rangée continue visiblement
+          au-delà de l'écran, au lieu de s'arrêter net sur une vignette coupée. */}
+      <span aria-hidden="true"
+            className={`pointer-events-none absolute inset-y-0 right-0 w-10 transition-opacity duration-300
+                        bg-gradient-to-l from-academy-surface to-transparent
+                        ${ends.end ? 'opacity-0' : 'opacity-100'}`} />
 
       {/* Flèches à la souris : au doigt, on fait simplement glisser. */}
       {['start', 'end'].map(side => (

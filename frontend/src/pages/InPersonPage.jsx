@@ -12,6 +12,7 @@ import Curriculum from '../components/Curriculum'
 import SessionCountdown from '../components/SessionCountdown'
 import { formatDate } from '../utils/sessionDates'
 import { PAYMENT_INFO } from '../config/paymentConfig'
+import { getSessions } from '../api/sessions'
 
 const STEPS = ['Formation', 'Date', 'Profil', 'Infos']
 
@@ -84,9 +85,10 @@ export default function InPersonPage() {
   const [copied, setCopied] = useState('')
   const [reprise, setReprise] = useState(false)
 
-  const loadSessions = () => {
-    api.get('/in-person/sessions')
-      .then(({ data }) => {
+  const loadSessions = (rafraichir = false) => {
+    getSessions(rafraichir)
+      .then((list) => {
+        const data = { sessions: list }
         setSessions(data.sessions || [])
         const firstFree = (data.sessions || []).find(s => s.seatsLeft > 0)
         setSessionId(id => id ?? firstFree?.id ?? null)
@@ -184,7 +186,7 @@ export default function InPersonPage() {
       requestAnimationFrame(() => topRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }))
     } catch (err) {
       setError(err.response?.data?.error || "L'inscription a échoué. Réessayez.")
-      if (err.response?.status === 409) { loadSessions(); goTo(1) }
+      if (err.response?.status === 409) { loadSessions(true); goTo(1) }
     } finally {
       setSubmitting(false)
     }

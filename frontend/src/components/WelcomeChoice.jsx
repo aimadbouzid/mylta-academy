@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom'
 import { useNavigate } from 'react-router-dom'
 import { useSiteSettings } from '../context/SiteSettingsContext'
 import api from '../api/axios'
+import { getSessions } from '../api/sessions'
 
 // Premier écran du visiteur : la question qu'il se pose vraiment en arrivant,
 // « laquelle des trois ? ». Posée une fois, puis plus avant quatre heures : le
@@ -32,8 +33,8 @@ export default function WelcomeChoice() {
   // page qui n'a rien à lui vendre : on le dit avant qu'il clique.
   useEffect(() => {
     if (!settings?.inPerson?.enabled) return
-    api.get('/in-person/sessions')
-      .then(({ data }) => setHasDates((data.sessions || []).some(x => x.seatsLeft > 0)))
+    getSessions()
+      .then(list => setHasDates(list.some(x => x.seatsLeft > 0)))
       .catch(() => setHasDates(true))
   }, [settings?.inPerson?.enabled])
 

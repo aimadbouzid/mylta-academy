@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { CalendarDays, ArrowRight } from 'lucide-react'
 import api from '../api/axios'
+import { getSessions } from '../api/sessions'
 
 // « Mar. 20 → jeu. 22 oct. » : tient sur une ligne de téléphone, même avec l'étiquette du créneau.
 const shortRange = (iso) => {
@@ -20,8 +21,8 @@ export default function NextSessionAd({ enabled, notice }) {
 
   useEffect(() => {
     if (!enabled) return
-    api.get('/in-person/sessions')
-      .then(({ data }) => setSessions((data.sessions || []).filter(s => s.seatsLeft > 0).slice(0, 3)))
+    getSessions()
+      .then(list => setSessions(list.filter(s => s.seatsLeft > 0).slice(0, 3)))
       .catch(() => {})
   }, [enabled])
 
