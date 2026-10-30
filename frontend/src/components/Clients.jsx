@@ -28,7 +28,8 @@ export default function Clients() {
                 <li key={c.nom} className="shrink-0">
                   <img src={c.logo} alt={copie === 0 ? c.nom : ''} loading="lazy" decoding="async"
                        width="300" height="300"
-                       className="w-14 h-14 sm:w-20 sm:h-20 rounded-full object-cover bg-white border border-academy-border" />
+                       className="w-14 h-14 sm:w-20 sm:h-20 rounded-full object-cover bg-white border border-academy-border
+                                  grayscale opacity-80 transition duration-300 hover:grayscale-0 hover:opacity-100" />
                 </li>
               ))}
             </ul>

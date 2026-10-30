@@ -228,6 +228,8 @@ export default function LandingPage() {
 
         <FormationAd inPerson={siteSettings.inPerson} />
 
+        <Clients />
+
         {siteSettings.contest?.enabled && !(siteSettings.contest.endDate && siteSettings.contest.endDate < new Date().toISOString().slice(0, 10)) && (
           <section className="section-container pt-4">
             <Link to="/concours" className="group relative flex max-w-3xl lg:max-w-none mx-auto bg-white border border-academy-border rounded-xl overflow-hidden hover:border-academy-textMain/30 transition-colors">
@@ -461,7 +463,6 @@ export default function LandingPage() {
 
         <Productions productions={siteSettings.productions} />
 
-        <Clients />
 
         {/* FOOTER */}
         <footer className="border-t border-academy-border pt-16 pb-8 bg-academy-surfaceDark/50">
