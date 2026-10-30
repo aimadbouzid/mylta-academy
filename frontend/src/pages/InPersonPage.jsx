@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowLeft, ArrowRight, CheckCircle2, MessageCircle, MapPin, Clock, Users, Check, Copy, Sun, Sunset } from 'lucide-react'
+import { ArrowLeft, ArrowRight, CheckCircle2, MessageCircle, MapPin, Clock, Users, Check, Copy, Sun, Sunset, ChevronDown } from 'lucide-react'
 import Navbar from '../components/Navbar'
 import { trackEvent } from '../lib/facebookPixel'
 import TrainingLocation from '../components/TrainingLocation'
@@ -414,12 +414,31 @@ export default function InPersonPage() {
                     </p>
                   </section>
                 )}
+                {/* Le détail est replié : la première étape doit tenir sur un
+                    écran et répondre à « c'est quoi, quand, combien ». Qui veut
+                    le programme complet ou le lieu les ouvre lui-même. */}
                 {step === 0 && (
-                  <section className={`${card} mt-4`}>
-                    <Curriculum curriculum={cfg.curriculum} />
-                  </section>
+                  <details className={`${card} mt-4 group/det`}>
+                    <summary className="flex items-center justify-between gap-3 cursor-pointer list-none
+                                        font-bold text-[15px] marker:hidden">
+                      Le programme en détail
+                      <ChevronDown size={18} className="shrink-0 text-academy-textMain/40 transition-transform group-open/det:rotate-180" />
+                    </summary>
+                    <div className="mt-4">
+                      <Curriculum curriculum={cfg.curriculum} />
+                    </div>
+                  </details>
                 )}
-                {step === 0 && <div className="mt-4"><TrainingLocation /></div>}
+                {step === 0 && (
+                  <details className={`${card} mt-4 group/det`}>
+                    <summary className="flex items-center justify-between gap-3 cursor-pointer list-none
+                                        font-bold text-[15px] marker:hidden">
+                      Où ça se passe
+                      <ChevronDown size={18} className="shrink-0 text-academy-textMain/40 transition-transform group-open/det:rotate-180" />
+                    </summary>
+                    <div className="mt-4"><TrainingLocation /></div>
+                  </details>
+                )}
 
 
                 {/* 2. La date */}
