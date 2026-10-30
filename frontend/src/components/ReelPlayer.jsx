@@ -1,140 +1,126 @@
 import { useEffect, useRef, useState } from 'react'
-import { Volume2, VolumeX } from 'lucide-react'
+import { Play, Volume2, VolumeX } from 'lucide-react'
 
-// Lecteur des vidéos du fil, pensé pour le téléphone.
-// Trois règles pour que ce soit rapide et fluide sur Android comme sur iPhone :
-//   · `playsInline` — sans lui, iOS ouvre la vidéo en plein écran et coupe la page ;
-//   · démarrage sans le son — les navigateurs refusent la lecture automatique sonore ;
-//   · une seule vidéo joue à la fois, celle qui est à l'écran : les autres sont mises
-//     en pause et ne téléchargent rien, donc pas de saccade ni de forfait gaspillé.
+// Lecteur des vidéos de la galerie.
+//
+// Rien ne démarre tout seul : chaque vignette montre son image avec un bouton
+// de lecture au centre, et la balise vidéo n'est créée qu'au clic. C'est le
+// visiteur qui choisit ce qu'il regarde — et tant qu'il n'a rien choisi, le
+// téléphone ne décode aucune vidéo, ne télécharge aucun fichier.
+//
+// Une seule vidéo joue à la fois : lancer la suivante arrête la précédente.
 
-// Trois barres défilent en même temps : sans garde-fou, une dizaine de vidéos
-// se décoderaient d'un coup et le téléphone chaufferait. On en laisse jouer
-// quatre au plus ; les autres gardent leur image et auront leur tour en
-// repassant à l'écran.
-const MAX_EN_LECTURE = 3
-const enLecture = new Set()
-
-// Vignettes visibles qui attendent une place. Sans cette file, une vidéo
-// arrivée alors que les trois places étaient prises restait figée sur son
-// image tant qu'on ne la sortait pas puis ne la ramenait pas à l'écran — on
-// croyait la vidéo cassée. Dès qu'une place se libère, la suivante démarre.
-const enAttente = new Set()
-
-function libererPlace(el) {
-  if (!enLecture.delete(el)) return
-  for (const reprendre of [...enAttente]) {
-    if (enLecture.size >= MAX_EN_LECTURE) break
-    reprendre()
-  }
-}
+let enCours = null // { pause() } de la vignette qui joue
 
 export default function ReelPlayer({ src, poster, className = '' }) {
   const ref = useRef(null)
-  const [near, setNear] = useState(false)   // assez proche pour précharger
+  const [active, setActive] = useState(false)  // la balise vidéo est montée
   const [playing, setPlaying] = useState(false)
   const [muted, setMuted] = useState(true)
-  const visible = useRef(false)
 
-  // Tente la lecture si la vignette est à l'écran et qu'une place est libre.
-  const tenterLecture = useRef(() => {})
-  tenterLecture.current = () => {
-    const el = ref.current
-    const v = el?.querySelector('video')
-    if (!v || !visible.current || enLecture.has(el) || enLecture.size >= MAX_EN_LECTURE) return
-    enLecture.add(el)
-    v.play().then(() => setPlaying(true)).catch(() => libererPlace(el))
+  const arreter = () => {
+    ref.current?.querySelector('video')?.pause()
+    setPlaying(false)
+    setActive(false)
   }
 
-  // Inscrite dans la file d'attente tant que la vignette est montée.
-  useEffect(() => {
-    const reprendre = () => tenterLecture.current()
-    enAttente.add(reprendre)
-    return () => enAttente.delete(reprendre)
-  }, [])
+  const lancer = () => {
+    if (enCours && enCours !== arreter) enCours()
+    enCours = arreter
+    setActive(true)
+    setPlaying(true)
+  }
 
-  // La balise vidéo n'existe que près de l'écran, et disparaît dès qu'on s'en
-  // éloigne : c'est ce qui évite d'avoir quatre-vingts décodeurs ouverts en même
-  // temps quand les barres défilent. L'affiche prend le relais, on ne voit rien.
+  // La balise vient d'être montée : on lance la lecture.
   useEffect(() => {
+    if (!active) return
+    const v = ref.current?.querySelector('video')
+    v?.play().catch(() => setPlaying(false))
+  }, [active])
+
+  // Sortie d'écran ou onglet masqué : on arrête. Laisser tourner une vidéo
+  // qu'on ne voit plus consomme de la batterie et des données pour rien.
+  useEffect(() => {
+    if (!active) return
     const el = ref.current
     if (!el) return
-    const preload = new IntersectionObserver(([e]) => {
-      setNear(e.isIntersecting)
-      if (!e.isIntersecting) { visible.current = false; libererPlace(el); setPlaying(false) }
-    }, { rootMargin: '200px' })
-    const play = new IntersectionObserver(([e]) => {
-      visible.current = e.isIntersecting
-      if (e.isIntersecting) {
-        tenterLecture.current()
-      } else {
-        libererPlace(el)
-        el.querySelector('video')?.pause()
-        setPlaying(false)
-      }
-    }, { threshold: 0.45 })
-    preload.observe(el)
-    play.observe(el)
-    return () => { preload.disconnect(); play.disconnect(); libererPlace(el) }
-  }, [])
 
-  // La balise vient d'apparaître : si la carte est déjà à l'écran, l'observateur
-  // ne se déclenchera plus, donc on tente la lecture ici.
-  useEffect(() => {
-    const el = ref.current
-    if (!near || !el?.querySelector('video')) return
-    const r = el.getBoundingClientRect()
-    if (r.bottom < 0 || r.top > window.innerHeight || r.right < 0 || r.left > window.innerWidth) return
-    visible.current = true
-    tenterLecture.current()
-  }, [near])
+    // L'observateur peut annoncer « hors écran » au moment même où la vidéo
+    // vient d'être lancée (il livre toujours un premier état, et certains
+    // navigateurs le donnent à faux quand l'onglet n'est pas peint). On
+    // revérifie donc la position avant d'arrêter quoi que ce soit.
+    const io = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) return
+      const r = el.getBoundingClientRect()
+      const visible = r.bottom > 0 && r.top < window.innerHeight && r.right > 0 && r.left < window.innerWidth
+      if (!visible) arreter()
+    }, { threshold: 0.2 })
+    io.observe(el)
 
-  // Mettre en pause quand l'onglet passe à l'arrière-plan.
-  useEffect(() => {
-    const onHide = () => { if (document.hidden) ref.current?.querySelector('video')?.pause() }
+    const onHide = () => { if (document.hidden) arreter() }
     document.addEventListener('visibilitychange', onHide)
-    return () => document.removeEventListener('visibilitychange', onHide)
-  }, [])
 
-  const toggleSound = (e) => {
+    return () => { io.disconnect(); document.removeEventListener('visibilitychange', onHide) }
+  }, [active])
+
+  useEffect(() => () => { if (enCours === arreter) enCours = null }, [])
+
+  const basculerSon = (e) => {
     e.preventDefault()
     e.stopPropagation()
     const v = ref.current?.querySelector('video')
     if (!v) return
     v.muted = !v.muted
     setMuted(v.muted)
-    if (v.paused) v.play().catch(() => {})
   }
 
   return (
     <div ref={ref} className={`relative overflow-hidden bg-black ${className}`}>
-      {near ? (
+      {active ? (
         <video
           src={src}
           poster={poster}
           muted={muted}
           loop
           playsInline
-          preload="metadata"
+          preload="auto"
           disablePictureInPicture
           controls={false}
           className="w-full h-full object-cover"
+          onClick={arreter}
           onPlaying={() => setPlaying(true)}
         />
       ) : (
-        poster && <img src={poster} alt="" loading="lazy" className="w-full h-full object-cover" />
+        poster && <img src={poster} alt="" loading="lazy" decoding="async"
+                       className="w-full h-full object-cover" />
       )}
 
-      <button type="button" onClick={toggleSound}
-              aria-label={muted ? 'Activer le son' : 'Couper le son'}
-              className="absolute bottom-2 right-2 w-9 h-9 rounded-full bg-black/55 text-white flex items-center justify-center backdrop-blur-sm">
-        {muted ? <VolumeX size={16} /> : <Volume2 size={16} />}
-      </button>
+      {/* Bouton de lecture, au centre. Il disparaît pendant la lecture pour
+          laisser l'image tranquille, et revient si on met en pause. */}
+      {!playing && (
+        <button
+          type="button"
+          onClick={lancer}
+          aria-label="Lire la vidéo"
+          className="absolute inset-0 grid place-items-center group/play focus:outline-none"
+        >
+          <span className="grid place-items-center w-12 h-12 rounded-full
+                           bg-white/90 text-black shadow-[0_4px_20px_rgba(0,0,0,0.45)]
+                           backdrop-blur-sm transition-transform duration-200
+                           group-hover/play:scale-110 group-active/play:scale-95">
+            <Play size={19} strokeWidth={0} className="translate-x-[1px] fill-current" />
+          </span>
+        </button>
+      )}
 
-      {!playing && near && !poster && (
-        <span aria-hidden="true" className="absolute inset-0 flex items-center justify-center">
-          <span className="w-10 h-10 rounded-full border-2 border-white/30 border-t-white animate-spin" />
-        </span>
+      {/* Le son ne se propose qu'une fois la vidéo lancée. */}
+      {playing && (
+        <button type="button" onClick={basculerSon}
+                aria-label={muted ? 'Activer le son' : 'Couper le son'}
+                className="absolute bottom-2 right-2 w-9 h-9 rounded-full bg-black/55 text-white
+                           flex items-center justify-center backdrop-blur-sm">
+          {muted ? <VolumeX size={16} /> : <Volume2 size={16} />}
+        </button>
       )}
     </div>
   )
