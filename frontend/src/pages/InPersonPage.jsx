@@ -516,8 +516,9 @@ export default function InPersonPage() {
                 {step === 2 && (
                   <section key="etape-2" className={`${card} space-y-5 etape-entre`}>
                     {/* Entre le choix de la date et les questions, le visiteur perd
-                        de vue ce qu'il réserve. Programme, date et lieu restent
-                        sous ses yeux ; l'admin peut masquer ce bloc. */}
+                        de vue ce qu'il réserve : la date et le lieu restent donc
+                        sous ses yeux. Le programme, lui, a déjà été vu deux fois
+                        à l'étape précédente. L'admin peut masquer ce bloc. */}
                     {cfg.recapEnabled !== false && selected && (
                       <div className="rounded-xl border border-academy-border bg-academy-surface/60 p-4 space-y-3">
                         <div>
@@ -531,18 +532,6 @@ export default function InPersonPage() {
                               {cfg.venue && <span className="font-bold block">{cfg.venue}</span>}
                               {cfg.venueAddress && <span className="text-academy-textMain/65">{cfg.venueAddress}</span>}
                             </p>
-                          </div>
-                        )}
-                        {(cfg.program || []).length > 0 && (
-                          <div>
-                            <p className="text-[11px] font-black uppercase tracking-wider text-academy-textMain/50">Au programme</p>
-                            <ul className="mt-1 grid grid-cols-2 gap-x-3 gap-y-1">
-                              {cfg.program.map(item => (
-                                <li key={item} className="flex items-start gap-1.5 text-[13px] leading-snug">
-                                  <Check size={13} className="mt-0.5 shrink-0 text-academy-primary" />{item}
-                                </li>
-                              ))}
-                            </ul>
                           </div>
                         )}
                       </div>
