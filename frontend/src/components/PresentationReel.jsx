@@ -143,26 +143,50 @@ export default function PresentationReel() {
       <div className="absolute inset-0 z-30 pointer-events-none rounded-2xl" style={{ boxShadow: 'inset 0 0 0 1px rgba(255,255,255,.07)' }} />
 
       {/* Barres de progression façon « story » */}
-      <div className="absolute top-[3cqw] inset-x-[4cqw] z-20 flex gap-[1cqw]">
+      <div className="absolute top-[2.6cqw] inset-x-[3.2cqw] z-20 flex gap-[0.7cqw]">
         {scenes.map((s, i) => (
-          <span key={s} className="h-[0.35cqw] min-h-[2px] flex-1 bg-white/15 overflow-hidden">
+          <span key={s} className="h-[0.45cqw] min-h-[2.5px] flex-1 rounded-full bg-white/25 overflow-hidden">
             <span
               key={i === step ? `on-${step}` : 'off'}
-              className={`block h-full bg-white/80 ${i === step ? 'bar' : ''}`}
+              className={`block h-full rounded-full bg-white ${i === step ? 'bar' : ''}`}
               style={i === step ? { animationDuration: `${DUR[s]}ms`, animationPlayState: paused ? 'paused' : 'running' } : { transform: `scaleX(${i < step ? 1 : 0})` }}
             />
           </span>
         ))}
       </div>
 
+      {/* En-tête de story : la pastille du compte, son nom, l'ancienneté et le
+          menu. C'est cette ligne, plus que l'image, qui fait reconnaître une
+          story au premier coup d'œil. */}
+      <div className="absolute top-[4.6cqw] inset-x-[3.2cqw] z-20 flex items-center gap-[1.6cqw] pointer-events-none">
+        <span className="shrink-0 rounded-full p-[0.3cqw] bg-gradient-to-tr from-[#f9ce34] via-[#ee2a7b] to-[#6228d7]">
+          <img src="/logo-128.png" alt="" aria-hidden="true"
+               className="block h-[4.4cqw] w-[4.4cqw] rounded-full object-cover border-[0.3cqw] border-black/80" />
+        </span>
+        <span className="text-[2.2cqw] font-bold leading-none">mylta_academy</span>
+        <span className="text-[2.2cqw] leading-none text-white/55">2 h</span>
+        <span className="ms-auto flex gap-[0.5cqw]" aria-hidden="true">
+          {[0, 1, 2].map(i => <span key={i} className="block h-[0.55cqw] w-[0.55cqw] rounded-full bg-white/75" />)}
+        </span>
+      </div>
+
+      {/* Zone de retour : sur Instagram, le tiers gauche revient en arrière et
+          le reste avance. Sans ça, une scène manquée oblige à refaire le tour. */}
+      <button
+        type="button"
+        aria-label="Scène précédente"
+        onClick={(e) => { e.stopPropagation(); setScene(s => (s - 1 + scenes.length) % scenes.length) }}
+        className="absolute inset-y-0 left-0 z-10 w-1/4 cursor-default focus:outline-none"
+      />
+
       {/* Signature discrète, en bas de cadre. Absente de la scène d'ouverture,
           où le logo est déjà le sujet : deux fois la même marque à l'écran. */}
       {act !== 'convention' && (
         <img src="/logo-wordmark-white.png" alt="" aria-hidden="true"
-             className="absolute bottom-[3.5cqw] left-[4cqw] z-20 h-[2.4cqw] w-auto opacity-30 pointer-events-none" />
+             className="absolute bottom-[3.2cqw] left-[3.2cqw] z-20 h-[2.2cqw] w-auto opacity-30 pointer-events-none" />
       )}
 
-      <div key={step} className="push absolute inset-0 flex items-center justify-center px-[7cqw] pt-[7cqw] pb-[7.5cqw]">
+      <div key={step} className="push absolute inset-0 flex items-center justify-center px-[7cqw] pt-[12cqw] pb-[7.5cqw]">
         {act === 'convention' && (
           <div className="w-full text-center">
             {/* Ouverture : la marque seule, au centre, et rien d'autre. */}

@@ -15,11 +15,43 @@ import { Volume2, VolumeX } from 'lucide-react'
 const MAX_EN_LECTURE = 3
 const enLecture = new Set()
 
+// Vignettes visibles qui attendent une place. Sans cette file, une vidéo
+// arrivée alors que les trois places étaient prises restait figée sur son
+// image tant qu'on ne la sortait pas puis ne la ramenait pas à l'écran — on
+// croyait la vidéo cassée. Dès qu'une place se libère, la suivante démarre.
+const enAttente = new Set()
+
+function libererPlace(el) {
+  if (!enLecture.delete(el)) return
+  for (const reprendre of [...enAttente]) {
+    if (enLecture.size >= MAX_EN_LECTURE) break
+    reprendre()
+  }
+}
+
 export default function ReelPlayer({ src, poster, className = '' }) {
   const ref = useRef(null)
   const [near, setNear] = useState(false)   // assez proche pour précharger
   const [playing, setPlaying] = useState(false)
   const [muted, setMuted] = useState(true)
+  const visible = useRef(false)
+
+  // Tente la lecture si la vignette est à l'écran et qu'une place est libre.
+  const tenterLecture = useRef(() => {})
+  tenterLecture.current = () => {
+    const el = ref.current
+    const v = el?.querySelector('video')
+    if (!v || !visible.current || enLecture.has(el) || enLecture.size >= MAX_EN_LECTURE) return
+    enLecture.add(el)
+    v.play().then(() => setPlaying(true)).catch(() => libererPlace(el))
+  }
+
+  // Inscrite dans la file d'attente tant que la vignette est montée.
+  useEffect(() => {
+    const reprendre = () => tenterLecture.current()
+    enAttente.add(reprendre)
+    return () => enAttente.delete(reprendre)
+  }, [])
 
   // La balise vidéo n'existe que près de l'écran, et disparaît dès qu'on s'en
   // éloigne : c'est ce qui évite d'avoir quatre-vingts décodeurs ouverts en même
@@ -29,35 +61,32 @@ export default function ReelPlayer({ src, poster, className = '' }) {
     if (!el) return
     const preload = new IntersectionObserver(([e]) => {
       setNear(e.isIntersecting)
-      if (!e.isIntersecting) { enLecture.delete(el); setPlaying(false) }
+      if (!e.isIntersecting) { visible.current = false; libererPlace(el); setPlaying(false) }
     }, { rootMargin: '200px' })
     const play = new IntersectionObserver(([e]) => {
-      const v = el.querySelector('video')
+      visible.current = e.isIntersecting
       if (e.isIntersecting) {
-        if (!v || enLecture.size >= MAX_EN_LECTURE) return
-        enLecture.add(el)
-        v.play().then(() => setPlaying(true)).catch(() => enLecture.delete(el))
+        tenterLecture.current()
       } else {
-        enLecture.delete(el)
-        v?.pause()
+        libererPlace(el)
+        el.querySelector('video')?.pause()
         setPlaying(false)
       }
-    }, { threshold: 0.6 })
+    }, { threshold: 0.45 })
     preload.observe(el)
     play.observe(el)
-    return () => { preload.disconnect(); play.disconnect(); enLecture.delete(el) }
+    return () => { preload.disconnect(); play.disconnect(); libererPlace(el) }
   }, [])
 
   // La balise vient d'apparaître : si la carte est déjà à l'écran, l'observateur
   // ne se déclenchera plus, donc on tente la lecture ici.
   useEffect(() => {
     const el = ref.current
-    const v = near && el?.querySelector('video')
-    if (!v || enLecture.size >= MAX_EN_LECTURE) return
+    if (!near || !el?.querySelector('video')) return
     const r = el.getBoundingClientRect()
     if (r.bottom < 0 || r.top > window.innerHeight || r.right < 0 || r.left > window.innerWidth) return
-    enLecture.add(el)
-    v.play().then(() => setPlaying(true)).catch(() => enLecture.delete(el))
+    visible.current = true
+    tenterLecture.current()
   }, [near])
 
   // Mettre en pause quand l'onglet passe à l'arrière-plan.

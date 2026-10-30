@@ -8,6 +8,10 @@ import api from '../api/axios'
 // prix et le bouton. Un objet qu'on reconnaît au premier coup d'œil, au lieu
 // d'une suite de paragraphes empilés.
 
+// Code-barres décoratif : des barres de largeurs irrégulières, dessinées en CSS.
+// Une image serait un fichier de plus à charger pour un détail purement visuel.
+const BARCODE = 'repeating-linear-gradient(90deg, currentColor 0 2px, transparent 2px 4px, currentColor 4px 5px, transparent 5px 9px, currentColor 9px 12px, transparent 12px 14px)'
+
 const cap = (x) => x.charAt(0).toUpperCase() + x.slice(1)
 const hour = (t) => (t || '').replace(':', 'h')
 
@@ -42,6 +46,7 @@ export default function FormationAd({ inPerson }) {
   const mn = Math.floor(left / 60000);   left -= mn * 60000
   const sc = Math.floor(left / 1000)
   const pad = (n) => String(n).padStart(2, '0')
+  const serial = `MA-${session.date.replace(/-/g, '')}-${String(session.id || 1).padStart(3, '0')}`
 
   return (
     <section className="section-container pt-3">
@@ -51,6 +56,7 @@ export default function FormationAd({ inPerson }) {
         <div className="flex items-center justify-between gap-3 px-4 sm:px-7 py-2.5 border-b border-academy-surface/15
                         text-[9.5px] font-bold uppercase tracking-[0.18em] opacity-70">
           <span>Mylta Academy · Présentiel</span>
+          <span className="hidden sm:inline opacity-70">N° {serial}</span>
           <span>{session.capacity || 10} places</span>
         </div>
 
@@ -97,7 +103,7 @@ export default function FormationAd({ inPerson }) {
 
         {/* Le talon : ce qu'on détache, donc le prix et le bouton. */}
         <div className="px-4 sm:px-7 py-4 flex flex-wrap items-center justify-between gap-x-5 gap-y-3">
-          <div>
+          <div className="flex-1 min-w-0">
             <p className="flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
               <span className="font-display font-black text-[1.6rem] sm:text-[2.1rem] tracking-tight">
                 {price.toLocaleString('fr-FR')} DA
@@ -115,12 +121,27 @@ export default function FormationAd({ inPerson }) {
               Commence dans {j} j {pad(h)} h {pad(mn)} min {pad(sc)} s
             </p>
           </div>
-          <Link to="/coaching-presentiel"
-                className="group w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg
-                           bg-academy-primary text-academy-onPrimary px-6 py-3 text-[14px] font-bold
-                           hover:opacity-90 transition-opacity">
-            Réserver ma place <ArrowRight size={16} className="group-hover:translate-x-0.5 transition-transform" />
-          </Link>
+          {/* Code-barres : le détail qui fait lire « billet » avant même le texte. */}
+          <div aria-hidden="true" className="hidden sm:flex flex-col items-center gap-1 shrink-0 opacity-80">
+            <span className="block h-9 w-[104px]" style={{ backgroundImage: BARCODE }} />
+            <span className="text-[8.5px] font-bold uppercase tracking-[0.22em] opacity-60">{serial}</span>
+          </div>
+
+          <div className="w-full sm:w-auto flex items-center gap-3">
+            <span aria-hidden="true"
+                  className="hidden lg:block self-stretch border-l-2 border-dashed border-academy-surface/25" />
+            <div className="w-full sm:w-auto">
+              <Link to="/coaching-presentiel"
+                    className="group w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg
+                               bg-academy-primary text-academy-onPrimary px-6 py-3 text-[14px] font-bold
+                               hover:opacity-90 transition-opacity">
+                Réserver ma place <ArrowRight size={16} className="group-hover:translate-x-0.5 transition-transform" />
+              </Link>
+              <p className="mt-1.5 text-center text-[9px] font-bold uppercase tracking-[0.22em] opacity-50">
+                Entrée · 1 place
+              </p>
+            </div>
+          </div>
         </div>
       </article>
     </section>
