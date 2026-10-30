@@ -21,8 +21,11 @@ export const fondPapier = {
   color: ENCRE,
 }
 
-// Les trois écritures de l'imprimé : titres condensés, accents en serif
-// italique, mentions en chasse fixe (celle du système : rien à télécharger).
-export const TITRE = { fontFamily: '"Anton", "Archivo", sans-serif', fontWeight: 400 }
+// Les écritures de l'imprimé. Les titres étaient en Anton, une condensée
+// d'affiche, et les mentions en chasse fixe : deux polices étrangères au reste
+// du site, qui donnaient à ces blocs un air de vieille affiche de cinéma. On
+// reprend les polices du site — Archivo pour les titres, Inter pour le texte —
+// et il ne reste de l'imprimé que le papier, la trame et la bande rouge.
+export const TITRE = { fontFamily: '"Archivo", "Inter", sans-serif', fontWeight: 900, letterSpacing: '-0.01em' }
 export const SERIF = { fontFamily: '"Instrument Serif", Georgia, serif', fontStyle: 'italic' }
-export const MONO = { fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace' }
+export const MONO = { fontFamily: '"Inter", system-ui, sans-serif' }
