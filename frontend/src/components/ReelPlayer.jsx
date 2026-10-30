@@ -12,7 +12,7 @@ import { Volume2, VolumeX } from 'lucide-react'
 // se décoderaient d'un coup et le téléphone chaufferait. On en laisse jouer
 // quatre au plus ; les autres gardent leur image et auront leur tour en
 // repassant à l'écran.
-const MAX_EN_LECTURE = 4
+const MAX_EN_LECTURE = 3
 const enLecture = new Set()
 
 export default function ReelPlayer({ src, poster, className = '' }) {
@@ -21,11 +21,16 @@ export default function ReelPlayer({ src, poster, className = '' }) {
   const [playing, setPlaying] = useState(false)
   const [muted, setMuted] = useState(true)
 
-  // Précharge juste avant l'arrivée à l'écran, puis joue dès que la vidéo est visible.
+  // La balise vidéo n'existe que près de l'écran, et disparaît dès qu'on s'en
+  // éloigne : c'est ce qui évite d'avoir quatre-vingts décodeurs ouverts en même
+  // temps quand les barres défilent. L'affiche prend le relais, on ne voit rien.
   useEffect(() => {
     const el = ref.current
     if (!el) return
-    const preload = new IntersectionObserver(([e]) => e.isIntersecting && setNear(true), { rootMargin: '600px' })
+    const preload = new IntersectionObserver(([e]) => {
+      setNear(e.isIntersecting)
+      if (!e.isIntersecting) { enLecture.delete(el); setPlaying(false) }
+    }, { rootMargin: '200px' })
     const play = new IntersectionObserver(([e]) => {
       const v = el.querySelector('video')
       if (e.isIntersecting) {
@@ -41,6 +46,18 @@ export default function ReelPlayer({ src, poster, className = '' }) {
     preload.observe(el)
     play.observe(el)
     return () => { preload.disconnect(); play.disconnect(); enLecture.delete(el) }
+  }, [])
+
+  // La balise vient d'apparaître : si la carte est déjà à l'écran, l'observateur
+  // ne se déclenchera plus, donc on tente la lecture ici.
+  useEffect(() => {
+    const el = ref.current
+    const v = near && el?.querySelector('video')
+    if (!v || enLecture.size >= MAX_EN_LECTURE) return
+    const r = el.getBoundingClientRect()
+    if (r.bottom < 0 || r.top > window.innerHeight || r.right < 0 || r.left > window.innerWidth) return
+    enLecture.add(el)
+    v.play().then(() => setPlaying(true)).catch(() => enLecture.delete(el))
   }, [near])
 
   // Mettre en pause quand l'onglet passe à l'arrière-plan.
@@ -69,7 +86,6 @@ export default function ReelPlayer({ src, poster, className = '' }) {
           muted={muted}
           loop
           playsInline
-          autoPlay
           preload="metadata"
           disablePictureInPicture
           controls={false}
@@ -86,7 +102,7 @@ export default function ReelPlayer({ src, poster, className = '' }) {
         {muted ? <VolumeX size={16} /> : <Volume2 size={16} />}
       </button>
 
-      {!playing && near && (
+      {!playing && near && !poster && (
         <span aria-hidden="true" className="absolute inset-0 flex items-center justify-center">
           <span className="w-10 h-10 rounded-full border-2 border-white/30 border-t-white animate-spin" />
         </span>

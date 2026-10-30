@@ -10,7 +10,7 @@ import { GALERIE } from '../data/galerie'
 // Le doigt reprend la main dès qu'on touche, et le défilement repart après.
 
 const ROWS = 3
-const SPEED = 0.28   // pixels par image ; assez lent pour qu'on puisse lire
+const SPEED = 0.017  // pixels par milliseconde, soit ~17 px/s : on a le temps de regarder
 
 // Une barre sur trois, en gardant l'ordre : chaque ligne reste mélangée.
 const rows = Array.from({ length: ROWS }, (_, r) => GALERIE.filter((_, i) => i % ROWS === r))
@@ -23,27 +23,35 @@ function Row({ items, reverse }) {
     if (!el) return
     // Le défilement automatique s'arrête hors écran, au doigt, et quand
     // l'onglet passe à l'arrière-plan : sinon il consomme pour rien.
-    let raf = 0, paused = false, onScreen = false
+    let raf = 0, paused = false, onScreen = false, last = 0
+    // La largeur est mesurée à part : la relire à chaque image forcerait le
+    // navigateur à recalculer la mise en page soixante fois par seconde.
+    let max = 0
+    const mesurer = () => { max = el.scrollWidth - el.clientWidth }
     const hold = () => { paused = true }
     const release = () => { paused = false }
-    const tick = () => {
+    // Avancer au temps écoulé, pas à l'image : la vitesse reste la même que
+    // l'écran affiche 60 ou 120 images par seconde, et un à-coup ne saute pas.
+    const tick = (t) => {
       raf = requestAnimationFrame(tick)
-      if (paused || !onScreen || document.hidden) return
-      const max = el.scrollWidth - el.clientWidth
-      if (max <= 0) return
-      const next = el.scrollLeft + (reverse ? -SPEED : SPEED)
+      const dt = Math.min(t - last, 50)
+      last = t
+      if (paused || !onScreen || document.hidden || max <= 0) return
+      const next = el.scrollLeft + (reverse ? -SPEED : SPEED) * dt
       el.scrollLeft = next < 0 ? max : next > max ? 0 : next
     }
     const io = new IntersectionObserver(([e]) => { onScreen = e.isIntersecting })
     io.observe(el)
-    if (reverse) el.scrollLeft = el.scrollWidth
+    mesurer()
+    window.addEventListener('resize', mesurer)
+    if (reverse) el.scrollLeft = max
     raf = requestAnimationFrame(tick)
     const events = ['pointerdown', 'touchstart', 'mouseenter']
     const outs = ['pointerup', 'touchend', 'mouseleave']
     events.forEach(e => el.addEventListener(e, hold, { passive: true }))
     outs.forEach(e => el.addEventListener(e, release, { passive: true }))
     return () => {
-      cancelAnimationFrame(raf); io.disconnect()
+      cancelAnimationFrame(raf); io.disconnect(); window.removeEventListener('resize', mesurer)
       events.forEach(e => el.removeEventListener(e, hold))
       outs.forEach(e => el.removeEventListener(e, release))
     }
