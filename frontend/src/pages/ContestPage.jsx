@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import SEOHead from '../components/SEOHead'
+import { trackEvent } from '../lib/facebookPixel'
 import api from '../api/axios'
 import { useSiteSettings } from '../context/SiteSettingsContext'
 
@@ -35,6 +36,7 @@ export default function ContestPage() {
       const { data } = await api.post('/contest/enter', { fullName, phone, city, prize, website })
       if (data.ticket) setTicket(data.ticket)
       setDone(true)
+      trackEvent('Lead', { content_name: 'Concours' })
     } catch (err) {
       setError(err.response?.data?.error || 'La participation a échoué. Réessayez.')
     } finally {

@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo, useRef } from 'react'
 import { ArrowLeft, ArrowRight, CheckCircle2, MessageCircle, CalendarPlus, Clock, ChevronLeft, ChevronRight, Check } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import Navbar from '../components/Navbar'
+import { trackEvent } from '../lib/facebookPixel'
 import SEOHead from '../components/SEOHead'
 import api from '../api/axios'
 import { useSiteSettings } from '../context/SiteSettingsContext'
@@ -135,6 +136,7 @@ export default function CoachingPage() {
     try {
       const { data } = await api.post('/coaching/book', { fullName, phone, topicId, formatId, channel, date, timeSlot, message, website, participants: people, companions: companions.slice(0, (people || 1) - 1) })
       setDone(data.booking)
+      trackEvent('Lead', { content_name: 'Coaching en ligne', currency: 'DZD' })
       requestAnimationFrame(() => topRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }))
     } catch (err) {
       setError(err.response?.data?.error || 'La réservation a échoué. Réessayez.')

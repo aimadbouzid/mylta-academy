@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowLeft, ArrowRight, CheckCircle2, MessageCircle, MapPin, Clock, Users, Check, Copy, Sun, Sunset } from 'lucide-react'
 import Navbar from '../components/Navbar'
+import { trackEvent } from '../lib/facebookPixel'
 import TrainingLocation from '../components/TrainingLocation'
 import SEOHead from '../components/SEOHead'
 import api from '../api/axios'
@@ -171,6 +172,15 @@ export default function InPersonPage() {
         isStudent: studentRate, studentCard: studentRate ? studentCard : undefined,
       })
       setDone(data.registration)
+
+      // Réservation payante (acompte) : intention d'achat, pas simple contact.
+      trackEvent('InitiateCheckout', {
+        content_name: 'Formation présentiel',
+        content_type: 'product',
+        value: Number(data.registration?.price) || 0,
+        currency: 'DZD',
+      })
+
       requestAnimationFrame(() => topRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }))
     } catch (err) {
       setError(err.response?.data?.error || "L'inscription a échoué. Réessayez.")
