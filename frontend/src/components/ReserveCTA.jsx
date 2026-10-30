@@ -20,6 +20,8 @@ export default function ReserveCTA() {
   if (HIDDEN_ON.some(p => pathname.startsWith(p))) return null
 
   const price = Number(settings?.inPerson?.price) || 0
+  // Prix barré : seulement s'il est bien supérieur, sinon la promesse est fausse.
+  const oldPrice = Number(settings?.inPerson?.oldPrice) > price ? Number(settings?.inPerson?.oldPrice) : 0
 
   return (
     <div className="fixed inset-x-0 bottom-0 z-[60] p-3 sm:inset-x-auto sm:start-6 sm:bottom-6 sm:p-0
@@ -35,8 +37,15 @@ export default function ReserveCTA() {
         <CalendarDays size={17} className="shrink-0" />
         <span>Réserver ma place</span>
         {price > 0 && (
-          <span className="rounded-full bg-black/15 px-2 py-0.5 text-[12px] font-black tabular-nums whitespace-nowrap">
-            {price.toLocaleString('fr-FR')} DA
+          <span className="flex items-center gap-1.5 rounded-full bg-black/15 px-2 py-0.5 whitespace-nowrap">
+            {oldPrice > 0 && (
+              <s className="text-[10.5px] font-bold opacity-60 tabular-nums">
+                {oldPrice.toLocaleString('fr-FR')} DA
+              </s>
+            )}
+            <span className="text-[12px] font-black tabular-nums">
+              {price.toLocaleString('fr-FR')} DA
+            </span>
           </span>
         )}
         <ArrowRight size={16} className="shrink-0 transition-transform group-hover:translate-x-0.5 rtl:rotate-180" />
