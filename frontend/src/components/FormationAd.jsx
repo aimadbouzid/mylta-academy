@@ -48,7 +48,6 @@ export default function FormationAd({ inPerson }) {
   const price = Number(session.price) || Number(inPerson.price) || 0
   const oldPrice = Number(inPerson.oldPrice) > price ? Number(inPerson.oldPrice) : 0
   const remise = oldPrice > 0 ? Math.round((1 - price / oldPrice) * 100) : 0
-  const serial = `MA-${session.date.replace(/-/g, '')}-${String(session.id || 1).padStart(3, '0')}`
 
   let left = Math.max(0, new Date(`${session.date}T${session.startTime || '08:30'}:00+01:00`) - now)
   const j = Math.floor(left / 86400000); left -= j * 86400000
@@ -86,11 +85,9 @@ export default function FormationAd({ inPerson }) {
           <div className="flex-1 min-w-0 flex flex-col lg:flex-row">
             {/* Corps du billet */}
             <div className="flex-1 min-w-0 px-4 sm:px-6 py-4 sm:py-6">
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[9.5px] sm:text-[10.5px] uppercase tracking-[0.18em] opacity-65"
-                   style={mono}>
-                <span>Mylta Academy — Présentiel</span>
-                <span className="opacity-70">N° {serial}</span>
-              </div>
+              <p className="text-[9.5px] sm:text-[10.5px] uppercase tracking-[0.18em] opacity-65" style={mono}>
+                Mylta Academy — Présentiel
+              </p>
 
               <h2 className="mt-2.5 uppercase leading-[0.92] tracking-[0.01em] text-[1.5rem] sm:text-[2.6rem] lg:text-[3.1rem]"
                   style={titre}>
@@ -99,21 +96,13 @@ export default function FormationAd({ inPerson }) {
                 <span className="normal-case tracking-normal" style={{ ...serif, color: ROUGE }}>dompter l'IA</span>
               </h2>
 
-              <p className="mt-3 max-w-lg text-[11.5px] sm:text-[13px] leading-[1.6]" style={mono}>
-                Tout se passe sur votre téléphone : tournage, montage, scripts,
-                voix off, images générées. On part de zéro.
-              </p>
 
-              <div className="mt-4 pt-3 flex flex-wrap gap-x-7 gap-y-2"
-                   style={{ borderTop: `1.5px solid ${ENCRE}` }}>
-                {[['Horaire', `${hour(session.startTime)} – ${hour(session.endTime)}`],
-                  ['Lieu', session.place || 'Camden Int. Institute']].map(([k, v]) => (
-                  <div key={k}>
-                    <p className="text-[9px] uppercase tracking-[0.25em] opacity-55" style={mono}>{k}</p>
-                    <p className="mt-0.5 text-[13px] sm:text-[15px] uppercase" style={titre}>{v}</p>
-                  </div>
-                ))}
-              </div>
+              <p className="mt-3.5 pt-3 text-[12px] sm:text-[14px] uppercase"
+                 style={{ ...titre, borderTop: `1.5px solid ${ENCRE}` }}>
+                {hour(session.startTime)} – {hour(session.endTime)}
+                <span className="mx-2 opacity-40">·</span>
+                {session.place || 'Camden Int. Institute'}
+              </p>
             </div>
 
             {/* Talon détachable : la date, le prix, la réservation. */}
@@ -184,7 +173,6 @@ export default function FormationAd({ inPerson }) {
                   color: ENCRE,
                   backgroundImage: 'repeating-linear-gradient(90deg, currentColor 0 2px, transparent 2px 4px, currentColor 4px 5px, transparent 5px 9px, currentColor 9px 12px, transparent 12px 14px)',
                 }} />
-                <span className="text-[8.5px] tracking-[0.2em] opacity-55" style={mono}>{serial}</span>
               </div>
             </div>
           </div>
