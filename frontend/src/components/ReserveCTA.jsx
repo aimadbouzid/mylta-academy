@@ -31,7 +31,7 @@ export default function ReserveCTA() {
         className="group pointer-events-auto flex items-center justify-center gap-2.5 w-full sm:w-auto
                    rounded-full bg-academy-primary text-academy-onPrimary
                    px-4 sm:px-5 py-3.5 sm:py-3 text-[14.5px] font-bold whitespace-nowrap
-                   shadow-[0_10px_30px_-8px_rgba(0,0,0,0.5)] animate-pulse-glow
+                   shadow-[0_10px_30px_-8px_rgba(0,0,0,0.5)] cta-pulse
                    hover:brightness-110 active:scale-[0.98] transition-all"
       >
         <CalendarDays size={17} className="shrink-0" />

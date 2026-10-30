@@ -116,6 +116,46 @@
   .hide-scrollbar::-webkit-scrollbar { display: none; }
   .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
+  /* ── Halos décoratifs ──
+     Ces grands cercles de couleur étaient obtenus avec `filter: blur(130px)`
+     sur un aplat. Un flou de ce rayon oblige le navigateur à peindre
+     l'élément dans un tampon hors écran puis à le flouter — sur un téléphone
+     de milieu de gamme, dix halos de 60vw suffisent à faire saccader le
+     défilement de toute la page.
+
+     Un dégradé radial donne le même rendu sans aucune passe de flou : il est
+     peint directement par le compositeur. La couleur vient de `currentColor`,
+     donc les classes Tailwind `text-blue-400/10 dark:text-blue-400/[0.04]`
+     continuent de piloter teinte et opacité, thème sombre compris. */
+  .glow-blob {
+    background-image: radial-gradient(closest-side, currentColor, transparent);
+    filter: none;
+  }
+
+  /* Halo respirant du bouton de réservation.
+     L'animation portait sur `box-shadow`, repeinte à chaque image sur un
+     élément fixe présent sur toutes les pages. Ici, c'est un anneau en
+     pseudo-élément animé en `transform`/`opacity` : la carte graphique s'en
+     charge seule, sans repeindre quoi que ce soit. */
+  .cta-pulse { position: relative; }
+  .cta-pulse::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: inherit;
+    z-index: -1;
+    animation: ctaPulse 2.8s ease-out infinite;
+    will-change: transform, opacity;
+  }
+  @keyframes ctaPulse {
+    0%        { transform: scale(1);    opacity: 0.45; }
+    70%, 100% { transform: scale(1.12); opacity: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cta-pulse::after { animation: none; }
+  }
+
   ::selection { background: rgb(var(--academy-primary) / 0.2); color: var(--clr-text); }
 }
 
