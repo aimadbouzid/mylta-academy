@@ -9,7 +9,6 @@ import api from '../api/axios'
 import { useSiteSettings } from '../context/SiteSettingsContext'
 import StepIndicator from '../components/StepIndicator'
 import Curriculum from '../components/Curriculum'
-import SessionCountdown from '../components/SessionCountdown'
 import { formatDate } from '../utils/sessionDates'
 import { PAYMENT_INFO } from '../config/paymentConfig'
 import { getSessions } from '../api/sessions'
@@ -445,9 +444,6 @@ export default function InPersonPage() {
                 {step === 1 && (
                   <section key="etape-1" className={`${card} space-y-4 etape-entre`}>
                     <h2 className="font-bold text-lg">Choisissez votre session</h2>
-                    {cfg.datesNotice && (
-                      <p className="text-[13px] leading-snug text-academy-textMain/70">{cfg.datesNotice}</p>
-                    )}
                     {sessions === null ? (
                       <p className="text-sm text-academy-textMain/60">Chargement des dates…</p>
                     ) : (
@@ -492,7 +488,6 @@ export default function InPersonPage() {
                           <span className={radio(sessionId === null)} aria-hidden="true" />
                           <span>
                             <span className="font-bold block text-[15px]">{sessions.length === 0 ? 'Me prévenir des prochaines dates' : 'Aucune date ne me convient'}</span>
-                            <span className="text-[13px] text-academy-textMain/60">Liste d'attente : on vous contacte dès qu'une date est fixée. Aucun paiement pour l'instant.</span>
                           </span>
                         </button>
                       </div>
@@ -509,18 +504,6 @@ export default function InPersonPage() {
                         </span>
                       </label>
                     )}
-                    {whatsappNumber && (
-                      <div className="rounded-xl border border-academy-border bg-academy-surface/60 p-3 text-[13px]">
-                        <p className="font-bold text-[14px]">Vous travaillez en semaine ?</p>
-                        <p className="text-academy-textMain/70 mt-0.5">Formule week-end en 2 jours (samedi + dimanche), dans un autre lieu à Béjaïa. On organise ça ensemble sur WhatsApp.</p>
-                        <a href={`https://wa.me/${whatsappNumber.replace(/\D/g, '')}?text=${encodeURIComponent("Bonjour Mylta Academy, je suis intéressé(e) par la formation IA & Montage Vidéo en week-end (samedi + dimanche).")}`}
-                           target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex items-center gap-1.5 font-bold text-[#128C7E]">
-                          <MessageCircle size={16} /> En parler sur WhatsApp
-                        </a>
-                      </div>
-                    )}
-                    {selected && <SessionCountdown date={selected.date} startTime={selected.startTime} />}
-
                     <button type="button" disabled={sessions === null} onClick={() => goTo(2)} className={primaryBtn}>
                       Continuer <ArrowRight size={18} />
                     </button>
