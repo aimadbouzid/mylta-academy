@@ -33,7 +33,10 @@ export default {
       },
       fontFamily: {
         sans:    ['"Inter"', 'system-ui', 'sans-serif'],
-        display: ['"Inter"', 'system-ui', 'sans-serif'],
+        // Titres : Archivo va réellement jusqu'au 900 et a le dessin large des
+        // affiches d'évènement. Inter s'arrêtait à 800 et le 900 demandé par
+        // `font-black` était un faux gras fabriqué par le navigateur.
+        display: ['"Archivo"', '"Inter"', 'system-ui', 'sans-serif'],
         mono:    ['"Inter"', 'system-ui', 'sans-serif'],
       },
       boxShadow: {

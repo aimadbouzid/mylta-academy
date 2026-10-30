@@ -23,7 +23,12 @@
     <!-- Polices Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <!-- Archivo pour les titres, Inter pour le texte courant. Les titres
+         réclamaient un 900 qu'Inter ne fournissait pas : le navigateur
+         fabriquait un faux gras, d'où ce rendu un peu mou et sans caractère.
+         Archivo monte réellement jusqu'à 900 et a le dessin large et net des
+         affiches d'évènement — le même registre que le billet. -->
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
 
     <!-- SEO de base (enrichi dynamiquement par SEOHead via react-helmet-async) -->
     <title>Mylta Academy | Formation Premium sur Smartphone & Outils de Réussite</title>
