@@ -426,3 +426,23 @@ section {
 @media (prefers-reduced-motion: reduce) {
   .etape-entre { animation: none; }
 }
+
+/* Bandeau des clients : la piste contient deux fois la même liste et glisse
+   d'exactement la moitié de sa largeur, si bien que le retour au départ tombe
+   sur une image identique et ne se voit pas. Tout est en CSS, donc le
+   navigateur peut l'animer sans repasser par le JavaScript. */
+.bandeau-clients { overflow: hidden; }
+.bandeau-clients-piste {
+  display: flex;
+  width: max-content;
+  animation: defile-clients 42s linear infinite;
+}
+.bandeau-clients:hover .bandeau-clients-piste { animation-play-state: paused; }
+@keyframes defile-clients {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bandeau-clients { overflow-x: auto; }
+  .bandeau-clients-piste { animation: none; }
+}
