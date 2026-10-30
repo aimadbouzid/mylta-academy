@@ -33,7 +33,7 @@ import api from '../api/axios'
 import ReviewModal from '../components/ReviewModal'
 import WelcomeChoice from '../components/WelcomeChoice'
 import { testimonialsData } from '../data/testimonialsData'
-import { ENCRE, ROUGE, fondPapier, TITRE, SERIF, MONO } from '../lib/papier'
+import { PAPIER, ENCRE, ROUGE, fondPapier, TITRE, SERIF, MONO } from '../lib/papier'
 
 const FEATURE_STYLES = [
   { icon: Trophy, color: 'text-academy-primary', bg: 'bg-academy-primary/10', border: 'border-academy-primary/20' },
@@ -321,8 +321,18 @@ export default function LandingPage() {
 
         {/* FEATURES — même papier imprimé que le billet de la formation. */}
         <section id="mission" className="section-container pt-4 lg:pt-6 pb-10 lg:pb-12">
-          <div className="rounded-[3px] overflow-hidden shadow-soft-lg" style={fondPapier}>
-            <div className="px-5 sm:px-8 py-6 sm:py-8">
+          <div className="rounded-[3px] overflow-hidden shadow-soft-lg flex" style={fondPapier}>
+            {/* La bande rouge du billet, reprise à l'identique. */}
+            <div className="relative shrink-0 w-8 sm:w-11 flex items-center justify-center"
+                 style={{ background: ROUGE, color: PAPIER }}>
+              <span className="[writing-mode:vertical-rl] rotate-180 text-[10px] sm:text-xs font-black uppercase tracking-[0.4em]">
+                Avantages
+              </span>
+              <span aria-hidden="true" className="absolute inset-y-0 right-0 border-r border-dashed"
+                    style={{ borderColor: `${PAPIER}66` }} />
+            </div>
+
+            <div className="flex-1 min-w-0 px-4 sm:px-7 py-6 sm:py-8">
               <p className="text-[9.5px] sm:text-[10.5px] uppercase tracking-[0.18em] opacity-65" style={MONO}>
                 {t('landing.why_choose')}
               </p>
