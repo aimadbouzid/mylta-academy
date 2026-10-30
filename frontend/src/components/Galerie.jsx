@@ -19,23 +19,37 @@ const ROWS = 3
 // Une barre sur trois, en gardant l'ordre : chaque ligne reste mélangée.
 const rows = Array.from({ length: ROWS }, (_, r) => GALERIE.filter((_, i) => i % ROWS === r))
 
+// Nombre de vignettes montées d'emblée, puis ajoutées à chaque approche de la
+// fin. Les 116 vignettes de la galerie étaient toutes créées au chargement,
+// avec leurs observateurs : lourd à l'ouverture sur un téléphone modeste,
+// alors que personne ne voit plus de cinq vignettes à la fois.
+const LOT = 15
+
 function Row({ items }) {
   const ref = useRef(null)
   const [ends, setEnds] = useState({ start: true, end: false })
+  const [limite, setLimite] = useState(LOT)
+  const visibles = items.slice(0, limite)
 
   // Les flèches n'apparaissent que là où il reste quelque chose à voir.
   useEffect(() => {
     const el = ref.current
     if (!el) return
-    const update = () => setEnds({
-      start: el.scrollLeft <= 8,
-      end: el.scrollLeft >= el.scrollWidth - el.clientWidth - 8,
-    })
+    const update = () => {
+      setEnds({
+        start: el.scrollLeft <= 8,
+        end: el.scrollLeft >= el.scrollWidth - el.clientWidth - 8,
+      })
+      // On approche de la fin : on prépare le lot suivant avant d'y arriver.
+      if (el.scrollLeft > el.scrollWidth - el.clientWidth - 700) {
+        setLimite(l => (l >= items.length ? l : l + LOT))
+      }
+    }
     update()
     el.addEventListener('scroll', update, { passive: true })
     window.addEventListener('resize', update)
     return () => { el.removeEventListener('scroll', update); window.removeEventListener('resize', update) }
-  }, [])
+  }, [items.length])
 
   // Au premier passage à l'écran, la rangée glisse puis revient : le geste dit
   // « ça se fait glisser » mieux qu'une phrase, et il ne se produit qu'une fois.
@@ -79,7 +93,7 @@ function Row({ items }) {
            className="flex gap-3 overflow-x-auto hide-scrollbar pb-1 snap-x snap-mandatory
                       overscroll-x-contain [-webkit-overflow-scrolling:touch]">
         <div className={`flex gap-3 ${montrerGeste ? 'geste-glisser' : ''}`}>
-        {items.map(item => (
+        {visibles.map(item => (
           <article key={item.src} className="shrink-0 w-[118px] sm:w-[150px] snap-start">
             <div className="rounded-xl overflow-hidden border border-academy-border bg-black aspect-[9/16]">
               {item.type === 'video' ? (
