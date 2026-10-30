@@ -408,9 +408,11 @@ export default function InPersonPage() {
                     <button type="button" onClick={() => goTo(1)} className={primaryBtn}>
                       Je réserve ma place <ArrowRight size={18} />
                     </button>
-                    <p className="text-center text-sm">
-                      Vous préférez à distance ? <Link to="/coaching" className="font-bold text-academy-primary underline underline-offset-2">Coaching en ligne</Link>
-                    </p>
+                    {settings?.coaching?.enabled && (
+                      <p className="text-center text-sm">
+                        Vous préférez à distance ? <Link to="/coaching" className="font-bold text-academy-primary underline underline-offset-2">Coaching en ligne</Link>
+                      </p>
+                    )}
                   </section>
                 )}
                 {/* Le détail est replié : la première étape doit tenir sur un

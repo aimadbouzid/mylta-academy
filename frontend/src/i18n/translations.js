@@ -632,10 +632,6 @@ export const translations = {
         { question: "Je ne peux plus venir, qu'est-ce qui se passe ?", answer: "Écrivez-nous sur WhatsApp le plus tôt possible. Plus vous prévenez tôt, plus c'est simple de vous replacer sur une autre session." },
         { question: "Comment je réserve ma place ?", answer: "Depuis la page de la formation : vous choisissez votre session, vous laissez votre numéro et vous réglez l'acompte. On vous confirme tout sur WhatsApp." },
         { question: "La formation est en darija ou en français ?", answer: "Les explications mélangent darija et français, comme on parle entre nous. Chaque mot technique est expliqué simplement." },
-        { question: "Comment se passe une séance de coaching en ligne ?", answer: "2h30 en appel vidéo, seul ou à plusieurs. Vous partagez votre écran et avancez sur votre projet : IA, vidéo, site ou application." },
-        { question: "Peut-on faire le coaching en ligne à plusieurs ?", answer: "Oui : seul, à 2, à 3 ou en groupe, tout le monde sur le même appel. La formule se choisit à la réservation." },
-        { question: "Comment réserver un coaching en ligne ?", answer: "Choisissez votre sujet, un créneau, puis laissez votre numéro. On confirme la séance et le prix sur WhatsApp." },
-        { question: "Faut-il un niveau particulier pour le coaching ?", answer: "Non. Un téléphone ou un ordinateur avec internet suffit, même en partant de zéro." },
         { question: "Comment fonctionne le coaching présentiel ?", answer: "3 jours en petit groupe, sur place. Vous réservez votre session avec un acompte, le reste est réglé après." },
         { question: "Puis-je changer la date de ma réservation ?", answer: "Oui, écrivez-nous sur WhatsApp le plus tôt possible et nous trouverons ensemble une autre date." },
         { question: "Ai-je besoin d'expérience pour commencer ?", answer: "Aucun prérequis. Les formations partent de zéro et montent progressivement." },
@@ -1274,10 +1270,6 @@ export const translations = {
         { val: 'Edahabia / CIB', label: '100% Secure Payment' }
       ],
       faq: [
-        { question: "How does an online coaching session work?", answer: "2h30 on a video call, alone or with others. You share your screen and move your project forward: AI, video, website or app." },
-        { question: "Can we do online coaching together?", answer: "Yes: alone, as 2, as 3 or as a group, everyone on the same call. Pick the option when booking." },
-        { question: "How do I book online coaching?", answer: "Choose your topic, a time slot, then leave your number. We confirm the session and the price on WhatsApp." },
-        { question: "Do I need a specific level for coaching?", answer: "No. A phone or computer with internet is enough, even starting from zero." },
         { question: "How does in-person coaching work?", answer: "3 days in a small group, on site. Book your session with a deposit, the rest is paid afterwards." },
         { question: "Can I change the date of my booking?", answer: "Yes, message us on WhatsApp as early as possible and we will find another date together." },
         { question: "Do I need experience to start?", answer: "No prerequisites. Courses start from zero and build up progressively." },
@@ -1906,10 +1898,6 @@ export const translations = {
         { val: 'الذهبية / CIB', label: 'دفع آمن 100%' }
       ],
       faq: [
-        { question: "كيف تتم جلسة التدريب عبر الإنترنت؟", answer: "ساعتان ونصف عبر مكالمة فيديو، بمفردك أو مع آخرين. تشارك شاشتك وتتقدم في مشروعك: الذكاء الاصطناعي أو الفيديو أو الموقع أو التطبيق." },
-        { question: "هل يمكن القيام بالتدريب عبر الإنترنت مع آخرين؟", answer: "نعم: بمفردك أو مع شخص أو شخصين أو ضمن مجموعة، والجميع في المكالمة نفسها. تختار الصيغة عند الحجز." },
-        { question: "كيف أحجز تدريبًا عبر الإنترنت؟", answer: "اختر موضوعك وموعدًا، ثم اترك رقمك. نؤكد لك الجلسة والسعر على واتساب." },
-        { question: "هل أحتاج إلى مستوى معين للتدريب؟", answer: "لا. يكفي هاتف أو حاسوب متصل بالإنترنت، حتى لو بدأت من الصفر." },
         { question: "كيف يعمل التدريب الحضوري؟", answer: "3 أيام في مجموعة صغيرة، في عين المكان. تحجز مكانك بعربون، ويُدفع الباقي لاحقًا." },
         { question: "هل يمكنني تغيير تاريخ حجزي؟", answer: "نعم، راسلنا على واتساب في أقرب وقت وسنجد معًا تاريخًا آخر." },
         { question: "هل أحتاج إلى خبرة للبدء؟", answer: "لا شروط مسبقة. الدورات تبدأ من الصفر وتتدرج." },

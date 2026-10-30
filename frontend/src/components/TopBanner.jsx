@@ -8,10 +8,10 @@ export default function TopBanner() {
     const cached = localStorage.getItem('mylta_topBanner_cache')
     return cached ? JSON.parse(cached) : {
       isActive: true,
-      text: "Nouveau : coaching en ligne IA & vibe coding — réservez votre séance de 2h30",
+      text: "Formation IA & Montage Vidéo à Béjaïa — 12, 13 et 14 novembre, places limitées",
       icon: "sparkles",
       animation: "marquee",
-      linkUrl: "/coaching",
+      linkUrl: "/coaching-presentiel",
       linkText: "Réserver"
     }
   })
