@@ -16,11 +16,15 @@ import { getSessions } from '../api/sessions'
 const STEPS = ['Formation', 'Date', 'Profil', 'Infos']
 
 // Mêmes clés que PROFILE_LABELS côté serveur (routes/inPerson.js).
+// Deux questions, pas quatre. « Pourquoi cette formation ? » servait au
+// marketing et « Avez-vous utilisé CapCut ? » redisait le niveau : chaque
+// question de plus est une occasion d'abandonner avant la fin. Restent les
+// deux seules qui changent la préparation de la journée.
+// Le serveur accepte n'importe quel ensemble de réponses : les inscriptions
+// déjà enregistrées gardent les leurs.
 const QUESTIONS = [
   { key: 'level', title: 'Quel est votre niveau actuel ?', options: ['Débutant total', 'Intermédiaire', 'Avancé'] },
-  { key: 'goal', title: 'Pourquoi souhaitez-vous suivre cette formation ?', options: ['Création de contenu perso', 'Pour mon business', 'Devenir monteur pro'] },
   { key: 'phoneType', title: 'Quel smartphone utilisez-vous ?', options: ['iPhone (iOS)', 'Android'] },
-  { key: 'capcut', title: 'Avez-vous déjà utilisé CapCut ?', options: ['Oui, régulièrement', 'Juste essayé', 'Jamais'] },
 ]
 const CONDITIONS = [
   'Je suis disponible pendant toute la durée de la formation.',
