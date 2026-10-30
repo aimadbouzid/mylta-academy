@@ -16,6 +16,7 @@ import FormationsHub from '../components/FormationsHub'
 import FormationAd from '../components/FormationAd'
 import Galerie from '../components/Galerie'
 import InstagramFeed from '../components/InstagramFeed'
+import Productions from '../components/Productions'
 import PresentationReel from '../components/PresentationReel'
 import CamdenPartner from '../components/CamdenPartner'
 import IntroVideoModal from '../components/IntroVideoModal'
@@ -456,6 +457,8 @@ export default function LandingPage() {
             </div>
           </div>
         </section>
+
+        <Productions productions={siteSettings.productions} />
 
         {/* FOOTER */}
         <footer className="border-t border-academy-border pt-16 pb-8 bg-academy-surfaceDark/50">

@@ -414,3 +414,15 @@ section {
 @media (prefers-reduced-motion: reduce) {
   .btn-glow, .btn-glow::after { animation: none; }
 }
+
+/* Passage d'une étape à l'autre du formulaire d'inscription : la nouvelle
+   carte arrive en glissant, pour qu'on sente qu'on avance. Coupé pour qui
+   demande moins d'animations dans les réglages de son système. */
+@keyframes etape-entre {
+  from { opacity: 0; transform: translateX(1.25rem); }
+  to   { opacity: 1; transform: none; }
+}
+.etape-entre { animation: etape-entre 0.24s ease-out both; }
+@media (prefers-reduced-motion: reduce) {
+  .etape-entre { animation: none; }
+}

@@ -308,6 +308,27 @@ const defaultSettings = {
       { code: 'DXAWM3zDmim', tag: 'formation', account: 'mylta_academy' },
     ],
   },
+  // Travaux de l'agence : les vidéos que nous tournons pour des clients.
+  // Même principe que le fil Instagram : l'image est hébergée ici, l'appui
+  // ouvre la publication, parce qu'Instagram refuse la lecture hors de chez lui.
+  productions: {
+    enabled: true,
+    account: 'mylta_creative',
+    posts: [
+      { code: 'DH1dMxZNad3', account: 'mylta_creative' },
+      { code: 'DMgH_6BtrUh', account: 'mylta_creative' },
+      { code: 'DexMjo5xPol', account: 'aimadbouzidii' },
+      { code: 'Dew1s8CN1pX', account: 'aimadbouzidii' },
+      { code: 'DeaRAvBo2h5', account: 'mylta_creative' },
+      { code: 'DbZFP-koLPK', account: 'mylta_creative' },
+      { code: 'DZYWiLONWMc', account: 'aimadbouzidii' },
+      { code: 'DXh0VtkCMJ-', account: 'mylta_creative' },
+      { code: 'DZDisxVonhU', account: 'mylta_creative' },
+      { code: 'DZlHqM6tnAq', account: 'aimadbouzidii' },
+      { code: 'DY7isyvoGyX', account: 'mylta_creative' },
+      { code: 'DZqRoIstfFZ', account: 'aimadbouzidii' },
+    ],
+  },
   inPerson: {
     enabled: true,
     title: 'Formation IA & Montage Vidéo',
@@ -499,7 +520,7 @@ function readSettingsFromDisk() {
 // les valeurs par défaut au premier démarrage, donc un simple changement de
 // défaut ne l'atteint pas). Appliqué une fois : le prochain enregistrement admin
 // écrit settingsVersion à jour.
-const SETTINGS_VERSION = 19
+const SETTINGS_VERSION = 20
 const OLD_BANNER_TEXTS = ["🚀 Promo exceptionnelle : -50% sur toutes les formations ! Inscrivez-vous vite."]
 
 function migrateSettings(parsed, merged) {
@@ -569,6 +590,9 @@ function migrateSettings(parsed, merged) {
   }
   if ((parsed.settingsVersion || 1) < 17) {
     merged.instagram = { ...defaultSettings.instagram, ...(parsed.instagram || {}), posts: defaultSettings.instagram.posts }
+  }
+  if ((parsed.settingsVersion || 1) < 20) {
+    merged.productions = { ...defaultSettings.productions, ...(parsed.productions || {}), posts: defaultSettings.productions.posts }
   }
   if ((parsed.settingsVersion || 1) < 19) {
     merged.instagram = { ...merged.instagram, posts: defaultSettings.instagram.posts }

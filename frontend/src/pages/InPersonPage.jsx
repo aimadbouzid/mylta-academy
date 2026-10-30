@@ -81,6 +81,7 @@ export default function InPersonPage() {
   const [done, setDone] = useState(null)
   const [showPlace, setShowPlace] = useState(false)
   const [copied, setCopied] = useState('')
+  const [reprise, setReprise] = useState(false)
 
   const loadSessions = () => {
     api.get('/in-person/sessions')
@@ -110,6 +111,40 @@ export default function InPersonPage() {
   })()
   const [isStudent, setIsStudent] = useState(false)
   const [studentCard, setStudentCard] = useState('')
+
+  const BROUILLON = 'mylta-inscription'
+
+  useEffect(() => {
+    try {
+      const v = JSON.parse(localStorage.getItem(BROUILLON) || 'null')
+      if (!v || Date.now() - (v.t || 0) > 30 * 86400000) return localStorage.removeItem(BROUILLON)
+      if (v.fullName) setFullName(v.fullName)
+      if (v.phone) setPhone(v.phone)
+      if (v.city) setCity(v.city)
+      if (v.message) setMessage(v.message)
+      if (v.profile) setProfile(v.profile)
+      if (v.sessionId) setSessionId(v.sessionId)
+      if (v.isStudent) setIsStudent(true)
+      if (v.step) setStep(Math.min(Number(v.step) || 0, 3))
+      if (v.fullName || v.phone || v.step) setReprise(true)
+    } catch { /* stockage indisponible : on continue sans brouillon */ }
+  }, [])
+
+  useEffect(() => {
+    if (done) return
+    try {
+      localStorage.setItem(BROUILLON, JSON.stringify(
+        { t: Date.now(), step, sessionId, profile, fullName, phone, city, message, isStudent }))
+    } catch { /* quota ou navigation privée : tant pis, ce n'est qu'un confort */ }
+  }, [done, step, sessionId, profile, fullName, phone, city, message, isStudent])
+
+  useEffect(() => { if (done) { try { localStorage.removeItem(BROUILLON) } catch { /* rien à nettoyer */ } } }, [done])
+
+  const effacerBrouillon = () => {
+    try { localStorage.removeItem(BROUILLON) } catch { /* déjà absent */ }
+    setFullName(''); setPhone(''); setCity(''); setMessage('')
+    setProfile({}); setIsStudent(false); setReprise(false); setStep(0)
+  }
   const studentPrice = Number(cfg?.studentPrice) || 0
   const studentRate = isStudent && studentPrice > 0
   const price = studentRate ? studentPrice : (Number(selected?.price) || Number(cfg?.price) || 0)
@@ -169,7 +204,7 @@ export default function InPersonPage() {
     disabled ? 'border-academy-border opacity-50 cursor-not-allowed'
     : active ? 'border-academy-primary bg-academy-primary/5' : 'border-academy-border hover:border-academy-primary/40'}`
   const radio = (active) => `mt-1 w-4 h-4 rounded-full border-2 shrink-0 ${active ? 'border-academy-primary bg-academy-primary shadow-[inset_0_0_0_3px_white]' : 'border-academy-textMain/30'}`
-  const primaryBtn = 'w-full py-4 rounded-xl bg-academy-primary text-academy-onPrimary font-bold text-lg flex items-center justify-center gap-2 transition-opacity hover:opacity-90 disabled:opacity-40'
+  const primaryBtn = 'sticky bottom-3 z-20 w-full py-4 rounded-xl bg-academy-primary text-academy-onPrimary font-bold text-lg flex items-center justify-center gap-2 shadow-lg shadow-black/15 transition-opacity hover:opacity-90 disabled:opacity-40'
 
   // Prix : un bloc sobre, à filets, comme l'en-tête — pas de carte colorée.
   const PriceBox = () => (
@@ -299,6 +334,15 @@ export default function InPersonPage() {
 
                 <StepIndicator steps={STEPS} current={step} onGo={goTo} />
 
+                {reprise && !done && (
+                  <p className="mb-4 flex flex-wrap items-center gap-x-2 gap-y-1 rounded-lg border border-academy-border bg-academy-primary/5 px-3 py-2 text-[13px]">
+                    <span className="font-bold">On a gardé vos réponses.</span>
+                    <span className="text-academy-textMain/60">Vous reprenez où vous vous étiez arrêté.</span>
+                    <button type="button" onClick={effacerBrouillon}
+                            className="font-bold text-academy-primary underline underline-offset-2">Tout effacer</button>
+                  </p>
+                )}
+
                 {step > 0 && (
                   <button type="button" onClick={() => goTo(step - 1)} className="mb-4 inline-flex items-center gap-1.5 text-sm font-bold text-academy-textMain/60 hover:text-academy-textMain">
                     <ArrowLeft size={16} /> Retour
@@ -307,23 +351,32 @@ export default function InPersonPage() {
 
                 {/* 1. La formation */}
                 {step === 0 && (
-                  <section className={`${card} space-y-5`}>
+                  <section key="etape-0" className={`${card} space-y-5 etape-entre`}>
                     {(cfg.infos || []).length > 0 && (
                       <p className="text-[13px] font-semibold text-academy-textMain/55 leading-relaxed">
                         {cfg.infos.join('  ·  ')}
                       </p>
                     )}
 
-                    {/* Aperçu court : une ligne par journée, le détail reste plus bas. */}
+                    {/* Le programme, en couleur : c'est ce qu'on achète, il doit se voir
+                        tout de suite. Le détail complet reste juste en dessous. */}
                     {(cfg.curriculum?.fr || []).length > 0 && (
-                      <ol className="divide-y divide-academy-border border-y border-academy-border">
-                        {(cfg.curriculum.fr).map((d, i) => (
-                          <li key={i} className="flex gap-3 py-2.5">
-                            <span className="shrink-0 font-mono text-[11px] font-bold text-academy-primary pt-0.5">J{i + 1}</span>
-                            <span className="text-[14px] font-semibold leading-snug">{d.title}</span>
-                          </li>
-                        ))}
-                      </ol>
+                      <div>
+                        <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-academy-textMain/50">
+                          Le programme, jour par jour
+                        </p>
+                        <ol className="mt-2 space-y-1.5">
+                          {(cfg.curriculum.fr).map((d, i) => (
+                            <li key={i} className="flex gap-3 rounded-lg bg-academy-primary/10 border-l-4 border-academy-primary py-2.5 px-3">
+                              <span className="shrink-0 font-display font-black text-[15px] text-academy-primary leading-tight">J{i + 1}</span>
+                              <span className="min-w-0">
+                                <span className="block text-[14.5px] font-bold leading-snug">{d.title}</span>
+                                {d.goal && <span className="block text-[12.5px] text-academy-textMain/60 leading-snug mt-0.5">{d.goal}</span>}
+                              </span>
+                            </li>
+                          ))}
+                        </ol>
+                      </div>
                     )}
 
                     {/* Un formateur par métier : c'est ce qui change tout sur trois jours. */}
@@ -365,7 +418,7 @@ export default function InPersonPage() {
 
                 {/* 2. La date */}
                 {step === 1 && (
-                  <section className={`${card} space-y-4`}>
+                  <section key="etape-1" className={`${card} space-y-4 etape-entre`}>
                     <h2 className="font-bold text-lg">Choisissez votre session</h2>
                     {cfg.datesNotice && (
                       <p className="text-[13px] leading-snug text-academy-textMain/70">{cfg.datesNotice}</p>
@@ -451,7 +504,7 @@ export default function InPersonPage() {
 
                 {/* 3. Votre profil */}
                 {step === 2 && (
-                  <section className={`${card} space-y-5`}>
+                  <section key="etape-2" className={`${card} space-y-5 etape-entre`}>
                     {/* Entre le choix de la date et les questions, le visiteur perd
                         de vue ce qu'il réserve. Programme, date et lieu restent
                         sous ses yeux ; l'admin peut masquer ce bloc. */}
@@ -505,7 +558,7 @@ export default function InPersonPage() {
 
                 {/* 4. Vos infos + conditions */}
                 {step === 3 && (
-                  <form onSubmit={handleSubmit} className={`${card} space-y-4 relative`}>
+                  <form key="etape-3" onSubmit={handleSubmit} className={`${card} space-y-4 relative etape-entre`}>
                     <div className="bg-academy-surface rounded-xl p-4 text-sm space-y-1">
                       <p className="font-bold">{selected ? formatDate(selected.date) : "Liste d'attente — prochaines dates"}</p>
                       {selected && (selected.city || hours(selected)) && <p className="text-academy-textMain/70">{[hours(selected), selected.city].filter(Boolean).join(' · ')}</p>}
