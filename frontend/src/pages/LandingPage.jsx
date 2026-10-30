@@ -33,6 +33,7 @@ import api from '../api/axios'
 import ReviewModal from '../components/ReviewModal'
 import WelcomeChoice from '../components/WelcomeChoice'
 import { testimonialsData } from '../data/testimonialsData'
+import { ENCRE, ROUGE, fondPapier, TITRE, SERIF, MONO } from '../lib/papier'
 
 const FEATURE_STYLES = [
   { icon: Trophy, color: 'text-academy-primary', bg: 'bg-academy-primary/10', border: 'border-academy-primary/20' },
@@ -318,36 +319,44 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* FEATURES */}
-        <section id="mission" className="pt-4 lg:pt-6 pb-10 lg:pb-12 bg-academy-surfaceDark/40 relative border-t border-academy-border overflow-hidden">
-          <div className="absolute top-[20%] left-[-15%] w-[45vw] h-[45vw] rounded-full text-purple-300/20 dark:text-purple-300/[0.05] pointer-events-none select-none z-0 glow-blob" />
-          <div className="absolute bottom-[20%] right-[-15%] w-[45vw] h-[45vw] rounded-full text-red-300/20 dark:text-red-300/[0.05] pointer-events-none select-none z-0 glow-blob" />
-          <div className="section-container relative z-10">
-            <div className="text-center mb-6">
-              <h2 className="font-display font-bold text-2xl text-academy-textMain mb-2">
-                {t('landing.why_choose')} <span className="text-academy-primary">{t('landing.academy')}</span>
-              </h2>
-              <p className="text-academy-textMain/60 font-medium max-w-lg mx-auto text-sm">
-                {t('landing.why_desc')}
+        {/* FEATURES — même papier imprimé que le billet de la formation. */}
+        <section id="mission" className="section-container pt-4 lg:pt-6 pb-10 lg:pb-12">
+          <div className="rounded-[3px] overflow-hidden shadow-soft-lg" style={fondPapier}>
+            <div className="px-5 sm:px-8 py-6 sm:py-8">
+              <p className="text-[9.5px] sm:text-[10.5px] uppercase tracking-[0.18em] opacity-65" style={MONO}>
+                {t('landing.why_choose')}
               </p>
-            </div>
+              <h2 className="mt-2 uppercase leading-[0.95] text-[1.6rem] sm:text-[2.4rem]" style={TITRE}>
+                Mylta{' '}
+                <span className="normal-case tracking-normal" style={{ ...SERIF, color: ROUGE }}>Academy</span>
+              </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 lg:gap-4 max-w-4xl mx-auto">
-              {features.map((f, i) => {
-                const style = FEATURE_STYLES[i] || FEATURE_STYLES[0]
-                const Icon = style.icon
-                return (
-                  <div key={f.title} className="card-academy p-3.5 flex items-center gap-3 md:flex-col md:items-start md:gap-2">
-                    <div className={`w-9 h-9 shrink-0 rounded-xl ${style.bg} border ${style.border} flex items-center justify-center`}>
-                      <Icon className={`w-[18px] h-[18px] ${style.color}`} />
-                    </div>
-                    <div className="min-w-0">
-                      <h3 className="font-display font-bold text-[15px] text-academy-textMain leading-tight">{f.title}</h3>
-                      <p className="text-academy-textMain/60 text-xs font-medium leading-snug mt-0.5">{f.desc}</p>
-                    </div>
-                  </div>
-                )
-              })}
+              <ol className="mt-5">
+                {features.map((f, i) => {
+                  const Icon = (FEATURE_STYLES[i] || FEATURE_STYLES[0]).icon
+                  return (
+                    <li key={f.title}
+                        className="flex items-start gap-4 py-4"
+                        style={{ borderTop: `1.5px solid ${i === 0 ? ENCRE : `${ENCRE}33`}` }}>
+                      <span className="shrink-0 grid place-items-center w-9 h-9 rounded-full"
+                            style={{ border: `1.5px solid ${ENCRE}` }}>
+                        <Icon className="w-[17px] h-[17px]" />
+                      </span>
+                      <span className="min-w-0 flex-1">
+                        <span className="block text-[15px] sm:text-[17px] uppercase leading-tight" style={TITRE}>
+                          {f.title}
+                        </span>
+                        <span className="block mt-1 text-[11.5px] sm:text-[12.5px] leading-[1.55] opacity-75" style={MONO}>
+                          {f.desc}
+                        </span>
+                      </span>
+                      <span className="shrink-0 text-[10px] tracking-[0.2em] opacity-45 pt-1" style={MONO}>
+                        0{i + 1}
+                      </span>
+                    </li>
+                  )
+                })}
+              </ol>
             </div>
           </div>
         </section>
