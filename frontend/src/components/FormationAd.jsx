@@ -56,8 +56,7 @@ export default function FormationAd({ inPerson }) {
         <div className="flex items-center justify-between gap-3 px-4 sm:px-7 py-2.5 border-b border-academy-border
                         text-[9.5px] font-bold uppercase tracking-[0.18em] opacity-70">
           <span>Mylta Academy · Présentiel</span>
-          <span className="hidden sm:inline opacity-70">N° {serial}</span>
-          <span>{session.capacity || 10} places</span>
+          <span className="opacity-70">N° {serial}</span>
         </div>
 
         <div className="px-4 sm:px-7 pt-4 pb-5 lg:flex lg:items-start lg:justify-between lg:gap-10">
@@ -85,20 +84,35 @@ export default function FormationAd({ inPerson }) {
               ))}
             </div>
             <p className="mt-1.5 text-center lg:text-right font-bold text-[15px]">{month}</p>
-            <p className="mt-0.5 text-center lg:text-right text-[12px] opacity-70">
-              {hour(session.startTime)} – {hour(session.endTime)}
-            </p>
-            <p className="mt-0.5 text-[12px] opacity-70 flex items-center justify-center lg:justify-end gap-1.5">
-              <MapPin size={13} className="shrink-0" /> {session.place || 'Camden International Institute'}
-            </p>
+
+            {/* Intitulés en petites capitales, comme les champs imprimés d'un billet. */}
+            <dl className="mt-2.5 flex justify-center lg:justify-end gap-5 text-center lg:text-right">
+              <div>
+                <dt className="text-[8.5px] font-bold uppercase tracking-[0.2em] opacity-45">Horaire</dt>
+                <dd className="mt-0.5 text-[12px] font-semibold">{hour(session.startTime)} – {hour(session.endTime)}</dd>
+              </div>
+              <div className="border-l border-academy-border ps-5">
+                <dt className="text-[8.5px] font-bold uppercase tracking-[0.2em] opacity-45">Lieu</dt>
+                <dd className="mt-0.5 text-[12px] font-semibold flex items-center justify-center lg:justify-end gap-1.5">
+                  <MapPin size={12} className="shrink-0 opacity-60" /> {session.place || 'Camden International Institute'}
+                </dd>
+              </div>
+            </dl>
           </div>
         </div>
 
-        {/* La perforation : deux encoches et un pointillé, comme sur un vrai billet. */}
+        {/* La perforation : deux encoches sur les bords et une ligne de trous
+            poinçonnés. Un simple pointillé se lit comme un séparateur de mise
+            en page ; des trous ronds, à la couleur du fond de page, se lisent
+            comme du papier réellement perforé, prêt à se détacher. */}
         <div className="relative">
           <span aria-hidden="true" className="absolute -left-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-academy-surface" />
           <span aria-hidden="true" className="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-academy-surface" />
-          <div className="mx-4 sm:mx-7 border-t-2 border-dashed border-academy-textMain/20" />
+          <div aria-hidden="true" className="mx-4 sm:mx-7 h-[7px]" style={{
+            backgroundImage: 'radial-gradient(circle at center, rgb(var(--academy-surface)) 0 3.5px, transparent 3.5px)',
+            backgroundSize: '14px 7px',
+            backgroundRepeat: 'repeat-x',
+          }} />
         </div>
 
         {/* Le talon : ce qu'on détache, donc le prix et le bouton. */}
@@ -138,7 +152,7 @@ export default function FormationAd({ inPerson }) {
                 Réserver ma place <ArrowRight size={16} className="group-hover:translate-x-0.5 transition-transform" />
               </Link>
               <p className="mt-1.5 text-center text-[9px] font-bold uppercase tracking-[0.22em] opacity-50">
-                Entrée · 1 place
+                Entrée
               </p>
             </div>
           </div>

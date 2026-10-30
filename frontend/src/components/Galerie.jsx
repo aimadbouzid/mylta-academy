@@ -99,12 +99,21 @@ export default function Galerie() {
         <p className="mt-1.5 text-[15px] text-academy-textMain/60 max-w-xl">
           Filmé et monté au téléphone, pendant les trois jours. Aucune caméra, aucun ordinateur.
         </p>
-        <p className="mt-3 inline-flex items-center gap-2 rounded-full border border-academy-border
-                      bg-academy-surface dark:bg-white/[0.04] px-3 py-1.5
-                      text-[12px] font-bold text-academy-textMain/60">
-          <Hand size={13} className="shrink-0" />
+        <p className="mt-3 inline-flex items-center gap-2 rounded-full
+                      bg-academy-primary text-academy-onPrimary px-3.5 py-2
+                      text-[12.5px] font-bold shadow-soft">
+          <Hand size={14} className="shrink-0 animate-swipe" />
           Faites glisser pour voir les autres
+          <ChevronRight size={14} className="shrink-0 animate-swipe" />
         </p>
+
+        {/* Le geste, montré plutôt qu'écrit : la main et la flèche avancent
+            doucement vers la droite, en boucle. */}
+        <style>{`
+          @keyframes swipe-hint { 0%, 60%, 100% { transform: translateX(0) } 30% { transform: translateX(4px) } }
+          .animate-swipe { animation: swipe-hint 1.8s ease-in-out infinite; }
+          @media (prefers-reduced-motion: reduce) { .animate-swipe { animation: none } }
+        `}</style>
       </div>
 
       {/* Les barres débordent volontairement de la colonne : on sent qu'il y en a plus. */}
