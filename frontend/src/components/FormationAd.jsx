@@ -50,10 +50,10 @@ export default function FormationAd({ inPerson }) {
 
   return (
     <section className="section-container pt-3">
-      <article className="max-w-3xl lg:max-w-none mx-auto rounded-2xl bg-academy-textMain text-academy-surface overflow-hidden">
+      <article className="max-w-3xl lg:max-w-none mx-auto rounded-2xl bg-academy-white text-academy-textMain border border-academy-border shadow-soft overflow-hidden">
 
         {/* Bandeau du billet */}
-        <div className="flex items-center justify-between gap-3 px-4 sm:px-7 py-2.5 border-b border-academy-surface/15
+        <div className="flex items-center justify-between gap-3 px-4 sm:px-7 py-2.5 border-b border-academy-border
                         text-[9.5px] font-bold uppercase tracking-[0.18em] opacity-70">
           <span>Mylta Academy · Présentiel</span>
           <span className="hidden sm:inline opacity-70">N° {serial}</span>
@@ -74,7 +74,7 @@ export default function FormationAd({ inPerson }) {
           <div className="mt-5 lg:mt-1 shrink-0">
             <div className="flex justify-center lg:justify-end">
               {days.map((dt, i) => (
-                <div key={i} className={`px-3 sm:px-4 text-center ${i ? 'border-l border-academy-surface/20' : ''}`}>
+                <div key={i} className={`px-3 sm:px-4 text-center ${i ? 'border-l border-academy-border' : ''}`}>
                   <span className="block text-[9.5px] font-bold uppercase tracking-[0.14em] opacity-55">
                     {dt.toLocaleDateString('fr-FR', { weekday: 'short' }).replace('.', '')}
                   </span>
@@ -98,7 +98,7 @@ export default function FormationAd({ inPerson }) {
         <div className="relative">
           <span aria-hidden="true" className="absolute -left-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-academy-surface" />
           <span aria-hidden="true" className="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-academy-surface" />
-          <div className="mx-4 sm:mx-7 border-t-2 border-dashed border-academy-surface/25" />
+          <div className="mx-4 sm:mx-7 border-t-2 border-dashed border-academy-textMain/20" />
         </div>
 
         {/* Le talon : ce qu'on détache, donc le prix et le bouton. */}
@@ -129,7 +129,7 @@ export default function FormationAd({ inPerson }) {
 
           <div className="w-full sm:w-auto flex items-center gap-3">
             <span aria-hidden="true"
-                  className="hidden lg:block self-stretch border-l-2 border-dashed border-academy-surface/25" />
+                  className="hidden lg:block self-stretch border-l-2 border-dashed border-academy-textMain/20" />
             <div className="w-full sm:w-auto">
               <Link to="/coaching-presentiel"
                     className="group w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg
