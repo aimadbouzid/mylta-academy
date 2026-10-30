@@ -29,7 +29,7 @@ export default function Productions({ productions }) {
         <div className="mt-4 flex gap-3 overflow-x-auto snap-x snap-mandatory hide-scrollbar pb-1">
           {productions.posts.map(p => (
             <a key={p.code} href={`https://www.instagram.com/reel/${p.code}/`} target="_blank" rel="noopener noreferrer"
-               className="group snap-start shrink-0 w-[180px] sm:w-[220px]">
+               className="group snap-start shrink-0 w-[150px] sm:w-[185px]">
               <div className="relative rounded-xl overflow-hidden border border-academy-border bg-black aspect-[9/16]">
                 <img src={`/productions/${p.code}.jpg`} alt={`Production de @${p.account}`}
                      loading="lazy" decoding="async"

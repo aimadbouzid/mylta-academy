@@ -60,7 +60,7 @@ function Row({ items, reverse }) {
   return (
     <div ref={ref} className="flex gap-3 overflow-x-auto hide-scrollbar pb-1">
       {items.map(item => (
-        <article key={item.src} className="shrink-0 w-[150px] sm:w-[190px]">
+        <article key={item.src} className="shrink-0 w-[118px] sm:w-[150px]">
           <div className="rounded-xl overflow-hidden border border-academy-border bg-black aspect-[9/16]">
             {item.type === 'video' ? (
               <ReelPlayer src={item.src} poster={item.poster} className="w-full h-full" />

@@ -327,6 +327,18 @@ const defaultSettings = {
       { code: 'DZlHqM6tnAq', account: 'aimadbouzidii' },
       { code: 'DY7isyvoGyX', account: 'mylta_creative' },
       { code: 'DZqRoIstfFZ', account: 'aimadbouzidii' },
+      { code: 'C_GPnzNND8w', account: 'mylta_creative' },
+      { code: 'DeCd9nONYjW', account: 'mylta_creative' },
+      { code: 'DdenF9MtQoy', account: 'mylta_creative' },
+      { code: 'DdE-U3UogqF', account: 'mylta_creative' },
+      { code: 'DcytqulOLwz', account: 'mylta_creative' },
+      { code: 'DfDP_LaR306', account: 'aimadbouzidii' },
+      { code: 'DfAtRpAxI46', account: 'aimadbouzidii' },
+      { code: 'De-F_Fvx3jh', account: 'aimadbouzidii' },
+      { code: 'De7btakxhHb', account: 'aimadbouzidii' },
+      { code: 'De42YCNROo1', account: 'aimadbouzidii' },
+      { code: 'DekGtBOsT5z', account: 'aimadbouzidii' },
+      { code: 'DefOlBMx-4V', account: 'aimadbouzidii' },
     ],
   },
   inPerson: {
@@ -520,7 +532,7 @@ function readSettingsFromDisk() {
 // les valeurs par défaut au premier démarrage, donc un simple changement de
 // défaut ne l'atteint pas). Appliqué une fois : le prochain enregistrement admin
 // écrit settingsVersion à jour.
-const SETTINGS_VERSION = 20
+const SETTINGS_VERSION = 21
 const OLD_BANNER_TEXTS = ["🚀 Promo exceptionnelle : -50% sur toutes les formations ! Inscrivez-vous vite."]
 
 function migrateSettings(parsed, merged) {
@@ -590,6 +602,9 @@ function migrateSettings(parsed, merged) {
   }
   if ((parsed.settingsVersion || 1) < 17) {
     merged.instagram = { ...defaultSettings.instagram, ...(parsed.instagram || {}), posts: defaultSettings.instagram.posts }
+  }
+  if ((parsed.settingsVersion || 1) < 21) {
+    merged.productions = { ...merged.productions, posts: defaultSettings.productions.posts }
   }
   if ((parsed.settingsVersion || 1) < 20) {
     merged.productions = { ...defaultSettings.productions, ...(parsed.productions || {}), posts: defaultSettings.productions.posts }
