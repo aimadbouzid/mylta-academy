@@ -85,39 +85,39 @@ export default function FormationAd({ inPerson }) {
 
           <div className="flex-1 min-w-0 flex flex-col lg:flex-row">
             {/* Corps du billet */}
-            <div className="flex-1 min-w-0 px-4 sm:px-6 py-5 sm:py-6">
+            <div className="flex-1 min-w-0 px-4 sm:px-6 py-4 sm:py-6">
               <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[9.5px] sm:text-[10.5px] uppercase tracking-[0.18em] opacity-65"
                    style={mono}>
                 <span>Mylta Academy — Présentiel</span>
                 <span className="opacity-70">N° {serial}</span>
               </div>
 
-              <h2 className="mt-3 uppercase leading-[0.92] tracking-[0.01em] text-[1.9rem] sm:text-[2.9rem] lg:text-[3.2rem]"
+              <h2 className="mt-2.5 uppercase leading-[0.92] tracking-[0.01em] text-[1.5rem] sm:text-[2.6rem] lg:text-[3.1rem]"
                   style={titre}>
                 3 jours pour filmer,<br />
                 monter &amp;{' '}
                 <span className="normal-case tracking-normal" style={{ ...serif, color: ROUGE }}>dompter l'IA</span>
               </h2>
 
-              <p className="mt-4 max-w-lg text-[12px] sm:text-[13.5px] leading-[1.75]" style={mono}>
-                Tout se passe sur votre téléphone. Tournage, montage, scripts,
+              <p className="mt-3 max-w-lg text-[11.5px] sm:text-[13px] leading-[1.6]" style={mono}>
+                Tout se passe sur votre téléphone : tournage, montage, scripts,
                 voix off, images générées. On part de zéro.
               </p>
 
-              <div className="mt-5 pt-4 flex flex-wrap gap-x-8 gap-y-3"
+              <div className="mt-4 pt-3 flex flex-wrap gap-x-7 gap-y-2"
                    style={{ borderTop: `1.5px solid ${ENCRE}` }}>
                 {[['Horaire', `${hour(session.startTime)} – ${hour(session.endTime)}`],
                   ['Lieu', session.place || 'Camden Int. Institute']].map(([k, v]) => (
                   <div key={k}>
                     <p className="text-[9px] uppercase tracking-[0.25em] opacity-55" style={mono}>{k}</p>
-                    <p className="mt-1 text-[14px] sm:text-[15px] uppercase" style={titre}>{v}</p>
+                    <p className="mt-0.5 text-[13px] sm:text-[15px] uppercase" style={titre}>{v}</p>
                   </div>
                 ))}
               </div>
             </div>
 
             {/* Talon détachable : la date, le prix, la réservation. */}
-            <div className="relative shrink-0 lg:w-[270px] px-4 sm:px-6 py-5 sm:py-6
+            <div className="relative shrink-0 lg:w-[270px] px-4 sm:px-6 py-4 sm:py-6
                             border-t-2 lg:border-t-0 lg:border-l-2 border-dashed"
                  style={{ borderColor: `${ENCRE}55` }}>
               <div className="flex items-start justify-between gap-3 lg:block">
@@ -147,7 +147,7 @@ export default function FormationAd({ inPerson }) {
                 )}
               </div>
 
-              <div className="mt-4 flex items-end justify-between gap-3 lg:block">
+              <div className="mt-3 flex items-end justify-between gap-3 lg:block">
                 <div>
                   {oldPrice > 0 && (
                     <p className="text-[12px] line-through opacity-50 tracking-[0.1em]" style={mono}>
@@ -167,19 +167,19 @@ export default function FormationAd({ inPerson }) {
                 )}
               </div>
 
-              <p className="mt-2 text-[10px] tracking-[0.08em] opacity-60" style={mono}>
+              <p className="mt-1.5 text-[10px] tracking-[0.08em] opacity-60" style={mono}>
                 Dans {j} j {pad(h)} h {pad(mn)} min
               </p>
 
               <Link to="/coaching-presentiel"
-                    className="mt-3 block w-full text-center uppercase text-[14px] sm:text-[15px] tracking-[0.12em]
-                               py-3 transition-opacity hover:opacity-85"
+                    className="mt-2.5 block w-full text-center uppercase text-[14px] sm:text-[15px] tracking-[0.12em]
+                               py-2.5 transition-opacity hover:opacity-85"
                     style={{ ...titre, background: ENCRE, color: PAPIER }}>
                 Réserver
               </Link>
 
               {/* Code-barres : des barres de largeurs irrégulières, dessinées en CSS. */}
-              <div aria-hidden="true" className="mt-4 flex flex-col items-center gap-1">
+              <div aria-hidden="true" className="mt-3 hidden lg:flex flex-col items-center gap-1">
                 <span className="block h-7 w-full max-w-[180px]" style={{
                   color: ENCRE,
                   backgroundImage: 'repeating-linear-gradient(90deg, currentColor 0 2px, transparent 2px 4px, currentColor 4px 5px, transparent 5px 9px, currentColor 9px 12px, transparent 12px 14px)',
