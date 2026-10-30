@@ -377,12 +377,9 @@ export default function InPersonPage() {
                         </p>
                         <ol className="mt-2 space-y-1.5">
                           {(cfg.curriculum.fr).map((d, i) => (
-                            <li key={i} className="flex gap-3 rounded-lg bg-academy-primary/10 border-l-4 border-academy-primary py-2.5 px-3">
-                              <span className="shrink-0 font-display font-black text-[15px] text-academy-primary leading-tight">J{i + 1}</span>
-                              <span className="min-w-0">
-                                <span className="block text-[14.5px] font-bold leading-snug">{d.title}</span>
-                                {d.goal && <span className="block text-[12.5px] text-academy-textMain/60 leading-snug mt-0.5">{d.goal}</span>}
-                              </span>
+                            <li key={i} className="flex items-center gap-3 rounded-lg bg-academy-primary/10 border-l-4 border-academy-primary py-2 px-3">
+                              <span className="shrink-0 font-display font-black text-[15px] text-academy-primary leading-none">J{i + 1}</span>
+                              <span className="text-[14.5px] font-bold leading-snug">{d.title}</span>
                             </li>
                           ))}
                         </ol>
@@ -395,14 +392,11 @@ export default function InPersonPage() {
                         <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-academy-textMain/50">
                           {cfg.coaches.length} coachs, un par spécialité
                         </p>
-                        <ul className="mt-2 divide-y divide-academy-border border-y border-academy-border">
+                        <ul className="mt-2 flex flex-wrap gap-1.5">
                           {cfg.coaches.map((c, i) => (
-                            <li key={i} className="flex gap-3 py-2.5">
-                              <span className="shrink-0 font-mono text-[11px] font-bold text-academy-primary pt-1">0{i + 1}</span>
-                              <span className="min-w-0">
-                                <span className="block font-bold text-[14px] leading-snug">{c.role}</span>
-                                {c.desc && <span className="block text-[13px] text-academy-textMain/60 leading-snug mt-0.5">{c.desc}</span>}
-                              </span>
+                            <li key={i} className="rounded-full border border-academy-border bg-academy-surface
+                                                   dark:bg-white/[0.04] px-3 py-1.5 text-[13px] font-bold">
+                              {c.role}
                             </li>
                           ))}
                         </ul>
