@@ -14,6 +14,22 @@ const DUR = { convention: 2600, formation: 4800, route: 6200, programme: 5800, v
 const ROUTE = 'M286 34 L262 62 L232 112 L204 160 L178 204 L160 170 L146 136'
 const money = (n) => `${Number(n).toLocaleString('fr-FR')} DA`
 const hour = (t) => (t || '').replace(/^0/, '').replace(':00', 'h').replace(':', 'h')
+// Fond photo par scène : des images de la formation, prises sur place. Le noir
+// uni faisait « image de synthèse » ; une photo réelle, très assombrie, donne
+// la profondeur d'une story sans jamais gêner la lecture du texte.
+// Elles sont légères (≈ 45 ko, 540 px) et déjà servies par la galerie.
+const BG = {
+  convention: '/galerie/photo-03.jpg',
+  formation:  '/galerie/photo-06.jpg',
+  route:      '/galerie/photo-10.jpg',
+  programme:  '/galerie/photo-12.jpg',
+  viga:       '/galerie/photo-01.jpg',
+  offre:      '/galerie/photo-04.jpg',
+}
+
+// Scènes chargées de texte : on assombrit davantage pour garder le contraste.
+const BG_OPACITY = { convention: 0.4, formation: 0.32, route: 0.16, programme: 0.18, viga: 0.26, offre: 0.3 }
+
 const GRAIN = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E")`
 
 // Compteur qui monte sur le prix : le chiffre s'installe au lieu d'apparaître d'un bloc.
@@ -108,20 +124,39 @@ export default function PresentationReel() {
         .reel .bar { transform-origin: left; animation: ae-bar linear forwards; }
         .reel .push { opacity: 0; animation: ae-scene .7s var(--e) forwards; }
         .reel .grain { animation: ae-grain .7s steps(4) infinite; }
+        /* Zoom très lent sur la photo de fond : la scène respire au lieu d'être figée. */
+        .reel .kb { animation: ae-kb 7s linear forwards, ae-bgin .9s ease-out backwards; }
         @keyframes ae-rise  { to { opacity: 1; transform: none } }
         @keyframes ae-fx    { from { opacity: 0; transform: translateY(10px) } to { opacity: 1; transform: none } }
         @keyframes ae-scene { from { opacity: 0; transform: scale(1.015) } to { opacity: 1; transform: none } }
         @keyframes ae-wipe  { to { clip-path: inset(0 0 0 0) } }
         @keyframes ae-draw  { to { stroke-dashoffset: 0 } }
         @keyframes ae-bar   { from { transform: scaleX(0) } to { transform: scaleX(1) } }
+        @keyframes ae-kb    { from { transform: scale(1.04) } to { transform: scale(1.14) } }
+        @keyframes ae-bgin  { from { opacity: 0 } }
         @keyframes ae-grain { 0% { transform: translate(0,0) } 25% { transform: translate(-2%,1%) } 50% { transform: translate(1%,-2%) } 75% { transform: translate(-1%,-1%) } 100% { transform: translate(0,0) } }
         @media (prefers-reduced-motion: reduce) {
             animation: none; opacity: 1; transform: none;
           }
+          .reel .kb { animation: none }
           .reel .wipe { animation: none; clip-path: none }
           .reel .draw { animation: none; stroke-dashoffset: 0 }
         }
       `}</style>
+
+      {/* Photo de fond de la scène. `key` force un nouveau montage à chaque
+          changement : l'image réapparaît en fondu et repart en lent zoom. */}
+      <div key={`bg-${act}`} className="absolute inset-0 overflow-hidden pointer-events-none">
+        <img
+          src={BG[act]}
+          alt=""
+          aria-hidden="true"
+          decoding="async"
+          loading={act === 'convention' ? 'eager' : 'lazy'}
+          className="kb absolute inset-0 w-full h-full object-cover"
+          style={{ opacity: BG_OPACITY[act] ?? 0.25 }}
+        />
+      </div>
 
       {/* La séquence du samedi chez Viga bascule l'image en bleu : le fond a un
           jumeau posé par-dessus, révélé en fondu. */}
@@ -139,7 +174,7 @@ export default function PresentationReel() {
       {/* Grain argentique, ombre basse et filet de cadre : la texture d'une image
           filmée et le bord net d'un écran, pas un aplat. */}
       <div className="grain absolute -inset-[6%] opacity-[0.07] mix-blend-overlay pointer-events-none" style={{ backgroundImage: GRAIN }} />
-      <div className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(to top, rgba(0,0,0,.5), transparent 48%)' }} />
+      <div className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(to top, rgba(0,0,0,.72), rgba(0,0,0,.28) 48%, rgba(0,0,0,.45))' }} />
       <div className="absolute inset-0 z-30 pointer-events-none rounded-2xl" style={{ boxShadow: 'inset 0 0 0 1px rgba(255,255,255,.07)' }} />
 
       {/* Barres de progression façon « story » */}
