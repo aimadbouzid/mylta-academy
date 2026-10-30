@@ -34,6 +34,7 @@ export default function FormationAd({ inPerson }) {
   const weekdays = days.map(dt => dt.toLocaleDateString('fr-FR', { weekday: 'short' }).replace('.', '')).join(' · ')
   const month = cap(days[2].toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' }))
   const price = Number(session.price) || Number(inPerson.price) || 0
+  const oldPrice = Number(inPerson.oldPrice) > price ? Number(inPerson.oldPrice) : 0
 
   let left = Math.max(0, new Date(`${session.date}T${session.startTime || '08:30'}:00+01:00`) - now)
   const countdown = UNITS.map(([u, ms]) => {
@@ -82,7 +83,17 @@ export default function FormationAd({ inPerson }) {
                 </span>
               ))}
             </div>
-            <p className="mt-4 font-display font-black text-3xl">{price.toLocaleString('fr-FR')} DA</p>
+            <p className="mt-4 flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
+              <span className="font-display font-black text-3xl">{price.toLocaleString('fr-FR')} DA</span>
+              {oldPrice > 0 && (
+                <>
+                  <span className="text-sm text-current/45 line-through">{oldPrice.toLocaleString('fr-FR')} DA</span>
+                  <span className="text-[11px] font-black rounded px-1.5 py-0.5 bg-academy-primary text-academy-onPrimary">
+                    -{Math.round((1 - price / oldPrice) * 100)}%
+                  </span>
+                </>
+              )}
+            </p>
             <Link to="/coaching-presentiel"
                   className="group mt-3 w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg bg-academy-primary text-academy-onPrimary px-6 py-3 text-[15px] font-bold hover:opacity-90 transition-opacity">
               Réserver ma place <ArrowRight size={16} className="group-hover:translate-x-0.5 transition-transform" />

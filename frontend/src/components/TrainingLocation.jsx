@@ -9,7 +9,6 @@ const PLACE = {
   partner: 'Camden International Institute',
   logo: '/camden-logo.jpg',
   address: 'Cité Douanière Bir Slam, Promo Ceram Bt D1 W, Béjaïa',
-  phone: '0542 47 12 61',
   from: { label: 'Gare routière de Béjaïa', lat: 36.7371759, lng: 5.0636466 },
   to: { lat: 36.7294694, lng: 5.0566702 },
 }
@@ -48,6 +47,7 @@ export default function TrainingLocation() {
   const route = ROUTES[routeId]
   const partner = settings?.inPerson?.venue || PLACE.partner
   const address = settings?.inPerson?.venueAddress || PLACE.address
+  const whatsapp = settings?.inPerson?.whatsappNumber || settings?.coaching?.whatsappNumber
 
   return (
     <section className="bg-white border border-academy-border rounded-2xl p-5 sm:p-6 shadow-sm space-y-5">
@@ -69,9 +69,13 @@ export default function TrainingLocation() {
 
       <div className="space-y-1.5 text-sm">
         <p className="flex gap-2"><MapPin size={17} className="text-academy-primary shrink-0 mt-0.5" /> {address}</p>
-        <a href={`tel:${PLACE.phone.replace(/\s/g, '')}`} className="flex gap-2 font-semibold hover:text-academy-primary">
-          <Phone size={16} className="text-academy-primary shrink-0 mt-0.5" /> {PLACE.phone}
-        </a>
+        {whatsapp && (
+          <a href={`https://wa.me/${whatsapp.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer"
+             className="flex gap-2 font-semibold hover:text-academy-primary">
+            <Phone size={16} className="text-academy-primary shrink-0 mt-0.5" />
+            <span>Inscriptions : WhatsApp Mylta Academy</span>
+          </a>
+        )}
       </div>
 
       {/* Trajet depuis la gare routière */}

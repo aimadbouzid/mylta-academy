@@ -64,7 +64,7 @@ export default function InPersonPage() {
   const { settings, loadingSettings } = useSiteSettings()
   const cfg = settings?.inPerson
   const currency = settings?.coaching?.currency || 'DA'
-  const whatsappNumber = settings?.coaching?.whatsappNumber
+  const whatsappNumber = settings?.inPerson?.whatsappNumber || settings?.coaching?.whatsappNumber
   const topRef = useRef(null)
 
   const [step, setStep] = useState(0)
@@ -324,6 +324,26 @@ export default function InPersonPage() {
                           </li>
                         ))}
                       </ol>
+                    )}
+
+                    {/* Un formateur par métier : c'est ce qui change tout sur trois jours. */}
+                    {(cfg.coaches || []).length > 0 && (
+                      <div>
+                        <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-academy-textMain/50">
+                          {cfg.coaches.length} coachs, un par spécialité
+                        </p>
+                        <ul className="mt-2 divide-y divide-academy-border border-y border-academy-border">
+                          {cfg.coaches.map((c, i) => (
+                            <li key={i} className="flex gap-3 py-2.5">
+                              <span className="shrink-0 font-mono text-[11px] font-bold text-academy-primary pt-1">0{i + 1}</span>
+                              <span className="min-w-0">
+                                <span className="block font-bold text-[14px] leading-snug">{c.role}</span>
+                                {c.desc && <span className="block text-[13px] text-academy-textMain/60 leading-snug mt-0.5">{c.desc}</span>}
+                              </span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
                     )}
 
                     {price > 0 && <PriceBox />}

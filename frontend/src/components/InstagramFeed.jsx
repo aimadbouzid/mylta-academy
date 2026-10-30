@@ -1,10 +1,11 @@
-import { useEffect, useRef, useState } from 'react'
-import { Instagram, Play } from 'lucide-react'
-import ReelPlayer from './ReelPlayer'
+import { useState } from 'react'
+import { Instagram } from 'lucide-react'
 
 // Publications Instagram de l'académie, montrées sur l'accueil.
-// L'intégration officielle d'Instagram n'est chargée que lorsque la carte
-// approche de l'écran : dix cadres chargés d'un coup rendraient la page lourde.
+// Instagram interdit à ses vidéos de se lire dans un autre site : son cadre
+// intégré affiche « Watch on Instagram » et emmène le visiteur ailleurs. On
+// montre donc l'image de chaque publication, hébergée ici, et un appui ouvre
+// la publication d'origine — compte et lien exacts.
 
 const TAGS = [
   { id: 'all', label: 'Tout' },
@@ -21,53 +22,12 @@ const TAG_LABEL = {
   ia: 'IA',
 }
 
-function Post({ code, tag, video, poster, hidden }) {
-  const ref = useRef(null)
-  const [visible, setVisible] = useState(false)
-
-  useEffect(() => {
-    const el = ref.current
-    if (!el || visible) return
-    const io = new IntersectionObserver(([e]) => e.isIntersecting && setVisible(true), { rootMargin: '400px' })
-    io.observe(el)
-    return () => io.disconnect()
-  }, [visible])
-
-  return (
-    <article ref={ref} className={`snap-start shrink-0 w-[270px] sm:w-[300px] ${hidden ? 'hidden' : ''}`}>
-      <div className="relative rounded-xl overflow-hidden border border-academy-border bg-white h-[440px]">
-        {/* Vidéo hébergée ici : elle démarre seule, sans attendre Instagram. */}
-        {video ? (
-          <a href={`https://www.instagram.com/p/${code}/`} target="_blank" rel="noopener noreferrer" className="block w-full h-full">
-            <ReelPlayer src={video} poster={poster} className="w-full h-full" />
-          </a>
-        ) : visible ? (
-          <iframe
-            src={`https://www.instagram.com/p/${code}/embed/`}
-            title={`Publication Instagram ${code}`}
-            loading="lazy"
-            scrolling="no"
-            allowTransparency="true"
-            className="w-full h-full border-0"
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center text-academy-textMain/30">
-            <Play size={28} />
-          </div>
-        )}
-      </div>
-      {tag && TAG_LABEL[tag] && (
-        <p className="mt-2 text-[11px] font-bold uppercase tracking-[0.15em] text-academy-primary">{TAG_LABEL[tag]}</p>
-      )}
-    </article>
-  )
-}
-
 export default function InstagramFeed({ instagram }) {
   const [tag, setTag] = useState('all')
   if (!instagram?.enabled || !(instagram.posts || []).length) return null
 
   const shown = TAGS.filter(t => t.id === 'all' || instagram.posts.some(p => p.tag === t.id))
+  const posts = tag === 'all' ? instagram.posts : instagram.posts.filter(p => p.tag === tag)
 
   return (
     <section className="py-8 lg:py-12 border-t border-academy-border">
@@ -78,6 +38,9 @@ export default function InstagramFeed({ instagram }) {
             <h2 className="mt-1 font-display font-black text-2xl sm:text-3xl tracking-tight text-academy-textMain">
               Nos formations et nos étudiants
             </h2>
+            <p className="mt-1.5 text-[15px] text-academy-textMain/60 max-w-xl">
+              Chaque vidéo a été tournée et montée avec un téléphone. Appuyez pour la voir sur Instagram.
+            </p>
           </div>
           <a href={`https://www.instagram.com/${instagram.account}/`} target="_blank" rel="noopener noreferrer"
              className="inline-flex items-center gap-1.5 text-sm font-bold text-academy-textMain border-b-2 border-academy-textMain hover:text-academy-primary hover:border-academy-primary transition-colors">
@@ -99,9 +62,24 @@ export default function InstagramFeed({ instagram }) {
         )}
 
         <div className="mt-4 flex gap-3 overflow-x-auto snap-x snap-mandatory hide-scrollbar pb-1">
-          {instagram.posts.map(p => (
-            <Post key={p.code} code={p.code} tag={p.tag} video={p.video} poster={p.poster}
-                  hidden={tag !== 'all' && p.tag !== tag} />
+          {posts.map(p => (
+            <a key={p.code} href={`https://www.instagram.com/p/${p.code}/`} target="_blank" rel="noopener noreferrer"
+               className="group snap-start shrink-0 w-[180px] sm:w-[220px]">
+              <div className="relative rounded-xl overflow-hidden border border-academy-border bg-black aspect-[9/16]">
+                <img src={`/instagram/${p.code}.jpg`} alt={`Publication de @${p.account || instagram.account}`}
+                     loading="lazy" decoding="async"
+                     className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.03]" />
+                <div className="absolute inset-x-0 bottom-0 p-2.5 pt-10 bg-gradient-to-t from-black/85 to-transparent">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-white/75">Créée avec un téléphone</p>
+                  <p className="mt-0.5 flex items-center gap-1 text-[12px] font-bold text-white">
+                    <Instagram size={12} className="shrink-0" /> @{p.account || instagram.account}
+                  </p>
+                </div>
+              </div>
+              {p.tag && TAG_LABEL[p.tag] && (
+                <p className="mt-2 text-[11px] font-bold uppercase tracking-[0.12em] text-academy-primary">{TAG_LABEL[p.tag]}</p>
+              )}
+            </a>
           ))}
         </div>
       </div>

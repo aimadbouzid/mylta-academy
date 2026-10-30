@@ -8,6 +8,13 @@ import { Volume2, VolumeX } from 'lucide-react'
 //   · une seule vidéo joue à la fois, celle qui est à l'écran : les autres sont mises
 //     en pause et ne téléchargent rien, donc pas de saccade ni de forfait gaspillé.
 
+// Trois barres défilent en même temps : sans garde-fou, une dizaine de vidéos
+// se décoderaient d'un coup et le téléphone chaufferait. On en laisse jouer
+// quatre au plus ; les autres gardent leur image et auront leur tour en
+// repassant à l'écran.
+const MAX_EN_LECTURE = 4
+const enLecture = new Set()
+
 export default function ReelPlayer({ src, poster, className = '' }) {
   const ref = useRef(null)
   const [near, setNear] = useState(false)   // assez proche pour précharger
@@ -20,18 +27,20 @@ export default function ReelPlayer({ src, poster, className = '' }) {
     if (!el) return
     const preload = new IntersectionObserver(([e]) => e.isIntersecting && setNear(true), { rootMargin: '600px' })
     const play = new IntersectionObserver(([e]) => {
+      const v = el.querySelector('video')
       if (e.isIntersecting) {
-        const v = el.querySelector('video')
-        v?.play().then(() => setPlaying(true)).catch(() => {})
+        if (!v || enLecture.size >= MAX_EN_LECTURE) return
+        enLecture.add(el)
+        v.play().then(() => setPlaying(true)).catch(() => enLecture.delete(el))
       } else {
-        const v = el.querySelector('video')
+        enLecture.delete(el)
         v?.pause()
         setPlaying(false)
       }
     }, { threshold: 0.6 })
     preload.observe(el)
     play.observe(el)
-    return () => { preload.disconnect(); play.disconnect() }
+    return () => { preload.disconnect(); play.disconnect(); enLecture.delete(el) }
   }, [near])
 
   // Mettre en pause quand l'onglet passe à l'arrière-plan.

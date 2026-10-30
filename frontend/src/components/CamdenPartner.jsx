@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { MapPin, Phone, Mail, Facebook } from 'lucide-react'
+import { MapPin, Facebook } from 'lucide-react'
 import { useSiteSettings } from '../context/SiteSettingsContext'
 
 // Partenaire officiel (convention signée) : lieu des formations présentielles.
@@ -19,11 +19,9 @@ export default function CamdenPartner() {
              className="mx-auto w-24 sm:w-28 h-16 sm:h-20 object-contain" />
         <p className="mt-3 text-[10px] font-black uppercase tracking-[0.15em] text-academy-primary">Partenaire officiel · Convention signée</p>
         <p className="font-display font-black text-[15px] sm:text-lg leading-tight mt-1">Mylta Academy × {partner}</p>
-        <p className="text-xs text-academy-textMain/60 mt-1">Nos formations en présentiel ont lieu chez Camden, à Béjaïa.</p>
+        <p className="text-xs text-academy-textMain/60 mt-1">Nos formations en présentiel ont lieu chez Camden, à Béjaïa. Les inscriptions se font chez Mylta Academy.</p>
         <div className="mt-4 pt-4 border-t border-academy-border flex flex-col sm:flex-row sm:flex-wrap items-center justify-center gap-x-5 gap-y-2 text-[13px] text-academy-textMain/75">
           <span className="flex items-center gap-1.5"><MapPin size={15} className="text-academy-primary shrink-0" /> {address}</span>
-          <a href="tel:0542471261" className="flex items-center gap-1.5 hover:text-academy-primary"><Phone size={15} className="text-academy-primary shrink-0" /> 0542 47 12 61</a>
-          <a href="mailto:info@camden-dz.com" className="flex items-center gap-1.5 hover:text-academy-primary"><Mail size={15} className="text-academy-primary shrink-0" /> info@camden-dz.com</a>
           <a href="https://www.facebook.com/p/Camden-Institute-61559611526317/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 hover:text-academy-primary"><Facebook size={15} className="text-academy-primary shrink-0" /> Camden Institute</a>
         </div>
         <Link to="/coaching-presentiel" className="mt-4 inline-block text-sm font-bold border-b-2 border-academy-textMain hover:text-academy-primary hover:border-academy-primary">

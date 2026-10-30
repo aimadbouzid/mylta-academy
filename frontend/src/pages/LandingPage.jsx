@@ -14,8 +14,8 @@ import LoginModal from '../components/LoginModal'
 import PaymentModal from '../components/PaymentModal'
 import FormationsHub from '../components/FormationsHub'
 import FormationAd from '../components/FormationAd'
-import InstagramFeed from '../components/InstagramFeed'
 import Galerie from '../components/Galerie'
+import InstagramFeed from '../components/InstagramFeed'
 import PresentationReel from '../components/PresentationReel'
 import CamdenPartner from '../components/CamdenPartner'
 import IntroVideoModal from '../components/IntroVideoModal'
@@ -271,6 +271,7 @@ export default function LandingPage() {
         <Galerie />
 
         <InstagramFeed instagram={siteSettings.instagram} />
+
 
         <CamdenPartner />
 
