@@ -44,45 +44,45 @@ export default function FormationAd({ inPerson }) {
   const pad = (n) => String(n).padStart(2, '0')
 
   return (
-    <section className="section-container pt-4">
+    <section className="section-container pt-3">
       <article className="max-w-3xl lg:max-w-none mx-auto rounded-2xl bg-academy-textMain text-academy-surface overflow-hidden">
 
         {/* Bandeau du billet */}
-        <div className="flex items-center justify-between gap-3 px-5 sm:px-8 py-3 border-b border-academy-surface/15
-                        text-[10px] font-bold uppercase tracking-[0.2em] opacity-70">
+        <div className="flex items-center justify-between gap-3 px-4 sm:px-7 py-2.5 border-b border-academy-surface/15
+                        text-[9.5px] font-bold uppercase tracking-[0.18em] opacity-70">
           <span>Mylta Academy · Présentiel</span>
           <span>{session.capacity || 10} places</span>
         </div>
 
-        <div className="px-5 sm:px-8 pt-6 pb-7 lg:flex lg:items-start lg:justify-between lg:gap-12">
+        <div className="px-4 sm:px-7 pt-4 pb-5 lg:flex lg:items-start lg:justify-between lg:gap-10">
           <div className="lg:max-w-xl">
-            <h2 className="font-display font-black text-[1.75rem] sm:text-[2.6rem] leading-[1.04] tracking-tight">
+            <h2 className="font-display font-black text-[1.35rem] sm:text-[2rem] lg:text-[2.3rem] leading-[1.06] tracking-tight">
               En 3 jours, vous filmez, montez et faites travailler l'IA.
             </h2>
-            <p className="mt-2.5 text-[15px] sm:text-[17px] opacity-70">
+            <p className="mt-2 text-[13px] sm:text-[15px] opacity-70 leading-snug">
               Tout sur votre téléphone : tournage, montage, scripts, voix off et images par l'IA. Même en partant de zéro.
             </p>
           </div>
 
           {/* Les trois jours, en cases séparées : on lit une date, pas un nombre. */}
-          <div className="mt-7 lg:mt-1 shrink-0">
+          <div className="mt-5 lg:mt-1 shrink-0">
             <div className="flex justify-center lg:justify-end">
               {days.map((dt, i) => (
-                <div key={i} className={`px-3.5 sm:px-5 text-center ${i ? 'border-l border-academy-surface/20' : ''}`}>
-                  <span className="block text-[10px] font-bold uppercase tracking-[0.14em] opacity-55">
+                <div key={i} className={`px-3 sm:px-4 text-center ${i ? 'border-l border-academy-surface/20' : ''}`}>
+                  <span className="block text-[9.5px] font-bold uppercase tracking-[0.14em] opacity-55">
                     {dt.toLocaleDateString('fr-FR', { weekday: 'short' }).replace('.', '')}
                   </span>
-                  <span className="block font-display font-black text-[2.7rem] sm:text-[3.3rem] leading-[0.95] tabular-nums">
+                  <span className="block font-display font-black text-[1.9rem] sm:text-[2.4rem] leading-[1] tabular-nums">
                     {dt.getDate()}
                   </span>
                 </div>
               ))}
             </div>
-            <p className="mt-2.5 text-center lg:text-right font-bold text-lg">{month}</p>
-            <p className="mt-0.5 text-center lg:text-right text-[13px] opacity-70">
+            <p className="mt-1.5 text-center lg:text-right font-bold text-[15px]">{month}</p>
+            <p className="mt-0.5 text-center lg:text-right text-[12px] opacity-70">
               {hour(session.startTime)} – {hour(session.endTime)}
             </p>
-            <p className="mt-0.5 text-[13px] opacity-70 flex items-center justify-center lg:justify-end gap-1.5">
+            <p className="mt-0.5 text-[12px] opacity-70 flex items-center justify-center lg:justify-end gap-1.5">
               <MapPin size={13} className="shrink-0" /> {session.place || 'Camden International Institute'}
             </p>
           </div>
@@ -92,32 +92,32 @@ export default function FormationAd({ inPerson }) {
         <div className="relative">
           <span aria-hidden="true" className="absolute -left-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-academy-surface" />
           <span aria-hidden="true" className="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-academy-surface" />
-          <div className="mx-5 sm:mx-8 border-t-2 border-dashed border-academy-surface/25" />
+          <div className="mx-4 sm:mx-7 border-t-2 border-dashed border-academy-surface/25" />
         </div>
 
         {/* Le talon : ce qu'on détache, donc le prix et le bouton. */}
-        <div className="px-5 sm:px-8 py-5 flex flex-wrap items-center justify-between gap-x-6 gap-y-4">
+        <div className="px-4 sm:px-7 py-4 flex flex-wrap items-center justify-between gap-x-5 gap-y-3">
           <div>
             <p className="flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
-              <span className="font-display font-black text-[2rem] sm:text-4xl tracking-tight">
+              <span className="font-display font-black text-[1.6rem] sm:text-[2.1rem] tracking-tight">
                 {price.toLocaleString('fr-FR')} DA
               </span>
               {oldPrice > 0 && (
                 <>
-                  <span className="text-[15px] opacity-45 line-through">{oldPrice.toLocaleString('fr-FR')} DA</span>
+                  <span className="text-[13px] opacity-45 line-through">{oldPrice.toLocaleString('fr-FR')} DA</span>
                   <span className="text-[11px] font-black rounded px-1.5 py-0.5 bg-academy-primary text-academy-onPrimary">
                     −{Math.round((1 - price / oldPrice) * 100)} %
                   </span>
                 </>
               )}
             </p>
-            <p className="mt-1 text-[12.5px] opacity-65 tabular-nums">
+            <p className="mt-1 text-[11.5px] opacity-65 tabular-nums">
               Commence dans {j} j {pad(h)} h {pad(mn)} min {pad(sc)} s
             </p>
           </div>
           <Link to="/coaching-presentiel"
                 className="group w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg
-                           bg-academy-primary text-academy-onPrimary px-7 py-3.5 text-[15px] font-bold
+                           bg-academy-primary text-academy-onPrimary px-6 py-3 text-[14px] font-bold
                            hover:opacity-90 transition-opacity">
             Réserver ma place <ArrowRight size={16} className="group-hover:translate-x-0.5 transition-transform" />
           </Link>

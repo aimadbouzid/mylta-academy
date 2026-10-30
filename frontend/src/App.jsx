@@ -19,6 +19,7 @@ import Toast from './components/Toast'
 import ProtectedAdminRoute from './pages/ProtectedAdminRoute'
 import NotFoundPage from './components/NotFoundPage'
 import WhatsAppButton from './components/WhatsAppButton'
+import ReserveCTA from './components/ReserveCTA'
 import InAppBrowserGuard from './components/InAppBrowserGuard'
 import ClickTracker from './components/ClickTracker'
 import FacebookPixel from './components/FacebookPixel'
@@ -206,7 +207,12 @@ export default function App() {
           {settings?.modules?.cookieBannerEnabled === true && <CookieBanner />}
 
           {/* WhatsApp Button */}
-          {!(pathname.startsWith('/admin') || pathname.startsWith('/instructor')) && <WhatsAppButton />}
+          {!(pathname.startsWith('/admin') || pathname.startsWith('/instructor')) && (
+            <WhatsAppButton raised={settings?.inPerson?.enabled !== false} />
+          )}
+
+          {/* Bouton de réservation, sur tout le site */}
+          <ReserveCTA />
 
           {/* Système de notifications toast — global */}
           <Toast />

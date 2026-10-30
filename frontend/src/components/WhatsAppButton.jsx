@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { MessageCircle, X, Send, AlertCircle, LogIn, BookOpen, CreditCard, UserPlus, HelpCircle } from 'lucide-react';
 import { useSiteSettings } from '../context/SiteSettingsContext';
 
-export default function WhatsAppButton() {
+export default function WhatsAppButton({ raised = false }) {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedTopic, setSelectedTopic] = useState('');
   const [customMessage, setCustomMessage] = useState('');
@@ -46,7 +46,7 @@ export default function WhatsAppButton() {
     <>
       <button 
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 z-50 flex items-center justify-center w-14 h-14 bg-green-500 text-white rounded-full shadow-xl shadow-green-500/30 hover:bg-green-600 transition-all hover:-translate-y-1 group"
+        className={`fixed ${raised ? 'bottom-[5.5rem] sm:bottom-6' : 'bottom-6'} right-6 z-50 flex items-center justify-center w-14 h-14 bg-green-500 text-white rounded-full shadow-xl shadow-green-500/30 hover:bg-green-600 transition-all hover:-translate-y-1 group`}
         aria-label="Contactez-nous sur WhatsApp"
       >
         {/* Animation de pulse */}
