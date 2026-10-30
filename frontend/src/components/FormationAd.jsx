@@ -1,16 +1,24 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowRight, MapPin } from 'lucide-react'
 import api from '../api/axios'
 
-// Annonce de la formation en tête de l'accueil, dessinée comme un billet :
-// l'affiche en haut, puis la ligne de perforation, puis le talon qui porte le
-// prix et le bouton. Un objet qu'on reconnaît au premier coup d'œil, au lieu
-// d'une suite de paragraphes empilés.
+// Annonce de la formation, dessinée comme un billet d'évènement imprimé :
+// papier crème tramé, souche rouge « ENTRÉE » sur la tranche, bords dentelés,
+// et un talon détachable à droite qui porte la date, le prix et la réservation.
+//
+// Les couleurs du billet ne suivent pas le thème du site : un billet est un
+// objet posé sur la page, comme une photo. Il reste donc en papier clair,
+// y compris en thème sombre, où il ressort d'autant mieux.
 
-// Code-barres décoratif : des barres de largeurs irrégulières, dessinées en CSS.
-// Une image serait un fichier de plus à charger pour un détail purement visuel.
-const BARCODE = 'repeating-linear-gradient(90deg, currentColor 0 2px, transparent 2px 4px, currentColor 4px 5px, transparent 5px 9px, currentColor 9px 12px, transparent 12px 14px)'
+const PAPIER = '#efe8da'
+const ENCRE = '#17150f'
+const ROUGE = '#c0392f'
+
+// Trame d'imprimerie : des points fins, comme l'impression d'un vrai ticket.
+const TRAME = `radial-gradient(${ENCRE}1f 0.7px, transparent 0.8px)`
+// Dentelure : une rangée de demi-cercles mordus dans le bord de la carte.
+const dentelure = (cote) =>
+  `radial-gradient(circle at 50% ${cote === 'haut' ? '0' : '100%'}, transparent 0 5px, ${PAPIER} 5.5px)`
 
 const cap = (x) => x.charAt(0).toUpperCase() + x.slice(1)
 const hour = (t) => (t || '').replace(':', 'h')
@@ -36,124 +44,148 @@ export default function FormationAd({ inPerson }) {
 
   const [y, m, d] = session.date.split('-').map(Number)
   const days = [0, 1, 2].map(i => new Date(y, m - 1, d + i))
-  const month = cap(days[2].toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' }))
+  const month = cap(days[2].toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })).toUpperCase()
   const price = Number(session.price) || Number(inPerson.price) || 0
   const oldPrice = Number(inPerson.oldPrice) > price ? Number(inPerson.oldPrice) : 0
+  const remise = oldPrice > 0 ? Math.round((1 - price / oldPrice) * 100) : 0
+  const serial = `MA-${session.date.replace(/-/g, '')}-${String(session.id || 1).padStart(3, '0')}`
 
   let left = Math.max(0, new Date(`${session.date}T${session.startTime || '08:30'}:00+01:00`) - now)
   const j = Math.floor(left / 86400000); left -= j * 86400000
   const h = Math.floor(left / 3600000);  left -= h * 3600000
-  const mn = Math.floor(left / 60000);   left -= mn * 60000
-  const sc = Math.floor(left / 1000)
+  const mn = Math.floor(left / 60000)
   const pad = (n) => String(n).padStart(2, '0')
-  const serial = `MA-${session.date.replace(/-/g, '')}-${String(session.id || 1).padStart(3, '0')}`
+
+  const mono = { fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace' }
+  const titre = { fontFamily: '"Anton", "Archivo", sans-serif', fontWeight: 400 }
+  const serif = { fontFamily: '"Instrument Serif", Georgia, serif', fontStyle: 'italic' }
 
   return (
     <section className="section-container pt-3">
-      <article className="max-w-3xl lg:max-w-none mx-auto rounded-2xl bg-academy-white text-academy-textMain border border-academy-border shadow-soft overflow-hidden">
+      <article
+        className="relative mx-auto max-w-3xl lg:max-w-none overflow-hidden rounded-[3px] shadow-soft-lg"
+        style={{ background: PAPIER, backgroundImage: TRAME, backgroundSize: '4px 4px', color: ENCRE }}
+      >
+        {/* Bords dentelés : ce que laisse une découpe de billetterie. */}
+        <span aria-hidden="true" className="absolute inset-x-0 top-0 h-[6px] z-10"
+              style={{ backgroundImage: dentelure('haut'), backgroundSize: '14px 6px' }} />
+        <span aria-hidden="true" className="absolute inset-x-0 bottom-0 h-[6px] z-10"
+              style={{ backgroundImage: dentelure('bas'), backgroundSize: '14px 6px' }} />
 
-        {/* Bandeau du billet */}
-        <div className="flex items-center justify-between gap-3 px-4 sm:px-7 py-2.5 border-b border-academy-border
-                        text-[9.5px] font-bold uppercase tracking-[0.18em] opacity-70">
-          <span>Mylta Academy · Présentiel</span>
-          <span className="opacity-70">N° {serial}</span>
-        </div>
-
-        <div className="px-4 sm:px-7 pt-4 pb-5 lg:flex lg:items-start lg:justify-between lg:gap-10">
-          <div className="lg:max-w-xl">
-            <h2 className="font-display font-black text-[1.35rem] sm:text-[2rem] lg:text-[2.3rem] leading-[1.06] tracking-tight">
-              En 3 jours, vous filmez, montez et faites travailler l'IA.
-            </h2>
-            <p className="mt-2 text-[13px] sm:text-[15px] opacity-70 leading-snug">
-              Tout sur votre téléphone : tournage, montage, scripts, voix off et images par l'IA. Même en partant de zéro.
-            </p>
+        <div className="flex">
+          {/* Souche d'entrée, sur la tranche. */}
+          <div className="relative shrink-0 w-8 sm:w-11 flex items-center justify-center"
+               style={{ background: ROUGE, color: PAPIER }}>
+            <span className="[writing-mode:vertical-rl] rotate-180 text-[10px] sm:text-xs font-black uppercase tracking-[0.4em]">
+              Entrée
+            </span>
+            <span aria-hidden="true" className="absolute inset-y-0 right-0 border-r border-dashed"
+                  style={{ borderColor: `${PAPIER}66` }} />
           </div>
 
-          {/* Les trois jours, en cases séparées : on lit une date, pas un nombre. */}
-          <div className="mt-5 lg:mt-1 shrink-0">
-            <div className="flex justify-center lg:justify-end">
-              {days.map((dt, i) => (
-                <div key={i} className={`px-3 sm:px-4 text-center ${i ? 'border-l border-academy-border' : ''}`}>
-                  <span className="block text-[9.5px] font-bold uppercase tracking-[0.14em] opacity-55">
-                    {dt.toLocaleDateString('fr-FR', { weekday: 'short' }).replace('.', '')}
-                  </span>
-                  <span className="block font-display font-black text-[1.9rem] sm:text-[2.4rem] leading-[1] tabular-nums">
-                    {dt.getDate()}
-                  </span>
-                </div>
-              ))}
-            </div>
-            <p className="mt-1.5 text-center lg:text-right font-bold text-[15px]">{month}</p>
-
-            {/* Intitulés en petites capitales, comme les champs imprimés d'un billet. */}
-            <dl className="mt-2.5 flex justify-center lg:justify-end gap-5 text-center lg:text-right">
-              <div>
-                <dt className="text-[8.5px] font-bold uppercase tracking-[0.2em] opacity-45">Horaire</dt>
-                <dd className="mt-0.5 text-[12px] font-semibold">{hour(session.startTime)} – {hour(session.endTime)}</dd>
+          <div className="flex-1 min-w-0 flex flex-col lg:flex-row">
+            {/* Corps du billet */}
+            <div className="flex-1 min-w-0 px-4 sm:px-6 py-5 sm:py-6">
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[9.5px] sm:text-[10.5px] uppercase tracking-[0.18em] opacity-65"
+                   style={mono}>
+                <span>Mylta Academy — Présentiel</span>
+                <span className="opacity-70">N° {serial}</span>
               </div>
-              <div className="border-l border-academy-border ps-5">
-                <dt className="text-[8.5px] font-bold uppercase tracking-[0.2em] opacity-45">Lieu</dt>
-                <dd className="mt-0.5 text-[12px] font-semibold flex items-center justify-center lg:justify-end gap-1.5">
-                  <MapPin size={12} className="shrink-0 opacity-60" /> {session.place || 'Camden International Institute'}
-                </dd>
-              </div>
-            </dl>
-          </div>
-        </div>
 
-        {/* La perforation : deux encoches sur les bords et une ligne de trous
-            poinçonnés. Un simple pointillé se lit comme un séparateur de mise
-            en page ; des trous ronds, à la couleur du fond de page, se lisent
-            comme du papier réellement perforé, prêt à se détacher. */}
-        <div className="relative">
-          <span aria-hidden="true" className="absolute -left-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-academy-surface" />
-          <span aria-hidden="true" className="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-academy-surface" />
-          <div aria-hidden="true" className="mx-4 sm:mx-7 h-[7px]" style={{
-            backgroundImage: 'radial-gradient(circle at center, rgb(var(--academy-surface)) 0 3.5px, transparent 3.5px)',
-            backgroundSize: '14px 7px',
-            backgroundRepeat: 'repeat-x',
-          }} />
-        </div>
+              <h2 className="mt-3 uppercase leading-[0.92] tracking-[0.01em] text-[1.9rem] sm:text-[2.9rem] lg:text-[3.2rem]"
+                  style={titre}>
+                3 jours pour filmer,<br />
+                monter &amp;{' '}
+                <span className="normal-case tracking-normal" style={{ ...serif, color: ROUGE }}>dompter l'IA</span>
+              </h2>
 
-        {/* Le talon : ce qu'on détache, donc le prix et le bouton. */}
-        <div className="px-4 sm:px-7 py-4 flex flex-wrap items-center justify-between gap-x-5 gap-y-3">
-          <div className="flex-1 min-w-0">
-            <p className="flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
-              <span className="font-display font-black text-[1.6rem] sm:text-[2.1rem] tracking-tight">
-                {price.toLocaleString('fr-FR')} DA
-              </span>
-              {oldPrice > 0 && (
-                <>
-                  <span className="text-[13px] opacity-45 line-through">{oldPrice.toLocaleString('fr-FR')} DA</span>
-                  <span className="text-[11px] font-black rounded px-1.5 py-0.5 bg-academy-primary text-academy-onPrimary">
-                    −{Math.round((1 - price / oldPrice) * 100)} %
-                  </span>
-                </>
-              )}
-            </p>
-            <p className="mt-1 text-[11.5px] opacity-65 tabular-nums">
-              Commence dans {j} j {pad(h)} h {pad(mn)} min {pad(sc)} s
-            </p>
-          </div>
-          {/* Code-barres : le détail qui fait lire « billet » avant même le texte. */}
-          <div aria-hidden="true" className="hidden sm:flex flex-col items-center gap-1 shrink-0 opacity-80">
-            <span className="block h-9 w-[104px]" style={{ backgroundImage: BARCODE }} />
-            <span className="text-[8.5px] font-bold uppercase tracking-[0.22em] opacity-60">{serial}</span>
-          </div>
-
-          <div className="w-full sm:w-auto flex items-center gap-3">
-            <span aria-hidden="true"
-                  className="hidden lg:block self-stretch border-l-2 border-dashed border-academy-textMain/20" />
-            <div className="w-full sm:w-auto">
-              <Link to="/coaching-presentiel"
-                    className="group w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg
-                               bg-academy-primary text-academy-onPrimary px-6 py-3 text-[14px] font-bold
-                               hover:opacity-90 transition-opacity">
-                Réserver ma place <ArrowRight size={16} className="group-hover:translate-x-0.5 transition-transform" />
-              </Link>
-              <p className="mt-1.5 text-center text-[9px] font-bold uppercase tracking-[0.22em] opacity-50">
-                Entrée
+              <p className="mt-4 max-w-lg text-[12px] sm:text-[13.5px] leading-[1.75]" style={mono}>
+                Tout se passe sur votre téléphone. Tournage, montage, scripts,
+                voix off, images générées. On part de zéro.
               </p>
+
+              <div className="mt-5 pt-4 flex flex-wrap gap-x-8 gap-y-3"
+                   style={{ borderTop: `1.5px solid ${ENCRE}` }}>
+                {[['Horaire', `${hour(session.startTime)} – ${hour(session.endTime)}`],
+                  ['Lieu', session.place || 'Camden Int. Institute']].map(([k, v]) => (
+                  <div key={k}>
+                    <p className="text-[9px] uppercase tracking-[0.25em] opacity-55" style={mono}>{k}</p>
+                    <p className="mt-1 text-[14px] sm:text-[15px] uppercase" style={titre}>{v}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Talon détachable : la date, le prix, la réservation. */}
+            <div className="relative shrink-0 lg:w-[270px] px-4 sm:px-6 py-5 sm:py-6
+                            border-t-2 lg:border-t-0 lg:border-l-2 border-dashed"
+                 style={{ borderColor: `${ENCRE}55` }}>
+              <div className="flex items-start justify-between gap-3 lg:block">
+                <div>
+                  <div className="flex" style={{ border: `1.5px solid ${ENCRE}` }}>
+                    {days.map((dt, i) => (
+                      <div key={i} className="px-2.5 sm:px-3 py-1 text-center"
+                           style={i ? { borderLeft: `1.5px solid ${ENCRE}` } : undefined}>
+                        <span className="block text-[1.35rem] sm:text-[1.6rem] leading-none" style={titre}>
+                          {dt.getDate()}
+                        </span>
+                        <span className="block mt-0.5 text-[8px] uppercase tracking-[0.15em] opacity-60" style={mono}>
+                          {dt.toLocaleDateString('fr-FR', { weekday: 'short' }).replace('.', '')}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="mt-2 text-[9.5px] uppercase tracking-[0.25em] opacity-65" style={mono}>{month}</p>
+                </div>
+
+                {/* Tampon de remise, posé de travers comme à l'encre. */}
+                {remise > 0 && (
+                  <span className="lg:hidden shrink-0 -rotate-6 px-2 py-0.5 text-[12px] font-black"
+                        style={{ color: ROUGE, border: `2px solid ${ROUGE}` }}>
+                    −{remise}%
+                  </span>
+                )}
+              </div>
+
+              <div className="mt-4 flex items-end justify-between gap-3 lg:block">
+                <div>
+                  {oldPrice > 0 && (
+                    <p className="text-[12px] line-through opacity-50 tracking-[0.1em]" style={mono}>
+                      {oldPrice.toLocaleString('fr-FR')} DA
+                    </p>
+                  )}
+                  <p className="leading-none" style={titre}>
+                    <span className="text-[2.1rem] sm:text-[2.5rem]">{price.toLocaleString('fr-FR')}</span>
+                    <span className="ms-1 text-[1rem]">DA</span>
+                  </p>
+                </div>
+                {remise > 0 && (
+                  <span className="hidden lg:inline-block absolute top-5 right-5 -rotate-6 px-2 py-0.5 text-[13px] font-black"
+                        style={{ color: ROUGE, border: `2px solid ${ROUGE}` }}>
+                    −{remise}%
+                  </span>
+                )}
+              </div>
+
+              <p className="mt-2 text-[10px] tracking-[0.08em] opacity-60" style={mono}>
+                Dans {j} j {pad(h)} h {pad(mn)} min
+              </p>
+
+              <Link to="/coaching-presentiel"
+                    className="mt-3 block w-full text-center uppercase text-[14px] sm:text-[15px] tracking-[0.12em]
+                               py-3 transition-opacity hover:opacity-85"
+                    style={{ ...titre, background: ENCRE, color: PAPIER }}>
+                Réserver
+              </Link>
+
+              {/* Code-barres : des barres de largeurs irrégulières, dessinées en CSS. */}
+              <div aria-hidden="true" className="mt-4 flex flex-col items-center gap-1">
+                <span className="block h-7 w-full max-w-[180px]" style={{
+                  color: ENCRE,
+                  backgroundImage: 'repeating-linear-gradient(90deg, currentColor 0 2px, transparent 2px 4px, currentColor 4px 5px, transparent 5px 9px, currentColor 9px 12px, transparent 12px 14px)',
+                }} />
+                <span className="text-[8.5px] tracking-[0.2em] opacity-55" style={mono}>{serial}</span>
+              </div>
             </div>
           </div>
         </div>
