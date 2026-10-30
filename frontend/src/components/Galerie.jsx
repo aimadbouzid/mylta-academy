@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowRight, ChevronLeft, ChevronRight, Hand } from 'lucide-react'
+import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react'
 import ReelPlayer from './ReelPlayer'
 import { GALERIE } from '../data/galerie'
 
@@ -151,28 +151,12 @@ export default function Galerie() {
   return (
     <section className="py-8 lg:py-12 border-t border-academy-border">
       <div className="section-container">
-        <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-academy-primary">Tourné pendant la formation</p>
-        <h2 className="mt-1 font-display font-black text-2xl sm:text-3xl tracking-tight text-academy-textMain">
+        <h2 className="font-display font-black text-2xl sm:text-3xl tracking-tight text-academy-textMain">
           Ce que font nos étudiants
         </h2>
-        <p className="mt-1.5 text-[15px] text-academy-textMain/60 max-w-xl">
-          Filmé et monté au téléphone, pendant les trois jours. Aucune caméra, aucun ordinateur.
+        <p className="mt-1 text-[14px] text-academy-textMain/60">
+          Filmé et monté au téléphone, pendant les trois jours.
         </p>
-        <p className="mt-3 inline-flex items-center gap-2 rounded-full
-                      bg-academy-primary text-academy-onPrimary px-3.5 py-2
-                      text-[12.5px] font-bold shadow-soft">
-          <Hand size={14} className="shrink-0 animate-swipe" />
-          Faites glisser pour voir les autres
-          <ChevronRight size={14} className="shrink-0 animate-swipe" />
-        </p>
-
-        {/* Le geste, montré plutôt qu'écrit : la main et la flèche avancent
-            doucement vers la droite, en boucle. */}
-        <style>{`
-          @keyframes swipe-hint { 0%, 60%, 100% { transform: translateX(0) } 30% { transform: translateX(4px) } }
-          .animate-swipe { animation: swipe-hint 1.8s ease-in-out infinite; }
-          @media (prefers-reduced-motion: reduce) { .animate-swipe { animation: none } }
-        `}</style>
       </div>
 
       {/* Les barres débordent volontairement de la colonne : on sent qu'il y en a plus. */}
