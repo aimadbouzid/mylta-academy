@@ -71,7 +71,7 @@ export const seoKeywords = [
   
   // Mots clés divers / compléments
   "formation en ligne", "cours interactifs", "vidéos de formation", "masterclass algérie", "webinaire dz",
-  "formation en direct", "coaching en ligne", "mentorat algérie", "accompagnement business", "réseau d'entrepreneurs",
+  "formation en direct", "mentorat algérie", "accompagnement business", "réseau d'entrepreneurs",
   "networking algérie", "réussite professionnelle", "booster sa carrière", "cv algérie", "entretien d'embauche dz",
   "compétences du 21e siècle", "soft skills algérie", "hard skills", "formation pratique", "cas pratiques",
   "exercices en ligne", "quiz et évaluations", "certification reconnue", "diplôme accrédité", "formation de qualité",

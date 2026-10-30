@@ -104,16 +104,16 @@ const defaultSettings = {
   ],
   topBanner: {
     isActive: true,
-    text: "Nouveau : coaching en ligne IA & vibe coding — réservez votre séance de 2h30",
-    text2: "Formation IA & Montage Vidéo en présentiel — offre de lancement, places limitées",
+    text: "Formation IA & Montage Vidéo à Béjaïa — 12, 13 et 14 novembre 2026",
+    text2: "Offre de lancement : 22 000 DA au lieu de 35 000 DA, places limitées",
     animation: "marquee",
-    hasCountdown: false,
-    countdownDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+    hasCountdown: true,
+    countdownDate: "2026-11-12T08:30:00+01:00",
     backgroundColor: "bg-gradient-to-r from-red-600 to-red-500",
     textColor: "text-white",
     icon: "sparkles",
-    linkUrl: "/coaching",
-    linkText: "Réserver"
+    linkUrl: "/coaching-presentiel",
+    linkText: "Réserver ma place"
   },
   weeklyResource: {
     isActive: true,
@@ -532,7 +532,7 @@ function readSettingsFromDisk() {
 // les valeurs par défaut au premier démarrage, donc un simple changement de
 // défaut ne l'atteint pas). Appliqué une fois : le prochain enregistrement admin
 // écrit settingsVersion à jour.
-const SETTINGS_VERSION = 21
+const SETTINGS_VERSION = 22
 const OLD_BANNER_TEXTS = ["🚀 Promo exceptionnelle : -50% sur toutes les formations ! Inscrivez-vous vite."]
 
 function migrateSettings(parsed, merged) {
@@ -602,6 +602,11 @@ function migrateSettings(parsed, merged) {
   }
   if ((parsed.settingsVersion || 1) < 17) {
     merged.instagram = { ...defaultSettings.instagram, ...(parsed.instagram || {}), posts: defaultSettings.instagram.posts }
+  }
+  // Le bandeau affichait du texte d'essai et un compte à rebours vers une date
+  // déjà passée ; il repart sur la session de novembre.
+  if ((parsed.settingsVersion || 1) < 22) {
+    merged.topBanner = { ...merged.topBanner, ...defaultSettings.topBanner, isActive: merged.topBanner?.isActive !== false }
   }
   if ((parsed.settingsVersion || 1) < 21) {
     merged.productions = { ...merged.productions, posts: defaultSettings.productions.posts }
