@@ -18,6 +18,7 @@ import Galerie from '../components/Galerie'
 import InstagramFeed from '../components/InstagramFeed'
 import Productions from '../components/Productions'
 import Clients from '../components/Clients'
+import AssistantFaq from '../components/AssistantFaq'
 import PresentationReel from '../components/PresentationReel'
 import CamdenPartner from '../components/CamdenPartner'
 import IntroVideoModal from '../components/IntroVideoModal'
@@ -114,9 +115,9 @@ export default function LandingPage() {
           {/* Blobs de flou localisés pour l'accueil (Neutral/Blueish tones).
               En thème sombre leur opacité est fortement réduite : ces teintes
               pastel, pensées pour un fond clair, voilaient le noir de gris. */}
-          <div className="absolute top-[5%] left-[-15%] w-[60vw] h-[60vw] rounded-full bg-blue-400/10 dark:bg-blue-400/[0.04] pointer-events-none select-none z-0 animate-pulse-slow" style={{ filter: 'blur(130px)', WebkitFilter: 'blur(130px)' }} />
-          <div className="absolute bottom-[0%] right-[-15%] w-[55vw] h-[55vw] rounded-full bg-indigo-400/10 dark:bg-indigo-400/[0.04] pointer-events-none select-none z-0 animate-pulse-slow" style={{ filter: 'blur(130px)', WebkitFilter: 'blur(130px)' }} />
-          <div className="absolute top-[40%] right-[10%] w-[40vw] h-[40vw] rounded-full bg-gray-300/20 dark:bg-gray-300/[0.03] pointer-events-none select-none z-0 animate-pulse-slow" style={{ filter: 'blur(110px)', WebkitFilter: 'blur(110px)' }} />
+          <div className="absolute top-[5%] left-[-15%] w-[60vw] h-[60vw] rounded-full text-blue-400/10 dark:text-blue-400/[0.04] pointer-events-none select-none z-0 animate-pulse-slow glow-blob" />
+          <div className="absolute bottom-[0%] right-[-15%] w-[55vw] h-[55vw] rounded-full text-indigo-400/10 dark:text-indigo-400/[0.04] pointer-events-none select-none z-0 animate-pulse-slow glow-blob" />
+          <div className="absolute top-[40%] right-[10%] w-[40vw] h-[40vw] rounded-full text-gray-300/20 dark:text-gray-300/[0.03] pointer-events-none select-none z-0 animate-pulse-slow glow-blob" />
           
           <div className="section-container relative z-10 flex flex-col lg:flex-row items-center gap-6 lg:gap-10">
             <div className="flex-1 text-center lg:text-left">
@@ -188,7 +189,7 @@ export default function LandingPage() {
                   chargés on n'affiche rien, plutôt que l'état vide du lecteur
                   (dont le texte s'adresse à l'admin, pas au visiteur). */}
               <div className="relative max-w-xl mx-auto lg:mr-0">
-                <div className="absolute -inset-8 rounded-full bg-academy-primary/20 dark:bg-academy-primary/[0.07] pointer-events-none select-none z-0" style={{ filter: 'blur(60px)', WebkitFilter: 'blur(60px)' }} />
+                <div className="absolute -inset-8 rounded-full text-academy-primary/20 dark:text-academy-primary/[0.07] pointer-events-none select-none z-0 glow-blob" />
                 {siteSettings.inPerson?.enabled ? (
                   <div className="relative z-10"><PresentationReel /></div>
                 ) : /^\/[^/].*\.(mp4|webm)$/i.test(siteSettings.introVideoUrl || '') ? (
@@ -281,8 +282,8 @@ export default function LandingPage() {
 
         {/* FORMATIONS */}
         <section className="pt-2 lg:pt-4 pb-8 lg:pb-12 border-t border-academy-border relative overflow-hidden">
-          <div className="absolute top-[10%] left-[-10%] w-[45vw] h-[45vw] rounded-full bg-academy-primary/15 dark:bg-academy-primary/[0.06] pointer-events-none select-none z-0" style={{ filter: 'blur(120px)', WebkitFilter: 'blur(120px)' }} />
-          <div className="absolute bottom-[10%] right-[-10%] w-[40vw] h-[40vw] rounded-full bg-blue-300/20 dark:bg-blue-300/[0.05] pointer-events-none select-none z-0" style={{ filter: 'blur(100px)', WebkitFilter: 'blur(100px)' }} />
+          <div className="absolute top-[10%] left-[-10%] w-[45vw] h-[45vw] rounded-full text-academy-primary/15 dark:text-academy-primary/[0.06] pointer-events-none select-none z-0 glow-blob" />
+          <div className="absolute bottom-[10%] right-[-10%] w-[40vw] h-[40vw] rounded-full text-blue-300/20 dark:text-blue-300/[0.05] pointer-events-none select-none z-0 glow-blob" />
           <div className="section-container relative z-10">
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
               <div>
@@ -319,8 +320,8 @@ export default function LandingPage() {
 
         {/* FEATURES */}
         <section id="mission" className="pt-4 lg:pt-6 pb-10 lg:pb-12 bg-academy-surfaceDark/40 relative border-t border-academy-border overflow-hidden">
-          <div className="absolute top-[20%] left-[-15%] w-[45vw] h-[45vw] rounded-full bg-purple-300/20 dark:bg-purple-300/[0.05] pointer-events-none select-none z-0" style={{ filter: 'blur(120px)', WebkitFilter: 'blur(120px)' }} />
-          <div className="absolute bottom-[20%] right-[-15%] w-[45vw] h-[45vw] rounded-full bg-red-300/20 dark:bg-red-300/[0.05] pointer-events-none select-none z-0" style={{ filter: 'blur(120px)', WebkitFilter: 'blur(120px)' }} />
+          <div className="absolute top-[20%] left-[-15%] w-[45vw] h-[45vw] rounded-full text-purple-300/20 dark:text-purple-300/[0.05] pointer-events-none select-none z-0 glow-blob" />
+          <div className="absolute bottom-[20%] right-[-15%] w-[45vw] h-[45vw] rounded-full text-red-300/20 dark:text-red-300/[0.05] pointer-events-none select-none z-0 glow-blob" />
           <div className="section-container relative z-10">
             <div className="text-center mb-6">
               <h2 className="font-display font-bold text-2xl text-academy-textMain mb-2">
@@ -353,7 +354,7 @@ export default function LandingPage() {
 
         {/* TESTIMONIALS */}
         <section id="testimonials" className="py-8 lg:py-12 bg-academy-surfaceDark/40 border-t border-academy-border overflow-hidden relative">
-          <div className="absolute top-[10%] right-[-10%] w-[50vw] h-[50vw] rounded-full bg-indigo-400/20 dark:bg-indigo-400/[0.05] pointer-events-none select-none z-0" style={{ filter: 'blur(130px)', WebkitFilter: 'blur(130px)' }} />
+          <div className="absolute top-[10%] right-[-10%] w-[50vw] h-[50vw] rounded-full text-indigo-400/20 dark:text-indigo-400/[0.05] pointer-events-none select-none z-0 glow-blob" />
           <div className="section-container text-center mb-12 relative z-10">
             <h2 className="font-display font-black text-3xl sm:text-4xl text-academy-textMain mb-3">
               {t('landing.students_reviews')} <span className="text-academy-primary">{t('landing.students')}</span>
@@ -416,7 +417,7 @@ export default function LandingPage() {
 
         {/* FAQ SECTION */}
         <section id="faq" className="scroll-mt-28 py-8 lg:py-12 border-t border-academy-border relative overflow-hidden">
-          <div className="absolute top-[20%] left-[-10%] w-[50vw] h-[50vw] rounded-full bg-academy-primary/25 dark:bg-academy-primary/[0.08] pointer-events-none select-none z-0" style={{ filter: 'blur(130px)', WebkitFilter: 'blur(130px)' }} />
+          <div className="absolute top-[20%] left-[-10%] w-[50vw] h-[50vw] rounded-full text-academy-primary/25 dark:text-academy-primary/[0.08] pointer-events-none select-none z-0 glow-blob" />
           <div className="section-container relative z-10">
             <div className="max-w-2xl mx-auto">
             <div className="text-center mb-6">
@@ -429,34 +430,7 @@ export default function LandingPage() {
               </h2>
             </div>
 
-            <div className="space-y-2">
-              {faqItems.map((item, index) => {
-                const isOpen = openFaq === index
-                return (
-                  <div key={index} className={`card-academy overflow-hidden transition-all duration-300 ${isOpen ? 'border-academy-primary shadow-soft-lg' : ''}`}>
-                    <button
-                      onClick={() => setOpenFaq(isOpen ? null : index)}
-                      className="w-full px-4 py-3 text-left flex items-center justify-between gap-3 focus:outline-none bg-red-950/5 border-red-900/10 backdrop-blur-md"
-                    >
-                      <span className="font-display font-bold text-sm sm:text-[15px] text-academy-textMain pr-1 leading-snug">
-                        {item.question}
-                      </span>
-                      <div className={`w-7 h-7 rounded-full flex items-center justify-center transition-transform duration-300 flex-shrink-0 ${
-                        isOpen ? 'bg-academy-primary text-academy-onPrimary rotate-180' : 'bg-academy-surfaceDark text-academy-textMain/60'
-                      }`}>
-                        <ChevronDown size={15} />
-                      </div>
-                    </button>
-
-                    {isOpen && (
-                      <div className="px-4 pb-4 pt-2 text-academy-textMain/70 font-medium text-[13px] leading-relaxed border-t border-academy-border bg-red-950/5 border-red-900/10 backdrop-blur-md animate-fade-in">
-                        {item.answer}
-                      </div>
-                    )}
-                  </div>
-                )
-              })}
-            </div>
+            <AssistantFaq items={faqItems} whatsappNumber={siteSettings?.inPerson?.whatsappNumber || siteSettings?.coaching?.whatsappNumber} />
             </div>
           </div>
         </section>
