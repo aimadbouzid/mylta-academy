@@ -322,27 +322,20 @@ export default function InPersonPage() {
             ) : (
               <>
                 <header className="mb-6">
-                  {/* Le formateur à côté du titre : on réserve trois jours avec
-                      quelqu'un, pas avec un programme. Un visage change la
-                      lecture de la page bien plus qu'un argument de plus. */}
-                  <div className="flex items-start gap-4 sm:gap-6">
-                    <div className="flex-1 min-w-0">
-                      <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-academy-primary">
-                        Formation présentielle · {(cfg.venueAddress || '').split(',').pop().trim() || 'Béjaïa'}
-                      </p>
-                      <h1 className="mt-1.5 font-display font-black text-[1.75rem] sm:text-[2.75rem] leading-[1.03] tracking-tight">{cfg.title}</h1>
-                      <p className="mt-2 text-[14px] sm:text-[17px] text-academy-textMain/65 leading-snug max-w-xl">{cfg.subtitle}</p>
-                    </div>
-
-                    <figure className="shrink-0 w-[92px] sm:w-[150px]">
-                      <img src="/formateur.jpg" alt="Le formateur de Mylta Academy"
-                           width="534" height="900" decoding="async"
-                           className="w-full aspect-[3/4] object-cover rounded-2xl border border-academy-border shadow-soft" />
-                      <figcaption className="mt-1.5 text-[10px] font-bold uppercase tracking-[0.14em] text-academy-textMain/45 text-center">
-                        Votre formateur
-                      </figcaption>
-                    </figure>
+                  {/* Le formateur en médaillon sur la ligne de surtitre : un
+                      visage change la lecture de la page, mais en portrait il
+                      mangeait la moitié de la largeur avant même le titre. */}
+                  <div className="flex items-center gap-3">
+                    <img src="/formateur.jpg" alt="Le formateur de Mylta Academy"
+                         width="534" height="900" decoding="async"
+                         className="shrink-0 w-11 h-11 sm:w-12 sm:h-12 rounded-full object-cover object-top border border-academy-border" />
+                    <p className="min-w-0 text-[11px] font-bold uppercase tracking-[0.2em] text-academy-primary">
+                      Formation présentielle · {(cfg.venueAddress || '').split(',').pop().trim() || 'Béjaïa'}
+                    </p>
                   </div>
+
+                  <h1 className="mt-3 font-display font-black text-[1.75rem] sm:text-[2.75rem] leading-[1.03] tracking-tight">{cfg.title}</h1>
+                  <p className="mt-2 text-[14px] sm:text-[17px] text-academy-textMain/65 leading-snug max-w-xl">{cfg.subtitle}</p>
 
                   {/* Les trois jours, l'horaire et le lieu : l'essentiel avant tout le reste. */}
                   {headline && (

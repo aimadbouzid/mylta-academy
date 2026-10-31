@@ -344,7 +344,7 @@ const defaultSettings = {
   inPerson: {
     enabled: true,
     title: 'Formation IA & Montage Vidéo',
-    subtitle: "Filmez, montez et utilisez l'IA comme un pro, depuis votre smartphone. 3 jours en présentiel, en petit groupe.",
+    subtitle: "Avec votre téléphone, sans ordinateur et sans expérience : 3 jours pour filmer, monter et faire travailler l'IA comme un pro.",
     price: 22000,   // prix de la formation (DA) — repris par défaut pour chaque session
     studentPrice: 0, // tarif étudiant (carte étudiante obligatoire) ; 0 = pas de tarif étudiant
     oldPrice: 35000, // prix barré affiché à côté (offre de lancement) ; 0 = pas de prix barré
@@ -532,7 +532,7 @@ function readSettingsFromDisk() {
 // les valeurs par défaut au premier démarrage, donc un simple changement de
 // défaut ne l'atteint pas). Appliqué une fois : le prochain enregistrement admin
 // écrit settingsVersion à jour.
-const SETTINGS_VERSION = 22
+const SETTINGS_VERSION = 23
 const OLD_BANNER_TEXTS = ["🚀 Promo exceptionnelle : -50% sur toutes les formations ! Inscrivez-vous vite."]
 
 function migrateSettings(parsed, merged) {
@@ -624,6 +624,9 @@ function migrateSettings(parsed, merged) {
       coaches: defaultSettings.inPerson.coaches,
       whatsappNumber: defaultSettings.inPerson.whatsappNumber,
     }
+  }
+  if ((parsed.settingsVersion || 1) < 23 && merged.inPerson?.subtitle === "Filmez, montez et utilisez l'IA comme un pro, depuis votre smartphone. 3 jours en présentiel, en petit groupe.") {
+    merged.inPerson = { ...merged.inPerson, subtitle: defaultSettings.inPerson.subtitle }
   }
   merged.settingsVersion = SETTINGS_VERSION
   return merged
