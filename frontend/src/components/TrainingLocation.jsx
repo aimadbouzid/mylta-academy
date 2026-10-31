@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { MapPin, Phone, Navigation, Map as MapIcon, Car, Footprints } from 'lucide-react'
+import ReelPlayer from './ReelPlayer'
 import { useSiteSettings } from '../context/SiteSettingsContext'
 
 // Lieu de la formation présentielle (partenaire Camden International Institute,
@@ -39,6 +40,13 @@ const ROUTES = {
 
 const directionsUrl = (mode) =>
   `https://www.google.com/maps/dir/?api=1&origin=${PLACE.from.lat},${PLACE.from.lng}&destination=${PLACE.to.lat},${PLACE.to.lng}&travelmode=${mode}`
+
+// Les clips tournés dans la salle. Rien ne se charge tant qu'on ne clique
+// pas : seule l'affiche est téléchargée, une quinzaine de kilo-octets.
+const CLIPS = [1, 2, 3, 4, 5].map(n => ({
+  src: `/lieu/lieu-0${n}.mp4`,
+  poster: `/lieu/lieu-0${n}.jpg`,
+}))
 
 export default function TrainingLocation() {
   const { settings } = useSiteSettings()
@@ -153,6 +161,22 @@ export default function TrainingLocation() {
                 src={`https://www.google.com/maps?q=${PLACE.to.lat},${PLACE.to.lng}&z=16&output=embed`}
                 className="w-full h-64 rounded-xl border border-academy-border" />
       )}
+
+      {/* La salle en vidéo : on voit l'endroit avant de s'y déplacer. Petites
+          vignettes qui défilent, lecture au clic. */}
+      <div>
+        <p className="text-[10px] font-black uppercase tracking-[0.18em] text-academy-textMain/45 mb-2">
+          La salle en vidéo
+        </p>
+        <div className="flex gap-2 overflow-x-auto hide-scrollbar snap-x snap-mandatory pb-1">
+          {CLIPS.map(c => (
+            <div key={c.src} className="shrink-0 w-[150px] sm:w-[180px] snap-start">
+              <ReelPlayer src={c.src} poster={c.poster}
+                          className="w-full aspect-video rounded-xl border border-academy-border" />
+            </div>
+          ))}
+        </div>
+      </div>
 
       <div className="grid grid-cols-2 gap-2">
         <a href={directionsUrl(route.mode)} target="_blank" rel="noopener noreferrer"
