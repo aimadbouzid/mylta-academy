@@ -382,78 +382,122 @@ export default function InPersonPage() {
 
                 {/* 1. La formation */}
                 {step === 0 && (
-                  <section key="etape-0" className={`${card} space-y-5 etape-entre`}>
-                    {/* Le contenu présenté comme un forfait : la liste cochée dit
-                        « voilà tout ce que vous avez pour ce prix », là où une
-                        suite de mots séparés par des points se survolait sans
-                        rien retenir. Les premières entrées viennent des réglages,
-                        les deux dernières sont les promesses de l'offre. */}
-                    <div className="rounded-2xl border-2 border-academy-textMain overflow-hidden">
-                      <p className="px-4 py-2 bg-academy-textMain text-academy-surface text-[10px] font-black uppercase tracking-[0.18em]">
-                        Tout est compris
-                      </p>
-                      {/* Deux colonnes dès le téléphone : les mentions sont courtes.
-                          Les deux promesses, plus longues, prennent la ligne entière. */}
-                      <ul className="grid grid-cols-2 gap-x-3 gap-y-1.5 p-3.5">
-                        {[...(cfg.infos || []), 'Suivi gratuit après la formation', 'Certificat Mylta Academy'].map((item, i, tab) => {
-                          const phare = i >= tab.length - 2
-                          return (
-                            <li key={item} className={`flex items-start gap-2 text-[13px] leading-snug ${phare ? 'col-span-2' : ''}`}>
-                              <Check size={14} strokeWidth={3}
-                                     className={`mt-[3px] shrink-0 ${phare ? 'text-academy-primary' : 'text-academy-textMain/35'}`} />
-                              <span className={phare ? 'font-bold' : 'font-medium text-academy-textMain/75'}>{item}</span>
-                            </li>
-                          )
-                        })}
-                      </ul>
-                    </div>
+                  <section key="etape-0" className="etape-entre">
+                    {/* L'offre en un seul objet, au lieu d'une pile de blocs
+                        indépendants : un bandeau qui la nomme, le prix, ce qu'on
+                        fait, ce qu'on reçoit, puis le bouton. On lit de haut en
+                        bas sans se demander où commence et où finit le forfait. */}
+                    <article className="rounded-2xl border-2 border-academy-textMain overflow-hidden bg-academy-white shadow-soft-lg">
 
-                    {/* Le programme, en couleur : c'est ce qu'on achète, il doit se voir
-                        tout de suite. Le détail complet reste juste en dessous. */}
-                    {(cfg.curriculum?.fr || []).length > 0 && (
-                      <div>
-                        <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-academy-textMain/50">
-                          Le programme, jour par jour
-                        </p>
-                        <ol className="mt-2 space-y-1.5">
-                          {(cfg.curriculum.fr).map((d, i) => (
-                            <li key={i} className="flex items-center gap-3 rounded-lg bg-academy-primary/10 border-l-4 border-academy-primary py-2 px-3">
-                              <span className="shrink-0 font-display font-black text-[15px] text-academy-primary leading-none">J{i + 1}</span>
-                              <span className="text-[14.5px] font-bold leading-snug">{d.title}</span>
-                            </li>
-                          ))}
-                        </ol>
-                      </div>
-                    )}
+                      <header className="flex items-center justify-between gap-3 px-4 sm:px-5 py-3
+                                         bg-academy-textMain text-academy-surface">
+                        <div className="min-w-0">
+                          <p className="text-[9.5px] font-black uppercase tracking-[0.22em] opacity-55">Le pack complet</p>
+                          <p className="font-display font-black text-[15px] sm:text-[17px] leading-tight mt-0.5">
+                            3 jours en présentiel + suivi gratuit
+                          </p>
+                        </div>
+                        {discount > 0 && (
+                          <span className="shrink-0 rounded-full bg-academy-primary text-white px-2.5 py-1 text-[12px] font-black">
+                            −{discount}%
+                          </span>
+                        )}
+                      </header>
 
-                    {/* Un formateur par métier : c'est ce qui change tout sur trois jours. */}
-                    {(cfg.coaches || []).length > 0 && (
-                      <div>
-                        <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-academy-textMain/50">
-                          {cfg.coaches.length} coachs, un par spécialité
+                      {price > 0 && (
+                        <div className="px-4 sm:px-5 py-4 border-b border-academy-border">
+                          <div className="flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
+                            <span className="font-display font-black text-[2.1rem] leading-none tracking-tight">{money(price, currency)}</span>
+                            {oldPrice > 0 && <span className="text-sm text-academy-textMain/45 line-through">{money(oldPrice, currency)}</span>}
+                          </div>
+                          {studentPrice > 0 && !studentRate && (
+                            <p className="mt-1.5 text-[13px]">
+                              <b>Étudiants : {money(studentPrice, currency)}</b>{' '}
+                              <span className="text-academy-textMain/55">avec la carte étudiante</span>
+                            </p>
+                          )}
+                          {deposit > 0 && (
+                            <dl className="mt-3 pt-3 border-t border-academy-border space-y-1 text-[13px]">
+                              <div className="flex justify-between gap-4">
+                                <dt className="font-bold">Acompte pour réserver</dt>
+                                <dd className="font-black tabular-nums">{money(deposit, currency)}</dd>
+                              </div>
+                              <div className="flex justify-between gap-4 text-academy-textMain/60">
+                                <dt>Reste à payer ensuite</dt>
+                                <dd className="tabular-nums">{money(Math.max(0, price - deposit), currency)}</dd>
+                              </div>
+                            </dl>
+                          )}
+                        </div>
+                      )}
+
+                      {(cfg.curriculum?.fr || []).length > 0 && (
+                        <div className="px-4 sm:px-5 py-4 border-b border-academy-border">
+                          <p className="text-[9.5px] font-black uppercase tracking-[0.2em] text-academy-textMain/45">
+                            Le déroulé
+                          </p>
+                          <ol className="mt-2 space-y-1.5">
+                            {(cfg.curriculum.fr).map((d, i) => (
+                              <li key={i} className="flex items-center gap-3 rounded-lg bg-academy-primary/[0.07]
+                                                     border-l-4 border-academy-primary py-2 px-3">
+                                <span className="shrink-0 font-display font-black text-[14px] text-academy-primary leading-none">J{i + 1}</span>
+                                <span className="text-[14px] font-bold leading-snug">{d.title}</span>
+                              </li>
+                            ))}
+                          </ol>
+                        </div>
+                      )}
+
+                      <div className="px-4 sm:px-5 py-4 border-b border-academy-border">
+                        <p className="text-[9.5px] font-black uppercase tracking-[0.2em] text-academy-textMain/45">
+                          Tout est compris
                         </p>
-                        <ul className="mt-2 flex flex-wrap gap-1.5">
-                          {cfg.coaches.map((c, i) => (
-                            <li key={i} className="rounded-full border border-academy-border bg-academy-surface
-                                                   dark:bg-white/[0.04] px-3 py-1.5 text-[13px] font-bold">
-                              {c.role}
-                            </li>
-                          ))}
+                        {/* Deux colonnes dès le téléphone : les mentions sont courtes.
+                            Les deux promesses, plus longues, prennent la ligne entière. */}
+                        <ul className="mt-2 grid grid-cols-2 gap-x-3 gap-y-1.5">
+                          {[...(cfg.infos || []), 'Suivi gratuit après la formation', 'Certificat Mylta Academy'].map((item, i, tab) => {
+                            const phare = i >= tab.length - 2
+                            return (
+                              <li key={item} className={`flex items-start gap-2 text-[13px] leading-snug ${phare ? 'col-span-2' : ''}`}>
+                                <Check size={14} strokeWidth={3}
+                                       className={`mt-[3px] shrink-0 ${phare ? 'text-academy-primary' : 'text-academy-textMain/35'}`} />
+                                <span className={phare ? 'font-bold' : 'font-medium text-academy-textMain/75'}>{item}</span>
+                              </li>
+                            )
+                          })}
                         </ul>
                       </div>
-                    )}
 
-                    {price > 0 && <PriceBox />}
-                    <button type="button" onClick={() => goTo(1)} className={primaryBtn}>
-                      Je réserve ma place <ArrowRight size={18} />
-                    </button>
-                    {settings?.coaching?.enabled && (
-                      <p className="text-center text-sm">
-                        Vous préférez à distance ? <Link to="/coaching" className="font-bold text-academy-primary underline underline-offset-2">Coaching en ligne</Link>
-                      </p>
-                    )}
+                      {(cfg.coaches || []).length > 0 && (
+                        <div className="px-4 sm:px-5 py-4 border-b border-academy-border">
+                          <p className="text-[9.5px] font-black uppercase tracking-[0.2em] text-academy-textMain/45">
+                            {cfg.coaches.length} coachs, un par spécialité
+                          </p>
+                          <ul className="mt-2 flex flex-wrap gap-1.5">
+                            {cfg.coaches.map((c, i) => (
+                              <li key={i} className="rounded-full border border-academy-border bg-academy-surface
+                                                     dark:bg-white/[0.04] px-3 py-1.5 text-[13px] font-bold">
+                                {c.role}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+
+                      <div className="p-4 sm:p-5">
+                        <button type="button" onClick={() => goTo(1)} className={primaryBtn}>
+                          Je réserve ma place <ArrowRight size={18} />
+                        </button>
+                        {settings?.coaching?.enabled && (
+                          <p className="mt-3 text-center text-sm">
+                            Vous préférez à distance ? <Link to="/coaching" className="font-bold text-academy-primary underline underline-offset-2">Coaching en ligne</Link>
+                          </p>
+                        )}
+                      </div>
+                    </article>
                   </section>
                 )}
+
                 {/* Le détail est replié : la première étape doit tenir sur un
                     écran et répondre à « c'est quoi, quand, combien ». Qui veut
                     le programme complet ou le lieu les ouvre lui-même. */}
