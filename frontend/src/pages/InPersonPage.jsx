@@ -8,6 +8,7 @@ import SEOHead from '../components/SEOHead'
 import api from '../api/axios'
 import { useSiteSettings } from '../context/SiteSettingsContext'
 import StepIndicator from '../components/StepIndicator'
+import TicketDechire from '../components/TicketDechire'
 import Curriculum from '../components/Curriculum'
 import { formatDate } from '../utils/sessionDates'
 import { PAYMENT_INFO } from '../config/paymentConfig'
@@ -276,21 +277,28 @@ export default function InPersonPage() {
             ) : !cfg?.enabled ? (
               <p className="text-center text-academy-textMain/60">Le coaching présentiel n'est pas disponible pour le moment.</p>
             ) : done ? (
-              <div className={`${card} space-y-5`}>
+              <div className="space-y-5">
+                {doneSession && (
+                  <TicketDechire
+                    numero={done.id}
+                    titre={cfg.title}
+                    date={`${formatDate(doneSession.date)}${hours(doneSession) ? ` · ${hours(doneSession)}` : ''}`}
+                    lieu={[doneSession.place, doneSession.city].filter(Boolean).join(', ')}
+                    nom={fullName}
+                  />
+                )}
+
+                <div className={`${card} space-y-5`}>
                 <div className="text-center">
-                  <CheckCircle2 size={52} className="mx-auto text-emerald-500 mb-3" />
+                  {!doneSession && <CheckCircle2 size={52} className="mx-auto text-emerald-500 mb-3" />}
                   <h1 className="font-display font-black text-2xl sm:text-3xl mb-1">
                     {doneSession ? 'Plus qu\'une étape !' : "C'est noté !"}
                   </h1>
-                  <p className="text-academy-textMain/60">Inscription n°{done.id}</p>
+                  {!doneSession && <p className="text-academy-textMain/60">Inscription n°{done.id}</p>}
                 </div>
 
                 {doneSession ? (
                   <>
-                    <div className="bg-academy-surface rounded-xl p-4 text-sm space-y-1">
-                      <p className="font-bold">{formatDate(doneSession.date)}{hours(doneSession) ? ` · ${hours(doneSession)}` : ''}</p>
-                      {(doneSession.city || doneSession.place) && <p>{[doneSession.place, doneSession.city].filter(Boolean).join(', ')}</p>}
-                    </div>
                     {deposit > 0 && (
                       <div>
                         <h2 className="font-bold text-lg mb-1">Payez l'acompte de {money(deposit, currency)}</h2>
@@ -318,6 +326,7 @@ export default function InPersonPage() {
                     <MessageCircle size={20} /> {doneSession && deposit > 0 ? 'Envoyer mon reçu sur WhatsApp' : 'Confirmer sur WhatsApp'}
                   </a>
                 )}
+                </div>
               </div>
             ) : (
               <>
