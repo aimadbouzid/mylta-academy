@@ -6,7 +6,7 @@ import { useSiteSettings } from '../context/SiteSettingsContext'
 // Béjaïa). Le nom et l'adresse sont modifiables en administration ; les valeurs
 // ci-dessous servent de repli, et les coordonnées GPS restent ici.
 const PLACE = {
-  partner: 'Camden International Institute',
+  partner: 'Camden School',
   logo: '/camden-logo.jpg',
   address: 'Cité Douanière Bir Slam, Promo Ceram Bt D1 W, Béjaïa',
   from: { label: 'Gare routière de Béjaïa', lat: 36.7371759, lng: 5.0636466 },

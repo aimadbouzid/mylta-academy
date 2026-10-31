@@ -348,7 +348,7 @@ const defaultSettings = {
     price: 22000,   // prix de la formation (DA) — repris par défaut pour chaque session
     studentPrice: 0, // tarif étudiant (carte étudiante obligatoire) ; 0 = pas de tarif étudiant
     oldPrice: 35000, // prix barré affiché à côté (offre de lancement) ; 0 = pas de prix barré
-    deposit: 3000,  // acompte obligatoire pour réserver sa place
+    deposit: 5000,  // acompte obligatoire pour réserver sa place
     // Message affiché au-dessus des sessions (vide = rien) : utile tant que les dates ne sont pas définitives.
     datesNotice: "Session unique : les 12, 13 et 14 novembre 2026. Les places partent vite.",
     showSeats: false,
@@ -368,7 +368,7 @@ const defaultSettings = {
     ],
     // Numéro WhatsApp des inscriptions : celui de l'académie, pas celui du lieu.
     whatsappNumber: '213795103743',
-    venue: 'Camden International Institute',
+    venue: 'Camden School',
     venueAddress: 'Cité Douanière Bir Slam, Promo Ceram Bt D1 W, Béjaïa',
     // Étiquettes très courtes, en grille de 3 en haut de la page.
     infos: [
@@ -532,7 +532,7 @@ function readSettingsFromDisk() {
 // les valeurs par défaut au premier démarrage, donc un simple changement de
 // défaut ne l'atteint pas). Appliqué une fois : le prochain enregistrement admin
 // écrit settingsVersion à jour.
-const SETTINGS_VERSION = 22
+const SETTINGS_VERSION = 23
 const OLD_BANNER_TEXTS = ["🚀 Promo exceptionnelle : -50% sur toutes les formations ! Inscrivez-vous vite."]
 
 function migrateSettings(parsed, merged) {
@@ -602,6 +602,14 @@ function migrateSettings(parsed, merged) {
   }
   if ((parsed.settingsVersion || 1) < 17) {
     merged.instagram = { ...defaultSettings.instagram, ...(parsed.instagram || {}), posts: defaultSettings.instagram.posts }
+  }
+  // Le lieu s'appelle Camden School, et l'acompte passe à 5 000 DA.
+  if ((parsed.settingsVersion || 1) < 23) {
+    merged.inPerson = {
+      ...merged.inPerson,
+      deposit: defaultSettings.inPerson.deposit,
+      venue: defaultSettings.inPerson.venue,
+    }
   }
   // Le bandeau affichait du texte d'essai et un compte à rebours vers une date
   // déjà passée ; il repart sur la session de novembre.

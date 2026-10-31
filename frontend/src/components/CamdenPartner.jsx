@@ -10,7 +10,7 @@ export default function CamdenPartner() {
   // TrainingLocation et dans le récapitulatif, donc un déménagement en laissait
   // toujours un en arrière.
   const { settings } = useSiteSettings()
-  const partner = settings?.inPerson?.venue || 'Camden International Institute'
+  const partner = settings?.inPerson?.venue || 'Camden School'
   const address = settings?.inPerson?.venueAddress || 'Cité Douanière Bir Slam, Promo Ceram Bt D1 W, Béjaïa'
   return (
     <section className="section-container pt-0">

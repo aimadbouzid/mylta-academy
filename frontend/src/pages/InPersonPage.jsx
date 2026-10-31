@@ -284,7 +284,7 @@ export default function InPersonPage() {
                     titre={cfg.title}
                     date={formatDate(doneSession.date)}
                     heures={hours(doneSession)}
-                    lieu={[doneSession.place, doneSession.city].filter(Boolean).join(', ')}
+                    lieu={[doneSession.place || cfg.venue, doneSession.city].filter(Boolean).join(', ')}
                     nom={fullName}
                   />
                 )}
@@ -731,7 +731,7 @@ export default function InPersonPage() {
                       <span className="flex items-center gap-2 min-w-0">
                         <MapPin size={18} className="text-academy-primary shrink-0" />
                         <span className="min-w-0">
-                          <span className="block text-[13px] font-bold">Lieu : Camden International Institute</span>
+                          <span className="block text-[13px] font-bold">Lieu : {cfg.venue || 'Camden School'}</span>
                           <span className="block text-xs text-academy-textMain/60">Bir Slam, Béjaïa · à 4 min de la gare routière</span>
                         </span>
                       </span>
