@@ -163,7 +163,7 @@ export default function Galerie() {
       </div>
 
       {/* Les barres débordent volontairement de la colonne : on sent qu'il y en a plus. */}
-      <div className="mt-5 space-y-3 ps-4 sm:ps-6 lg:ps-8">
+      <div className="mt-5 space-y-3 ps-4 sm:ps-6 lg:ps-[max(2rem,calc((100%_-_80rem)/2_+_2rem))]">
         {rows.map((items, i) => <Row key={i} items={items} />)}
       </div>
 
