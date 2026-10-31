@@ -44,7 +44,11 @@ function Row({ items }) {
       // On approche de la fin : on prépare le lot suivant avant d'y arriver.
       // `scrollLeft > 0` est indispensable : sans lui, une rangée à peine plus
       // large que l'écran remplit tous ses lots dès le chargement.
-      if (el.scrollLeft > 0 && el.scrollLeft > el.scrollWidth - el.clientWidth - 700) {
+      // Sur grand écran, six vignettes ne remplissent pas la rangée : elle
+      // s'arrête au milieu de l'écran et rien ne peut la faire défiler. On
+      // complète donc tant qu'elle ne déborde pas.
+      const vide = el.scrollWidth <= el.clientWidth + 20
+      if (vide || (el.scrollLeft > 0 && el.scrollLeft > el.scrollWidth - el.clientWidth - 700)) {
         setLimite(l => (l >= items.length ? l : l + LOT))
       }
     }
@@ -52,7 +56,7 @@ function Row({ items }) {
     el.addEventListener('scroll', update, { passive: true })
     window.addEventListener('resize', update)
     return () => { el.removeEventListener('scroll', update); window.removeEventListener('resize', update) }
-  }, [items.length])
+  }, [items.length, limite])
 
   // Au premier passage à l'écran, la rangée glisse puis revient : le geste dit
   // « ça se fait glisser » mieux qu'une phrase, et il ne se produit qu'une fois.
