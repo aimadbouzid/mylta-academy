@@ -1,11 +1,15 @@
 import { Instagram, ArrowUpRight } from 'lucide-react'
+import { useLotDefile } from '../hooks/useLotDefile'
 
 // Les tournages que nous réalisons pour des clients, en bas de l'accueil.
 // Comme le fil de l'académie : l'image est hébergée ici et l'appui ouvre la
 // publication, Instagram n'autorisant pas la lecture dans un autre site.
 
 export default function Productions({ productions }) {
-  if (!productions?.enabled || !(productions.posts || []).length) return null
+  const posts = productions?.posts || []
+  const [rangee, limite] = useLotDefile(posts.length, 8)
+
+  if (!productions?.enabled || !posts.length) return null
 
   return (
     <section className="py-8 lg:py-12 border-t border-academy-border">
@@ -26,8 +30,8 @@ export default function Productions({ productions }) {
           </a>
         </div>
 
-        <div className="mt-4 flex gap-3 overflow-x-auto snap-x snap-mandatory hide-scrollbar pb-1">
-          {productions.posts.map(p => (
+        <div ref={rangee} className="mt-4 flex gap-3 overflow-x-auto snap-x snap-mandatory hide-scrollbar pb-1">
+          {posts.slice(0, limite).map(p => (
             <a key={p.code} href={`https://www.instagram.com/reel/${p.code}/`} target="_blank" rel="noopener noreferrer"
                className="group snap-start shrink-0 w-[150px] sm:w-[185px]">
               <div className="relative rounded-xl overflow-hidden border border-academy-border bg-black aspect-[9/16]">

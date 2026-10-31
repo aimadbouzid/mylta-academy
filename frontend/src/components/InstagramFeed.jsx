@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Instagram } from 'lucide-react'
+import { useLotDefile } from '../hooks/useLotDefile'
 
 // Publications Instagram de l'académie, montrées sur l'accueil.
 // Instagram interdit à ses vidéos de se lire dans un autre site : son cadre
@@ -24,10 +25,14 @@ const TAG_LABEL = {
 
 export default function InstagramFeed({ instagram }) {
   const [tag, setTag] = useState('all')
-  if (!instagram?.enabled || !(instagram.posts || []).length) return null
+  const tous = instagram?.posts || []
+  const posts = tag === 'all' ? tous : tous.filter(p => p.tag === tag)
+  // Les crochets doivent être appelés avant toute sortie anticipée.
+  const [rangee, limite] = useLotDefile(posts.length, 8)
 
-  const shown = TAGS.filter(t => t.id === 'all' || instagram.posts.some(p => p.tag === t.id))
-  const posts = tag === 'all' ? instagram.posts : instagram.posts.filter(p => p.tag === tag)
+  if (!instagram?.enabled || !tous.length) return null
+
+  const shown = TAGS.filter(t => t.id === 'all' || tous.some(p => p.tag === t.id))
 
   return (
     <section className="py-8 lg:py-12 border-t border-academy-border">
@@ -61,8 +66,8 @@ export default function InstagramFeed({ instagram }) {
           </div>
         )}
 
-        <div className="mt-4 flex gap-3 overflow-x-auto snap-x snap-mandatory hide-scrollbar pb-1">
-          {posts.map(p => (
+        <div ref={rangee} className="mt-4 flex gap-3 overflow-x-auto snap-x snap-mandatory hide-scrollbar pb-1">
+          {posts.slice(0, limite).map(p => (
             <a key={p.code} href={`https://www.instagram.com/p/${p.code}/`} target="_blank" rel="noopener noreferrer"
                className="group snap-start shrink-0 w-[150px] sm:w-[185px]">
               <div className="relative rounded-xl overflow-hidden border border-academy-border bg-black aspect-[9/16]">

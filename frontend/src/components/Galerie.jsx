@@ -21,9 +21,10 @@ const rows = Array.from({ length: ROWS }, (_, r) => GALERIE.filter((_, i) => i %
 
 // Nombre de vignettes montées d'emblée, puis ajoutées à chaque approche de la
 // fin. Les 116 vignettes de la galerie étaient toutes créées au chargement,
-// avec leurs observateurs : lourd à l'ouverture sur un téléphone modeste,
-// alors que personne ne voit plus de cinq vignettes à la fois.
-const LOT = 15
+// avec leurs affiches : près de 650 ko d'images réclamées à l'ouverture alors
+// qu'on n'en voit que trois ou quatre par rangée. Six laissent de la marge
+// avant le premier geste de glissement.
+const LOT = 6
 
 function Row({ items }) {
   const ref = useRef(null)
@@ -41,7 +42,9 @@ function Row({ items }) {
         end: el.scrollLeft >= el.scrollWidth - el.clientWidth - 8,
       })
       // On approche de la fin : on prépare le lot suivant avant d'y arriver.
-      if (el.scrollLeft > el.scrollWidth - el.clientWidth - 700) {
+      // `scrollLeft > 0` est indispensable : sans lui, une rangée à peine plus
+      // large que l'écran remplit tous ses lots dès le chargement.
+      if (el.scrollLeft > 0 && el.scrollLeft > el.scrollWidth - el.clientWidth - 700) {
         setLimite(l => (l >= items.length ? l : l + LOT))
       }
     }
