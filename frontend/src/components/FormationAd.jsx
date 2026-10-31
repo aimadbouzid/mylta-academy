@@ -143,10 +143,14 @@ export default function FormationAd({ inPerson }) {
                 Dans {j} j {pad(h)} h {pad(mn)} min
               </p>
 
+              {/* Bouton en rouge de marque plutôt qu'en noir : sur un papier crème,
+                  le noir pèse comme un pavé d'encre alors que le rouge éclaire le
+                  billet et reprend la souche « Entrée ». Le reflet qui traverse
+                  accroche l'œil sans clignoter. */}
               <Link to="/coaching-presentiel"
-                    className="mt-2.5 block w-full text-center uppercase text-[14px] sm:text-[15px] tracking-[0.12em]
-                               py-2.5 transition-opacity hover:opacity-85"
-                    style={{ ...TITRE, background: ENCRE, color: PAPIER }}>
+                    className="billet-reserver mt-2.5 block w-full text-center uppercase
+                               text-[14px] sm:text-[15px] tracking-[0.12em] py-2.5"
+                    style={{ ...TITRE, background: ROUGE, color: PAPIER }}>
                 Réserver
               </Link>
 
