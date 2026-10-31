@@ -147,6 +147,11 @@ export default function Navbar({ onLoginClick }) {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-[100] pointer-events-none flex flex-col transition-all duration-500">
+      {/* La pilule de nav ne couvre pas toute la largeur : sans ce fondu, le
+          contenu de la page défile derrière et dépasse visiblement sur les
+          côtés du header. */}
+      <div className="absolute inset-x-0 top-0 h-32 sm:h-40 bg-gradient-to-b from-academy-surface from-80% to-transparent pointer-events-none" />
+
       <div className="pointer-events-auto">
         <TopBanner />
       </div>
