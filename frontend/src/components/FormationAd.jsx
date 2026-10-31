@@ -92,6 +92,23 @@ export default function FormationAd({ inPerson }) {
             <div className="relative shrink-0 lg:w-[270px] px-4 sm:px-6 py-4 sm:py-6
                             border-t-2 lg:border-t-0 lg:border-l-2 border-dashed"
                  style={{ borderColor: `${ENCRE}55` }}>
+
+              {/* Les encoches de la perforation, mordues dans le bord du billet.
+                  Sur téléphone le talon passe dessous : elles encadrent le
+                  pointillé horizontal, en haut à gauche et en haut à droite. En
+                  grand écran le talon est à droite : elles glissent aux deux
+                  bouts du pointillé vertical. */}
+              <span aria-hidden="true"
+                    className="absolute w-[18px] h-[18px] rounded-full
+                               -top-[9px] -left-[9px]
+                               lg:-left-[11px] lg:-top-[9px]"
+                    style={{ background: 'rgb(var(--academy-surface))' }} />
+              <span aria-hidden="true"
+                    className="absolute w-[18px] h-[18px] rounded-full
+                               -top-[9px] -right-[9px]
+                               lg:right-auto lg:-left-[11px] lg:top-auto lg:-bottom-[9px]"
+                    style={{ background: 'rgb(var(--academy-surface))' }} />
+
               <div className="flex items-start justify-between gap-3 lg:block">
                 <div>
                   <div className="flex" style={{ border: `1.5px solid ${ENCRE}` }}>
@@ -154,8 +171,10 @@ export default function FormationAd({ inPerson }) {
                 Réserver
               </Link>
 
-              {/* Code-barres : des barres de largeurs irrégulières, dessinées en CSS. */}
-              <div aria-hidden="true" className="mt-3 hidden lg:flex flex-col items-center gap-1">
+              {/* Code-barres : des barres de largeurs irrégulières, dessinées en CSS.
+                  Il apparaît dès la tablette, où le talon a la place : c'est lui
+                  qui fait lire « billet » plus que n'importe quel cadre. */}
+              <div aria-hidden="true" className="mt-3 hidden sm:flex flex-col items-center gap-1">
                 <span className="block h-7 w-full max-w-[180px]" style={{
                   color: ENCRE,
                   backgroundImage: 'repeating-linear-gradient(90deg, currentColor 0 2px, transparent 2px 4px, currentColor 4px 5px, transparent 5px 9px, currentColor 9px 12px, transparent 12px 14px)',
