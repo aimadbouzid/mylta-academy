@@ -322,11 +322,27 @@ export default function InPersonPage() {
             ) : (
               <>
                 <header className="mb-6">
-                  <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-academy-primary">
-                    Formation présentielle · {(cfg.venueAddress || '').split(',').pop().trim() || 'Béjaïa'}
-                  </p>
-                  <h1 className="mt-1.5 font-display font-black text-[2rem] sm:text-5xl leading-[1.02] tracking-tight">{cfg.title}</h1>
-                  <p className="mt-2 text-[15px] sm:text-lg text-academy-textMain/65 leading-relaxed max-w-xl">{cfg.subtitle}</p>
+                  {/* Le formateur à côté du titre : on réserve trois jours avec
+                      quelqu'un, pas avec un programme. Un visage change la
+                      lecture de la page bien plus qu'un argument de plus. */}
+                  <div className="flex items-start gap-4 sm:gap-6">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-academy-primary">
+                        Formation présentielle · {(cfg.venueAddress || '').split(',').pop().trim() || 'Béjaïa'}
+                      </p>
+                      <h1 className="mt-1.5 font-display font-black text-[1.75rem] sm:text-[2.75rem] leading-[1.03] tracking-tight">{cfg.title}</h1>
+                      <p className="mt-2 text-[14px] sm:text-[17px] text-academy-textMain/65 leading-snug max-w-xl">{cfg.subtitle}</p>
+                    </div>
+
+                    <figure className="shrink-0 w-[92px] sm:w-[150px]">
+                      <img src="/formateur.jpg" alt="Le formateur de Mylta Academy"
+                           width="534" height="900" decoding="async"
+                           className="w-full aspect-[3/4] object-cover rounded-2xl border border-academy-border shadow-soft" />
+                      <figcaption className="mt-1.5 text-[10px] font-bold uppercase tracking-[0.14em] text-academy-textMain/45 text-center">
+                        Votre formateur
+                      </figcaption>
+                    </figure>
+                  </div>
 
                   {/* Les trois jours, l'horaire et le lieu : l'essentiel avant tout le reste. */}
                   {headline && (
@@ -367,11 +383,30 @@ export default function InPersonPage() {
                 {/* 1. La formation */}
                 {step === 0 && (
                   <section key="etape-0" className={`${card} space-y-5 etape-entre`}>
-                    {(cfg.infos || []).length > 0 && (
-                      <p className="text-[13px] font-semibold text-academy-textMain/55 leading-relaxed">
-                        {cfg.infos.join('  ·  ')}
+                    {/* Le contenu présenté comme un forfait : la liste cochée dit
+                        « voilà tout ce que vous avez pour ce prix », là où une
+                        suite de mots séparés par des points se survolait sans
+                        rien retenir. Les premières entrées viennent des réglages,
+                        les deux dernières sont les promesses de l'offre. */}
+                    <div className="rounded-2xl border-2 border-academy-textMain overflow-hidden">
+                      <p className="px-4 py-2 bg-academy-textMain text-academy-surface text-[10px] font-black uppercase tracking-[0.18em]">
+                        Tout est compris
                       </p>
-                    )}
+                      {/* Deux colonnes dès le téléphone : les mentions sont courtes.
+                          Les deux promesses, plus longues, prennent la ligne entière. */}
+                      <ul className="grid grid-cols-2 gap-x-3 gap-y-1.5 p-3.5">
+                        {[...(cfg.infos || []), 'Suivi gratuit après la formation', 'Certificat Mylta Academy'].map((item, i, tab) => {
+                          const phare = i >= tab.length - 2
+                          return (
+                            <li key={item} className={`flex items-start gap-2 text-[13px] leading-snug ${phare ? 'col-span-2' : ''}`}>
+                              <Check size={14} strokeWidth={3}
+                                     className={`mt-[3px] shrink-0 ${phare ? 'text-academy-primary' : 'text-academy-textMain/35'}`} />
+                              <span className={phare ? 'font-bold' : 'font-medium text-academy-textMain/75'}>{item}</span>
+                            </li>
+                          )
+                        })}
+                      </ul>
+                    </div>
 
                     {/* Le programme, en couleur : c'est ce qu'on achète, il doit se voir
                         tout de suite. Le détail complet reste juste en dessous. */}

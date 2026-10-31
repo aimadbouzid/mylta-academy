@@ -76,7 +76,7 @@ export default function FormationAd({ inPerson }) {
                   style={TITRE}>
                 3 jours pour filmer,<br />
                 monter &amp;{' '}
-                <span className="normal-case tracking-normal" style={{ ...SERIF, color: ROUGE }}>dompter l'IA</span>
+                <span className="normal-case tracking-normal" style={{ ...SERIF, color: ROUGE }}>maîtriser l'IA</span>
               </h2>
 
 
