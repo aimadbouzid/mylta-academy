@@ -282,7 +282,8 @@ export default function InPersonPage() {
                   <TicketDechire
                     numero={done.id}
                     titre={cfg.title}
-                    date={`${formatDate(doneSession.date)}${hours(doneSession) ? ` · ${hours(doneSession)}` : ''}`}
+                    date={formatDate(doneSession.date)}
+                    heures={hours(doneSession)}
                     lieu={[doneSession.place, doneSession.city].filter(Boolean).join(', ')}
                     nom={fullName}
                   />
