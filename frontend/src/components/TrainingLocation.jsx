@@ -1,6 +1,11 @@
 import { useState } from 'react'
 import { MapPin, Phone, Navigation, Map as MapIcon, Car, Footprints } from 'lucide-react'
 import { useSiteSettings } from '../context/SiteSettingsContext'
+import ReelPlayer from './ReelPlayer'
+
+// Visite de la salle, filmée sur place. Seules les cinq affiches se chargent :
+// la vidéo n'est téléchargée qu'au clic (voir ReelPlayer).
+const SALLE = ['salle-01', 'salle-02', 'salle-03', 'salle-04', 'salle-05']
 
 // Lieu de la formation présentielle (partenaire Camden International Institute,
 // Béjaïa). Le nom et l'adresse sont modifiables en administration ; les valeurs
@@ -146,6 +151,19 @@ export default function TrainingLocation() {
             </li>
           ))}
         </ol>
+      </div>
+
+      <div>
+        <h3 className="text-[11px] font-black uppercase tracking-[0.14em] text-academy-textMain/45 mb-2">La salle en vidéo</h3>
+        <div className="flex gap-2 overflow-x-auto hide-scrollbar snap-x snap-mandatory
+                        overscroll-x-contain [-webkit-overflow-scrolling:touch]">
+          {SALLE.map(nom => (
+            <div key={nom} className="shrink-0 w-[112px] snap-start aspect-[9/16]
+                                      rounded-xl overflow-hidden border border-academy-border bg-black">
+              <ReelPlayer src={`/salle/${nom}.mp4`} poster={`/salle/${nom}.jpg`} className="w-full h-full" />
+            </div>
+          ))}
+        </div>
       </div>
 
       {showMap && (
