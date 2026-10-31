@@ -1,4 +1,6 @@
+import { useRef } from 'react'
 import { CLIENTS } from '../data/clients'
+import { usePauseHorsEcran } from '../hooks/usePauseHorsEcran'
 
 // Les entreprises qui nous ont confié leurs tournages, en bandeau qui défile.
 // Le défilement est une animation CSS sur une liste écrite deux fois : la
@@ -6,6 +8,9 @@ import { CLIENTS } from '../data/clients'
 // rien ne tourne en JavaScript. Le bandeau s'arrête quand on le survole.
 
 export default function Clients() {
+  const piste = useRef(null)
+  usePauseHorsEcran(piste)
+
   if (!CLIENTS.length) return null
 
   return (
@@ -21,7 +26,7 @@ export default function Clients() {
       </div>
 
       <div className="mt-6 bandeau-clients">
-        <div className="bandeau-clients-piste">
+        <div ref={piste} className="bandeau-clients-piste">
           {[0, 1].map(copie => (
             <ul key={copie} aria-hidden={copie === 1} className="flex items-center gap-4 sm:gap-7 pe-4 sm:pe-7 shrink-0">
               {CLIENTS.map(c => (

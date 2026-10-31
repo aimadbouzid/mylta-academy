@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import {
   ArrowRight, Star, Shield, Infinity, CreditCard,
   Trophy, Users, BookOpen, TrendingUp, ChevronRight, Sparkles, ChevronDown, HelpCircle, ExternalLink,
   Instagram, Facebook, Download
 } from 'lucide-react'
+import { usePauseHorsEcran } from '../hooks/usePauseHorsEcran'
 import Navbar from '../components/Navbar'
 import SEOHead from '../components/SEOHead'
 import CourseCard from '../components/CourseCard'
@@ -44,6 +45,9 @@ const FEATURE_STYLES = [
 
 export default function LandingPage() {
   const { isAuthenticated } = useAuth()
+  // Le bandeau des avis tourne sans fin : inutile tant qu'il est hors écran.
+  const pisteAvis = useRef(null)
+  usePauseHorsEcran(pisteAvis)
   const { t, currentLang } = useLanguage()
   const { courses, loading, error, refetch } = useCourses({})
   const [loginOpen,   setLoginOpen]   = useState(false)
@@ -116,9 +120,9 @@ export default function LandingPage() {
           {/* Blobs de flou localisés pour l'accueil (Neutral/Blueish tones).
               En thème sombre leur opacité est fortement réduite : ces teintes
               pastel, pensées pour un fond clair, voilaient le noir de gris. */}
-          <div className="absolute top-[5%] left-[-15%] w-[60vw] h-[60vw] rounded-full text-blue-400/10 dark:text-blue-400/[0.04] pointer-events-none select-none z-0 animate-pulse-slow glow-blob" />
-          <div className="absolute bottom-[0%] right-[-15%] w-[55vw] h-[55vw] rounded-full text-indigo-400/10 dark:text-indigo-400/[0.04] pointer-events-none select-none z-0 animate-pulse-slow glow-blob" />
-          <div className="absolute top-[40%] right-[10%] w-[40vw] h-[40vw] rounded-full text-gray-300/20 dark:text-gray-300/[0.03] pointer-events-none select-none z-0 animate-pulse-slow glow-blob" />
+          <div className="absolute top-[5%] left-[-15%] w-[60vw] h-[60vw] rounded-full text-blue-400/10 dark:text-blue-400/[0.04] pointer-events-none select-none z-0 glow-blob" />
+          <div className="absolute bottom-[0%] right-[-15%] w-[55vw] h-[55vw] rounded-full text-indigo-400/10 dark:text-indigo-400/[0.04] pointer-events-none select-none z-0 glow-blob" />
+          <div className="absolute top-[40%] right-[10%] w-[40vw] h-[40vw] rounded-full text-gray-300/20 dark:text-gray-300/[0.03] pointer-events-none select-none z-0 glow-blob" />
           
           <div className="section-container relative z-10 flex flex-col lg:flex-row items-center gap-6 lg:gap-10">
             <div className="flex-1 text-center lg:text-left">
@@ -387,7 +391,7 @@ export default function LandingPage() {
             <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-24 sm:w-40 bg-gradient-to-r from-academy-surfaceDark to-transparent z-10" />
             <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-24 sm:w-40 bg-gradient-to-l from-academy-surfaceDark to-transparent z-10" />
 
-            <div className="animate-marquee-track flex gap-3 px-4">
+            <div ref={pisteAvis} className="animate-marquee-track flex gap-3 px-4">
               {[...allReviews, ...allReviews].map((testimonial, idx) => (
                 <div key={idx} className="card-academy p-3 w-[210px] sm:w-[260px] flex-shrink-0 group">
                   <div className="flex items-center justify-between mb-2">
