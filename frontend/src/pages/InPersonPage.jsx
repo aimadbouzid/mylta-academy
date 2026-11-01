@@ -9,6 +9,7 @@ import api from '../api/axios'
 import { useSiteSettings } from '../context/SiteSettingsContext'
 import StepIndicator from '../components/StepIndicator'
 import TicketDechire from '../components/TicketDechire'
+import ParcoursAnime from '../components/ParcoursAnime'
 import Curriculum from '../components/Curriculum'
 import { formatDate } from '../utils/sessionDates'
 import { PAYMENT_INFO } from '../config/paymentConfig'
@@ -507,6 +508,8 @@ export default function InPersonPage() {
                     </article>
                   </section>
                 )}
+
+                {step === 0 && <ParcoursAnime />}
 
                 {/* Le détail est replié : la première étape doit tenir sur un
                     écran et répondre à « c'est quoi, quand, combien ». Qui veut

@@ -38,6 +38,8 @@ export default {
         // `font-black` était un faux gras fabriqué par le navigateur.
         display: ['"Archivo"', '"Inter"', 'system-ui', 'sans-serif'],
         mono:    ['"Inter"', 'system-ui', 'sans-serif'],
+        // Lettrage de bande dessinée : la carte du parcours, et rien d'autre.
+        comic:   ['"Bangers"', '"Archivo"', 'system-ui', 'sans-serif'],
       },
       boxShadow: {
         'soft': '0 4px 20px rgba(0, 0, 0, 0.05)',
