@@ -58,6 +58,7 @@ const ClubEventPage = React.lazy(() => import('./pages/ClubEventPage'))
 const LiveParticipantPage = React.lazy(() => import('./pages/LiveParticipantPage'))
 const LiveDisplayPage = React.lazy(() => import('./pages/LiveDisplayPage'))
 const ExpressPage = React.lazy(() => import('./pages/ExpressPage'))
+const ParcoursPage = React.lazy(() => import('./pages/ParcoursPage'))
 
 const SuspenseFallback = () => (
   <div className="min-h-screen flex items-center justify-center">
@@ -139,6 +140,7 @@ export default function App() {
               <Route path="/mission" element={<MissionPage />} />
               <Route path="/coaching" element={<CoachingPage />} />
               <Route path="/coaching-presentiel" element={<InPersonPage />} />
+              <Route path="/parcours" element={<ParcoursPage />} />
               <Route path="/rejoindre" element={<JoinPage />} />
               <Route path="/concours" element={<ContestPage />} />
               {/* Club scientifique de l'université : inscription publique, et

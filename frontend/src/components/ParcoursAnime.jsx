@@ -182,11 +182,30 @@ const REPARS = [
   'Le suivi gratuit après la formation',
 ]
 
+// Les caractères que le lettrage affiche, accents compris : la police
+// téléchargée se limite à ceux-là.
+const GLYPHES = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 ÀÂÇÉÈÊÎÔÛàâçéèêîïôùû!,.'’"
+
 const ETOILE = 'polygon(50% 0%, 58.5% 18.1%, 75% 6.7%, 73.3% 26.7%, 93.3% 25%, 81.9% 41.5%, 100% 50%, 81.9% 58.5%, 93.3% 75%, 73.3% 73.3%, 75% 93.3%, 58.5% 81.9%, 50% 100%, 41.5% 81.9%, 25% 93.3%, 26.7% 73.3%, 6.7% 75%, 18.1% 58.5%, 0% 50%, 18.1% 41.5%, 6.7% 25%, 26.7% 26.7%, 25% 6.7%, 41.5% 18.1%)'
 
 export default function ParcoursAnime() {
   const ref = useRef(null)
   const [vu, setVu] = useState(false)
+
+  // Le lettrage BD ne sert qu'ici : la police est demandée par cette page, et
+  // seulement pour les caractères qu'elle affiche (`text=`). Google renvoie
+  // alors un fichier réduit — 15 ko au lieu de 23 — et les autres pages du
+  // site ne le téléchargent jamais.
+  useEffect(() => {
+    const id = 'police-bd'
+    if (document.getElementById(id)) return
+    const lien = document.createElement('link')
+    lien.id = id
+    lien.rel = 'stylesheet'
+    lien.href = 'https://fonts.googleapis.com/css2?family=Bangers&text=' +
+      encodeURIComponent(GLYPHES) + '&display=swap'
+    document.head.appendChild(lien)
+  }, [])
 
   // Les cases n'arrivent que quand on y est : plus bas dans la page, elles ne
   // coûtent rien pendant qu'on lit le reste.
@@ -246,60 +265,60 @@ export default function ParcoursAnime() {
           background-color: var(--papier);
           /* la trame : des points d'imprimerie, très pâles */
           background-image: radial-gradient(rgba(21,24,27,.16) 1px, transparent 1.2px);
-          background-size: 14px 14px;
-          box-shadow: 7px 7px 0 var(--ink);
-          padding: 20px 16px 22px;
+          background-size: 12px 12px;
+          box-shadow: 5px 5px 0 var(--ink);
+          padding: 14px 12px 16px;
           color: var(--ink);
         }
-        @media (min-width: 640px) { .bd { padding: 26px 22px 28px } }
+        @media (min-width: 640px) { .bd { padding: 18px 16px 20px } }
 
-        .bd-entete { text-align: center; margin-bottom: 18px }
+        .bd-entete { text-align: center; margin-bottom: 14px }
         .bd-etiquette {
           display: inline-block;
           font-family: Bangers, Archivo, system-ui, sans-serif;
           letter-spacing: .12em;
-          font-size: 14px; line-height: 1;
+          font-size: 12px; line-height: 1;
           color: #fff; background: var(--rouge);
           border: 2.5px solid var(--ink);
-          padding: 7px 14px 5px;
+          padding: 5px 11px 4px;
           transform: rotate(-2.5deg);
           box-shadow: 3px 3px 0 var(--ink);
         }
         .bd-titre {
-          margin-top: 12px;
+          margin-top: 9px;
           font-family: Bangers, Archivo, system-ui, sans-serif;
-          font-size: clamp(28px, 7vw, 46px);
+          font-size: clamp(21px, 5vw, 32px);
           line-height: .98;
           letter-spacing: .015em;
           text-transform: uppercase;
           /* contour d'encre autour des lettres, comme un titre de couverture */
-          text-shadow: 2px 2px 0 var(--jaune), 4px 4px 0 var(--ink);
+          text-shadow: 1.5px 1.5px 0 var(--jaune), 3px 3px 0 var(--ink);
         }
 
-        .bd-cases { display: grid; gap: 22px }
-        @media (min-width: 1024px) { .bd-cases { grid-template-columns: repeat(4, 1fr); gap: 16px } }
+        .bd-cases { display: grid; gap: 16px }
+        @media (min-width: 1024px) { .bd-cases { grid-template-columns: repeat(4, 1fr); gap: 12px } }
 
         .bd-case {
           position: relative;
           background: #fff;
           border: 3px solid var(--ink);
           border-radius: 12px;
-          box-shadow: 5px 5px 0 var(--ink);
-          padding: 16px 14px 14px;
+          box-shadow: 4px 4px 0 var(--ink);
+          padding: 11px 10px 10px;
           opacity: 0; transform: translateY(14px) rotate(0deg);
         }
         .bd-case:nth-child(odd)  { rotate: -.7deg }
         .bd-case:nth-child(even) { rotate: .7deg }
 
         .bd-badge {
-          position: absolute; top: -16px; left: -10px; z-index: 2;
+          position: absolute; top: -12px; left: -8px; z-index: 2;
           display: grid; place-items: center;
-          width: 62px; height: 62px;
+          width: 48px; height: 48px;
           background: var(--jaune);
           color: var(--ink);
           font-family: Bangers, Archivo, system-ui, sans-serif;
-          font-size: 14px; line-height: 1; text-align: center;
-          letter-spacing: .04em;
+          font-size: 11px; line-height: 1; text-align: center;
+          letter-spacing: .03em;
           rotate: -10deg;
         }
 
@@ -310,16 +329,16 @@ export default function ParcoursAnime() {
           background:
             radial-gradient(circle at 50% 120%, ${JAUNE}55, transparent 60%),
             #F2F5F7;
-          padding: 6px;
-          height: 104px;
+          padding: 4px;
+          height: 76px;
         }
         .bd-bulle {
-          position: relative; display: inline-block; margin-top: 14px;
+          position: relative; display: inline-block; margin-top: 11px;
           background: #fff; color: var(--ink);
           border: 2.5px solid var(--ink);
           border-radius: 14px;
-          padding: 5px 11px 4px;
-          font-size: 12.5px; font-weight: 800; line-height: 1.15;
+          padding: 4px 9px 3px;
+          font-size: 11.5px; font-weight: 800; line-height: 1.15;
           box-shadow: 2px 2px 0 var(--ink);
         }
         /* la queue pointe vers le dessin, juste au-dessus */
@@ -331,27 +350,27 @@ export default function ParcoursAnime() {
         }
 
         .bd-case-titre {
-          margin-top: 10px;
+          margin-top: 8px;
           font-family: Bangers, Archivo, system-ui, sans-serif;
-          font-size: 20px; line-height: 1.05; letter-spacing: .02em;
+          font-size: 16px; line-height: 1.05; letter-spacing: .02em;
         }
-        .bd-case-texte { margin-top: 6px; font-size: 13px; line-height: 1.35; opacity: .78 }
+        .bd-case-texte { margin-top: 5px; font-size: 12px; line-height: 1.32; opacity: .78 }
 
         .bd-final {
-          margin-top: 26px;
-          display: grid; gap: 14px;
+          margin-top: 18px;
+          display: grid; gap: 11px;
           grid-template-columns: 1fr;
           align-items: start;
           background: var(--jaune);
           border: 3px solid var(--ink);
           border-radius: 14px;
-          box-shadow: 5px 5px 0 var(--ink);
-          padding: 16px 14px;
+          box-shadow: 4px 4px 0 var(--ink);
+          padding: 12px 11px;
           opacity: 0; transform: translateY(14px);
         }
-        @media (min-width: 640px) { .bd-final { grid-template-columns: 120px 1fr; gap: 18px; padding: 20px } }
+        @media (min-width: 640px) { .bd-final { grid-template-columns: 96px 1fr; gap: 14px; padding: 14px } }
         .bd-final-dessin {
-          height: 96px;
+          height: 72px;
           background: #fff;
           border: 2.5px solid var(--ink); border-radius: 10px;
           padding: 6px;
@@ -360,27 +379,27 @@ export default function ParcoursAnime() {
         .bd-boum {
           display: inline-block;
           font-family: Bangers, Archivo, system-ui, sans-serif;
-          font-size: clamp(26px, 6vw, 36px); line-height: 1;
+          font-size: clamp(21px, 4.6vw, 28px); line-height: 1;
           color: var(--rouge);
-          text-shadow: 2px 2px 0 #fff, 4px 4px 0 var(--ink);
+          text-shadow: 1.5px 1.5px 0 #fff, 3px 3px 0 var(--ink);
           rotate: -2deg;
         }
         .bd-final-soustitre {
           margin-top: 8px;
-          font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: .16em;
+          font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: .14em;
           opacity: .6;
         }
-        .bd-listes { display: grid; gap: 14px; margin-top: 10px }
-        @media (min-width: 640px) { .bd-listes { grid-template-columns: 1fr 1fr; gap: 18px } }
+        .bd-listes { display: grid; gap: 10px; margin-top: 8px }
+        @media (min-width: 640px) { .bd-listes { grid-template-columns: 1fr 1fr; gap: 14px } }
         .bd-liste-titre {
           font-family: Bangers, Archivo, system-ui, sans-serif;
-          font-size: 17px; letter-spacing: .03em; color: var(--rouge);
+          font-size: 14.5px; letter-spacing: .03em; color: var(--rouge);
           -webkit-text-stroke: .4px var(--ink);
         }
         .bd-listes ul { margin-top: 5px; display: grid; gap: 5px }
         .bd-listes li {
           position: relative; padding-left: 16px;
-          font-size: 13px; line-height: 1.35; font-weight: 600;
+          font-size: 12px; line-height: 1.32; font-weight: 600;
         }
         .bd-listes li::before {
           content: ''; position: absolute; left: 0; top: 7px;
