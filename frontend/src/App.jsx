@@ -20,7 +20,6 @@ import ProtectedAdminRoute from './pages/ProtectedAdminRoute'
 import NotFoundPage from './components/NotFoundPage'
 import WhatsAppButton from './components/WhatsAppButton'
 import ReserveCTA from './components/ReserveCTA'
-import InAppBrowserGuard from './components/InAppBrowserGuard'
 import ClickTracker from './components/ClickTracker'
 import FacebookPixel from './components/FacebookPixel'
 import CookieBanner from './components/CookieBanner'
@@ -82,11 +81,6 @@ export default function App() {
   const { pathname } = useLocation()
   const { success } = useToast()
   const { settings } = useSiteSettings()
-  // Actif par défaut, y compris pendant le chargement des réglages : on ne
-  // veut jamais laisser passer un visiteur Instagram/TikTok dans le
-  // navigateur intégré le temps que /config/site réponde.
-  const inAppGuardEnabled = settings?.modules?.inAppBrowserGuardEnabled !== false
-
   useEffect(() => {
     if (!socket) return
 
@@ -123,7 +117,6 @@ export default function App() {
 
   return (
     <ErrorBoundary>
-      <InAppBrowserGuard enabled={inAppGuardEnabled}>
         <ClickTracker />
         <FacebookPixel />
         <ScrollToTop />
@@ -220,7 +213,6 @@ export default function App() {
           <Toast />
         </div>
       </div>
-      </InAppBrowserGuard>
     </ErrorBoundary>
   )
 }

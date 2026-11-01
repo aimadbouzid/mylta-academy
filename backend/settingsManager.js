@@ -399,9 +399,6 @@ const defaultSettings = {
     resourcesEnabled: false,
     // Bandeau de consentement aux cookies : désactivé par défaut.
     cookieBannerEnabled: false,
-    // Redirige les visiteurs venus d'Instagram/TikTok/Facebook (navigateur
-    // intégré) vers Chrome/Safari — voir InAppBrowserGuard côté frontend.
-    inAppBrowserGuardEnabled: true,
     // Bandeau « Formations gratuites à l'université de Béjaïa » sur l'accueil.
     clubBannerEnabled: false
   }
