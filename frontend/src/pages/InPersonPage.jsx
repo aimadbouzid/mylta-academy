@@ -508,18 +508,6 @@ export default function InPersonPage() {
                   </section>
                 )}
 
-                {step === 0 && (
-                  <Link to="/parcours"
-                        className="group mt-4 flex items-center justify-between gap-3 rounded-2xl border border-academy-border
-                                   bg-academy-white px-4 py-3.5 text-left shadow-sm hover:border-academy-primary/40">
-                    <span className="min-w-0">
-                      <span className="block text-[9.5px] font-black uppercase tracking-[0.2em] text-academy-primary">En images</span>
-                      <span className="mt-0.5 block text-[15px] font-bold">De toi aujourd'hui à toi dimanche soir</span>
-                    </span>
-                    <ArrowRight size={18} className="shrink-0 text-academy-textMain/40 transition-transform group-hover:translate-x-0.5" />
-                  </Link>
-                )}
-
                 {/* Le détail est replié : la première étape doit tenir sur un
                     écran et répondre à « c'est quoi, quand, combien ». Qui veut
                     le programme complet ou le lieu les ouvre lui-même. */}
