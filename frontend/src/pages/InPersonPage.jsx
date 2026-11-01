@@ -9,6 +9,7 @@ import api from '../api/axios'
 import { useSiteSettings } from '../context/SiteSettingsContext'
 import StepIndicator from '../components/StepIndicator'
 import Curriculum from '../components/Curriculum'
+import BandeDessinee from '../components/BandeDessinee'
 import { formatDate } from '../utils/sessionDates'
 import { PAYMENT_INFO } from '../config/paymentConfig'
 import { getSessions } from '../api/sessions'
@@ -503,6 +504,18 @@ export default function InPersonPage() {
                     </summary>
                     <div className="mt-4">
                       <Curriculum curriculum={cfg.curriculum} />
+                    </div>
+                  </details>
+                )}
+                {step === 0 && (
+                  <details className={`${card} mt-4 group/det`}>
+                    <summary className="flex items-center justify-between gap-3 cursor-pointer list-none
+                                        font-bold text-[15px] marker:hidden">
+                      Les 3 jours en images
+                      <ChevronDown size={18} className="shrink-0 text-academy-textMain/40 transition-transform group-open/det:rotate-180" />
+                    </summary>
+                    <div className="mt-4">
+                      <BandeDessinee />
                     </div>
                   </details>
                 )}

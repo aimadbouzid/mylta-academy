@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300" role="img" aria-label="On lui montre les réglages cachés de la caméra : 60 images par seconde, mise au point verrouillée, grille.">
+<rect width="400" height="300" fill="#f1f5f7"/>
+<rect x="104" y="24" width="192" height="252" rx="20" fill="#1a1a1a"/>
+<rect x="116" y="38" width="168" height="224" rx="10" fill="#fff"/>
+<path d="M172 38v224M228 38v224M116 112h168M116 188h168" stroke="#cbd5dd" stroke-width="2"/>
+<rect x="128" y="50" width="58" height="26" rx="13" fill="#b91c1c"/>
+<text x="157" y="69" font-family="Inter,system-ui,sans-serif" font-size="16" font-weight="900" fill="#fff" text-anchor="middle">60</text>
+<rect x="186" y="122" width="56" height="56" rx="6" fill="none" stroke="#b91c1c" stroke-width="4"/>
+<rect x="202" y="212" width="24" height="20" rx="3" fill="#1a1a1a"/>
+<path d="M207 212v-8a7 7 0 0114 0v8" fill="none" stroke="#1a1a1a" stroke-width="4"/>
+</svg>

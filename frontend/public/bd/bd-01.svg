@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300" role="img" aria-label="Un participant arrive devant la salle, son téléphone à la main, sans rien savoir encore.">
+<rect width="400" height="300" fill="#f1f5f7"/>
+<rect x="208" y="30" width="168" height="270" fill="#e2e8ed"/>
+<rect x="208" y="30" width="168" height="36" fill="#1a1a1a"/>
+<text x="292" y="54" font-family="Inter,system-ui,sans-serif" font-size="15" font-weight="800" fill="#fff" text-anchor="middle" letter-spacing="2">CAMDEN</text>
+<rect x="246" y="108" width="92" height="192" rx="4" fill="#f1f5f7" stroke="#1a1a1a" stroke-width="4"/>
+<circle cx="322" cy="208" r="5" fill="#1a1a1a"/>
+<circle cx="112" cy="156" r="32" fill="#1a1a1a"/>
+<path d="M60 300v-58a52 52 0 01104 0v58z" fill="#1a1a1a"/>
+<rect x="150" y="238" width="30" height="52" rx="6" fill="#1a1a1a"/>
+<rect x="154" y="242" width="22" height="44" rx="3" fill="#fff"/>
+<text x="112" y="86" font-family="Inter,system-ui,sans-serif" font-size="58" font-weight="900" fill="#b91c1c" text-anchor="middle">?</text>
+</svg>

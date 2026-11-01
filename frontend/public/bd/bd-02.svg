@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300" role="img" aria-label="Sa première vidéo est floue, sombre et tremblante.">
+<rect width="400" height="300" fill="#f1f5f7"/>
+<rect x="128" y="30" width="144" height="240" rx="18" fill="#1a1a1a"/>
+<rect x="138" y="44" width="124" height="212" rx="8" fill="#6b7280"/>
+<path d="M160 180q24-46 48-14t44-30v120H160z" fill="#4b5563"/>
+<circle cx="196" cy="96" r="20" fill="#9ca3af"/>
+<path d="M150 56l18 14M150 84l26 20M150 118l14 10" stroke="#9ca3af" stroke-width="5" stroke-linecap="round" opacity=".7"/>
+<circle cx="200" cy="150" r="46" fill="#b91c1c"/>
+<path d="M182 132l36 36M218 132l-36 36" stroke="#fff" stroke-width="9" stroke-linecap="round"/>
+</svg>

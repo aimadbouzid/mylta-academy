@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300" role="img" aria-label="Le son : l'erreur qui tue une vidéo, et comment obtenir un son net.">
+<rect width="400" height="300" fill="#f1f5f7"/>
+<rect x="40" y="86" width="140" height="128" rx="12" fill="#e2e8ed"/>
+<path d="M74 118v64M100 104v92M126 124v52M152 112v76" stroke="#9ca3af" stroke-width="11" stroke-linecap="round"/>
+<circle cx="110" cy="150" r="44" fill="none" stroke="#b91c1c" stroke-width="8"/>
+<path d="M79 181l62-62" stroke="#b91c1c" stroke-width="8" stroke-linecap="round"/>
+<rect x="238" y="74" width="40" height="76" rx="20" fill="#1a1a1a"/>
+<path d="M226 142a32 32 0 0064 0" fill="none" stroke="#1a1a1a" stroke-width="7" stroke-linecap="round"/>
+<path d="M258 174v26" stroke="#1a1a1a" stroke-width="7" stroke-linecap="round"/>
+<path d="M310 142v16M330 128v44M350 138v24" stroke="#b91c1c" stroke-width="9" stroke-linecap="round"/>
+</svg>

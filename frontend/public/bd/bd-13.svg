@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300" role="img" aria-label="Le hook : les trois premières secondes qui font décoller les vues.">
+<rect width="400" height="300" fill="#f1f5f7"/>
+<text x="92" y="150" font-family="Inter,system-ui,sans-serif" font-size="96" font-weight="900" fill="#1a1a1a" text-anchor="middle">3s</text>
+<path d="M30 186h124" stroke="#b91c1c" stroke-width="9" stroke-linecap="round"/>
+<path d="M196 254l44-6 42-48 44-92" fill="none" stroke="#b91c1c" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M300 50l28 10-24 20z" fill="#b91c1c"/>
+<rect x="196" y="236" width="20" height="26" rx="4" fill="#cbd5dd"/>
+<rect x="230" y="206" width="20" height="56" rx="4" fill="#cbd5dd"/>
+<rect x="264" y="166" width="20" height="96" rx="4" fill="#cbd5dd"/>
+<rect x="298" y="122" width="20" height="140" rx="4" fill="#cbd5dd"/>
+</svg>

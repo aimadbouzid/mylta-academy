@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300" role="img" aria-label="Les sous-titres et l'étalonnage des couleurs : avant et après.">
+<rect width="400" height="300" fill="#f1f5f7"/>
+<rect x="36" y="38" width="328" height="224" rx="8" fill="#1a1a1a"/>
+<rect x="46" y="48" width="154" height="204" fill="#9ca3af"/>
+<rect x="200" y="48" width="154" height="204" fill="#fcd9b6"/>
+<path d="M200 48v204" stroke="#fff" stroke-width="4"/>
+<circle cx="123" cy="128" r="36" fill="#6b7280"/>
+<circle cx="277" cy="128" r="36" fill="#c2703f"/>
+<rect x="76" y="206" width="248" height="30" rx="6" fill="#1a1a1a" opacity=".82"/>
+<path d="M96 221h86M196 221h108" stroke="#fff" stroke-width="9" stroke-linecap="round"/>
+</svg>

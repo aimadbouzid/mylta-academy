@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300" role="img" aria-label="Atelier du jour 2 : la vidéo est montée du début à la fin.">
+<rect width="400" height="300" fill="#f1f5f7"/>
+<rect x="128" y="18" width="144" height="264" rx="20" fill="#1a1a1a"/>
+<rect x="138" y="32" width="124" height="236" rx="8" fill="#e2e8ed"/>
+<circle cx="200" cy="138" r="44" fill="#b91c1c"/>
+<path d="M188 116l34 22-34 22z" fill="#fff"/>
+<rect x="152" y="226" width="96" height="9" rx="4.5" fill="#b91c1c"/>
+<path d="M152 250h58" stroke="#9ca3af" stroke-width="7" stroke-linecap="round"/>
+</svg>

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300" role="img" aria-label="Le cadrage : la règle des tiers, et le regard placé au bon endroit.">
+<rect width="400" height="300" fill="#f1f5f7"/>
+<rect x="34" y="40" width="332" height="220" fill="#fff" stroke="#1a1a1a" stroke-width="5"/>
+<path d="M145 40v220M255 40v220M34 113h332M34 187h332" stroke="#cbd5dd" stroke-width="3"/>
+<circle cx="145" cy="113" r="30" fill="#1a1a1a"/>
+<path d="M97 260v-44a48 48 0 0196 0v44z" fill="#1a1a1a"/>
+<circle cx="145" cy="113" r="9" fill="#b91c1c"/>
+<circle cx="255" cy="113" r="7" fill="#b91c1c" opacity=".35"/>
+<circle cx="145" cy="187" r="7" fill="#b91c1c" opacity=".35"/>
+<circle cx="255" cy="187" r="7" fill="#b91c1c" opacity=".35"/>
+</svg>

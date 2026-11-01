@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300" role="img" aria-label="Filmer stable en marchant, sans stabilisateur.">
+<rect width="400" height="300" fill="#f1f5f7"/>
+<path d="M28 108h78M14 152h92M34 196h72" stroke="#cbd5dd" stroke-width="12" stroke-linecap="round"/>
+<circle cx="214" cy="118" r="32" fill="#1a1a1a"/>
+<path d="M162 300v-58a52 52 0 01104 0v58z" fill="#1a1a1a"/>
+<rect x="268" y="128" width="54" height="92" rx="9" fill="#1a1a1a"/>
+<rect x="274" y="134" width="42" height="80" rx="5" fill="#fff"/>
+<path d="M286 160h18M286 176h18M286 192h18" stroke="#cbd5dd" stroke-width="5" stroke-linecap="round"/>
+<path d="M336 150v48" stroke="#b91c1c" stroke-width="7" stroke-linecap="round"/>
+<path d="M348 164v20" stroke="#b91c1c" stroke-width="7" stroke-linecap="round"/>
+</svg>
