@@ -1,0 +1,91 @@
+# Déploiement automatique de Mylta Academy.
+#
+# À chaque mise à jour de `main`, GitHub se connecte au serveur en SSH et y
+# lance `deploy/deploy.sh` — exactement ce qu'on faisait à la main.
+#
+# Trois secrets à renseigner une fois dans le dépôt
+# (Settings › Secrets and variables › Actions) :
+#   VPS_HOST      l'adresse du serveur (IP ou nom de domaine)
+#   VPS_USER      l'utilisateur SSH (souvent « root »)
+#   VPS_SSH_KEY   la clé privée qui ouvre ce serveur
+# Deux secrets facultatifs :
+#   VPS_PATH      le dossier du projet sur le serveur (sinon il est cherché)
+#   VPS_PORT      le port SSH, si ce n'est pas 22
+#
+# Tant que les trois premiers manquent, le déploiement est simplement ignoré :
+# aucune erreur rouge sur le dépôt.
+
+name: Déploiement
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Deux déploiements ne se marchent pas dessus : le second attend le premier.
+concurrency:
+  group: deploiement
+  cancel-in-progress: false
+
+jobs:
+  deployer:
+    name: Mettre le serveur à jour
+    runs-on: ubuntu-latest
+    steps:
+      - name: Vérifier les secrets
+        id: secrets
+        env:
+          HOTE: ${{ secrets.VPS_HOST }}
+          UTILISATEUR: ${{ secrets.VPS_USER }}
+          CLE: ${{ secrets.VPS_SSH_KEY }}
+        run: |
+          if [ -z "$HOTE" ] || [ -z "$UTILISATEUR" ] || [ -z "$CLE" ]; then
+            echo "pret=non" >> "$GITHUB_OUTPUT"
+            echo "::notice::Déploiement ignoré : VPS_HOST, VPS_USER ou VPS_SSH_KEY n'est pas renseigné dans les secrets du dépôt."
+          else
+            echo "pret=oui" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Préparer la connexion
+        if: steps.secrets.outputs.pret == 'oui'
+        env:
+          CLE: ${{ secrets.VPS_SSH_KEY }}
+          HOTE: ${{ secrets.VPS_HOST }}
+          PORT: ${{ secrets.VPS_PORT }}
+        run: |
+          mkdir -p ~/.ssh && chmod 700 ~/.ssh
+          printf '%s\n' "$CLE" > ~/.ssh/cle_deploiement
+          chmod 600 ~/.ssh/cle_deploiement
+          ssh-keyscan -p "${PORT:-22}" "$HOTE" >> ~/.ssh/known_hosts 2>/dev/null || true
+
+      - name: Lancer deploy.sh sur le serveur
+        if: steps.secrets.outputs.pret == 'oui'
+        env:
+          HOTE: ${{ secrets.VPS_HOST }}
+          UTILISATEUR: ${{ secrets.VPS_USER }}
+          PORT: ${{ secrets.VPS_PORT }}
+          CHEMIN: ${{ secrets.VPS_PATH }}
+        run: |
+          ssh -i ~/.ssh/cle_deploiement -p "${PORT:-22}" \
+              -o StrictHostKeyChecking=accept-new \
+              -o ConnectTimeout=20 \
+              "$UTILISATEUR@$HOTE" "CHEMIN='${CHEMIN}' bash -s" <<'SUR_LE_SERVEUR'
+          set -euo pipefail
+          if [ -z "${CHEMIN:-}" ]; then
+            CHEMIN=$(find "$HOME" /var/www /srv /opt -maxdepth 5 -path '*/deploy/deploy.sh' 2>/dev/null | head -1 | xargs -r dirname | xargs -r dirname)
+          fi
+          if [ -z "${CHEMIN:-}" ] || [ ! -f "$CHEMIN/deploy/deploy.sh" ]; then
+            echo "Projet introuvable sur le serveur : ajoute le secret VPS_PATH avec le chemin du dossier." >&2
+            exit 1
+          fi
+          cd "$CHEMIN"
+          bash ./deploy/deploy.sh
+          SUR_LE_SERVEUR
+
+      - name: Vérifier que le site répond
+        if: steps.secrets.outputs.pret == 'oui'
+        continue-on-error: true
+        run: |
+          sleep 10
+          curl -sf --max-time 20 https://myltaacademy.com/api/health && echo "Le site répond." \
+            || echo "::warning::/api/health n'a pas répondu — à vérifier à la main."
