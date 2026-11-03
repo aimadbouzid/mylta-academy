@@ -33,9 +33,15 @@ const MODULES_TOTAL = MODULES.reduce((t, m) => t + m.price, 0)
 // deux seules qui changent la préparation de la journée.
 // Le serveur accepte n'importe quel ensemble de réponses : les inscriptions
 // déjà enregistrées gardent les leurs.
+// « court » est le nom donné à la réponse dans le message WhatsApp, où les
+// intitulés complets seraient trop longs.
 const QUESTIONS = [
-  { key: 'level', title: 'Quel est votre niveau actuel ?', options: ['Débutant total', 'Intermédiaire', 'Avancé'] },
-  { key: 'phoneType', title: 'Quel smartphone utilisez-vous ?', options: ['iPhone (iOS)', 'Android'] },
+  { key: 'level', court: 'Niveau', title: 'Quel est votre niveau actuel ?', options: ['Débutant total', 'Intermédiaire', 'Avancé'] },
+  { key: 'phoneType', court: 'Smartphone', title: 'Quel smartphone utilisez-vous ?', options: ['iPhone (iOS)', 'Android'] },
+  // Le domaine dit à qui on s'adresse : c'est ce qui permet de préparer des
+  // exemples qui parlent au participant plutôt qu'un cours générique.
+  { key: 'domaine', court: 'Domaine', title: 'Vous travaillez dans quel domaine ?',
+    options: ['Commerce / boutique', 'Création de contenu', 'Services / artisanat', 'Étudiant(e)', 'Autre'] },
 ]
 const DERNIERE_ETAPE = QUESTIONS.length + 1
 // Photo de carte étudiante : réduite à 1200 px en JPEG (léger, compatible iPhone) avant l'envoi.
@@ -207,6 +213,9 @@ export default function InPersonPage() {
           ? `Bonjour Mylta Academy, je viens de réserver ma place pour la ${cfg.title} et je vous envoie le reçu de mon acompte de ${money(deposit, currency)}.\n`
           : `Bonjour Mylta Academy, je souhaite être prévenu(e) des prochaines dates de la ${cfg.title}.\n`) +
         `• Nom : ${fullName}\n• Téléphone : ${phone}\n` +
+        // Les réponses partent avec l'inscription : le message WhatsApp dit
+        // tout de suite à qui on a affaire, sans aller ouvrir l'admin.
+        QUESTIONS.filter(q => profile[q.key]).map(q => `• ${q.court} : ${profile[q.key]}\n`).join('') +
         (studentRate ? `• Tarif étudiant : ${money(studentPrice, currency)} (carte étudiante envoyée sur le site)\n` : '') +
         (city ? `• Ville : ${city}\n` : '') +
         (doneSession ? `• Session : ${formatDate(doneSession.date)}${doneSession.city ? ` — ${doneSession.city}` : ''}\n` : '') +

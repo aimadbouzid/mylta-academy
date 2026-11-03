@@ -68,7 +68,7 @@ const registerSchema = z.object({
 })
 
 // Questions du profil, dans l'ordre d'affichage (même liste côté page).
-const PROFILE_LABELS = { level: 'Niveau', goal: 'Objectif', phoneType: 'Smartphone', capcut: 'CapCut' }
+const PROFILE_LABELS = { level: 'Niveau', goal: 'Objectif', phoneType: 'Smartphone', capcut: 'CapCut', domaine: 'Domaine' }
 
 class SessionError extends Error {
   constructor(status, message) { super(message); this.status = status }
