@@ -338,41 +338,6 @@ export default function InPersonPage() {
               </div>
             ) : (
               <>
-                <header className="relative mb-5 overflow-hidden rounded-3xl bg-academy-textMain text-academy-surface
-                                   px-5 py-7 sm:px-8 sm:py-9 shadow-[0_26px_60px_-30px_rgba(0,0,0,0.6)]">
-                  {/* Une lueur rouge dans l'angle : le noir seul tombe à plat. */}
-                  <div aria-hidden="true"
-                       className="pointer-events-none absolute -top-24 -end-16 w-64 h-64 rounded-full bg-academy-primary/25 blur-3xl" />
-
-                  <div className="relative">
-                    {headline && (
-                      <ol className="flex gap-2">
-                        {headline.days.map(d => (
-                          <li key={d.num} className="w-[56px] rounded-xl border border-academy-surface/15 bg-academy-surface/[0.07] py-2 text-center">
-                            <span className="block text-[9.5px] font-black uppercase tracking-[0.14em] opacity-55">{d.weekday}</span>
-                            <span className="block font-display font-black text-[22px] leading-none mt-0.5">{d.num}</span>
-                          </li>
-                        ))}
-                      </ol>
-                    )}
-
-                    <h1 className="mt-4 font-display font-black text-[2rem] sm:text-[3rem] leading-[0.98] tracking-tight">{cfg.title}</h1>
-
-                    {headline && (
-                      <p className="mt-2.5 text-[13.5px] text-academy-surface/60">
-                        <b className="text-academy-surface">{headline.month}</b>
-                        {headline.hours ? ` · ${headline.hours}` : ''}{cfg.venue ? ` · ${cfg.venue}` : ''}
-                      </p>
-                    )}
-
-                    {selected && cfg.showSeats && selected.seatsLeft > 0 && (
-                      <p className="mt-4 inline-flex items-center gap-2 rounded-full bg-academy-primary text-white px-3 py-1.5 text-[12px] font-black">
-                        <span className="w-1.5 h-1.5 rounded-full bg-white" />
-                        {selected.seatsLeft === 1 ? "Plus qu'1 place" : `${selected.seatsLeft} places restantes`}
-                      </p>
-                    )}
-                  </div>
-                </header>
 
                 {/* Une question par écran : la barre dit où l'on en est et
                     combien il reste — sans elle, on ne sait pas si c'est long. */}
@@ -416,8 +381,20 @@ export default function InPersonPage() {
                         {discount > 0 && <p className="text-[13px] font-black tabular-nums">−{discount} %</p>}
                       </div>
 
+                      {/* Le titre et les trois jours tiennent en deux lignes,
+                          dans la carte : le grand bandeau mangeait l'écran. */}
+                      <div className="px-5 pt-4">
+                        <h1 className="font-display font-black text-[1.35rem] leading-tight">{cfg.title}</h1>
+                        {headline && (
+                          <p className="mt-1 text-[13px] text-academy-textMain/60">
+                            {headline.days.map(d => d.num).join(' · ')} {headline.month}
+                            {headline.hours ? ` · ${headline.hours}` : ''}
+                          </p>
+                        )}
+                      </div>
+
                       {price > 0 && (
-                        <div className="px-5 pt-5">
+                        <div className="px-5 pt-4">
                           <ul className="space-y-2">
                             {MODULES.map(m => (
                               <li key={m.title} className="flex items-baseline justify-between gap-3">
