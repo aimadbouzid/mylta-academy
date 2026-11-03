@@ -119,6 +119,7 @@ export default function InPersonPage() {
   const [studentCard, setStudentCard] = useState('')
 
   const BROUILLON = 'mylta-inscription'
+  const FAITE = 'mylta-inscription-faite'
 
   useEffect(() => {
     try {
@@ -136,7 +137,12 @@ export default function InPersonPage() {
     } catch { /* stockage indisponible : on continue sans brouillon */ }
   }, [])
 
+  // Le tout premier passage est sauté : il aurait enregistré le formulaire vide
+  // par-dessus le brouillon qu'on vient tout juste de relire, et les réponses
+  // déjà données seraient perdues.
+  const brouillonPret = useRef(false)
   useEffect(() => {
+    if (!brouillonPret.current) { brouillonPret.current = true; return }
     if (done) return
     try {
       localStorage.setItem(BROUILLON, JSON.stringify(
@@ -184,6 +190,10 @@ export default function InPersonPage() {
         isStudent: studentRate, studentCard: studentRate ? studentCard : undefined,
       })
       setDone(data.registration)
+      try {
+        localStorage.setItem(FAITE, JSON.stringify(
+          { t: Date.now(), done: data.registration, fullName, phone }))
+      } catch { /* stockage indisponible : la page reste affichée, c'est déjà ça */ }
 
       // Réservation payante (acompte) : intention d'achat, pas simple contact.
       trackEvent('InitiateCheckout', {
@@ -233,6 +243,29 @@ export default function InPersonPage() {
     const t = setTimeout(() => { window.location.href = whatsappUrl }, 1500)
     return () => clearTimeout(t)
   }, [done, whatsappUrl])
+
+  // Le client part sur WhatsApp, puis revient : il doit retrouver son billet et
+  // les coordonnées de paiement, pas la page de vente. Sans cela, il n'a plus
+  // nulle part où lire le CCP sur lequel envoyer son acompte.
+  useEffect(() => {
+    try {
+      const v = JSON.parse(localStorage.getItem(FAITE) || 'null')
+      if (!v?.done || Date.now() - (v.t || 0) > 14 * 86400000) return localStorage.removeItem(FAITE)
+      whatsappLance.current = true // au retour, on ne repart pas sur WhatsApp tout seul
+      if (v.fullName) setFullName(v.fullName)
+      if (v.phone) setPhone(v.phone)
+      setDone(v.done)
+    } catch { /* stockage indisponible : on affiche la page normale */ }
+  }, [])
+
+  // Une place réservée n'interdit pas d'en réserver une autre (un proche, une
+  // autre session) : il faut pouvoir repartir de zéro.
+  const nouvelleReservation = () => {
+    try { localStorage.removeItem(FAITE) } catch { /* déjà absent */ }
+    whatsappLance.current = false
+    setDone(null); setStep(0); setProfile({})
+    setFullName(''); setPhone(''); setCity(''); setMessage('')
+  }
 
   const card = 'bg-white border border-academy-border rounded-2xl p-5 sm:p-6 shadow-sm'
   const input = 'w-full bg-white border border-academy-border rounded-xl px-4 py-3.5 text-base text-academy-textMain outline-none focus:border-academy-primary'
@@ -343,6 +376,11 @@ export default function InPersonPage() {
                     <MessageCircle size={20} /> {doneSession && deposit > 0 ? 'Envoyer mon reçu sur WhatsApp' : 'Confirmer sur WhatsApp'}
                   </a>
                 )}
+
+                <button type="button" onClick={nouvelleReservation}
+                        className="mx-auto block text-[13px] font-bold text-academy-textMain/50 underline underline-offset-2">
+                  Réserver une autre place
+                </button>
                 </div>
               </div>
             ) : (
