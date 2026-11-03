@@ -1,20 +1,30 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowLeft, ArrowRight, CheckCircle2, MessageCircle, MapPin, Clock, Users, Check, Copy, Sun, Sunset, ChevronDown } from 'lucide-react'
+import { ArrowLeft, ArrowRight, CheckCircle2, MessageCircle, MapPin, Check, Copy, ChevronDown } from 'lucide-react'
 import Navbar from '../components/Navbar'
 import { trackEvent } from '../lib/facebookPixel'
 import TrainingLocation from '../components/TrainingLocation'
 import SEOHead from '../components/SEOHead'
 import api from '../api/axios'
 import { useSiteSettings } from '../context/SiteSettingsContext'
-import StepIndicator from '../components/StepIndicator'
 import TicketDechire from '../components/TicketDechire'
 import Curriculum from '../components/Curriculum'
 import { formatDate } from '../utils/sessionDates'
 import { PAYMENT_INFO } from '../config/paymentConfig'
 import { getSessions } from '../api/sessions'
 
-const STEPS = ['Formation', 'Date', 'Profil', 'Infos']
+// L'offre d'abord, puis une question par écran, puis les coordonnées : on ne
+// voit jamais qu'une seule chose à faire, et la barre de progression dit
+// combien il en reste.
+
+// Le pack se vend en un bloc, mais on montre de quoi il est fait : deux
+// formations, chacune avec son prix. Leur somme est le prix barré ; le pack,
+// lui, reste à son prix unique.
+const MODULES = [
+  { title: 'Filmer & publier avec son smartphone', price: 15000 },
+  { title: "Montage CapCut & l'IA au travail", price: 20000 },
+]
+const MODULES_TOTAL = MODULES.reduce((t, m) => t + m.price, 0)
 
 // Mêmes clés que PROFILE_LABELS côté serveur (routes/inPerson.js).
 // Deux questions, pas quatre. « Pourquoi cette formation ? » servait au
@@ -27,12 +37,7 @@ const QUESTIONS = [
   { key: 'level', title: 'Quel est votre niveau actuel ?', options: ['Débutant total', 'Intermédiaire', 'Avancé'] },
   { key: 'phoneType', title: 'Quel smartphone utilisez-vous ?', options: ['iPhone (iOS)', 'Android'] },
 ]
-const CONDITIONS = [
-  'Je suis disponible pendant toute la durée de la formation.',
-  "Je comprends que l'acompte est obligatoire pour réserver ma place.",
-  "Je m'engage à respecter les horaires.",
-]
-
+const DERNIERE_ETAPE = QUESTIONS.length + 1
 // Photo de carte étudiante : réduite à 1200 px en JPEG (léger, compatible iPhone) avant l'envoi.
 const compressPhoto = (file) => new Promise((resolve, reject) => {
   const url = URL.createObjectURL(file)
@@ -51,17 +56,6 @@ const compressPhoto = (file) => new Promise((resolve, reject) => {
 })
 
 const hour = (t) => (t ? t.replace(':', 'h') : '')
-const isMorning = (s) => !s.startTime || s.startTime < '12:00'
-// « Mar. 20 → jeu. 22 oct. » : début et fin des 3 jours, lisible d'un coup d'œil.
-const shortRange = (date) => {
-  const [y, m, d] = date.split('-').map(Number)
-  const start = new Date(y, m - 1, d)
-  const end = new Date(y, m - 1, d + 2)
-  const day = (dt) => dt.toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric' })
-  const month = (dt) => dt.toLocaleDateString('fr-FR', { month: 'short' })
-  const label = `${day(start)}${start.getMonth() === end.getMonth() ? '' : ` ${month(start)}`} → ${day(end)} ${month(end)}`
-  return label.charAt(0).toUpperCase() + label.slice(1)
-}
 const cap = (x) => x.charAt(0).toUpperCase() + x.slice(1)
 const hours = (s) => (s.startTime ? `${hour(s.startTime)}${s.endTime ? ` – ${hour(s.endTime)}` : ''}` : '')
 const money = (n, cur) => `${Number(n).toLocaleString('fr-FR')} ${cur || 'DA'}`
@@ -81,7 +75,6 @@ export default function InPersonPage() {
   const [phone, setPhone] = useState('')
   const [city, setCity] = useState('')
   const [message, setMessage] = useState('')
-  const [accepted, setAccepted] = useState([])
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
   const [done, setDone] = useState(null)
@@ -132,7 +125,7 @@ export default function InPersonPage() {
       if (v.profile) setProfile(v.profile)
       if (v.sessionId) setSessionId(v.sessionId)
       if (v.isStudent) setIsStudent(true)
-      if (v.step) setStep(Math.min(Number(v.step) || 0, 3))
+      if (v.step) setStep(Math.min(Number(v.step) || 0, DERNIERE_ETAPE))
       if (v.fullName || v.phone || v.step) setReprise(true)
     } catch { /* stockage indisponible : on continue sans brouillon */ }
   }, [])
@@ -159,7 +152,7 @@ export default function InPersonPage() {
   const oldPrice = Number(cfg?.oldPrice) > price ? Number(cfg.oldPrice) : 0
   const discount = oldPrice ? Math.round((1 - price / oldPrice) * 100) : 0
   const [website, setWebsite] = useState('') // piège à robots
-  const allAccepted = (!selected || accepted.length === CONDITIONS.length) && (!studentRate || !!studentCard)
+  const allAccepted = !studentRate || !!studentCard
   const profileReady = QUESTIONS.every(q => profile[q.key])
 
   const goTo = (n) => {
@@ -168,13 +161,20 @@ export default function InPersonPage() {
     requestAnimationFrame(() => topRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }))
   }
 
+  // Une question par écran : on répond, l'écran suivant arrive. Le court
+  // délai laisse voir la réponse se cocher avant de basculer.
+  const repondre = (cle, valeur) => {
+    setProfile(prev => ({ ...prev, [cle]: valeur }))
+    setTimeout(() => goTo(step + 1), 220)
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
     setSubmitting(true)
     try {
       const { data } = await api.post('/in-person/register', {
-        fullName, phone, city, message, sessionId, profile, accepted: accepted.length === CONDITIONS.length, website,
+        fullName, phone, city, message, sessionId, profile, accepted: true, website,
         isStudent: studentRate, studentCard: studentRate ? studentCard : undefined,
       })
       setDone(data.registration)
@@ -190,7 +190,7 @@ export default function InPersonPage() {
       requestAnimationFrame(() => topRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }))
     } catch (err) {
       setError(err.response?.data?.error || "L'inscription a échoué. Réessayez.")
-      if (err.response?.status === 409) { loadSessions(true); goTo(1) }
+      if (err.response?.status === 409) { loadSessions(true); goTo(0) }
     } finally {
       setSubmitting(false)
     }
@@ -214,12 +214,19 @@ export default function InPersonPage() {
       )}`
     : null
 
+  // L'inscription enregistrée, on part sur WhatsApp sans rien demander de
+  // plus : c'est là que la suite se joue (reçu de l'acompte, questions). La
+  // page reste derrière, avec le billet et les coordonnées de paiement.
+  const whatsappLance = useRef(false)
+  useEffect(() => {
+    if (!done || !whatsappUrl || whatsappLance.current) return
+    whatsappLance.current = true
+    const t = setTimeout(() => { window.location.href = whatsappUrl }, 1500)
+    return () => clearTimeout(t)
+  }, [done, whatsappUrl])
+
   const card = 'bg-white border border-academy-border rounded-2xl p-5 sm:p-6 shadow-sm'
   const input = 'w-full bg-white border border-academy-border rounded-xl px-4 py-3.5 text-base text-academy-textMain outline-none focus:border-academy-primary'
-  const choice = (active, disabled) => `w-full text-left rounded-xl border-2 p-4 flex items-start gap-3 transition-colors ${
-    disabled ? 'border-academy-border opacity-50 cursor-not-allowed'
-    : active ? 'border-academy-primary bg-academy-primary/5' : 'border-academy-border hover:border-academy-primary/40'}`
-  const radio = (active) => `mt-1 w-4 h-4 rounded-full border-2 shrink-0 ${active ? 'border-academy-primary bg-academy-primary shadow-[inset_0_0_0_3px_white]' : 'border-academy-textMain/30'}`
   const primaryBtn = 'sticky bottom-3 z-20 w-full py-4 rounded-xl bg-academy-primary text-academy-onPrimary font-bold text-lg flex items-center justify-center gap-2 shadow-lg shadow-black/15 transition-opacity hover:opacity-90 disabled:opacity-40'
 
   // Prix : un bloc sobre, à filets, comme l'en-tête — pas de carte colorée.
@@ -331,49 +338,56 @@ export default function InPersonPage() {
               </div>
             ) : (
               <>
-                <header className="mb-6">
-                  {/* Le formateur à côté du titre : on réserve trois jours avec
-                      quelqu'un, pas avec un programme. Un visage change la
-                      lecture de la page bien plus qu'un argument de plus. */}
-                  <div className="flex items-start gap-4 sm:gap-6">
-                    <div className="flex-1 min-w-0">
-                      <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-academy-primary">
-                        Formation présentielle · {(cfg.venueAddress || '').split(',').pop().trim() || 'Béjaïa'}
-                      </p>
-                      <h1 className="mt-1.5 font-display font-black text-[1.75rem] sm:text-[2.75rem] leading-[1.03] tracking-tight">{cfg.title}</h1>
-                      <p className="mt-2 text-[14px] sm:text-[17px] text-academy-textMain/65 leading-snug max-w-xl">{cfg.subtitle}</p>
-                    </div>
+                <header className="relative mb-5 overflow-hidden rounded-3xl bg-academy-textMain text-academy-surface
+                                   px-5 py-7 sm:px-8 sm:py-9 shadow-[0_26px_60px_-30px_rgba(0,0,0,0.6)]">
+                  {/* Une lueur rouge dans l'angle : le noir seul tombe à plat. */}
+                  <div aria-hidden="true"
+                       className="pointer-events-none absolute -top-24 -end-16 w-64 h-64 rounded-full bg-academy-primary/25 blur-3xl" />
 
-                    <figure className="shrink-0 w-[92px] sm:w-[150px]">
-                      <img src="/formateur.jpg" alt="Le formateur de Mylta Academy"
-                           width="534" height="900" decoding="async"
-                           className="w-full aspect-[3/4] object-cover rounded-2xl border border-academy-border shadow-soft" />
-                      <figcaption className="mt-1.5 text-[10px] font-bold uppercase tracking-[0.14em] text-academy-textMain/45 text-center">
-                        Votre formateur
-                      </figcaption>
-                    </figure>
-                  </div>
-
-                  {/* Les trois jours, l'horaire et le lieu : l'essentiel avant tout le reste. */}
-                  {headline && (
-                    <div className="mt-5 border-y-2 border-academy-textMain py-4">
+                  <div className="relative">
+                    {headline && (
                       <ol className="flex gap-2">
                         {headline.days.map(d => (
-                          <li key={d.num} className="flex-1 text-center rounded-lg bg-academy-textMain text-academy-surface py-2">
-                            <span className="block text-[10px] font-bold uppercase tracking-[0.12em] opacity-70">{d.weekday}</span>
-                            <span className="block font-display font-black text-2xl leading-none mt-0.5">{d.num}</span>
+                          <li key={d.num} className="w-[56px] rounded-xl border border-academy-surface/15 bg-academy-surface/[0.07] py-2 text-center">
+                            <span className="block text-[9.5px] font-black uppercase tracking-[0.14em] opacity-55">{d.weekday}</span>
+                            <span className="block font-display font-black text-[22px] leading-none mt-0.5">{d.num}</span>
                           </li>
                         ))}
                       </ol>
-                      <p className="mt-2.5 font-bold text-[15px]">{headline.month}</p>
-                      <p className="text-[13.5px] text-academy-textMain/65">
-                        {headline.hours}{cfg.venue ? ` · ${cfg.venue}` : ''}
+                    )}
+
+                    <h1 className="mt-4 font-display font-black text-[2rem] sm:text-[3rem] leading-[0.98] tracking-tight">{cfg.title}</h1>
+
+                    {headline && (
+                      <p className="mt-2.5 text-[13.5px] text-academy-surface/60">
+                        <b className="text-academy-surface">{headline.month}</b>
+                        {headline.hours ? ` · ${headline.hours}` : ''}{cfg.venue ? ` · ${cfg.venue}` : ''}
                       </p>
-                    </div>
-                  )}
+                    )}
+
+                    {selected && cfg.showSeats && selected.seatsLeft > 0 && (
+                      <p className="mt-4 inline-flex items-center gap-2 rounded-full bg-academy-primary text-white px-3 py-1.5 text-[12px] font-black">
+                        <span className="w-1.5 h-1.5 rounded-full bg-white" />
+                        {selected.seatsLeft === 1 ? "Plus qu'1 place" : `${selected.seatsLeft} places restantes`}
+                      </p>
+                    )}
+                  </div>
                 </header>
 
-                <StepIndicator steps={STEPS} current={step} onGo={goTo} />
+                {/* Une question par écran : la barre dit où l'on en est et
+                    combien il reste — sans elle, on ne sait pas si c'est long. */}
+                {step > 0 && (
+                  <div className="mb-5">
+                    <div className="mb-1.5 flex items-center justify-between text-[11px] font-bold text-academy-textMain/55">
+                      <span>Étape {step} sur {DERNIERE_ETAPE}</span>
+                      <span className="tabular-nums">{Math.round((step / DERNIERE_ETAPE) * 100)} %</span>
+                    </div>
+                    <div className="h-1.5 overflow-hidden rounded-full bg-academy-border">
+                      <div className="h-full rounded-full bg-academy-primary transition-[width] duration-500"
+                           style={{ width: `${(step / DERNIERE_ETAPE) * 100}%` }} />
+                    </div>
+                  </div>
+                )}
 
                 {reprise && !done && (
                   <p className="mb-4 flex flex-wrap items-center gap-x-2 gap-y-1 rounded-lg border border-academy-border bg-academy-primary/5 px-3 py-2 text-[13px]">
@@ -390,119 +404,75 @@ export default function InPersonPage() {
                   </button>
                 )}
 
-                {/* 1. La formation */}
+                {/* 1. L'offre en un seul objet : le bandeau dit pourquoi ce
+                    prix, le prix suit, puis les trois jours et le bouton. */}
                 {step === 0 && (
                   <section key="etape-0" className="etape-entre">
-                    {/* L'offre en un seul objet, au lieu d'une pile de blocs
-                        indépendants : un bandeau qui la nomme, le prix, ce qu'on
-                        fait, ce qu'on reçoit, puis le bouton. On lit de haut en
-                        bas sans se demander où commence et où finit le forfait. */}
-                    <article className="rounded-2xl border-2 border-academy-textMain overflow-hidden bg-academy-white shadow-soft-lg">
+                    <article className="overflow-hidden rounded-3xl border border-academy-border bg-white
+                                        shadow-[0_24px_60px_-30px_rgba(0,0,0,0.45)]">
 
-                      <header className="flex items-center justify-between gap-3 px-4 sm:px-5 py-3
-                                         bg-academy-textMain text-academy-surface">
-                        <div className="min-w-0">
-                          <p className="text-[9.5px] font-black uppercase tracking-[0.22em] opacity-55">Le pack complet</p>
-                          <p className="font-display font-black text-[15px] sm:text-[17px] leading-tight mt-0.5">
-                            3 jours en présentiel + suivi gratuit
-                          </p>
-                        </div>
-                        {discount > 0 && (
-                          <span className="shrink-0 rounded-full bg-academy-primary text-white px-2.5 py-1 text-[12px] font-black">
-                            −{discount}%
-                          </span>
-                        )}
-                      </header>
+                      <div className="flex items-center justify-between gap-3 bg-academy-primary px-5 py-2.5 text-white">
+                        <p className="text-[10.5px] font-black uppercase tracking-[0.18em]">Offre de lancement</p>
+                        {discount > 0 && <p className="text-[13px] font-black tabular-nums">−{discount} %</p>}
+                      </div>
 
                       {price > 0 && (
-                        <div className="px-4 sm:px-5 py-4 border-b border-academy-border">
-                          <div className="flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
-                            <span className="font-display font-black text-[2.1rem] leading-none tracking-tight">{money(price, currency)}</span>
-                            {oldPrice > 0 && <span className="text-sm text-academy-textMain/45 line-through">{money(oldPrice, currency)}</span>}
+                        <div className="px-5 pt-5">
+                          <ul className="space-y-2">
+                            {MODULES.map(m => (
+                              <li key={m.title} className="flex items-baseline justify-between gap-3">
+                                <span className="flex items-baseline gap-2 min-w-0">
+                                  <Check size={14} strokeWidth={3} className="shrink-0 translate-y-0.5 text-academy-primary" />
+                                  <span className="text-[14px] font-bold leading-snug">{m.title}</span>
+                                </span>
+                                <span className="shrink-0 text-[13.5px] tabular-nums text-academy-textMain/50">{money(m.price, currency)}</span>
+                              </li>
+                            ))}
+                          </ul>
+
+                          <div className="mt-4 flex items-end justify-between gap-4 border-t border-dashed border-academy-border pt-4">
+                            <div className="min-w-0">
+                              <p className="text-[10.5px] font-black uppercase tracking-[0.16em] text-academy-textMain/45">Les deux ensemble</p>
+                              <p className="mt-1 font-display font-black text-[2.05rem] sm:text-[2.6rem] leading-none tracking-tight whitespace-nowrap">{money(price, currency)}</p>
+                            </div>
+                            <div className="shrink-0 text-end">
+                              <p className="text-[13px] tabular-nums text-academy-textMain/45 line-through">{money(MODULES_TOTAL, currency)}</p>
+                              {MODULES_TOTAL > price && (
+                                <p className="mt-1.5 rounded-full bg-academy-primary/10 px-2.5 py-1 text-[12px] font-black text-academy-primary">
+                                  −{money(MODULES_TOTAL - price, currency)}
+                                </p>
+                              )}
+                            </div>
                           </div>
-                          {studentPrice > 0 && !studentRate && (
-                            <p className="mt-1.5 text-[13px]">
-                              <b>Étudiants : {money(studentPrice, currency)}</b>{' '}
-                              <span className="text-academy-textMain/55">avec la carte étudiante</span>
-                            </p>
-                          )}
+
                           {deposit > 0 && (
-                            <dl className="mt-3 pt-3 border-t border-academy-border space-y-1 text-[13px]">
-                              <div className="flex justify-between gap-4">
-                                <dt className="font-bold">Acompte pour réserver</dt>
-                                <dd className="font-black tabular-nums">{money(deposit, currency)}</dd>
-                              </div>
-                              <div className="flex justify-between gap-4 text-academy-textMain/60">
-                                <dt>Reste à payer ensuite</dt>
-                                <dd className="tabular-nums">{money(Math.max(0, price - deposit), currency)}</dd>
-                              </div>
-                            </dl>
+                            <p className="mt-3 rounded-xl bg-academy-surface px-3.5 py-2.5 text-[13px] leading-snug">
+                              <b>{money(deposit, currency)}</b> d'acompte pour réserver votre place,
+                              <span className="text-academy-textMain/60"> le reste sur place le premier jour.</span>
+                            </p>
                           )}
                         </div>
                       )}
 
                       {(cfg.curriculum?.fr || []).length > 0 && (
-                        <div className="px-4 sm:px-5 py-4 border-b border-academy-border">
-                          <p className="text-[9.5px] font-black uppercase tracking-[0.2em] text-academy-textMain/45">
-                            Le déroulé
-                          </p>
-                          <ol className="mt-2 space-y-1.5">
-                            {(cfg.curriculum.fr).map((d, i) => (
-                              <li key={i} className="flex items-center gap-3 rounded-lg bg-academy-primary/[0.07]
-                                                     border-l-4 border-academy-primary py-2 px-3">
-                                <span className="shrink-0 font-display font-black text-[14px] text-academy-primary leading-none">J{i + 1}</span>
-                                <span className="text-[14px] font-bold leading-snug">{d.title}</span>
-                              </li>
-                            ))}
-                          </ol>
-                        </div>
+                        <ol className="space-y-2 px-5 pt-5">
+                          {(cfg.curriculum.fr).map((d, i) => (
+                            <li key={i} className="flex items-center gap-3">
+                              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg
+                                               bg-academy-textMain text-academy-surface font-display text-[12px] font-black">J{i + 1}</span>
+                              <span className="text-[14px] font-bold leading-snug">{d.title}</span>
+                            </li>
+                          ))}
+                        </ol>
                       )}
 
-                      <div className="px-4 sm:px-5 py-4 border-b border-academy-border">
-                        <p className="text-[9.5px] font-black uppercase tracking-[0.2em] text-academy-textMain/45">
-                          Tout est compris
-                        </p>
-                        {/* Deux colonnes dès le téléphone : les mentions sont courtes.
-                            Les deux promesses, plus longues, prennent la ligne entière. */}
-                        <ul className="mt-2 grid grid-cols-2 gap-x-3 gap-y-1.5">
-                          {[...(cfg.infos || []), 'Suivi gratuit après la formation', 'Certificat Mylta Academy'].map((item, i, tab) => {
-                            const phare = i >= tab.length - 2
-                            return (
-                              <li key={item} className={`flex items-start gap-2 text-[13px] leading-snug ${phare ? 'col-span-2' : ''}`}>
-                                <Check size={14} strokeWidth={3}
-                                       className={`mt-[3px] shrink-0 ${phare ? 'text-academy-primary' : 'text-academy-textMain/35'}`} />
-                                <span className={phare ? 'font-bold' : 'font-medium text-academy-textMain/75'}>{item}</span>
-                              </li>
-                            )
-                          })}
-                        </ul>
-                      </div>
-
-                      {(cfg.coaches || []).length > 0 && (
-                        <div className="px-4 sm:px-5 py-4 border-b border-academy-border">
-                          <p className="text-[9.5px] font-black uppercase tracking-[0.2em] text-academy-textMain/45">
-                            {cfg.coaches.length} coachs, un par spécialité
-                          </p>
-                          <ul className="mt-2 flex flex-wrap gap-1.5">
-                            {cfg.coaches.map((c, i) => (
-                              <li key={i} className="rounded-full border border-academy-border bg-academy-surface
-                                                     dark:bg-white/[0.04] px-3 py-1.5 text-[13px] font-bold">
-                                {c.role}
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-
-                      <div className="p-4 sm:p-5">
-                        <button type="button" onClick={() => goTo(1)} className={primaryBtn}>
-                          Je réserve ma place <ArrowRight size={18} />
+                      <div className="p-5">
+                        <button type="button" disabled={sessions === null} onClick={() => goTo(1)} className={primaryBtn}>
+                          {sessions && !selected ? 'Je veux être prévenu' : 'Je réserve ma place'} <ArrowRight size={18} />
                         </button>
-                        {settings?.coaching?.enabled && (
-                          <p className="mt-3 text-center text-sm">
-                            Vous préférez à distance ? <Link to="/coaching" className="font-bold text-academy-primary underline underline-offset-2">Coaching en ligne</Link>
-                          </p>
-                        )}
+                        <p className="mt-2.5 text-center text-[12px] text-academy-textMain/55">
+                          {(cfg.infos || []).slice(0, 3).join(' · ')}
+                        </p>
                       </div>
                     </article>
                   </section>
@@ -535,126 +505,50 @@ export default function InPersonPage() {
                 )}
 
 
-                {/* 2. La date */}
-                {step === 1 && (
-                  <section key="etape-1" className={`${card} space-y-4 etape-entre`}>
-                    <h2 className="font-bold text-lg">Choisissez votre session</h2>
-                    {sessions === null ? (
-                      <p className="text-sm text-academy-textMain/60">Chargement des dates…</p>
-                    ) : (
-                      <div className="space-y-2">
-                        {sessions.length === 0 && (
-                          <p className="text-sm text-academy-textMain/70 bg-academy-surface rounded-xl p-4">
-                            Les prochaines dates arrivent bientôt. Inscrivez-vous : on vous prévient en premier.
-                          </p>
-                        )}
-                        {/* Un créneau = une carte, réservable seule : le visiteur choisit
-                            d'un seul geste la date ET le moment de la journée. */}
-                        {[...sessions]
-                          .sort((a, b) => a.date.localeCompare(b.date) || isMorning(b) - isMorning(a))
-                          .map((s, i) => {
-                            const full = s.seatsLeft <= 0
-                            const on = sessionId === s.id
-                            const am = isMorning(s)
-                            return (
-                              <button type="button" key={s.id} disabled={full} onClick={() => setSessionId(s.id)}
-                                      className={`w-full text-left rounded-xl border-2 p-3 transition-colors ${on ? 'border-academy-primary bg-academy-primary/5' : 'border-academy-border'} ${full ? 'opacity-50 cursor-not-allowed' : ''}`}>
-                                <div className="flex items-start justify-between gap-3">
-                                  <span className="min-w-0">
-                                    {/* Numéro de session : un repère à citer au téléphone ou sur
-                                        WhatsApp, là où « la formation du 20 » prête à confusion
-                                        entre le matin et le soir. */}
-                                    <span className="block text-[11px] font-black uppercase tracking-[0.12em] text-academy-primary">Formation n° {i + 1}</span>
-                                    <span className="block font-bold text-[15px] leading-tight mt-0.5">{shortRange(s.date)}</span>
-                                    <span className="block text-xs text-academy-textMain/55 mt-0.5">3 jours de suite</span>
-                                  </span>
-                                  <span className={`shrink-0 inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] font-black uppercase tracking-wide ${am ? 'bg-amber-50 text-amber-900' : 'bg-indigo-50 text-indigo-900'}`}>
-                                    {am ? <Sun size={13} /> : <Sunset size={13} />} {am ? 'Matin' : 'Soir'}
-                                  </span>
-                                </div>
-                                <span className="block mt-2 text-[13px] font-bold">{hours(s) || '—'}</span>
-                                {full
-                                  ? <span className="block text-[11px] font-bold text-red-600">Complet</span>
-                                  : cfg.showSeats && <span className="block text-[11px] text-academy-textMain/60">{s.seatsLeft === 1 ? "Plus qu'1 place" : `${s.seatsLeft} places`}</span>}
-                              </button>
-                            )
-                          })}
-                        <button type="button" onClick={() => setSessionId(null)} className={`${choice(sessionId === null, false)} !p-3`}>
-                          <span className={radio(sessionId === null)} aria-hidden="true" />
-                          <span>
-                            <span className="font-bold block text-[15px]">{sessions.length === 0 ? 'Me prévenir des prochaines dates' : 'Aucune date ne me convient'}</span>
-                          </span>
-                        </button>
-                      </div>
-                    )}
-                    {/* Le tarif étudiant se décidait seulement à la dernière étape : on le
-                        propose dès le choix de la date, là où le visiteur compare les prix. */}
-                    {studentPrice > 0 && (
-                      <label className="flex items-center gap-3 rounded-xl border border-academy-border bg-academy-surface/60 p-3 cursor-pointer">
-                        <input type="checkbox" checked={isStudent} onChange={e => setIsStudent(e.target.checked)}
-                               className="w-5 h-5 shrink-0 accent-academy-primary" />
-                        <span className="text-[13px]">
-                          <span className="font-bold text-[14px] block">🎓 Je suis étudiant(e) — {money(studentPrice, currency)}</span>
-                          <span className="text-academy-textMain/65">Photo de votre carte étudiante demandée à la dernière étape.</span>
-                        </span>
-                      </label>
-                    )}
-                    <button type="button" disabled={sessions === null} onClick={() => goTo(2)} className={primaryBtn}>
-                      Continuer <ArrowRight size={18} />
-                    </button>
-                  </section>
-                )}
+                {/* 2. Une question par écran. */}
+                {step >= 1 && step <= QUESTIONS.length && (
+                  <section key={`question-${step}`} className={`${card} etape-entre`}>
+                    <p className="text-[11px] font-black uppercase tracking-[0.16em] text-academy-primary">
+                      Question {step} sur {QUESTIONS.length}
+                    </p>
+                    <h2 className="mt-1.5 font-display font-black text-[1.5rem] leading-tight">
+                      {QUESTIONS[step - 1].title}
+                    </h2>
+                    <p className="mt-1 text-[13px] text-academy-textMain/55">
+                      Votre réponse prépare la journée : on n'avance pas sans elle.
+                    </p>
 
-                {/* 3. Votre profil */}
-                {step === 2 && (
-                  <section key="etape-2" className={`${card} space-y-5 etape-entre`}>
-                    {/* Entre le choix de la date et les questions, le visiteur perd
-                        de vue ce qu'il réserve : la date et le lieu restent donc
-                        sous ses yeux. Le programme, lui, a déjà été vu deux fois
-                        à l'étape précédente. L'admin peut masquer ce bloc. */}
-                    {cfg.recapEnabled !== false && selected && (
-                      <div className="rounded-xl border border-academy-border bg-academy-surface/60 p-4 space-y-3">
-                        <div>
-                          <p className="text-[11px] font-black uppercase tracking-wider text-academy-textMain/50">Votre session</p>
-                          <p className="font-bold text-[15px] mt-0.5">{formatDate(selected.date)}{hours(selected) ? ` · ${hours(selected)}` : ''}</p>
-                        </div>
-                        {(cfg.venue || cfg.venueAddress) && (
-                          <div className="flex items-start gap-2">
-                            <MapPin size={15} className="mt-0.5 shrink-0 text-academy-primary" />
-                            <p className="text-[13px] leading-snug">
-                              {cfg.venue && <span className="font-bold block">{cfg.venue}</span>}
-                              {cfg.venueAddress && <span className="text-academy-textMain/65">{cfg.venueAddress}</span>}
-                            </p>
-                          </div>
-                        )}
-                      </div>
-                    )}
-                    {QUESTIONS.map(q => (
-                      <div key={q.key}>
-                        <h2 className="font-bold text-[15px] mb-2">{q.title}</h2>
-                        <div className="flex flex-wrap gap-1.5">
-                          {q.options.map(o => (
-                            <button type="button" key={o} onClick={() => setProfile(p => ({ ...p, [q.key]: o }))}
-                                    className={`h-9 px-3 rounded-full border text-xs font-semibold whitespace-nowrap transition-colors ${profile[q.key] === o ? 'border-academy-primary bg-academy-primary text-academy-onPrimary' : 'border-academy-border bg-white text-academy-textMain/80 hover:border-academy-primary/50'}`}>
-                              {o}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    ))}
-                    <button type="button" disabled={!profileReady} onClick={() => goTo(3)} className={primaryBtn}>
-                      Continuer <ArrowRight size={18} />
-                    </button>
-                  </section>
-                )}
-
-                {/* 4. Vos infos + conditions */}
-                {step === 3 && (
-                  <form key="etape-3" onSubmit={handleSubmit} className={`${card} space-y-4 relative etape-entre`}>
-                    <div className="bg-academy-surface rounded-xl p-4 text-sm space-y-1">
-                      <p className="font-bold">{selected ? formatDate(selected.date) : "Liste d'attente — prochaines dates"}</p>
-                      {selected && (selected.city || hours(selected)) && <p className="text-academy-textMain/70">{[hours(selected), selected.city].filter(Boolean).join(' · ')}</p>}
+                    <div className="mt-4 space-y-2">
+                      {QUESTIONS[step - 1].options.map(o => {
+                        const choisi = profile[QUESTIONS[step - 1].key] === o
+                        return (
+                          <button type="button" key={o} onClick={() => repondre(QUESTIONS[step - 1].key, o)}
+                                  className={`w-full flex items-center gap-3 rounded-2xl border-2 px-4 py-4 text-start transition-all ${
+                                    choisi
+                                      ? 'border-academy-primary bg-academy-primary/[0.06] shadow-sm'
+                                      : 'border-academy-border hover:border-academy-primary/40 hover:bg-academy-primary/[0.02]'}`}>
+                            <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 ${
+                              choisi ? 'border-academy-primary bg-academy-primary text-white' : 'border-academy-textMain/25'}`}>
+                              {choisi && <Check size={13} strokeWidth={3.5} />}
+                            </span>
+                            <span className="text-[15.5px] font-bold">{o}</span>
+                          </button>
+                        )
+                      })}
                     </div>
+                  </section>
+                )}
+
+                {/* 3. Les coordonnées, et c'est réservé. */}
+                {step === DERNIERE_ETAPE && (
+                  <form key="etape-infos" onSubmit={handleSubmit} className={`${card} space-y-4 relative etape-entre`}>
+                    {cfg.recapEnabled !== false && (
+                      <div className="bg-academy-surface rounded-xl p-4 text-sm space-y-1">
+                        <p className="font-bold">{selected ? formatDate(selected.date) : "Liste d'attente — prochaines dates"}</p>
+                        {selected && (selected.city || hours(selected)) && <p className="text-academy-textMain/70">{[hours(selected), selected.city].filter(Boolean).join(' · ')}</p>}
+                      </div>
+                    )}
+
                     {selected && studentPrice > 0 && (
                       <div className="space-y-2">
                         <h2 className="font-bold">Votre tarif</h2>
@@ -686,44 +580,48 @@ export default function InPersonPage() {
 
                     <input type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" value={website}
                            onChange={e => setWebsite(e.target.value)} className="absolute -left-[9999px] w-px h-px opacity-0" />
-                    <h2 className="font-bold text-lg">Vos coordonnées</h2>
-                    <input className={input} required minLength={3} maxLength={80} autoComplete="name" placeholder="Votre nom et prénom"
-                           value={fullName} onChange={e => setFullName(e.target.value)} />
-                    <input className={input} required type="tel" inputMode="tel" autoComplete="tel" maxLength={20} pattern="\+?[0-9 ]{8,20}"
-                           title="Exemple : 0555 12 34 56" placeholder="Votre numéro WhatsApp (ex : 0555 12 34 56)"
-                           value={phone} onChange={e => setPhone(e.target.value)} />
-                    <input className={input} maxLength={60} autoComplete="address-level2" placeholder="Votre ville (facultatif)"
-                           value={city} onChange={e => setCity(e.target.value)} />
-                    <textarea className={input} rows={2} maxLength={500} placeholder="Une question ? (facultatif)"
-                              value={message} onChange={e => setMessage(e.target.value)} />
-
-                    {selected && (
-                      <div className="space-y-2">
-                        <h2 className="font-bold">Conditions de participation</h2>
-                        {CONDITIONS.map((c, i) => {
-                          const on = accepted.includes(i)
-                          return (
-                            <button type="button" key={i} onClick={() => setAccepted(a => on ? a.filter(x => x !== i) : [...a, i])}
-                                    className={`w-full text-left rounded-lg border p-3 flex items-center gap-3 transition-colors ${on ? 'border-academy-primary bg-academy-primary/5' : 'border-academy-border'}`}>
-                              <span className={`w-5 h-5 rounded-md border-2 shrink-0 flex items-center justify-center ${on ? 'bg-academy-primary border-academy-primary text-academy-onPrimary' : 'border-academy-textMain/30'}`}>
-                                {on && <Check size={14} strokeWidth={3} />}
-                              </span>
-                              <span className="text-[13px] font-semibold leading-snug">{c}</span>
-                            </button>
-                          )
-                        })}
-                      </div>
-                    )}
+                    <div>
+                      <p className="text-[11px] font-black uppercase tracking-[0.16em] text-academy-primary">Dernière étape</p>
+                      <h2 className="mt-1 font-display font-black text-[1.5rem] leading-tight">Où peut-on vous joindre ?</h2>
+                    </div>
+                    {/* Un libellé au-dessus de chaque champ : dans un simple
+                        placeholder, l'intitulé disparaît dès qu'on écrit. */}
+                    <label className="block">
+                      <span className="mb-1.5 block text-[12.5px] font-bold">Nom et prénom</span>
+                      <input className={input} required minLength={3} maxLength={80} autoComplete="name" placeholder="Ex : Amine Belkacem"
+                             value={fullName} onChange={e => setFullName(e.target.value)} />
+                    </label>
+                    <label className="block">
+                      <span className="mb-1.5 block text-[12.5px] font-bold">Numéro WhatsApp</span>
+                      <input className={input} required type="tel" inputMode="tel" autoComplete="tel" maxLength={20} pattern="\+?[0-9 ]{8,20}"
+                             title="Exemple : 0555 12 34 56" placeholder="0555 12 34 56"
+                             value={phone} onChange={e => setPhone(e.target.value)} />
+                      <span className="mt-1.5 block text-[12px] text-academy-textMain/55">C'est là qu'on confirmera votre place.</span>
+                    </label>
+                    <label className="block">
+                      <span className="mb-1.5 block text-[12.5px] font-bold">
+                        Ville <span className="font-medium text-academy-textMain/45">· facultatif</span>
+                      </span>
+                      <input className={input} maxLength={60} autoComplete="address-level2" placeholder="Béjaïa"
+                             value={city} onChange={e => setCity(e.target.value)} />
+                    </label>
+                    <label className="block">
+                      <span className="mb-1.5 block text-[12.5px] font-bold">
+                        Une question ? <span className="font-medium text-academy-textMain/45">· facultatif</span>
+                      </span>
+                      <textarea className={input} rows={2} maxLength={500}
+                                value={message} onChange={e => setMessage(e.target.value)} />
+                    </label>
 
                     {error && <p className="text-center text-sm font-bold text-red-600">{error}</p>}
 
-                    <button type="submit" disabled={submitting || !allAccepted} className={primaryBtn}>
+                    <button type="submit" disabled={submitting || !allAccepted || !profileReady} className={primaryBtn}>
                       {submitting ? 'Inscription…' : selected ? 'Réserver ma place' : 'Je veux être prévenu'}
                     </button>
                   </form>
                 )}
 
-                {error && step !== 3 && <p className="mt-4 text-center text-sm font-bold text-red-600">{error}</p>}
+                {error && step !== DERNIERE_ETAPE && <p className="mt-4 text-center text-sm font-bold text-red-600">{error}</p>}
                 {step > 0 && (
                   <div className="mt-4">
                     <button type="button" onClick={() => setShowPlace(v => !v)}
