@@ -219,17 +219,22 @@ export default function InPersonPage() {
   const doneSession = done?.session
   const whatsappUrl = done && whatsappNumber
     ? `https://wa.me/${whatsappNumber.replace(/\D/g, '')}?text=${encodeURIComponent(
+        // Le message est écrit du point de vue du client : il annonce son
+        // paiement et donne tout ce qu'il a rempli. Le numéro d'inscription
+        // n'y est pas — il ne lui dit rien, et le nom suffit à le retrouver.
         (doneSession
-          ? `Bonjour Mylta Academy, je viens de réserver ma place pour la ${cfg.title} et je vous envoie le reçu de mon acompte de ${money(deposit, currency)}.\n`
+          ? `Bonjour Mylta Academy, je viens de réserver ma place pour la ${cfg.title}.\n` +
+            (deposit > 0
+              ? `Je vous envoie maintenant la preuve de paiement de mon acompte de ${money(deposit, currency)}.\n`
+              : '')
           : `Bonjour Mylta Academy, je souhaite être prévenu(e) des prochaines dates de la ${cfg.title}.\n`) +
+        `\nMes informations :\n` +
         `• Nom : ${fullName}\n• Téléphone : ${phone}\n` +
-        // Les réponses partent avec l'inscription : le message WhatsApp dit
-        // tout de suite à qui on a affaire, sans aller ouvrir l'admin.
         QUESTIONS.filter(q => profile[q.key]).map(q => `• ${q.court} : ${profile[q.key]}\n`).join('') +
         (studentRate ? `• Tarif étudiant : ${money(studentPrice, currency)} (carte étudiante envoyée sur le site)\n` : '') +
         (city ? `• Ville : ${city}\n` : '') +
         (doneSession ? `• Session : ${formatDate(doneSession.date)}${doneSession.city ? ` — ${doneSession.city}` : ''}\n` : '') +
-        `Inscription n°${done.id}`
+        (message ? `\nMa question : ${message}` : '')
       )}`
     : null
 
