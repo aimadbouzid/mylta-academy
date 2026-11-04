@@ -16,3 +16,6 @@ test.html
 *.pem
 *.key
 backend/logs/
+
+# Copies de fichiers d'environnement mises de côté (.env-ecarte, .env-old…)
+.env-*
