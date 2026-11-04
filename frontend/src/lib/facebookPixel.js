@@ -73,11 +73,15 @@ export function trackPageView() {
  * Évènement standard Meta (ViewContent, InitiateCheckout, Purchase, Lead…).
  * @param {string} event Nom de l'évènement standard
  * @param {object} data  Paramètres (value, currency, content_ids…)
+ * @param {object} [options] Options Meta, dont `eventID` : le même évènement
+ *   part aussi du serveur (API Conversions) et Meta rapproche les deux pour
+ *   n'en compter qu'un.
  */
-export function trackEvent(event, data = {}) {
+export function trackEvent(event, data = {}, options) {
   if (!hasConsent()) return
   if (!loaded && !initPixel()) return
-  window.fbq?.('track', event, data)
+  if (options) window.fbq?.('track', event, data, options)
+  else window.fbq?.('track', event, data)
 }
 
 /**

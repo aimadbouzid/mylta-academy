@@ -65,9 +65,15 @@ const registerSchema = z.object({
   website: z.string().optional(), // piège à robots : toujours vide pour un humain
   isStudent: z.boolean().optional().default(false),
   studentCard: z.string().max(950000).optional(),
+  // Même identifiant que l'évènement envoyé par le navigateur : Meta
+  // rapproche les deux et n'en compte qu'un.
+  eventId: z.string().trim().max(64).optional(),
+  abPrix: z.string().trim().max(20).optional(),
 })
 
 // Questions du profil, dans l'ordre d'affichage (même liste côté page).
+const { envoyerEvenement } = require('../services/metaConversions')
+
 const PROFILE_LABELS = { level: 'Niveau', goal: 'Objectif', phoneType: 'Smartphone', capcut: 'CapCut', domaine: 'Domaine' }
 
 class SessionError extends Error {
@@ -83,7 +89,7 @@ router.post('/register', async (req, res, next) => {
     if (!parsed.success) {
       return res.status(400).json({ error: 'Vérifiez votre nom et votre numéro de téléphone.' })
     }
-    const { fullName, phone, city, message, sessionId, profile, accepted, website, isStudent } = parsed.data
+    const { fullName, phone, city, message, sessionId, profile, accepted, website, isStudent, eventId, abPrix } = parsed.data
     if (website) return res.status(201).json({ registration: { id: 0, session: null } })
     if (sessionId && accepted !== true) {
       return res.status(400).json({ error: 'Merci d\'accepter les conditions de participation.' })
@@ -100,6 +106,29 @@ router.post('/register', async (req, res, next) => {
       if (!studentCard) return res.status(400).json({ error: 'Ajoutez une photo lisible de votre carte étudiante.' })
     }
     const data = { fullName, phone, city, profile: profileText, message: message || null, ip: String(req.ip || '').slice(0, 45), isStudent: !!studentRate, studentCard }
+
+    // L'inscription est le moment qui compte pour la publicité. On la signale
+    // à Meta depuis le serveur, sans attendre la réponse : le visiteur n'a pas
+    // à patienter pour du suivi, et un échec ne doit rien casser.
+    const signalerAMeta = () => {
+      const tarif = studentRate
+        ? Number(settings.inPerson.studentPrice) || 0
+        : Number(settings.inPerson.price) || 0
+      envoyerEvenement({
+        nom: 'CompleteRegistration',
+        eventId,
+        valeur: tarif,
+        devise: settings.coaching?.currency === 'EUR' ? 'EUR' : 'DZD',
+        telephone: phone,
+        nomComplet: fullName,
+        ip: req.ip,
+        userAgent: req.get('user-agent'),
+        sourceUrl: req.get('referer'),
+        fbp: req.cookies?._fbp,
+        fbc: req.cookies?._fbc,
+        donneesSupplementaires: { content_name: 'Formation présentiel', ...(abPrix ? { ab_prix: abPrix } : {}) },
+      }).catch(() => { /* déjà journalisé dans le service */ })
+    }
 
     // Une même personne (même numéro) ne s'inscrit qu'une fois par session / liste d'attente.
     const normalizedPhone = phone.replace(/\D/g, '')
@@ -124,6 +153,7 @@ router.post('/register', async (req, res, next) => {
 
     if (!sessionId) {
       const registration = await prisma.inPersonRegistration.create({ data })
+      signalerAMeta()
       notify(registration.id, null)
       notifyRegistration(phone, describe.inPerson(registration))
       return res.status(201).json({ registration: { id: registration.id, session: null } })
@@ -148,6 +178,7 @@ router.post('/register', async (req, res, next) => {
       return { id: registration.id, session: publicSession }
     })
 
+    signalerAMeta()
     notify(result.id, result.session)
     notifyRegistration(phone, describe.inPerson({ ...data, formation: '', session: result.session }))
     res.status(201).json({ registration: result })

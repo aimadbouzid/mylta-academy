@@ -189,9 +189,14 @@ export default function InPersonPage() {
     setError('')
     setSubmitting(true)
     try {
+      // Un identifiant unique, partagé avec l'envoi fait par le serveur :
+      // sans lui, Meta compterait l'inscription deux fois.
+      const eventId = crypto.randomUUID?.() || `insc-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`
+
       const { data } = await api.post('/in-person/register', {
         fullName, phone, city, message, sessionId, profile, accepted: true, website,
         isStudent: studentRate, studentCard: studentRate ? studentCard : undefined,
+        eventId, abPrix,
       })
       setDone(data.registration)
       try {
@@ -210,7 +215,7 @@ export default function InPersonPage() {
         value: Number(data.registration?.price) || price || 0,
         currency: 'DZD',
         ab_prix: abPrix,
-      })
+      }, { eventID: eventId })
 
       // Réservation payante (acompte) : intention d'achat, pas simple contact.
       trackEvent('InitiateCheckout', {
