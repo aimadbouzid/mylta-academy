@@ -12,6 +12,7 @@ import Curriculum from '../components/Curriculum'
 import { formatDate } from '../utils/sessionDates'
 import { PAYMENT_INFO } from '../config/paymentConfig'
 import { getSessions } from '../api/sessions'
+import { variante } from '../lib/abTest'
 
 // L'offre d'abord, puis une question par écran, puis les coordonnées : on ne
 // voit jamais qu'une seule chose à faire, et la barre de progression dit
@@ -75,6 +76,11 @@ export default function InPersonPage() {
   const currency = settings?.coaching?.currency || 'DA'
   const whatsappNumber = settings?.inPerson?.whatsappNumber || settings?.coaching?.whatsappNumber
   const topRef = useRef(null)
+
+  // A/B en cours : le prix détaillé formation par formation (A, la référence)
+  // contre le prix seul (B). Le tirage est fait une fois et gardé ; il part
+  // avec les évènements Meta, où l'on compare les deux.
+  const [abPrix] = useState(() => variante('prix'))
 
   const [step, setStep] = useState(0)
   const [sessions, setSessions] = useState(null)
@@ -201,6 +207,7 @@ export default function InPersonPage() {
         // optimiser.
         value: Number(data.registration?.price) || price || 0,
         currency: 'DZD',
+        ab_prix: abPrix,
       })
 
       // Réservation payante (acompte) : intention d'achat, pas simple contact.
@@ -209,6 +216,7 @@ export default function InPersonPage() {
         content_type: 'product',
         value: Number(data.registration?.price) || price || 0,
         currency: 'DZD',
+        ab_prix: abPrix,
       })
 
       requestAnimationFrame(() => topRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }))
@@ -256,7 +264,7 @@ export default function InPersonPage() {
   const envoyerContact = () => {
     if (contactEnvoye.current) return
     contactEnvoye.current = true
-    trackEvent('Contact')
+    trackEvent('Contact', { ab_prix: abPrix })
   }
   useEffect(() => {
     if (!done || !whatsappUrl || whatsappLance.current) return
@@ -465,21 +473,29 @@ export default function InPersonPage() {
 
                       {price > 0 && (
                         <div className="px-5 pt-4">
-                          <ul className="space-y-2">
-                            {MODULES.map(m => (
-                              <li key={m.title} className="flex items-baseline justify-between gap-3">
-                                <span className="flex items-baseline gap-2 min-w-0">
-                                  <Check size={14} strokeWidth={3} className="shrink-0 translate-y-0.5 text-academy-primary" />
-                                  <span className="text-[14px] font-bold leading-snug">{m.title}</span>
-                                </span>
-                                <span className="shrink-0 text-[13.5px] tabular-nums text-academy-textMain/50">{money(m.price, currency)}</span>
-                              </li>
-                            ))}
-                          </ul>
+                          {/* Variante A : on montre de quoi le pack est fait,
+                              chaque formation avec son prix. Variante B : le
+                              prix seul. C'est le test en cours. */}
+                          {abPrix === 'A' && (
+                            <ul className="space-y-2">
+                              {MODULES.map(m => (
+                                <li key={m.title} className="flex items-baseline justify-between gap-3">
+                                  <span className="flex items-baseline gap-2 min-w-0">
+                                    <Check size={14} strokeWidth={3} className="shrink-0 translate-y-0.5 text-academy-primary" />
+                                    <span className="text-[14px] font-bold leading-snug">{m.title}</span>
+                                  </span>
+                                  <span className="shrink-0 text-[13.5px] tabular-nums text-academy-textMain/50">{money(m.price, currency)}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          )}
 
-                          <div className="mt-4 flex items-end justify-between gap-4 border-t border-dashed border-academy-border pt-4">
+                          <div className={`flex items-end justify-between gap-4 ${
+                            abPrix === 'A' ? 'mt-4 border-t border-dashed border-academy-border pt-4' : ''}`}>
                             <div className="min-w-0">
-                              <p className="text-[10.5px] font-black uppercase tracking-[0.16em] text-academy-textMain/45">Les deux ensemble</p>
+                              <p className="text-[10.5px] font-black uppercase tracking-[0.16em] text-academy-textMain/45">
+                                {abPrix === 'A' ? 'Les deux ensemble' : '3 jours, tout compris'}
+                              </p>
                               <p className="mt-1 font-display font-black text-[2.05rem] sm:text-[2.6rem] leading-none tracking-tight whitespace-nowrap">{money(price, currency)}</p>
                             </div>
                             <div className="shrink-0 text-end">
