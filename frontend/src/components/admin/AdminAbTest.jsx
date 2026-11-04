@@ -6,7 +6,7 @@
 // rien dire tant que les deux côtés n'ont pas assez de monde.
 
 import { useState, useEffect, useCallback } from 'react'
-import { FlaskConical, RefreshCw, Trophy, Eye, UserCheck } from 'lucide-react'
+import { FlaskConical, RefreshCw, Trophy, Eye, UserCheck, BadgeCheck } from 'lucide-react'
 import api from '../../api/axios'
 
 // En dessous, l'écart observé tient autant du hasard que de la page.
@@ -53,7 +53,11 @@ export default function AdminAbTest() {
             Test A/B — affichage du prix
           </h3>
           <p className="text-neutral-400 text-sm mt-0.5">
-            Les deux liens des annonces, comparés sur ce qui compte : le taux d'inscription.
+            Un seul lien dans les publicités ; le site répartit les visiteurs moitié-moitié
+            et chacun revoit toujours sa version.
+          </p>
+          <p className="font-mono text-[11px] text-neutral-500 mt-1">
+            myltaacademy.com/coaching-presentiel
           </p>
         </div>
         <button type="button" onClick={charger} disabled={chargement}
@@ -96,7 +100,7 @@ export default function AdminAbTest() {
                          style={{ width: `${Math.min(100, ((v.taux || 0) / tauxMax) * 100)}%` }} />
                   </div>
 
-                  <dl className="mt-3 grid grid-cols-2 gap-2 text-[13px]">
+                  <dl className="mt-3 grid grid-cols-3 gap-2 text-[13px]">
                     <div className="rounded-lg bg-neutral-900/70 px-2.5 py-2">
                       <dt className="flex items-center gap-1 text-[11px] text-neutral-500"><Eye size={11} /> Visiteurs</dt>
                       <dd className="font-bold text-white tabular-nums">{v.vues}</dd>
@@ -105,7 +109,18 @@ export default function AdminAbTest() {
                       <dt className="flex items-center gap-1 text-[11px] text-neutral-500"><UserCheck size={11} /> Inscrits</dt>
                       <dd className="font-bold text-white tabular-nums">{v.inscriptions}</dd>
                     </div>
+                    <div className="rounded-lg bg-neutral-900/70 px-2.5 py-2">
+                      <dt className="flex items-center gap-1 text-[11px] text-neutral-500"><BadgeCheck size={11} /> Payants</dt>
+                      <dd className="font-bold text-white tabular-nums">{v.payants}</dd>
+                    </div>
                   </dl>
+
+                  {/* Le taux qui décide vraiment : s'inscrire ne coûte rien,
+                      payer l'acompte si. */}
+                  <p className="mt-2 text-[12px] text-neutral-400">
+                    Acompte payé : <b className="text-white">{pourcent(v.tauxPaiement)}</b>
+                    <span className="text-neutral-500"> des inscrits</span>
+                  </p>
                 </div>
               )
             })}
@@ -145,20 +160,21 @@ export default function AdminAbTest() {
                     {donnees.jours.map(j => (
                       <tr key={j.jour} className="border-t border-neutral-800">
                         <td className="px-3 py-2 font-mono text-[12px] text-neutral-400">{j.jour}</td>
-                        <td className="px-3 py-2 text-right tabular-nums text-neutral-200">
-                          <b className="text-white">{j.avec.inscriptions}</b>
-                          <span className="text-neutral-500"> / {j.avec.vues}</span>
-                        </td>
-                        <td className="px-3 py-2 text-right tabular-nums text-neutral-200">
-                          <b className="text-white">{j.sans.inscriptions}</b>
-                          <span className="text-neutral-500"> / {j.sans.vues}</span>
-                        </td>
+                        {['avec', 'sans'].map(cle => (
+                          <td key={cle} className="px-3 py-2 text-right tabular-nums text-neutral-200">
+                            <b className="text-white">{j[cle].inscriptions}</b>
+                            <span className="text-neutral-500"> / {j[cle].vues}</span>
+                            {j[cle].payants > 0 && (
+                              <span className="text-emerald-400"> · {j[cle].payants} payé{j[cle].payants > 1 ? 's' : ''}</span>
+                            )}
+                          </td>
+                        ))}
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
-              <p className="text-[11px] text-neutral-500 mt-1.5">Inscriptions / visiteurs.</p>
+              <p className="text-[11px] text-neutral-500 mt-1.5">Inscriptions / visiteurs, puis acomptes reçus.</p>
             </div>
           )}
 

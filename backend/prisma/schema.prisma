@@ -447,6 +447,9 @@ model InPersonRegistration {
   ip        String?
   // Variante du test A/B vue au moment de l'inscription ("avec" / "sans").
   abPrix    String?
+  // Rempli quand l'acompte a été reçu, coché à la main depuis l'admin : c'est
+  // ce qui sépare un inscrit d'un client.
+  payeLe    DateTime?
   createdAt DateTime         @default(now())
   updatedAt DateTime         @updatedAt
 

@@ -105,7 +105,11 @@ router.post('/register', async (req, res, next) => {
       studentCard = saveStudentCard(parsed.data.studentCard)
       if (!studentCard) return res.status(400).json({ error: 'Ajoutez une photo lisible de votre carte étudiante.' })
     }
-    const data = { fullName, phone, city, profile: profileText, message: message || null, ip: String(req.ip || '').slice(0, 45), isStudent: !!studentRate, studentCard, abPrix: abPrix || null }
+    const versionVue = ['avec', 'sans'].includes(req.cookies?.ab_prix)
+      ? req.cookies.ab_prix
+      : (['avec', 'sans'].includes(abPrix) ? abPrix : null)
+
+    const data = { fullName, phone, city, profile: profileText, message: message || null, ip: String(req.ip || '').slice(0, 45), isStudent: !!studentRate, studentCard, abPrix: versionVue }
 
     // L'inscription est le moment qui compte pour la publicité. On la signale
     // à Meta depuis le serveur, sans attendre la réponse : le visiteur n'a pas
@@ -126,7 +130,7 @@ router.post('/register', async (req, res, next) => {
         sourceUrl: req.get('referer'),
         fbp: req.cookies?._fbp,
         fbc: req.cookies?._fbc,
-        donneesSupplementaires: { content_name: 'Formation présentiel', ...(abPrix ? { ab_prix: abPrix } : {}) },
+        donneesSupplementaires: { content_name: 'Formation présentiel', ...(versionVue ? { ab_prix: versionVue } : {}) },
       }).catch(() => { /* déjà journalisé dans le service */ })
     }
 
@@ -316,12 +320,28 @@ router.post('/join', async (req, res, next) => {
 // saurait combien de gens se sont inscrits, mais pas quelle version
 // transforme le mieux.
 const VARIANTES = ['avec', 'sans']
+const COOKIE_COMPTE = 'ab_vu'
+
 router.post('/vue', async (req, res) => {
   const test = String(req.body?.test || 'prix').trim().slice(0, 20)
-  const variante = String(req.body?.variante || '').trim().slice(0, 20)
-  // Réponse vide dans tous les cas : un compteur ne doit jamais faire échouer
-  // une visite, ni dire à un robot ce qui a été retenu.
-  if (VARIANTES.includes(variante)) {
+  // La version vient du cookie posé à la première visite ; le corps de la
+  // requête ne sert que de secours, quand les cookies sont refusés.
+  const variante = VARIANTES.includes(req.cookies?.ab_prix)
+    ? req.cookies.ab_prix
+    : String(req.body?.variante || '').trim().slice(0, 20)
+
+  // Un visiteur n'est compté qu'une fois : c'est le serveur qui s'en souvient,
+  // par cookie, et non la page — un rechargement ne doit pas gonfler le
+  // dénominateur du test.
+  const dejaCompte = req.cookies?.[COOKIE_COMPTE] === '1'
+
+  if (VARIANTES.includes(variante) && !dejaCompte) {
+    res.cookie(COOKIE_COMPTE, '1', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 180 * 24 * 60 * 60 * 1000,
+    })
     const jour = today()
     try {
       await prisma.abVisite.upsert({
@@ -331,6 +351,8 @@ router.post('/vue', async (req, res) => {
       })
     } catch { /* comptage perdu : sans importance pour le visiteur */ }
   }
+  // Réponse vide dans tous les cas : un compteur ne doit jamais faire échouer
+  // une visite, ni dire à un robot ce qui a été retenu.
   res.status(204).end()
 })
 

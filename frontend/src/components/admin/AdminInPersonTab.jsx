@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import AdminAbTest from './AdminAbTest'
-import { Users, Plus, Trash2, Save, MessageCircle, Pencil, X, QrCode, KeyRound, Download, ChevronDown } from 'lucide-react'
+import { Users, Plus, Trash2, Save, MessageCircle, Pencil, X, QrCode, KeyRound, Download, ChevronDown, BadgeCheck } from 'lucide-react'
 import QRCode from 'qrcode'
 import AdminContestPanel from './AdminContestPanel'
 import AdminExpressPanel from './AdminExpressPanel'
@@ -272,11 +272,26 @@ export default function AdminInPersonTab() {
         <span className="font-bold text-white">{r.fullName}</span>
         <span className="text-neutral-400"> · {r.phone}{r.city ? ` · ${r.city}` : ''}</span>
         {r.isStudent && <span className="ml-2 text-[11px] font-bold px-1.5 py-0.5 rounded bg-sky-500/20 text-sky-300">🎓 Étudiant</span>}
+        {/* La version du test vue par cette personne : c'est elle qui relie
+            l'inscription au tableau de bord. */}
+        {r.abPrix && (
+          <span className="ml-2 text-[11px] font-bold px-1.5 py-0.5 rounded bg-violet-500/20 text-violet-300">
+            {r.abPrix === 'avec' ? 'Prix affiché' : 'Prix caché'}
+          </span>
+        )}
         {r.studentCard && <a href={r.studentCard} target="_blank" rel="noopener noreferrer" className="ml-2 text-[11px] font-bold text-sky-300 underline">Voir la carte</a>}
         {r.profile && <div className="text-xs text-neutral-400 mt-0.5">{r.profile}</div>}
         {r.message && <div className="text-xs text-neutral-500 mt-0.5">{r.message}</div>}
       </div>
       {extra}
+      <button onClick={() => updateRegistration(r.id, { paye: !r.payeLe })}
+              title={r.payeLe
+                ? `Acompte reçu le ${new Date(r.payeLe).toLocaleDateString('fr-FR')} — cliquer pour annuler`
+                : "Marquer l'acompte comme reçu"}
+              className={`px-2 py-1 rounded-lg text-[11px] font-bold inline-flex items-center gap-1 ${
+                r.payeLe ? 'bg-emerald-500/20 text-emerald-300' : 'text-neutral-400 bg-white/5 hover:bg-white/10'}`}>
+        <BadgeCheck size={13} /> {r.payeLe ? 'A payé' : 'A payé ?'}
+      </button>
       <button onClick={() => createAccount(r)} title="Créer son accès à la plateforme" className="px-2 py-1 rounded-lg text-[11px] font-bold text-sky-300 bg-sky-500/10 hover:bg-sky-500/20 inline-flex items-center gap-1"><KeyRound size={13} /> Accès (identifiant + mot de passe)</button>
       <select value={r.status} onChange={e => updateRegistration(r.id, { status: e.target.value })}
               className={`rounded-full px-2 py-1 text-[11px] font-bold border-0 outline-none ${STATUS[r.status]?.cls}`}>

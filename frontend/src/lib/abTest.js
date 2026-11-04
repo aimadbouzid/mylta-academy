@@ -1,43 +1,56 @@
 // ============================================================
-// A/B TEST — une variante tirée au sort, puis gardée
+// A/B TEST — un seul lien, le site répartit
 // ============================================================
 //
-// Le visiteur tombe sur A ou B à sa première visite et revoit la même ensuite :
-// une personne qui changerait de version entre deux visites fausserait la
-// mesure. La variante part avec les évènements Meta (paramètre `ab_<test>`),
-// c'est là qu'on compare les conversions.
+// Toutes les publicités pointent vers la même adresse. À sa première visite,
+// le visiteur est tiré au sort entre les versions, et un cookie garde ce
+// choix : il reverra la même page six mois durant. Quelqu'un qui changerait
+// de version entre deux visites fausserait la mesure.
 //
-// Ajouter un test : appeler variante('mon-test') et se servir du résultat.
-// Les tirages déjà faits ne bougent pas, chaque test a sa propre clé.
+// Le cookie, plutôt que le stockage du navigateur, parce que le serveur le
+// reçoit à chaque requête : il enregistre donc l'inscription avec la version
+// réellement vue, sans que la page ait à la lui redire.
+//
+// La variante part aussi avec les évènements Meta (paramètre `ab_<test>`).
 
-const CLE = 'mylta-ab'
+const PREFIXE = 'ab_'
+const DUREE_JOURS = 180
+
+function lireCookie(nom) {
+  try {
+    const trouve = document.cookie.split('; ').find(c => c.startsWith(nom + '='))
+    return trouve ? decodeURIComponent(trouve.slice(nom.length + 1)) : null
+  } catch {
+    return null
+  }
+}
+
+function ecrireCookie(nom, valeur) {
+  try {
+    const age = DUREE_JOURS * 24 * 60 * 60
+    document.cookie = `${nom}=${encodeURIComponent(valeur)}; path=/; max-age=${age}; samesite=lax`
+  } catch { /* cookies refusés : la personne verra un tirage par visite */ }
+}
 
 /**
- * @param {string} nom      Nom du test, par exemple 'prix'
- * @param {string[]} choix  Variantes possibles — la première est la référence
- * @returns {string} la variante attribuée à ce visiteur
+ * @param {string} nom     Nom du test, par exemple 'prix'
+ * @param {string[]} choix Versions possibles — la première est la référence
+ * @returns {string} la version attribuée à ce visiteur
  */
 export function variante(nom, choix = ['A', 'B']) {
+  const cookie = PREFIXE + nom
+
+  // ?ab_prix=sans sert à prévisualiser une version. Ce choix ne s'enregistre
+  // pas : un lien de test ne doit pas enfermer qui le reçoit dans une version.
   try {
-    const deja = JSON.parse(localStorage.getItem(CLE) || '{}')
+    const demandee = new URLSearchParams(window.location.search).get(cookie)
+    if (choix.includes(demandee)) return demandee
+  } catch { /* URL illisible : on passe au tirage normal */ }
 
-    // Le lien de la publicité décide : deux annonces Meta, deux adresses
-    // (…?ab_prix=avec et …?ab_prix=sans), et c'est Meta qui répartit le
-    // trafic. Le choix est gardé, pour que la page ne change pas si le
-    // visiteur revient par un lien sans paramètre.
-    const demandee = new URLSearchParams(window.location.search).get(`ab_${nom}`)
-    if (choix.includes(demandee)) {
-      if (deja[nom] !== demandee) localStorage.setItem(CLE, JSON.stringify({ ...deja, [nom]: demandee }))
-      return demandee
-    }
+  const deja = lireCookie(cookie)
+  if (choix.includes(deja)) return deja
 
-    if (choix.includes(deja[nom])) return deja[nom]
-    const tiree = choix[Math.floor(Math.random() * choix.length)]
-    localStorage.setItem(CLE, JSON.stringify({ ...deja, [nom]: tiree }))
-    return tiree
-  } catch {
-    // Stockage bloqué (navigation privée) : tout le monde voit la référence,
-    // plutôt qu'une variante différente à chaque page.
-    return choix[0]
-  }
+  const tiree = choix[Math.floor(Math.random() * choix.length)]
+  ecrireCookie(cookie, tiree)
+  return tiree
 }

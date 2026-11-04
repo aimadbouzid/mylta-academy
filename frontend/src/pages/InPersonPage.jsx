@@ -84,15 +84,9 @@ export default function InPersonPage() {
   const [abPrix] = useState(() => variante('prix', ['avec', 'sans']))
   const montrerPrix = abPrix === 'avec'
 
-  // Une visite comptée une seule fois par visiteur : c'est le dénominateur du
-  // test. La recompter à chaque rechargement gonflerait les vues et écraserait
-  // le taux de transformation.
+  // On signale la visite ; c'est le serveur qui décide de la compter ou non,
+  // par cookie. Un rechargement ne doit pas gonfler le dénominateur du test.
   useEffect(() => {
-    const cle = `mylta-vue-prix-${abPrix}`
-    try {
-      if (localStorage.getItem(cle)) return
-      localStorage.setItem(cle, '1')
-    } catch { /* stockage bloqué : on compte au moins cette visite-ci */ }
     api.post('/in-person/vue', { test: 'prix', variante: abPrix }).catch(() => {})
   }, [abPrix])
 

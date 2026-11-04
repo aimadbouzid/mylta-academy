@@ -765,13 +765,17 @@ router.get('/in-person/ab', async (req, res, next) => {
       prisma.abVisite.findMany({ where: { test: 'prix' }, orderBy: { jour: 'asc' } }),
       prisma.inPersonRegistration.findMany({
         where: { abPrix: { not: null } },
-        select: { abPrix: true, createdAt: true },
+        select: { abPrix: true, createdAt: true, payeLe: true },
       }),
       prisma.inPersonRegistration.count({ where: { abPrix: null } }),
     ])
 
     const parJour = new Map()
-    const ligneVide = (jour) => ({ jour, avec: { vues: 0, inscriptions: 0 }, sans: { vues: 0, inscriptions: 0 } })
+    const ligneVide = (jour) => ({
+      jour,
+      avec: { vues: 0, inscriptions: 0, payants: 0 },
+      sans: { vues: 0, inscriptions: 0, payants: 0 },
+    })
 
     for (const v of visites) {
       if (!NOMS_VARIANTES[v.variante]) continue
@@ -784,14 +788,19 @@ router.get('/in-person/ab', async (req, res, next) => {
       const jour = i.createdAt.toISOString().slice(0, 10)
       const ligne = parJour.get(jour) || ligneVide(jour)
       ligne[i.abPrix].inscriptions += 1
+      if (i.payeLe) ligne[i.abPrix].payants += 1
       parJour.set(jour, ligne)
     }
 
-    const totaux = { avec: { vues: 0, inscriptions: 0 }, sans: { vues: 0, inscriptions: 0 } }
+    const totaux = {
+      avec: { vues: 0, inscriptions: 0, payants: 0 },
+      sans: { vues: 0, inscriptions: 0, payants: 0 },
+    }
     for (const ligne of parJour.values()) {
       for (const cle of ['avec', 'sans']) {
         totaux[cle].vues += ligne[cle].vues
         totaux[cle].inscriptions += ligne[cle].inscriptions
+        totaux[cle].payants += ligne[cle].payants
       }
     }
 
@@ -802,9 +811,13 @@ router.get('/in-person/ab', async (req, res, next) => {
         nom: NOMS_VARIANTES[cle],
         vues: totaux[cle].vues,
         inscriptions: totaux[cle].inscriptions,
+        payants: totaux[cle].payants,
         // null tant que personne n'est passé : un taux sur zéro visite ne veut
         // rien dire, et afficher 0 % serait un mensonge.
         taux: totaux[cle].vues ? (totaux[cle].inscriptions / totaux[cle].vues) * 100 : null,
+        tauxPaiement: totaux[cle].inscriptions
+          ? (totaux[cle].payants / totaux[cle].inscriptions) * 100
+          : null,
       })),
       jours: [...parJour.values()].sort((a, b) => a.jour.localeCompare(b.jour)),
       sansVariante,
@@ -844,13 +857,16 @@ router.put('/in-person/registrations/:id', async (req, res, next) => {
   try {
     const id = validateId(req.params.id)
     if (!id) return res.status(400).json({ error: 'ID invalide.' })
-    const { status, sessionId } = req.body
+    const { status, sessionId, paye } = req.body
     const data = {}
     if (status !== undefined) {
       if (!['PENDING', 'CONFIRMED', 'CANCELLED'].includes(status)) return res.status(400).json({ error: 'Statut invalide.' })
       data.status = status
     }
     if (sessionId !== undefined) data.sessionId = sessionId === null ? null : validateId(sessionId)
+    // L'acompte est reçu sur WhatsApp : c'est une case qu'on coche à la main,
+    // et c'est elle qui sépare un inscrit d'un client dans le tableau de bord.
+    if (paye !== undefined) data.payeLe = paye ? new Date() : null
     res.json(await prisma.inPersonRegistration.update({ where: { id }, data }))
   } catch (err) { next(err) }
 })
