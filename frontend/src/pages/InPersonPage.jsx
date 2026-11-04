@@ -77,10 +77,12 @@ export default function InPersonPage() {
   const whatsappNumber = settings?.inPerson?.whatsappNumber || settings?.coaching?.whatsappNumber
   const topRef = useRef(null)
 
-  // A/B en cours : le prix détaillé formation par formation (A, la référence)
-  // contre le prix seul (B). Le tirage est fait une fois et gardé ; il part
-  // avec les évènements Meta, où l'on compare les deux.
-  const [abPrix] = useState(() => variante('prix'))
+  // A/B en cours : le prix affiché (« avec », la référence) contre une page
+  // qui ne le montre pas du tout (« sans ») — le tarif se dit alors sur
+  // WhatsApp. La variante vient du lien de la publicité, et part avec les
+  // évènements Meta, où l'on compare les deux.
+  const [abPrix] = useState(() => variante('prix', ['avec', 'sans']))
+  const montrerPrix = abPrix === 'avec'
 
   const [step, setStep] = useState(0)
   const [sessions, setSessions] = useState(null)
@@ -456,7 +458,7 @@ export default function InPersonPage() {
 
                       <div className="flex items-center justify-between gap-3 bg-academy-primary px-5 py-2.5 text-white">
                         <p className="text-[10.5px] font-black uppercase tracking-[0.18em]">Offre de lancement</p>
-                        {discount > 0 && <p className="text-[13px] font-black tabular-nums">−{discount} %</p>}
+                        {montrerPrix && discount > 0 && <p className="text-[13px] font-black tabular-nums">−{discount} %</p>}
                       </div>
 
                       {/* Le titre et les trois jours tiennent en deux lignes,
@@ -471,13 +473,12 @@ export default function InPersonPage() {
                         )}
                       </div>
 
-                      {price > 0 && (
+                      {/* Variante « sans » : aucun montant sur la page, ni prix,
+                          ni acompte. Le tarif se donne dans la conversation
+                          WhatsApp, une fois la demande envoyée. */}
+                      {montrerPrix && price > 0 && (
                         <div className="px-5 pt-4">
-                          {/* Variante A : on montre de quoi le pack est fait,
-                              chaque formation avec son prix. Variante B : le
-                              prix seul. C'est le test en cours. */}
-                          {abPrix === 'A' && (
-                            <ul className="space-y-2">
+                          <ul className="space-y-2">
                               {MODULES.map(m => (
                                 <li key={m.title} className="flex items-baseline justify-between gap-3">
                                   <span className="flex items-baseline gap-2 min-w-0">
@@ -486,16 +487,12 @@ export default function InPersonPage() {
                                   </span>
                                   <span className="shrink-0 text-[13.5px] tabular-nums text-academy-textMain/50">{money(m.price, currency)}</span>
                                 </li>
-                              ))}
-                            </ul>
-                          )}
+                            ))}
+                          </ul>
 
-                          <div className={`flex items-end justify-between gap-4 ${
-                            abPrix === 'A' ? 'mt-4 border-t border-dashed border-academy-border pt-4' : ''}`}>
+                          <div className="mt-4 flex items-end justify-between gap-4 border-t border-dashed border-academy-border pt-4">
                             <div className="min-w-0">
-                              <p className="text-[10.5px] font-black uppercase tracking-[0.16em] text-academy-textMain/45">
-                                {abPrix === 'A' ? 'Les deux ensemble' : '3 jours, tout compris'}
-                              </p>
+                              <p className="text-[10.5px] font-black uppercase tracking-[0.16em] text-academy-textMain/45">Les deux ensemble</p>
                               <p className="mt-1 font-display font-black text-[2.05rem] sm:text-[2.6rem] leading-none tracking-tight whitespace-nowrap">{money(price, currency)}</p>
                             </div>
                             <div className="shrink-0 text-end">
@@ -624,7 +621,7 @@ export default function InPersonPage() {
                       </div>
                     )}
 
-                    {selected && studentPrice > 0 && (
+                    {montrerPrix && selected && studentPrice > 0 && (
                       <div className="space-y-2">
                         <h2 className="font-bold">Votre tarif</h2>
                         <div className="grid grid-cols-2 gap-2">
@@ -651,7 +648,7 @@ export default function InPersonPage() {
                         )}
                       </div>
                     )}
-                    {selected && price > 0 && <PriceBox />}
+                    {montrerPrix && selected && price > 0 && <PriceBox />}
 
                     <input type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" value={website}
                            onChange={e => setWebsite(e.target.value)} className="absolute -left-[9999px] w-px h-px opacity-0" />

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useSiteSettings } from '../context/SiteSettingsContext'
+import { variante } from '../lib/abTest'
 import { Timer, Sparkles, Flame, Gift, Megaphone, ArrowRight, X } from 'lucide-react'
 
 export default function TopBanner() {
@@ -36,7 +37,11 @@ export default function TopBanner() {
     localStorage.setItem('mylta_topBanner_cache', JSON.stringify(banner))
   }, [settings])
 
+  // Test « prix caché » : la bannière annonce le tarif, elle ne peut pas
+  // rester affichée au-dessus d'une page censée ne pas le montrer.
   if (!isLoaded || !config || !config.isActive) return null
+  if (window.location.pathname.startsWith('/coaching-presentiel')
+      && variante('prix', ['avec', 'sans']) === 'sans') return null
 
   // Determine icon
   const getIcon = () => {

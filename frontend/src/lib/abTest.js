@@ -20,6 +20,17 @@ const CLE = 'mylta-ab'
 export function variante(nom, choix = ['A', 'B']) {
   try {
     const deja = JSON.parse(localStorage.getItem(CLE) || '{}')
+
+    // Le lien de la publicité décide : deux annonces Meta, deux adresses
+    // (…?ab_prix=avec et …?ab_prix=sans), et c'est Meta qui répartit le
+    // trafic. Le choix est gardé, pour que la page ne change pas si le
+    // visiteur revient par un lien sans paramètre.
+    const demandee = new URLSearchParams(window.location.search).get(`ab_${nom}`)
+    if (choix.includes(demandee)) {
+      if (deja[nom] !== demandee) localStorage.setItem(CLE, JSON.stringify({ ...deja, [nom]: demandee }))
+      return demandee
+    }
+
     if (choix.includes(deja[nom])) return deja[nom]
     const tiree = choix[Math.floor(Math.random() * choix.length)]
     localStorage.setItem(CLE, JSON.stringify({ ...deja, [nom]: tiree }))
