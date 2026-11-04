@@ -195,11 +195,23 @@ export default function InPersonPage() {
           { t: Date.now(), done: data.registration, fullName, phone }))
       } catch { /* stockage indisponible : la page reste affichée, c'est déjà ça */ }
 
+      // L'inscription est enregistrée : c'est l'évènement qui compte pour la
+      // publicité. Il part ici, bien avant le départ vers WhatsApp, pour avoir
+      // le temps d'arriver.
+      trackEvent('CompleteRegistration', {
+        content_name: 'Formation présentiel',
+        // Le serveur ne renvoie pas toujours le prix : sans ce repli, la
+        // conversion remonterait à 0 DA et la publicité n'aurait rien à
+        // optimiser.
+        value: Number(data.registration?.price) || price || 0,
+        currency: 'DZD',
+      })
+
       // Réservation payante (acompte) : intention d'achat, pas simple contact.
       trackEvent('InitiateCheckout', {
         content_name: 'Formation présentiel',
         content_type: 'product',
-        value: Number(data.registration?.price) || 0,
+        value: Number(data.registration?.price) || price || 0,
         currency: 'DZD',
       })
 
@@ -242,11 +254,22 @@ export default function InPersonPage() {
   // plus : c'est là que la suite se joue (reçu de l'acompte, questions). La
   // page reste derrière, avec le billet et les coordonnées de paiement.
   const whatsappLance = useRef(false)
+  // « Contact » ne part qu'une fois par visite : le départ automatique et le
+  // bouton mènent au même endroit, et deux évènements fausseraient le compte.
+  const contactEnvoye = useRef(false)
+  const envoyerContact = () => {
+    if (contactEnvoye.current) return
+    contactEnvoye.current = true
+    trackEvent('Contact')
+  }
   useEffect(() => {
     if (!done || !whatsappUrl || whatsappLance.current) return
     whatsappLance.current = true
-    const t = setTimeout(() => { window.location.href = whatsappUrl }, 1500)
-    return () => clearTimeout(t)
+    // L'évènement part avant la navigation, pas en même temps : un évènement
+    // émis au moment où la page est quittée n'arrive pas toujours.
+    const contact = setTimeout(envoyerContact, 900)
+    const depart = setTimeout(() => { window.location.href = whatsappUrl }, 1800)
+    return () => { clearTimeout(contact); clearTimeout(depart) }
   }, [done, whatsappUrl])
 
   // Le client part sur WhatsApp, puis revient : il doit retrouver son billet et
@@ -376,7 +399,7 @@ export default function InPersonPage() {
                 )}
 
                 {whatsappUrl && (
-                  <a href={whatsappUrl} target="_blank" rel="noopener noreferrer"
+                  <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" onClick={envoyerContact}
                      className="w-full inline-flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#1ebe5a] text-white font-bold px-6 py-4 rounded-xl transition-colors text-lg">
                     <MessageCircle size={20} /> {doneSession && deposit > 0 ? 'Envoyer mon reçu sur WhatsApp' : 'Confirmer sur WhatsApp'}
                   </a>
