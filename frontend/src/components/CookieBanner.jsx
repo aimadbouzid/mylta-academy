@@ -30,7 +30,7 @@ export default function CookieBanner() {
           Confidentialité et Cookies 🍪
         </p>
         <p className="opacity-70 leading-relaxed text-xs md:text-sm">
-          Nous utilisons des cookies essentiels au fonctionnement du site, ainsi que des outils d'analyse pour améliorer votre expérience utilisateur et mesurer notre audience. Vous gardez le contrôle total sur vos données.
+          Nous utilisons des cookies essentiels au fonctionnement du site, ainsi que des outils de mesure d'audience. Vous gardez le contrôle : en refusant, la mesure s'arrête immédiatement et les cookies déjà déposés sont supprimés.
         </p>
       </div>
       <div className="flex flex-col-reverse sm:flex-row items-center gap-3 w-full justify-end mt-2 md:mt-0">

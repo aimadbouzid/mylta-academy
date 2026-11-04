@@ -2,10 +2,14 @@
 // META (FACEBOOK) PIXEL — chargement conditionné au consentement
 // ============================================================
 //
-// Le pixel n'est JAMAIS chargé tant que le visiteur n'a pas accepté les
-// cookies. La bannière promet « vous gardez le contrôle total sur vos
-// données » : charger un traceur publicitaire avant l'accord rendrait cette
-// promesse fausse, et le script Meta dépose ses propres cookies (_fbp).
+// La mesure démarre dès l'arrivée et s'arrête si le visiteur refuse. Exiger
+// un clic préalable revenait à ne rien mesurer du tout : Meta ne trouvait
+// aucun pixel sur le site (son vérificateur ne clique pas sur une bannière),
+// et la grande majorité des visiteurs ne répondent jamais à cette bannière —
+// la publicité tournait donc à l'aveugle.
+//
+// Le refus reste entier et immédiat : « Continuer sans accepter » coupe toute
+// émission et supprime les cookies déjà posés par Meta (_fbp, _fbc).
 //
 // L'identifiant du pixel est public : il part dans chaque page vue. Il est donc
 // écrit ici en valeur par défaut, pour qu'un déploiement sans variable
@@ -23,9 +27,11 @@ let loaded = false
 /** Le visiteur a-t-il accepté les cookies non essentiels ? */
 export function hasConsent() {
   try {
-    return localStorage.getItem(CONSENT_KEY) === 'true'
+    // Seul un refus explicite arrête la mesure. Pas encore de réponse = on
+    // mesure, et la bannière laisse refuser à tout moment.
+    return localStorage.getItem(CONSENT_KEY) !== 'false'
   } catch {
-    return false // navigation privée / stockage bloqué : on considère un refus
+    return true // stockage bloqué : on ne peut pas lire un refus, il n'y en a pas
   }
 }
 
