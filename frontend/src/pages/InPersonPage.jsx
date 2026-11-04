@@ -43,7 +43,10 @@ const QUESTIONS = [
   { key: 'domaine', court: 'Domaine', title: 'Vous travaillez dans quel domaine ?',
     options: ['Commerce / boutique', 'Création de contenu', 'Services / artisanat', 'Étudiant(e)', 'Autre'] },
 ]
-const DERNIERE_ETAPE = QUESTIONS.length + 1
+// Deux étapes avant la réservation : les questions, puis les coordonnées.
+// Une par écran faisait quatre écrans à traverser — autant d'endroits où
+// l'on s'arrête.
+const DERNIERE_ETAPE = 2
 // Photo de carte étudiante : réduite à 1200 px en JPEG (léger, compatible iPhone) avant l'envoi.
 const compressPhoto = (file) => new Promise((resolve, reject) => {
   const url = URL.createObjectURL(file)
@@ -171,13 +174,6 @@ export default function InPersonPage() {
     setError('')
     setStep(n)
     requestAnimationFrame(() => topRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }))
-  }
-
-  // Une question par écran : on répond, l'écran suivant arrive. Le court
-  // délai laisse voir la réponse se cocher avant de basculer.
-  const repondre = (cle, valeur) => {
-    setProfile(prev => ({ ...prev, [cle]: valeur }))
-    setTimeout(() => goTo(step + 1), 220)
   }
 
   const handleSubmit = async (e) => {
@@ -357,7 +353,6 @@ export default function InPersonPage() {
               <div className="space-y-5">
                 {doneSession && (
                   <TicketDechire
-                    numero={done.id}
                     titre={cfg.title}
                     date={formatDate(doneSession.date)}
                     heures={hours(doneSession)}
@@ -557,37 +552,49 @@ export default function InPersonPage() {
                 )}
 
 
-                {/* 2. Une question par écran. */}
-                {step >= 1 && step <= QUESTIONS.length && (
-                  <section key={`question-${step}`} className={`${card} etape-entre`}>
+                {/* 2. Les trois questions, sur un seul écran. */}
+                {step === 1 && (
+                  <section key="etape-questions" className={`${card} etape-entre`}>
                     <p className="text-[11px] font-black uppercase tracking-[0.16em] text-academy-primary">
-                      Question {step} sur {QUESTIONS.length}
+                      Avant de réserver
                     </p>
-                    <h2 className="mt-1.5 font-display font-black text-[1.5rem] leading-tight">
-                      {QUESTIONS[step - 1].title}
+                    <h2 className="mt-1.5 font-display font-black text-[1.45rem] leading-tight">
+                      Trois questions, et c'est à vous
                     </h2>
                     <p className="mt-1 text-[13px] text-academy-textMain/55">
-                      Votre réponse prépare la journée : on n'avance pas sans elle.
+                      Vos réponses servent à préparer la journée.
                     </p>
 
-                    <div className="mt-4 space-y-2">
-                      {QUESTIONS[step - 1].options.map(o => {
-                        const choisi = profile[QUESTIONS[step - 1].key] === o
-                        return (
-                          <button type="button" key={o} onClick={() => repondre(QUESTIONS[step - 1].key, o)}
-                                  className={`w-full flex items-center gap-3 rounded-2xl border-2 px-4 py-4 text-start transition-all ${
-                                    choisi
-                                      ? 'border-academy-primary bg-academy-primary/[0.06] shadow-sm'
-                                      : 'border-academy-border hover:border-academy-primary/40 hover:bg-academy-primary/[0.02]'}`}>
-                            <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 ${
-                              choisi ? 'border-academy-primary bg-academy-primary text-white' : 'border-academy-textMain/25'}`}>
-                              {choisi && <Check size={13} strokeWidth={3.5} />}
-                            </span>
-                            <span className="text-[15.5px] font-bold">{o}</span>
-                          </button>
-                        )
-                      })}
+                    <div className="mt-5 space-y-5">
+                      {QUESTIONS.map((q, i) => (
+                        <div key={q.key}>
+                          <h3 className="text-[14.5px] font-bold leading-snug">
+                            <span className="text-academy-primary">{i + 1}.</span> {q.title}
+                          </h3>
+                          <div className="mt-2 flex flex-wrap gap-2">
+                            {q.options.map(o => {
+                              const choisi = profile[q.key] === o
+                              return (
+                                <button type="button" key={o}
+                                        onClick={() => setProfile(prev => ({ ...prev, [q.key]: o }))}
+                                        className={`inline-flex items-center gap-1.5 rounded-xl border-2 px-3.5 py-2.5 text-[14px] font-bold transition-all ${
+                                          choisi
+                                            ? 'border-academy-primary bg-academy-primary text-white shadow-sm'
+                                            : 'border-academy-border hover:border-academy-primary/40'}`}>
+                                  {choisi && <Check size={13} strokeWidth={3.5} />}
+                                  {o}
+                                </button>
+                              )
+                            })}
+                          </div>
+                        </div>
+                      ))}
                     </div>
+
+                    <button type="button" disabled={!profileReady} onClick={() => goTo(DERNIERE_ETAPE)}
+                            className={`${primaryBtn} mt-6`}>
+                      Continuer <ArrowRight size={18} />
+                    </button>
                   </section>
                 )}
 

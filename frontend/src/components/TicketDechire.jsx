@@ -35,9 +35,9 @@ function Champ({ label, valeur, className = '' }) {
   )
 }
 
-export default function TicketDechire({ numero, titre, date, heures, lieu, nom }) {
+export default function TicketDechire({ titre, date, heures, lieu, nom }) {
   return (
-    <div className="billet-dechire relative z-10 mb-2" aria-label={`Billet de réservation n° ${numero}`}>
+    <div className="billet-dechire relative z-10 mb-2" aria-label="Billet de réservation">
       <div style={dents('bas')}
            className={`billet-haut relative ${PAPIER} rounded-t-2xl pb-[22px]
                        shadow-[0_18px_40px_-24px_rgba(0,0,0,0.5)]`}>
@@ -46,9 +46,6 @@ export default function TicketDechire({ numero, titre, date, heures, lieu, nom }
           <span className="flex items-center gap-2">
             <span className="h-3.5 w-[3px] rounded-full bg-academy-primary" />
             <span className="text-[10px] font-bold uppercase tracking-[0.22em] text-white/90">Mylta Academy</span>
-          </span>
-          <span className="font-mono text-[11px] font-bold tabular-nums tracking-wider text-white/70">
-            N° {numero}
           </span>
         </div>
 
@@ -88,9 +85,6 @@ export default function TicketDechire({ numero, titre, date, heures, lieu, nom }
                        flex items-center justify-between gap-3`}>
         <span className="text-[9.5px] font-bold uppercase tracking-[0.2em] text-academy-textMain/35">
           Souche · à garder
-        </span>
-        <span className="font-mono text-[12px] font-bold tabular-nums text-academy-textMain/50">
-          N° {numero}
         </span>
       </div>
 
