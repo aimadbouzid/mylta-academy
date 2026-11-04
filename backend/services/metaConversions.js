@@ -15,11 +15,19 @@
 
 const crypto = require('crypto')
 
-const PIXEL = process.env.FACEBOOK_PIXEL_ID
+const { getSettings } = require('../settingsManager')
+
 const TOKEN = process.env.FACEBOOK_CAPI_TOKEN
 const VERSION = 'v21.0'
 
-const estConfigure = () => Boolean(PIXEL && TOKEN)
+// L'identifiant vient de l'environnement, ou à défaut des réglages du site :
+// une seule variable à poser sur le serveur, le jeton, qui lui est secret.
+const pixel = () => {
+  if (process.env.FACEBOOK_PIXEL_ID) return process.env.FACEBOOK_PIXEL_ID
+  try { return getSettings()?.facebookPixelId || '' } catch { return '' }
+}
+
+const estConfigure = () => Boolean(pixel() && TOKEN)
 
 // Meta n'accepte les données personnelles que hachées (SHA-256), en minuscules
 // et sans espaces autour.
@@ -79,7 +87,7 @@ async function envoyerEvenement({
   }
 
   try {
-    const reponse = await fetch(`https://graph.facebook.com/${VERSION}/${PIXEL}/events`, {
+    const reponse = await fetch(`https://graph.facebook.com/${VERSION}/${pixel()}/events`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ data: [evenement], access_token: TOKEN }),

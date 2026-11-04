@@ -7,10 +7,15 @@
 // données » : charger un traceur publicitaire avant l'accord rendrait cette
 // promesse fausse, et le script Meta dépose ses propres cookies (_fbp).
 //
-// L'identifiant vient de VITE_FACEBOOK_PIXEL_ID. Sans cette variable, tout le
-// module reste inerte — aucun script tiers n'est injecté.
+// L'identifiant du pixel est public : il part dans chaque page vue. Il est donc
+// écrit ici en valeur par défaut, pour qu'un déploiement sans variable
+// d'environnement ne laisse pas le site sans suivi — c'est arrivé une fois, et
+// la publicité tournait à l'aveugle. VITE_FACEBOOK_PIXEL_ID reste prioritaire :
+// elle permet de changer de pixel sans toucher au code. Les réglages du site,
+// servis par le serveur, l'emportent sur les deux : changer de pixel depuis
+// l'admin ne demande alors aucun déploiement.
 
-const PIXEL_ID = import.meta.env.VITE_FACEBOOK_PIXEL_ID
+let PIXEL_ID = import.meta.env.VITE_FACEBOOK_PIXEL_ID || '1111003928482160'
 const CONSENT_KEY = 'cookie_consent'
 
 let loaded = false
@@ -26,6 +31,18 @@ export function hasConsent() {
 
 export function isPixelConfigured() {
   return Boolean(PIXEL_ID)
+}
+
+/**
+ * Donne au module l'identifiant venu des réglages du site.
+ * @returns {boolean} vrai si le pixel reste à charger avec ce nouvel identifiant
+ */
+export function configurerPixel(identifiant) {
+  const propre = String(identifiant || '').replace(/\D/g, '')
+  if (!propre || propre === PIXEL_ID) return false
+  PIXEL_ID = propre
+  loaded = false // identifiant différent : le script est à recharger
+  return true
 }
 
 /**

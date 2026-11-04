@@ -102,10 +102,18 @@ const defaultSettings = {
       answer: "Vous n'êtes jamais seul ! Notre équipe pédagogique et notre communauté d'étudiants sont là pour vous accompagner. Vous pouvez poser vos questions directement sous chaque leçon ou contacter notre support."
     }
   ],
+
+  // Identifiant du pixel Meta. C'est un réglage du site et non une variable de
+  // build : le serveur le sert avec le reste, donc un simple déploiement suffit
+  // à l'activer. Il est public par nature — il voyage dans le code de tout site
+  // qui l'utilise ; le jeton de l'API Conversions, lui, reste dans
+  // l'environnement du serveur, où personne ne peut le lire.
+  facebookPixelId: '1111003928482160',
+
   topBanner: {
     isActive: true,
     text: "Formation IA & Montage Vidéo à Béjaïa — 12, 13 et 14 novembre 2026",
-    text2: "Offre de lancement : 22 000 DA au lieu de 35 000 DA, places limitées",
+    text2: "Offre de lancement : 18 000 DA au lieu de 35 000 DA, places limitées",
     animation: "marquee",
     hasCountdown: true,
     countdownDate: "2026-11-12T08:30:00+01:00",
@@ -344,8 +352,10 @@ const defaultSettings = {
   inPerson: {
     enabled: true,
     title: 'Formation IA & Montage Vidéo',
-    subtitle: "Filmez, montez et utilisez l'IA comme un pro, depuis votre smartphone. 3 jours en présentiel, en petit groupe.",
-    price: 22000,   // prix de la formation (DA) — repris par défaut pour chaque session
+    // Phrase pensée pour un public algérien : le téléphone d'abord (c'est
+    // l'outil que tout le monde a déjà), zéro jargon, zéro prérequis.
+    subtitle: "Avec votre téléphone, sans ordinateur, sans expérience : 3 jours à Béjaïa pour filmer, monter et faire travailler l'IA comme un pro.",
+    price: 18000,   // prix de la formation (DA) — repris par défaut pour chaque session
     studentPrice: 0, // tarif étudiant (carte étudiante obligatoire) ; 0 = pas de tarif étudiant
     oldPrice: 35000, // prix barré affiché à côté (offre de lancement) ; 0 = pas de prix barré
     deposit: 5000,  // acompte obligatoire pour réserver sa place
@@ -529,7 +539,7 @@ function readSettingsFromDisk() {
 // les valeurs par défaut au premier démarrage, donc un simple changement de
 // défaut ne l'atteint pas). Appliqué une fois : le prochain enregistrement admin
 // écrit settingsVersion à jour.
-const SETTINGS_VERSION = 23
+const SETTINGS_VERSION = 24
 const OLD_BANNER_TEXTS = ["🚀 Promo exceptionnelle : -50% sur toutes les formations ! Inscrivez-vous vite."]
 
 function migrateSettings(parsed, merged) {
@@ -610,6 +620,11 @@ function migrateSettings(parsed, merged) {
   }
   // Le bandeau affichait du texte d'essai et un compte à rebours vers une date
   // déjà passée ; il repart sur la session de novembre.
+  // Le sous-titre de la formation parlait d'un public générique ; il parle
+  // maintenant à un public algérien (téléphone, zéro prérequis).
+  if ((parsed.settingsVersion || 1) < 23) {
+    merged.inPerson = { ...merged.inPerson, subtitle: defaultSettings.inPerson.subtitle }
+  }
   if ((parsed.settingsVersion || 1) < 22) {
     merged.topBanner = { ...merged.topBanner, ...defaultSettings.topBanner, isActive: merged.topBanner?.isActive !== false }
   }
@@ -630,6 +645,19 @@ function migrateSettings(parsed, merged) {
       whatsappNumber: defaultSettings.inPerson.whatsappNumber,
     }
   }
+  if ((parsed.settingsVersion || 1) < 24) {
+    // Le prix passe à 18 000 DA, et l'identifiant du pixel entre dans les
+    // réglages : il n'a plus à être compilé au moment du build.
+    merged.inPerson = { ...merged.inPerson, price: 18000 }
+    if (!merged.facebookPixelId) merged.facebookPixelId = defaultSettings.facebookPixelId
+    merged.topBanner = { ...merged.topBanner }
+    for (const cle of ['text', 'text2']) {
+      if (typeof merged.topBanner[cle] === 'string') {
+        merged.topBanner[cle] = merged.topBanner[cle].replace(/22\s?000/g, '18 000')
+      }
+    }
+  }
+
   merged.settingsVersion = SETTINGS_VERSION
   return merged
 }
