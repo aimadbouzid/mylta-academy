@@ -105,7 +105,7 @@ router.post('/register', async (req, res, next) => {
       studentCard = saveStudentCard(parsed.data.studentCard)
       if (!studentCard) return res.status(400).json({ error: 'Ajoutez une photo lisible de votre carte étudiante.' })
     }
-    const data = { fullName, phone, city, profile: profileText, message: message || null, ip: String(req.ip || '').slice(0, 45), isStudent: !!studentRate, studentCard }
+    const data = { fullName, phone, city, profile: profileText, message: message || null, ip: String(req.ip || '').slice(0, 45), isStudent: !!studentRate, studentCard, abPrix: abPrix || null }
 
     // L'inscription est le moment qui compte pour la publicité. On la signale
     // à Meta depuis le serveur, sans attendre la réponse : le visiteur n'a pas
@@ -309,6 +309,29 @@ router.post('/join', async (req, res, next) => {
     if (err instanceof AccountExistsError) return res.status(409).json({ error: err.message })
     next(err)
   }
+})
+
+// Une visite de la page de réservation, pour le test A/B. Le site n'appelle
+// qu'une fois par visiteur : ce compteur est le dénominateur sans lequel on
+// saurait combien de gens se sont inscrits, mais pas quelle version
+// transforme le mieux.
+const VARIANTES = ['avec', 'sans']
+router.post('/vue', async (req, res) => {
+  const test = String(req.body?.test || 'prix').trim().slice(0, 20)
+  const variante = String(req.body?.variante || '').trim().slice(0, 20)
+  // Réponse vide dans tous les cas : un compteur ne doit jamais faire échouer
+  // une visite, ni dire à un robot ce qui a été retenu.
+  if (VARIANTES.includes(variante)) {
+    const jour = today()
+    try {
+      await prisma.abVisite.upsert({
+        where: { test_variante_jour: { test, variante, jour } },
+        create: { test, variante, jour, vues: 1 },
+        update: { vues: { increment: 1 } },
+      })
+    } catch { /* comptage perdu : sans importance pour le visiteur */ }
+  }
+  res.status(204).end()
 })
 
 module.exports = router

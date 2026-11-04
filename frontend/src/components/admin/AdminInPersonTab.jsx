@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
+import AdminAbTest from './AdminAbTest'
 import { Users, Plus, Trash2, Save, MessageCircle, Pencil, X, QrCode, KeyRound, Download, ChevronDown } from 'lucide-react'
 import QRCode from 'qrcode'
 import AdminContestPanel from './AdminContestPanel'
@@ -298,6 +299,8 @@ export default function AdminInPersonTab() {
           Section visible sur le site
         </label>
       </div>
+
+      <AdminAbTest />
 
       <AdminExpressPanel />
 

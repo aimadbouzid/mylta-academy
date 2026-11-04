@@ -445,11 +445,27 @@ model InPersonRegistration {
   formation   String         @default("") // "" = formation 3 jours ; "express" = formation d'un jour (samedi)
   day         String         @default("") // jour choisi (AAAA-MM-JJ) pour la formation d'un jour
   ip        String?
+  // Variante du test A/B vue au moment de l'inscription ("avec" / "sans").
+  abPrix    String?
   createdAt DateTime         @default(now())
   updatedAt DateTime         @updatedAt
 
   @@index([sessionId])
   @@index([formation, day])
+  @@index([abPrix])
+}
+
+// Visites par variante : un compteur par jour, pas une ligne par visiteur.
+// Sans ce dénominateur, on saurait combien de gens se sont inscrits, mais pas
+// quelle version transforme le mieux.
+model AbVisite {
+  id       Int    @id @default(autoincrement())
+  test     String
+  variante String
+  jour     String // AAAA-MM-JJ
+  vues     Int    @default(0)
+
+  @@unique([test, variante, jour])
 }
 
 model ContestEntry {

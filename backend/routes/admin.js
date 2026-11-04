@@ -753,6 +753,65 @@ router.get('/in-person', async (req, res, next) => {
   } catch (err) { next(err) }
 })
 
+// Résultats du test A/B sur l'affichage du prix. On renvoie les visites, les
+// inscriptions et le taux de transformation de chaque version : le nombre
+// d'inscriptions seul ne dit rien tant qu'on ignore combien de gens ont vu
+// chaque page.
+const NOMS_VARIANTES = { avec: 'Prix affiché', sans: 'Prix caché' }
+
+router.get('/in-person/ab', async (req, res, next) => {
+  try {
+    const [visites, inscriptions, sansVariante] = await Promise.all([
+      prisma.abVisite.findMany({ where: { test: 'prix' }, orderBy: { jour: 'asc' } }),
+      prisma.inPersonRegistration.findMany({
+        where: { abPrix: { not: null } },
+        select: { abPrix: true, createdAt: true },
+      }),
+      prisma.inPersonRegistration.count({ where: { abPrix: null } }),
+    ])
+
+    const parJour = new Map()
+    const ligneVide = (jour) => ({ jour, avec: { vues: 0, inscriptions: 0 }, sans: { vues: 0, inscriptions: 0 } })
+
+    for (const v of visites) {
+      if (!NOMS_VARIANTES[v.variante]) continue
+      const ligne = parJour.get(v.jour) || ligneVide(v.jour)
+      ligne[v.variante].vues += v.vues
+      parJour.set(v.jour, ligne)
+    }
+    for (const i of inscriptions) {
+      if (!NOMS_VARIANTES[i.abPrix]) continue
+      const jour = i.createdAt.toISOString().slice(0, 10)
+      const ligne = parJour.get(jour) || ligneVide(jour)
+      ligne[i.abPrix].inscriptions += 1
+      parJour.set(jour, ligne)
+    }
+
+    const totaux = { avec: { vues: 0, inscriptions: 0 }, sans: { vues: 0, inscriptions: 0 } }
+    for (const ligne of parJour.values()) {
+      for (const cle of ['avec', 'sans']) {
+        totaux[cle].vues += ligne[cle].vues
+        totaux[cle].inscriptions += ligne[cle].inscriptions
+      }
+    }
+
+    res.json({
+      test: 'prix',
+      variantes: ['avec', 'sans'].map(cle => ({
+        cle,
+        nom: NOMS_VARIANTES[cle],
+        vues: totaux[cle].vues,
+        inscriptions: totaux[cle].inscriptions,
+        // null tant que personne n'est passé : un taux sur zéro visite ne veut
+        // rien dire, et afficher 0 % serait un mensonge.
+        taux: totaux[cle].vues ? (totaux[cle].inscriptions / totaux[cle].vues) * 100 : null,
+      })),
+      jours: [...parJour.values()].sort((a, b) => a.jour.localeCompare(b.jour)),
+      sansVariante,
+    })
+  } catch (err) { next(err) }
+})
+
 router.post('/in-person/sessions', async (req, res, next) => {
   try {
     const parsed = sessionSchema.safeParse(req.body)
