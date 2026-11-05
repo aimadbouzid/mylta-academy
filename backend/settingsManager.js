@@ -113,7 +113,7 @@ const defaultSettings = {
   topBanner: {
     isActive: true,
     text: "Formation IA & Montage Vidéo à Béjaïa — 12, 13 et 14 novembre 2026",
-    text2: "Offre de lancement : 18 000 DA au lieu de 35 000 DA, places limitées",
+    text2: "Offre de lancement : 15 000 DA au lieu de 35 000 DA, places limitées",
     animation: "marquee",
     hasCountdown: true,
     countdownDate: "2026-11-12T08:30:00+01:00",
@@ -355,7 +355,7 @@ const defaultSettings = {
     // Phrase pensée pour un public algérien : le téléphone d'abord (c'est
     // l'outil que tout le monde a déjà), zéro jargon, zéro prérequis.
     subtitle: "Avec votre téléphone, sans ordinateur, sans expérience : 3 jours à Béjaïa pour filmer, monter et faire travailler l'IA comme un pro.",
-    price: 18000,   // prix de la formation (DA) — repris par défaut pour chaque session
+    price: 15000,   // prix de la formation (DA) — repris par défaut pour chaque session
     studentPrice: 0, // tarif étudiant (carte étudiante obligatoire) ; 0 = pas de tarif étudiant
     oldPrice: 35000, // prix barré affiché à côté (offre de lancement) ; 0 = pas de prix barré
     deposit: 5000,  // acompte obligatoire pour réserver sa place
@@ -539,7 +539,7 @@ function readSettingsFromDisk() {
 // les valeurs par défaut au premier démarrage, donc un simple changement de
 // défaut ne l'atteint pas). Appliqué une fois : le prochain enregistrement admin
 // écrit settingsVersion à jour.
-const SETTINGS_VERSION = 24
+const SETTINGS_VERSION = 25
 const OLD_BANNER_TEXTS = ["🚀 Promo exceptionnelle : -50% sur toutes les formations ! Inscrivez-vous vite."]
 
 function migrateSettings(parsed, merged) {
@@ -654,6 +654,18 @@ function migrateSettings(parsed, merged) {
     for (const cle of ['text', 'text2']) {
       if (typeof merged.topBanner[cle] === 'string') {
         merged.topBanner[cle] = merged.topBanner[cle].replace(/22\s?000/g, '18 000')
+      }
+    }
+  }
+
+  if ((parsed.settingsVersion || 1) < 25) {
+    // Nouveau prix : 15 000 DA. La bannière annonce le même, quel que soit le
+    // montant qu'elle portait avant.
+    merged.inPerson = { ...merged.inPerson, price: 15000 }
+    merged.topBanner = { ...merged.topBanner }
+    for (const cle of ['text', 'text2']) {
+      if (typeof merged.topBanner[cle] === 'string') {
+        merged.topBanner[cle] = merged.topBanner[cle].replace(/\b(18|22)\s?000\b/g, '15 000')
       }
     }
   }
