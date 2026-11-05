@@ -121,6 +121,8 @@ export default function InPersonPage() {
 
   // En-tête : les trois jours de la prochaine session ouverte, avec l'horaire.
   const headlineSession = selected || sessions?.find(x => x.seatsLeft > 0) || sessions?.[0]
+  const ville = (cfg?.venueAddress || '').split(',').pop().trim() || 'Béjaïa'
+
   const headline = (() => {
     if (!headlineSession?.date) return null
     const [y, m, d] = headlineSession.date.split('-').map(Number)
@@ -480,6 +482,9 @@ export default function InPersonPage() {
                           <p className="mt-1 text-[13px] text-academy-textMain/60">
                             {headline.days.map(d => d.num).join(' · ')} {headline.month}
                             {headline.hours ? ` · ${headline.hours}` : ''}
+                            {/* La ville, dès la première ligne : c'est la question
+                                qui vient avant le prix quand on arrive par une pub. */}
+                            {ville ? <> · <b className="text-academy-textMain">{ville}</b></> : null}
                           </p>
                         )}
                       </div>
