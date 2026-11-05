@@ -21,9 +21,11 @@ import { variante } from '../lib/abTest'
 // Le pack se vend en un bloc, mais on montre de quoi il est fait : deux
 // formations, chacune avec son prix. Leur somme est le prix barré ; le pack,
 // lui, reste à son prix unique.
+// Chaque formation doit coûter plus cher que le pack entier, sinon l'offre se
+// contredit : leur somme fait le prix barré, le pack se lit en dessous.
 const MODULES = [
-  { title: 'Filmer & publier avec son smartphone', price: 15000 },
-  { title: "Montage CapCut & l'IA au travail", price: 20000 },
+  { title: 'Filmer & publier avec son smartphone', price: 17000 },
+  { title: "Montage CapCut & l'IA au travail", price: 18000 },
 ]
 const MODULES_TOTAL = MODULES.reduce((t, m) => t + m.price, 0)
 
