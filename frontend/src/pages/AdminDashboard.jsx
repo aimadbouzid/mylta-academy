@@ -715,7 +715,6 @@ function SiteCMSConfigTab() {
   const [missionTitle, setMissionTitle] = useState('')
   const [missionSubtitle, setMissionSubtitle] = useState('')
   const [testimonials, setTestimonials] = useState([])
-  const [faq, setFaq] = useState([])
   const [introVideoUrl, setIntroVideoUrl] = useState('')
   const [learningPoints, setLearningPoints] = useState([
     "Maîtrise complète des concepts théoriques et pratiques du domaine.",
@@ -750,7 +749,6 @@ function SiteCMSConfigTab() {
         }
         if (data.welcome) setWelcome({ enabled: data.welcome.enabled !== false, title: data.welcome.title || '', subtitle: data.welcome.subtitle || '', notifyEnabled: data.welcome.notifyEnabled !== false })
         if (Array.isArray(data.testimonials)) setTestimonials(data.testimonials)
-        if (Array.isArray(data.faq)) setFaq(data.faq)
         if (Array.isArray(data.learningPoints)) setLearningPoints(data.learningPoints)
         if (data.topBanner) {
           setBannerIsActive(data.topBanner.isActive || false)
@@ -779,7 +777,6 @@ function SiteCMSConfigTab() {
         mission: { title: missionTitle, subtitle: missionSubtitle },
         welcome,
         testimonials,
-        faq,
         learningPoints,
         topBanner: {
           isActive: bannerIsActive,
@@ -822,22 +819,6 @@ function SiteCMSConfigTab() {
     })
   }
 
-  const handleAddFaq = () => {
-    setFaq(prev => [...prev, { question: 'Nouvelle question ?', answer: 'Réponse ici...' }])
-  }
-
-  const handleRemoveFaq = (index) => {
-    setFaq(prev => prev.filter((_, i) => i !== index))
-  }
-
-  const handleFaqChange = (index, field, value) => {
-    setFaq(prev => {
-      const updated = [...prev]
-      updated[index] = { ...updated[index], [field]: value }
-      return updated
-    })
-  }
-
   if (loading) return <div className="text-center py-16 text-neutral-500 font-medium">Chargement du CMS...</div>
 
   return (
@@ -847,7 +828,7 @@ function SiteCMSConfigTab() {
           <h2 className="font-display text-4xl font-bold text-white tracking-tight flex items-center gap-3 mb-2">
             <Globe className="text-white" size={32} /> Gestion du Site (CMS)
           </h2>
-          <p className="text-neutral-400 text-sm">Modifiez tous les textes, la mission, la FAQ et les avis clients de la plateforme.</p>
+          <p className="text-neutral-400 text-sm">Modifiez tous les textes, la mission et les avis clients de la plateforme.</p>
         </div>
         <button onClick={handleSave} disabled={saving} className="bg-white text-black shadow-lg shadow-white/20 px-6 py-3 text-sm font-bold flex items-center gap-2 disabled:opacity-50 hover:scale-105 transition-transform">
           <Save size={18} /> {saving ? 'Sauvegarde...' : 'Sauvegarder en direct'}
@@ -1027,29 +1008,6 @@ function SiteCMSConfigTab() {
         </div>
       </div>
 
-      {/* FAQ CMS */}
-      <div className="bg-neutral-900/40 backdrop-blur-xl border border-white/5 rounded-3xl p-8 space-y-6 shadow-2xl">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-white/5 pb-4">
-          <h3 className="font-display font-bold text-xl text-white flex items-center gap-3">
-            <HelpCircle className="text-blue-500" size={22} /> Foire Aux Questions (FAQ) ({faq.length})
-          </h3>
-          <button onClick={handleAddFaq} className="btn-primary shadow-lg shadow-blue-500/20 text-sm py-2 px-5 flex items-center gap-2 hover:scale-105 transition-transform">
-            <Plus size={16} /> Ajouter une question
-          </button>
-        </div>
-
-        <div className="space-y-6 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
-          {faq.map((item, idx) => (
-            <div key={idx} className="bg-black/20 border border-white/5 p-6 rounded-2xl space-y-4 relative group">
-              <button onClick={() => handleRemoveFaq(idx)} className="absolute top-4 right-4 text-red-400/50 hover:text-red-400 bg-red-500/5 hover:bg-red-500/20 p-2 rounded-lg transition-colors border border-transparent hover:border-red-500/20 opacity-0 group-hover:opacity-100">
-                <Trash2 size={16} />
-              </button>
-              <input value={item.question} onChange={e => handleFaqChange(idx, 'question', e.target.value)} className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-neutral-600 font-semibold focus:border-blue-500 outline-none transition-all pr-12" placeholder="Question" />
-              <textarea value={item.answer} onChange={e => handleFaqChange(idx, 'answer', e.target.value)} rows={2} className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-neutral-600 focus:border-blue-500 outline-none transition-all resize-none" placeholder="Réponse" />
-            </div>
-          ))}
-        </div>
-      </div>
     </div>
   )
 }
