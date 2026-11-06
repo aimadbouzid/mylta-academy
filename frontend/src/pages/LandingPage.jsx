@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import {
   ArrowRight, Star, CreditCard,
-  Users, BookOpen, TrendingUp, ChevronRight, Sparkles, ChevronDown, HelpCircle, ExternalLink,
+  Users, BookOpen, TrendingUp, ChevronRight, Sparkles, ChevronDown, ExternalLink,
   Instagram, Facebook, Download
 } from 'lucide-react'
 import { usePauseHorsEcran } from '../hooks/usePauseHorsEcran'
@@ -19,7 +19,6 @@ import Galerie from '../components/Galerie'
 import InstagramFeed from '../components/InstagramFeed'
 import Productions from '../components/Productions'
 import Clients from '../components/Clients'
-import AssistantFaq from '../components/AssistantFaq'
 import PresentationReel from '../components/PresentationReel'
 import CamdenPartner from '../components/CamdenPartner'
 import IntroVideoModal from '../components/IntroVideoModal'
@@ -44,15 +43,12 @@ export default function LandingPage() {
   const { courses, loading, error, refetch } = useCourses({})
   const [loginOpen,   setLoginOpen]   = useState(false)
   const [payModal,    setPayModal]    = useState(null)
-  const [openFaq,     setOpenFaq]     = useState(null)
   const [upcomingOpen, setUpcomingOpen] = useState(null)
   
   const landingData = t('landing_data') || {}
-  const faqItems = landingData.faq || []
   const heroPhrases = landingData.hero_phrases || []
 
   const [siteSettings, setSiteSettings] = useState({
-    faq: faqItems,
     hero: { phrases: heroPhrases, subtitle: '' }
   })
   const [randomTestimonials, setRandomTestimonials] = useState([])
@@ -375,26 +371,6 @@ export default function LandingPage() {
             <ReviewModal onClose={() => setReviewOpen(false)}
                          onPublished={(r) => { if (r.id) setSiteReviews(rs => [r, ...rs]); setReviewOpen(false); setReviewThanks(true) }} />
           )}
-        </section>
-
-        {/* FAQ SECTION */}
-        <section id="faq" className="scroll-mt-28 py-8 lg:py-12 border-t border-academy-border relative overflow-hidden">
-          <div className="absolute top-[20%] left-[-10%] w-[50vw] h-[50vw] rounded-full text-academy-primary/25 dark:text-academy-primary/[0.08] pointer-events-none select-none z-0 glow-blob" />
-          <div className="section-container relative z-10">
-            <div className="max-w-2xl mx-auto">
-            <div className="text-center mb-6">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-academy-primary/10 border border-academy-primary/20 mb-3">
-                <HelpCircle size={13} className="text-academy-primary" />
-                <span className="text-academy-primary text-xs font-bold tracking-wide uppercase">FAQ</span>
-              </div>
-              <h2 className="font-display font-bold text-xl sm:text-2xl text-academy-textMain">
-                {t('landing.faq')} <span className="text-academy-primary">— {t('landing.faq_answers')}</span>
-              </h2>
-            </div>
-
-            <AssistantFaq items={faqItems} whatsappNumber={siteSettings?.inPerson?.whatsappNumber || siteSettings?.coaching?.whatsappNumber} />
-            </div>
-          </div>
         </section>
 
         <Productions productions={siteSettings.productions} />
