@@ -205,6 +205,11 @@ app.use(helmet({
         'https://accounts.google.com',
         'https://graph.facebook.com', 'https://www.facebook.com',
       ],
+      // Quand l'évènement est trop gros pour une image, fbevents.js l'envoie
+      // par formulaire. Sans cette entrée, Helmet applique form-action 'self'
+      // et le navigateur bloque l'envoi : l'inscription n'arrive jamais à
+      // Meta, sans erreur visible ailleurs que dans la console.
+      formAction: ["'self'", 'https://www.facebook.com'],
       // Les hébergeurs vidéo doivent figurer ici : UniversalVideoPlayer affiche
       // chaque leçon dans une iframe (toutes les leçons actuelles sont YouTube).
       // Sans eux, la CSP bloque le lecteur en production alors que tout
