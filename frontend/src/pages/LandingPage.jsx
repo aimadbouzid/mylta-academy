@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import {
   ArrowRight, Star, CreditCard,
-  Users, BookOpen, TrendingUp, ChevronRight, Sparkles, ChevronDown, ExternalLink,
+  Users, BookOpen, TrendingUp, ChevronRight, Sparkles, ChevronDown,
   Instagram, Facebook, Download
 } from 'lucide-react'
 import { usePauseHorsEcran } from '../hooks/usePauseHorsEcran'
@@ -19,10 +19,8 @@ import Galerie from '../components/Galerie'
 import InstagramFeed from '../components/InstagramFeed'
 import Productions from '../components/Productions'
 import Clients from '../components/Clients'
-import PresentationReel from '../components/PresentationReel'
 import CamdenPartner from '../components/CamdenPartner'
 import IntroVideoModal from '../components/IntroVideoModal'
-import UniversalVideoPlayer from '../components/UniversalVideoPlayer'
 import Logo from '../components/Logo'
 import { LoadingGrid, ErrorState } from '../components/LoadingSkeleton'
 import { useSiteSettings } from '../context/SiteSettingsContext'
@@ -169,51 +167,6 @@ export default function LandingPage() {
                     </span>
                   ))}
                 </div>
-              </div>
-            </div>
-            
-            <div className="flex-1 w-full mt-4 lg:mt-0">
-              {/* Lecteur de présentation intégré au hero : visible et lisible
-                  directement, à côté du texte. Le flou est un halo décoratif
-                  POSÉ DERRIÈRE (même procédé que les blobs du hero), pas un
-                  flou du fond du lecteur lui-même.
-                  Affichage conditionnel : tant que les réglages ne sont pas
-                  chargés on n'affiche rien, plutôt que l'état vide du lecteur
-                  (dont le texte s'adresse à l'admin, pas au visiteur). */}
-              <div className="relative max-w-xl mx-auto lg:mr-0">
-                <div className="absolute -inset-8 rounded-full text-academy-primary/20 dark:text-academy-primary/[0.07] pointer-events-none select-none z-0 glow-blob" />
-                {siteSettings.inPerson?.enabled ? (
-                  <div className="relative z-10"><PresentationReel /></div>
-                ) : /^\/[^/].*\.(mp4|webm)$/i.test(siteSettings.introVideoUrl || '') ? (
-                  <video
-                    src={siteSettings.introVideoUrl}
-                    poster={siteSettings.introVideoUrl.replace(/\.(mp4|webm)$/i, '-poster.jpg')}
-                    autoPlay muted loop playsInline
-                    aria-label="Vidéo de présentation Mylta Academy"
-                    className="relative z-10 w-full aspect-video rounded-2xl shadow-soft-lg bg-black object-cover"
-                  />
-                ) : siteSettings.introVideoUrl && (
-                  <div className="relative z-10">
-                    <UniversalVideoPlayer
-                      url={siteSettings.introVideoUrl}
-                      title="Vidéo de présentation Mylta Academy"
-                      facade
-                    />
-                    {/* Repli : si le lecteur tiers ne charge pas (bloqueur de pub,
-                        navigateur intégré Instagram/TikTok, réseau filtré), le
-                        cadre reste noir et la vidéo est alors inaccessible
-                        depuis la page. Ce lien donne toujours une porte de sortie. */}
-                    <a
-                      href={siteSettings.introVideoUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-academy-textMain/55 hover:text-academy-primary transition-colors"
-                    >
-                      <ExternalLink size={13} />
-                      {t('landing.watch_video')}
-                    </a>
-                  </div>
-                )}
               </div>
             </div>
           </div>
