@@ -105,15 +105,12 @@ export default function LandingPage() {
           {/* Blobs de flou localisés pour l'accueil (Neutral/Blueish tones).
               En thème sombre leur opacité est fortement réduite : ces teintes
               pastel, pensées pour un fond clair, voilaient le noir de gris. */}
-          <div className="absolute top-[5%] left-[-15%] w-[60vw] h-[60vw] rounded-full text-blue-400/10 dark:text-blue-400/[0.04] pointer-events-none select-none z-0 glow-blob" />
-          <div className="absolute bottom-[0%] right-[-15%] w-[55vw] h-[55vw] rounded-full text-indigo-400/10 dark:text-indigo-400/[0.04] pointer-events-none select-none z-0 glow-blob" />
-          <div className="absolute top-[40%] right-[10%] w-[40vw] h-[40vw] rounded-full text-gray-300/20 dark:text-gray-300/[0.03] pointer-events-none select-none z-0 glow-blob" />
           
           <div className="section-container relative z-10 flex flex-col lg:flex-row items-center gap-6 lg:gap-10">
             <div className="flex-1 text-center lg:text-left">
 
               {/* Titre Principal Pro */}
-              <h1 className="font-display text-[26px] sm:text-5xl lg:text-6xl font-black leading-[1.15] mb-3 lg:mb-6 text-academy-textMain tracking-tight">
+              <h1 className="font-display text-[26px] sm:text-4xl lg:text-5xl font-black leading-[1.15] mb-3 lg:mb-6 text-academy-textMain tracking-tight">
                 {landingData.hero_title ? (
                   <>
                     {landingData.hero_title.split(' ').slice(0, -1).join(' ')}{' '}
@@ -227,8 +224,6 @@ export default function LandingPage() {
 
         {/* FORMATIONS */}
         <section className="pt-2 lg:pt-4 pb-8 lg:pb-12 border-t border-academy-border relative overflow-hidden">
-          <div className="absolute top-[10%] left-[-10%] w-[45vw] h-[45vw] rounded-full text-academy-primary/15 dark:text-academy-primary/[0.06] pointer-events-none select-none z-0 glow-blob" />
-          <div className="absolute bottom-[10%] right-[-10%] w-[40vw] h-[40vw] rounded-full text-blue-300/20 dark:text-blue-300/[0.05] pointer-events-none select-none z-0 glow-blob" />
           <div className="section-container relative z-10">
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
               <div>
@@ -265,7 +260,6 @@ export default function LandingPage() {
 
         {/* TESTIMONIALS */}
         <section id="testimonials" className="py-8 lg:py-12 bg-academy-surfaceDark/40 border-t border-academy-border overflow-hidden relative">
-          <div className="absolute top-[10%] right-[-10%] w-[50vw] h-[50vw] rounded-full text-indigo-400/20 dark:text-indigo-400/[0.05] pointer-events-none select-none z-0 glow-blob" />
           <div className="section-container text-center mb-12 relative z-10">
             <h2 className="font-display font-black text-3xl sm:text-4xl text-academy-textMain mb-3">
               {t('landing.students_reviews')} <span className="text-academy-primary">{t('landing.students')}</span>
