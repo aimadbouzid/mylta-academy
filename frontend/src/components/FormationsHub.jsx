@@ -113,7 +113,7 @@ export default function FormationsHub({ coaching, inPerson, express }) {
           image="/cards/presentiel.jpg"
           overlay="bg-gradient-to-r from-white via-white/85 to-transparent dark:from-academy-surfaceDark dark:via-academy-surfaceDark/85"
           title={inPerson.title || 'Formation en présentiel'}
-          facts={[['Lieu', 'Camden', MapPin], ['Prix', inPerson.price ? money(inPerson.price) : '—', Coins]]}
+          facts={[['Lieu', 'Béjaïa', MapPin], ['Prix', inPerson.price ? money(inPerson.price) : '—', Coins]]}
           next={session ? `${range3(session.date)}${session.startTime ? (Number(session.startTime.slice(0, 2)) < 12 ? ' · matin' : ' · soir') : ''}` : inPerson.datesNotice ? 'dates bientôt annoncées' : null}
           to="/coaching-presentiel" cta="Voir les dates" />
   )

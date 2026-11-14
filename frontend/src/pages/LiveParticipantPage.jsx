@@ -47,6 +47,7 @@ export default function LiveParticipantPage() {
   const [score, setScore] = useState(0)
   const [answered, setAnswered] = useState(false)
   const [freeText, setFreeText] = useState('')
+  const [selectedOption, setSelectedOption] = useState(null)
   const socketRef = useRef(null)
 
   useEffect(() => {
@@ -70,7 +71,7 @@ export default function LiveParticipantPage() {
     const socket = io(`${apiOrigin()}/live`, { path: '/socket.io', auth: { token } })
     socketRef.current = socket
     socket.on('live:status', ({ status: s }) => setStatus(s))
-    socket.on('live:question', ({ question: q }) => { setQuestion(q); setAnswered(false); setFreeText('') })
+    socket.on('live:question', ({ question: q }) => { setQuestion(q); setAnswered(false); setFreeText(''); setSelectedOption(null) })
     return () => socket.disconnect()
   }, [token, sessionId])
 
@@ -93,9 +94,10 @@ export default function LiveParticipantPage() {
   const vote = async (option) => {
     if (!question || answered) return
     setAnswered(true)
+    setSelectedOption(option)
     try {
       await live.post(`/questions/${question.id}/vote`, { option }, { headers: { Authorization: `Bearer ${token}` } })
-    } catch { setAnswered(false) }
+    } catch { setAnswered(false); setSelectedOption(null) }
   }
 
   const answer = async (e) => {
@@ -109,24 +111,24 @@ export default function LiveParticipantPage() {
   }
 
   if (error && !publicInfo) {
-    return <div className="min-h-screen flex items-center justify-center p-6 text-center"><p className="text-academy-textMain/60">{error}</p></div>
+    return <div className="min-h-screen flex items-center justify-center p-6 text-center bg-academy-surface"><p className="text-academy-textMain/60">{error}</p></div>
   }
   if (!publicInfo) {
-    return <div className="min-h-screen flex items-center justify-center"><Loader2 className="animate-spin text-academy-primary" /></div>
+    return <div className="min-h-screen flex items-center justify-center bg-academy-surface"><Loader2 className="animate-spin text-academy-primary" /></div>
   }
 
   if (!token) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-6 bg-academy-surface">
-        <form onSubmit={join} className="w-full max-w-sm rounded-2xl border border-academy-border bg-white p-6 space-y-4">
+      <div className="min-h-screen flex items-center justify-center p-6 bg-academy-surface text-academy-textMain">
+        <form onSubmit={join} className="w-full max-w-sm rounded-2xl border border-academy-border bg-white dark:bg-academy-surfaceDark p-6 space-y-4 animate-fade-up">
           <h1 className="font-display font-black text-xl text-center">{publicInfo.title}</h1>
           {publicInfo.description && <p className="text-[13px] text-center text-academy-textMain/60">{publicInfo.description}</p>}
           {error && <p className="text-[13px] text-red-600 text-center">{error}</p>}
-          <input required placeholder="Votre prénom" className="w-full rounded-xl border border-academy-border px-3 py-2.5 text-[14px]"
+          <input required placeholder="Votre prénom" className="w-full rounded-xl border border-academy-border bg-white dark:bg-academy-surfaceDark px-3 py-2.5 text-[14px] outline-none focus:border-academy-primary"
                  value={form.displayName} onChange={e => setForm(f => ({ ...f, displayName: e.target.value }))} />
-          <input required type="email" placeholder="Votre e-mail" className="w-full rounded-xl border border-academy-border px-3 py-2.5 text-[14px]"
+          <input required type="email" placeholder="Votre e-mail" className="w-full rounded-xl border border-academy-border bg-white dark:bg-academy-surfaceDark px-3 py-2.5 text-[14px] outline-none focus:border-academy-primary"
                  value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} />
-          <button type="submit" disabled={busy} className="w-full rounded-xl bg-academy-primary text-white py-3 font-black disabled:opacity-50">
+          <button type="submit" disabled={busy} className="w-full rounded-xl bg-academy-primary text-white py-3 font-black disabled:opacity-50 transition-opacity">
             {busy ? 'Connexion…' : 'Rejoindre'}
           </button>
         </form>
@@ -135,45 +137,54 @@ export default function LiveParticipantPage() {
   }
 
   return (
-    <div className="min-h-screen bg-academy-surface p-5">
+    <div className="min-h-screen bg-academy-surface text-academy-textMain p-5">
       <div className="max-w-md mx-auto">
         <p className="flex items-center justify-between text-[13px] font-bold text-academy-textMain/60 mb-4">
-          <span>{publicInfo.title}</span>
-          <span className="inline-flex items-center gap-1"><Trophy size={14} /> {score} pts</span>
+          <span className="truncate">{publicInfo.title}</span>
+          <span className="inline-flex items-center gap-1 shrink-0"><Trophy size={14} className="text-amber-500" /> {score} pts</span>
         </p>
 
         {status !== 'live' && (
-          <p className="text-center text-academy-textMain/60 mt-10">
+          <p className="text-center text-academy-textMain/60 mt-10 animate-fade-up">
             {status === 'draft' ? 'En attente du démarrage par l\'organisateur…' : 'Cette session est terminée. Merci d\'avoir participé !'}
           </p>
         )}
 
         {status === 'live' && !question && (
-          <p className="text-center text-academy-textMain/60 mt-10">En attente de la prochaine question…</p>
+          <p className="text-center text-academy-textMain/60 mt-10 flex items-center justify-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-academy-primary animate-ping" /> En attente de la prochaine question…
+          </p>
         )}
 
         {status === 'live' && question && (
-          <div className="rounded-2xl border border-academy-border bg-white p-5">
+          <div key={question.id} className="rounded-2xl border border-academy-border bg-white dark:bg-academy-surfaceDark p-5 animate-fade-up">
             <p className="font-bold text-[16px] mb-4">{question.text}</p>
 
             {question.type !== 'freeform' ? (
               <div className="space-y-2">
-                {question.options.map(opt => (
-                  <button key={opt} disabled={answered} onClick={() => vote(opt)}
-                          className="w-full text-left rounded-xl border border-academy-border px-4 py-3 text-[14px] font-semibold disabled:opacity-50 hover:border-academy-primary transition-colors">
-                    {opt}
-                  </button>
-                ))}
+                {question.options.map(opt => {
+                  const isSelected = selectedOption === opt
+                  return (
+                    <button key={opt} disabled={answered} onClick={() => vote(opt)}
+                            className={`w-full text-left rounded-xl border px-4 py-3 text-[14px] font-semibold transition-colors disabled:cursor-default ${
+                              isSelected
+                                ? 'border-academy-primary bg-academy-primary/10 text-academy-primary'
+                                : 'border-academy-border hover:border-academy-primary disabled:opacity-50'
+                            }`}>
+                      {opt}
+                    </button>
+                  )
+                })}
               </div>
             ) : (
               <form onSubmit={answer} className="space-y-2">
-                <input disabled={answered} className="w-full rounded-xl border border-academy-border px-3 py-2.5 text-[14px]"
+                <input disabled={answered} className="w-full rounded-xl border border-academy-border bg-white dark:bg-academy-surfaceDark px-3 py-2.5 text-[14px] outline-none focus:border-academy-primary"
                        value={freeText} onChange={e => setFreeText(e.target.value)} placeholder="Votre réponse" />
-                <button type="submit" disabled={answered} className="w-full rounded-xl bg-academy-primary text-white py-2.5 font-bold disabled:opacity-50">Envoyer</button>
+                <button type="submit" disabled={answered} className="w-full rounded-xl bg-academy-primary text-white py-2.5 font-bold disabled:opacity-50 transition-opacity">Envoyer</button>
               </form>
             )}
 
-            {answered && <p className="mt-3 flex items-center gap-1.5 text-[13px] font-bold text-green-700"><CheckCircle2 size={15} /> Réponse envoyée</p>}
+            {answered && <p className="mt-3 flex items-center gap-1.5 text-[13px] font-bold text-green-600 animate-fade-up"><CheckCircle2 size={15} /> Réponse envoyée</p>}
           </div>
         )}
       </div>

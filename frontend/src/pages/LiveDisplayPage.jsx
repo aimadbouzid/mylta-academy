@@ -68,17 +68,17 @@ export default function LiveDisplayPage() {
         <div className="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-10">
           <div className="lg:col-span-2 flex flex-col justify-center">
             {question ? (
-              <>
+              <div key={question.id} className="animate-fade-up">
                 <p className="text-4xl font-black mb-8">{question.text}</p>
                 {question.options?.length > 0 && (
                   <div className="space-y-3">
-                    {question.options.map(opt => {
+                    {question.options.map((opt, i) => {
                       const total = Object.values(tally).reduce((a, b) => a + b, 0) || 1
                       const count = tally[opt] || 0
                       const pct = Math.round((count / total) * 100)
                       return (
-                        <div key={opt} className="relative rounded-xl bg-white/10 overflow-hidden h-14">
-                          <div className="absolute inset-y-0 left-0 bg-academy-primary/70 transition-all duration-500" style={{ width: `${pct}%` }} />
+                        <div key={opt} className="relative rounded-xl bg-white/10 overflow-hidden h-14 animate-fade-up" style={{ animationDelay: `${i * 80}ms` }}>
+                          <div className="absolute inset-y-0 left-0 bg-academy-primary/70 transition-all duration-700 ease-out" style={{ width: `${pct}%` }} />
                           <div className="relative h-full flex items-center justify-between px-5 text-xl font-bold">
                             <span>{opt}</span><span>{count} ({pct}%)</span>
                           </div>
@@ -87,9 +87,11 @@ export default function LiveDisplayPage() {
                     })}
                   </div>
                 )}
-              </>
+              </div>
             ) : (
-              <p className="text-2xl opacity-60">En attente de la prochaine question…</p>
+              <p className="text-2xl opacity-60 flex items-center gap-3">
+                <span className="w-3 h-3 rounded-full bg-academy-primary animate-ping" /> En attente de la prochaine question…
+              </p>
             )}
           </div>
 
@@ -97,7 +99,7 @@ export default function LiveDisplayPage() {
             <p className="flex items-center gap-2 text-xl font-black mb-4 opacity-80"><Trophy size={22} /> Classement</p>
             <ol className="space-y-2">
               {leaderboard.map((p, i) => (
-                <li key={i} className="flex items-center justify-between rounded-lg bg-white/5 px-4 py-2.5">
+                <li key={p.displayName + i} className="flex items-center justify-between rounded-lg bg-white/5 px-4 py-2.5 animate-fade-up" style={{ animationDelay: `${i * 60}ms` }}>
                   <span className="font-bold">#{i + 1} {p.displayName}</span>
                   <span className="font-black text-academy-primary">{p.score}</span>
                 </li>

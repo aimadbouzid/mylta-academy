@@ -84,7 +84,7 @@ export default function FormationAd({ inPerson }) {
                  style={{ ...TITRE, borderTop: `1.5px solid ${ENCRE}` }}>
                 {hour(session.startTime)} – {hour(session.endTime)}
                 <span className="mx-2 opacity-40">·</span>
-                {session.place || 'Camden Int. Institute'}
+                {session.place || 'Béjaïa'}
               </p>
             </div>
 

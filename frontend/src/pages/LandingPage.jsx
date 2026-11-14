@@ -19,7 +19,6 @@ import Galerie from '../components/Galerie'
 import InstagramFeed from '../components/InstagramFeed'
 import Productions from '../components/Productions'
 import Clients from '../components/Clients'
-import CamdenPartner from '../components/CamdenPartner'
 import IntroVideoModal from '../components/IntroVideoModal'
 import Logo from '../components/Logo'
 import { LoadingGrid, ErrorState } from '../components/LoadingSkeleton'
@@ -220,7 +219,6 @@ export default function LandingPage() {
         <InstagramFeed instagram={siteSettings.instagram} />
 
 
-        <CamdenPartner />
 
         {/* FORMATIONS */}
         <section className="pt-2 lg:pt-4 pb-8 lg:pb-12 border-t border-academy-border relative overflow-hidden">
