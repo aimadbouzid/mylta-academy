@@ -635,6 +635,47 @@ if (isProd) {
           }
         }
 
+        // Page de la formation présentielle. C'est le lien qu'on partage le
+        // plus, en message privé — et c'est celui qui recevait jusqu'ici la
+        // présentation générale du site : « plateforme e-learning de
+        // référence », là où le destinataire attend une date et un prix.
+        if (req.path === '/coaching-presentiel') {
+          const cfg = getSettings().inPerson || {}
+          const aujourdhui = new Date().toISOString().slice(0, 10)
+          const prochaine = await prisma.inPersonSession.findFirst({
+            where: { isOpen: true, date: { gte: aujourdhui } },
+            orderBy: { date: 'asc' },
+            select: { date: true },
+          })
+
+          // « Du 12 au 14 novembre », et le mois des deux côtés quand les trois
+          // jours chevauchent deux mois.
+          const periode = (iso) => {
+            const [a, m, j] = iso.split('-').map(Number)
+            const debut = new Date(Date.UTC(a, m - 1, j))
+            const fin = new Date(Date.UTC(a, m - 1, j + 2))
+            const mois = (dt) => dt.toLocaleDateString('fr-FR', { month: 'long', timeZone: 'UTC' })
+            const jour = (dt) => (dt.getUTCDate() === 1 ? '1er' : String(dt.getUTCDate()))
+            return mois(debut) === mois(fin)
+              ? `Du ${jour(debut)} au ${jour(fin)} ${mois(fin)}`
+              : `Du ${jour(debut)} ${mois(debut)} au ${jour(fin)} ${mois(fin)}`
+          }
+
+          const ville = (cfg.venueAddress || '').split(',').pop().trim() || 'Béjaïa'
+          const somme = (n) => Number(n).toLocaleString('fr-FR').replace(/\u202f|\u00a0/g, ' ')
+          const prix = Number(cfg.price) || 0
+          const acompte = Number(cfg.deposit) || 0
+
+          title = `${cfg.title || 'Formation présentielle'} — 3 jours à ${ville}`
+          description = [
+            "Filmer, monter et faire travailler l'IA, uniquement au smartphone.",
+            prochaine ? `${periode(prochaine.date)}.` : 'Prochaines dates bientôt annoncées.',
+            prix ? `${somme(prix)} DA${acompte ? `, ${somme(acompte)} DA d'acompte pour réserver` : ''}.` : '',
+            'Débutants acceptés, petit groupe, certificat.',
+          ].filter(Boolean).join(' ')
+          image = `${SITE}/og-formation.png`
+        }
+
         const escapeHtml = (unsafe) => {
           return String(unsafe)
             .replace(/&/g, "&amp;")
