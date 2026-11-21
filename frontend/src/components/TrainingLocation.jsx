@@ -3,12 +3,10 @@ import { MapPin, Phone, Navigation, Map as MapIcon, Car, Footprints } from 'luci
 import ReelPlayer from './ReelPlayer'
 import { useSiteSettings } from '../context/SiteSettingsContext'
 
-// Lieu de la formation présentielle (partenaire Camden International Institute,
-// Béjaïa). Le nom et l'adresse sont modifiables en administration ; les valeurs
-// ci-dessous servent de repli, et les coordonnées GPS restent ici.
+// Lieu de la formation présentielle, à Béjaïa. L'adresse est modifiable en
+// administration ; la valeur ci-dessous sert de repli, et les coordonnées GPS
+// restent ici.
 const PLACE = {
-  partner: 'Camden School',
-  logo: '/camden-logo.jpg',
   address: 'Cité Douanière Bir Slam, Promo Ceram Bt D1 W, Béjaïa',
   from: { label: 'Gare routière de Béjaïa', lat: 36.7371759, lng: 5.0636466 },
   to: { lat: 36.7294694, lng: 5.0566702 },
@@ -22,7 +20,7 @@ const ROUTES = {
     steps: [
       'Sortez de la gare routière et prenez la route N12 (1,5 km).',
       'Tournez à droite sur le boulevard Krim Belkacem.',
-      'Roulez 600 m : Camden est sur votre droite.',
+      'Roulez 600 m : la salle est sur votre droite.',
     ],
     mode: 'driving',
   },
@@ -32,7 +30,7 @@ const ROUTES = {
     steps: [
       'Sortez de la gare routière et longez la N12 vers le sud.',
       'Prenez la rue Rabia Ali à droite.',
-      'Continuez tout droit jusqu\'à Camden, à côté du boulevard Krim Belkacem.',
+      'Continuez tout droit jusqu\'à la salle, à côté du boulevard Krim Belkacem.',
     ],
     mode: 'walking',
   },
@@ -53,7 +51,6 @@ export default function TrainingLocation() {
   const [routeId, setRouteId] = useState('car')
   const [showMap, setShowMap] = useState(false)
   const route = ROUTES[routeId]
-  const partner = settings?.inPerson?.venue || PLACE.partner
   const address = settings?.inPerson?.venueAddress || PLACE.address
   const whatsapp = settings?.inPerson?.whatsappNumber || settings?.coaching?.whatsappNumber
 
@@ -61,18 +58,7 @@ export default function TrainingLocation() {
     <section className="bg-white border border-academy-border rounded-2xl p-5 sm:p-6 shadow-sm space-y-5">
       <div>
         <p className="text-xs font-black uppercase tracking-wider text-academy-primary mb-1">Lieu de la formation</p>
-        <h2 className="font-display font-black text-xl leading-tight">À Béjaïa, chez notre partenaire</h2>
-      </div>
-
-      {/* Partenariat */}
-      <div className="flex items-center gap-3 rounded-xl border border-academy-border bg-academy-surface/60 p-3">
-        <img src={PLACE.logo} alt={partner} width="84" height="56" loading="lazy"
-             className="w-[84px] h-14 object-contain rounded-lg bg-white p-1 shrink-0" />
-        <div className="min-w-0">
-          <p className="text-[11px] font-bold uppercase tracking-wide text-academy-textMain/50">En partenariat avec</p>
-          <p className="font-bold leading-snug">{partner}</p>
-          <p className="text-xs text-academy-textMain/60">Mylta Academy × Camden</p>
-        </div>
+        <h2 className="font-display font-black text-xl leading-tight">Où ça se passe, à Béjaïa</h2>
       </div>
 
       <div className="space-y-1.5 text-sm">
@@ -104,7 +90,7 @@ export default function TrainingLocation() {
 
         <div className="relative rounded-xl overflow-hidden border border-academy-border bg-[#f4f1ea]">
           <svg viewBox="0 0 360 230" className="block w-full h-auto" role="img"
-               aria-label={`Trajet (${route.label.toLowerCase()}) de la gare routière de Béjaïa à Camden : ${route.time}, ${route.dist}`}>
+               aria-label={`Trajet (${route.label.toLowerCase()}) de la gare routière de Béjaïa à la salle : ${route.time}, ${route.dist}`}>
             <style>{`
               .tl-route { stroke-dasharray: 420; stroke-dashoffset: 420; animation: tl-draw 2.4s ease-out forwards; }
               @keyframes tl-draw { to { stroke-dashoffset: 0; } }
@@ -135,11 +121,11 @@ export default function TrainingLocation() {
             <rect x="196" y="12" width="78" height="17" rx="8.5" fill="#fff" />
             <text x="235" y="24" fontSize="9" fontWeight="700" fill="#1f2937" textAnchor="middle">Gare routière</text>
 
-            {/* Camden */}
+            {/* La salle */}
             <path d="M146 136 C146 136 133 121 133 112 A13 13 0 0 1 159 112 C159 121 146 136 146 136 Z" fill="#b91c1c" stroke="#fff" strokeWidth="2" />
             <circle cx="146" cy="112" r="4.5" fill="#fff" />
             <rect x="42" y="102" width="82" height="20" rx="10" fill="#fff" stroke="#b91c1c" strokeWidth="1.2" />
-            <text x="83" y="115.5" fontSize="10" fontWeight="800" fill="#b91c1c" textAnchor="middle">Camden</text>
+            <text x="83" y="115.5" fontSize="10" fontWeight="800" fill="#b91c1c" textAnchor="middle">La salle</text>
           </svg>
           <span className="absolute bottom-2 right-2 rounded-full bg-white/95 px-2.5 py-1 text-xs font-bold shadow-sm">
             {route.time} · {route.dist}
@@ -157,7 +143,7 @@ export default function TrainingLocation() {
       </div>
 
       {showMap && (
-        <iframe title="Carte : Camden International Institute, Béjaïa" loading="lazy" referrerPolicy="no-referrer-when-downgrade"
+        <iframe title="Carte : lieu de la formation, Béjaïa" loading="lazy" referrerPolicy="no-referrer-when-downgrade"
                 src={`https://www.google.com/maps?q=${PLACE.to.lat},${PLACE.to.lng}&z=16&output=embed`}
                 className="w-full h-64 rounded-xl border border-academy-border" />
       )}

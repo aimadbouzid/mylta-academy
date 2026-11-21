@@ -246,8 +246,7 @@ export default function ClubPage() {
               </p>
               <p className="mt-3 text-[14px] text-academy-textMain/65 leading-relaxed">
                 Je forme depuis Béjaïa à la vidéo au smartphone, à l'IA et au web. Plus de 170 personnes
-                sont déjà passées par mes formations, en ligne et en présentiel, et Mylta Academy est
-                partenaire du Camden International Institute. Ces trois séances au club scientifique
+                sont déjà passées par mes formations, en ligne et en présentiel. Ces trois séances au club scientifique
                 reprennent, gratuitement, ce que j'enseigne le reste de l'année.
               </p>
             </div>

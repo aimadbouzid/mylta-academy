@@ -378,7 +378,7 @@ const defaultSettings = {
     ],
     // Numéro WhatsApp des inscriptions : celui de l'académie, pas celui du lieu.
     whatsappNumber: '213795103743',
-    venue: 'Camden School',
+    venue: '',
     venueAddress: 'Cité Douanière Bir Slam, Promo Ceram Bt D1 W, Béjaïa',
     // Étiquettes très courtes, en grille de 3 en haut de la page.
     infos: [
@@ -539,7 +539,7 @@ function readSettingsFromDisk() {
 // les valeurs par défaut au premier démarrage, donc un simple changement de
 // défaut ne l'atteint pas). Appliqué une fois : le prochain enregistrement admin
 // écrit settingsVersion à jour.
-const SETTINGS_VERSION = 25
+const SETTINGS_VERSION = 26
 const OLD_BANNER_TEXTS = ["🚀 Promo exceptionnelle : -50% sur toutes les formations ! Inscrivez-vous vite."]
 
 function migrateSettings(parsed, merged) {
@@ -666,6 +666,20 @@ function migrateSettings(parsed, merged) {
     for (const cle of ['text', 'text2']) {
       if (typeof merged.topBanner[cle] === 'string') {
         merged.topBanner[cle] = merged.topBanner[cle].replace(/\b(18|22)\s?000\b/g, '15 000')
+      }
+    }
+  }
+
+  if ((parsed.settingsVersion || 1) < 26) {
+    // Le partenaire est retiré du site : son nom ne doit plus sortir des
+    // réglages non plus, sinon il réapparaît là où le code se rabat dessus.
+    if (/camden/i.test(merged.inPerson?.venue || '')) {
+      merged.inPerson = { ...merged.inPerson, venue: '' }
+    }
+    for (const cle of ['text', 'text2']) {
+      if (typeof merged.topBanner?.[cle] === 'string' && /camden/i.test(merged.topBanner[cle])) {
+        merged.topBanner = { ...merged.topBanner }
+        merged.topBanner[cle] = merged.topBanner[cle].replace(/\s*(chez|au)\s+Camden[^,.—]*/gi, '').trim()
       }
     }
   }
