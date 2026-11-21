@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import {
   ArrowRight, Star, CreditCard,
   Users, BookOpen, TrendingUp, ChevronRight, Sparkles, ChevronDown,
-  Instagram, Facebook, Download
+  Instagram, Facebook, Download, Brain, Clapperboard, Globe
 } from 'lucide-react'
 import { usePauseHorsEcran } from '../hooks/usePauseHorsEcran'
 import Navbar from '../components/Navbar'
@@ -174,6 +174,40 @@ export default function LandingPage() {
         </section>
 
         <FormationAd inPerson={siteSettings.inPerson} />
+
+        {/* L'accueil ne montrait que de la vidéo : galeries d'étudiants,
+            productions, Instagram. Un visiteur en repartait convaincu que
+            l'académie ne fait que du montage. Voilà les trois domaines
+            réellement enseignés, dits une fois, simplement. */}
+        <section className="section-container pt-6">
+          <h2 className="font-display font-black text-2xl sm:text-3xl tracking-tight text-academy-textMain">
+            Ce qu'on enseigne
+          </h2>
+          <p className="text-academy-textMain/60 text-sm mt-1">
+            Trois domaines, la même méthode : on pratique, on repart avec quelque chose qui marche.
+          </p>
+          <div className="mt-5 grid gap-3 sm:grid-cols-3">
+            {[
+              [Brain, "Intelligence artificielle",
+               "Les outils d'IA au quotidien et au travail : écrire, chercher, organiser, produire. Du prompt qui donne un vrai résultat, pas des démos."],
+              [Clapperboard, "Vidéo & smartphone",
+               "Filmer, monter, publier — avec le téléphone qu'on a déjà. CapCut, cadrage, son, et ce qui fait qu'une vidéo est regardée jusqu'au bout."],
+              [Globe, "Web & sites avec l'IA",
+               "Créer son site et ses outils sans savoir coder, en se faisant assister par l'IA. De l'idée à la page en ligne."],
+            ].map(([Icone, titre, texte]) => (
+              <div key={titre}
+                   className="rounded-xl border border-academy-border bg-white dark:bg-academy-surfaceDark p-4 sm:p-5">
+                <Icone size={20} className="text-academy-primary" />
+                <h3 className="mt-2.5 font-display font-bold text-base sm:text-lg text-academy-textMain leading-tight">
+                  {titre}
+                </h3>
+                <p className="mt-1.5 text-[13px] leading-relaxed text-academy-textMain/65">
+                  {texte}
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
 
         <Clients />
 

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Search, SlidersHorizontal, BookOpen, X } from 'lucide-react'
+import { Search, SlidersHorizontal, BookOpen, X, ChevronRight } from 'lucide-react'
 import { Link, useSearchParams } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import CourseCard from '../components/CourseCard'
@@ -52,6 +52,12 @@ export default function CoursesPage() {
 
   const hasFilters = category !== 'Tous' || level !== 'Tous' || search
 
+  // Rien n'est publié dans le catalogue en ligne. La page affichait alors
+  // « Aucune formation disponible » au-dessus d'une recherche et de filtres
+  // qui ne filtrent rien : un cul-de-sac. On annonce plutôt la formation
+  // qui, elle, est réellement en vente.
+  const catalogueVide = !loading && !error && total === 0 && !hasFilters
+
   const handleAccessClick = (course) => {
     if (!isAuthenticated) return setLoginOpen(true)
     setPayModal(course)
@@ -82,13 +88,43 @@ export default function CoursesPage() {
               {t('courses_page.title_all')} <span className="text-academy-primary">{t('courses_page.title_formations')}</span>
             </h1>
             <p className="text-academy-textMain/60 font-medium text-sm sm:text-base">
-              {loading ? t('courses_page.searching') : (total > 0 ? (total === 1 ? t('courses_page.found_single') : t('courses_page.found_multiple').replace('{total}', total)) : t('courses_page.found_none'))}
+              {loading
+                ? t('courses_page.searching')
+                : total > 0
+                  ? (total === 1 ? t('courses_page.found_single') : t('courses_page.found_multiple').replace('{total}', total))
+                  : catalogueVide
+                    ? 'Les cours en ligne arrivent. En attendant, la formation se passe en présentiel, à Béjaïa.'
+                    : t('courses_page.found_none')}
             </p>
           </div>
         </div>
 
         <div className="section-container py-3 lg:py-10">
+
+          {/* La formation réellement en vente, pour que la page ne soit pas
+              un cul-de-sac tant que le catalogue est vide. */}
+          {catalogueVide && settings?.inPerson?.enabled && (
+            <Link to="/coaching-presentiel"
+                  className="group flex items-center justify-between gap-4 mb-6 lg:mb-10 rounded-2xl border border-academy-border bg-white dark:bg-academy-surfaceDark px-5 py-4 hover:border-academy-primary/50 transition-colors">
+              <span className="min-w-0">
+                <span className="block text-[11px] font-bold uppercase tracking-[0.18em] text-academy-primary">
+                  En présentiel · Béjaïa
+                </span>
+                <span className="block font-display font-black text-lg sm:text-2xl leading-tight text-academy-textMain mt-1">
+                  {settings.inPerson.title || 'Formation IA & Montage Vidéo'}
+                </span>
+                <span className="block text-sm text-academy-textMain/60 mt-1">
+                  3 jours, en petit groupe, tout au smartphone
+                </span>
+              </span>
+              <span className="shrink-0 inline-flex items-center gap-1.5 rounded-xl bg-academy-primary text-academy-onPrimary px-4 py-2.5 text-sm font-bold">
+                Voir <ChevronRight size={16} className="group-hover:translate-x-0.5 transition-transform" />
+              </span>
+            </Link>
+          )}
+
           {/* ── Barre de recherche + filtres ── */}
+          {!catalogueVide && (<>
           <div className="flex flex-col sm:flex-row gap-3 mb-4 lg:mb-8">
             {/* Recherche */}
             <form onSubmit={handleSearch} className="flex-1 relative">
@@ -148,6 +184,7 @@ export default function CoursesPage() {
               </button>
             )}
           </div>
+          </>)}
 
           {/* ── Grille de cours ── */}
           {loading && <LoadingGrid count={6} />}

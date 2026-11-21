@@ -141,8 +141,13 @@ export default function TopBanner() {
               to={config.linkUrl}
               className="pointer-events-auto inline-flex items-center gap-1.5 bg-white dark:bg-academy-surfaceDark text-black px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-[9px] font-black uppercase tracking-widest hover:scale-105 hover:bg-gray-100 transition-all duration-300 whitespace-nowrap shadow-sm"
             >
-              <span className="hidden sm:inline">{config.linkText}</span>
-              <span className="inline sm:hidden">Go</span>
+              {/* « Réserver ma place » alors qu'aucune date n'est ouverte : le
+                  bouton promettait une réservation et la page répondait « je
+                  veux être prévenu ». Il annonce ce qu'on obtient vraiment. */}
+              <span className="hidden sm:inline">
+                {prochaine ? config.linkText : 'Être prévenu'}
+              </span>
+              <span className="inline sm:hidden">{prochaine ? 'Go' : 'Info'}</span>
               <ArrowRight size={10} strokeWidth={3} />
             </Link>
           )}
