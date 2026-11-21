@@ -112,11 +112,11 @@ const defaultSettings = {
 
   topBanner: {
     isActive: true,
-    text: "Formation IA & Montage Vidéo à Béjaïa — 12, 13 et 14 novembre 2026",
+    text: "Formation IA & Montage Vidéo à Béjaïa — 3 jours en présentiel, places limitées",
     text2: "Offre de lancement : 15 000 DA au lieu de 35 000 DA, places limitées",
     animation: "marquee",
-    hasCountdown: true,
-    countdownDate: "2026-11-12T08:30:00+01:00",
+    hasCountdown: false,
+    countdownDate: "",
     backgroundColor: "bg-gradient-to-r from-red-600 to-red-500",
     textColor: "text-white",
     icon: "sparkles",
@@ -360,7 +360,7 @@ const defaultSettings = {
     oldPrice: 35000, // prix barré affiché à côté (offre de lancement) ; 0 = pas de prix barré
     deposit: 5000,  // acompte obligatoire pour réserver sa place
     // Message affiché au-dessus des sessions (vide = rien) : utile tant que les dates ne sont pas définitives.
-    datesNotice: "Session unique : les 12, 13 et 14 novembre 2026. Les places partent vite.",
+    datesNotice: "Prochaine session bientôt annoncée. Les places partent vite.",
     showSeats: false,
     joinCode: '', // code secret du QR d'inscription sur place (vide = QR désactivé) // afficher « il reste N places » sur les sessions (désactivé par défaut)
     // Titres courts : affichés en cartes compactes (2 par ligne sur téléphone).
@@ -539,7 +539,7 @@ function readSettingsFromDisk() {
 // les valeurs par défaut au premier démarrage, donc un simple changement de
 // défaut ne l'atteint pas). Appliqué une fois : le prochain enregistrement admin
 // écrit settingsVersion à jour.
-const SETTINGS_VERSION = 26
+const SETTINGS_VERSION = 27
 const OLD_BANNER_TEXTS = ["🚀 Promo exceptionnelle : -50% sur toutes les formations ! Inscrivez-vous vite."]
 
 function migrateSettings(parsed, merged) {
@@ -681,6 +681,20 @@ function migrateSettings(parsed, merged) {
         merged.topBanner = { ...merged.topBanner }
         merged.topBanner[cle] = merged.topBanner[cle].replace(/\s*(chez|au)\s+Camden[^,.—]*/gi, '').trim()
       }
+    }
+  }
+
+  if ((parsed.settingsVersion || 1) < 27) {
+    // La date du 12 novembre est passée. Un bandeau qui l'annonce encore
+    // apprend au visiteur, en haut de chaque page, que le site n'est pas tenu.
+    if (/12,?\s*13\s*et\s*14\s*novembre/i.test(merged.topBanner?.text || '')) {
+      merged.topBanner = { ...merged.topBanner, text: defaultSettings.topBanner.text }
+    }
+    if (/12,?\s*13\s*et\s*14\s*novembre/i.test(merged.inPerson?.datesNotice || '')) {
+      merged.inPerson = { ...merged.inPerson, datesNotice: defaultSettings.inPerson.datesNotice }
+    }
+    if (merged.topBanner?.countdownDate && new Date(merged.topBanner.countdownDate) < new Date()) {
+      merged.topBanner = { ...merged.topBanner, hasCountdown: false, countdownDate: '' }
     }
   }
 
