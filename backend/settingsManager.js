@@ -378,7 +378,7 @@ const defaultSettings = {
     ],
     // Numéro WhatsApp des inscriptions : celui de l'académie, pas celui du lieu.
     whatsappNumber: '213795103743',
-    venue: '',   // nom de la salle : laissé vide, le site n'affiche que la ville
+    venue: 'Camden School',
     venueAddress: 'Cité Douanière Bir Slam, Promo Ceram Bt D1 W, Béjaïa',
     // Étiquettes très courtes, en grille de 3 en haut de la page.
     infos: [
@@ -539,7 +539,7 @@ function readSettingsFromDisk() {
 // les valeurs par défaut au premier démarrage, donc un simple changement de
 // défaut ne l'atteint pas). Appliqué une fois : le prochain enregistrement admin
 // écrit settingsVersion à jour.
-const SETTINGS_VERSION = 26
+const SETTINGS_VERSION = 25
 const OLD_BANNER_TEXTS = ["🚀 Promo exceptionnelle : -50% sur toutes les formations ! Inscrivez-vous vite."]
 
 function migrateSettings(parsed, merged) {
@@ -574,10 +574,10 @@ function migrateSettings(parsed, merged) {
     merged.inPerson = { ...merged.inPerson, datesNotice: defaultSettings.inPerson.datesNotice }
   }
   if ((parsed.settingsVersion || 1) < 11 && [
-    "Du dimanche au jeudi à Béjaïa, 3 jours de suite : le matin (8h30 – 12h30) ou l'après-midi (15h – 18h).",
-    "Du dimanche au jeudi à Béjaïa, 3 jours de suite : le matin (8h30 – 12h30) ou l'après-midi (16h – 19h).",
+    "Du dimanche au jeudi chez Camden à Béjaïa, 3 jours de suite : le matin (8h30 – 12h30) ou l'après-midi (15h – 18h).",
+    "Du dimanche au jeudi chez Camden à Béjaïa, 3 jours de suite : le matin (8h30 – 12h30) ou l'après-midi (16h – 19h).",
     "Inscriptions ouvertes ! Le calendrier exact des sessions vous sera communiqué d'ici 2 à 4 jours.",
-    'Du dimanche au jeudi, de 8h30 à 12h30, à Béjaïa : 3 matinées de suite.',
+    'Du dimanche au jeudi, de 8h30 à 12h30, chez Camden à Béjaïa : 3 matinées de suite.',
   ].includes(merged.inPerson?.datesNotice)) {
     merged.inPerson = { ...merged.inPerson, datesNotice: defaultSettings.inPerson.datesNotice }
   }
@@ -666,23 +666,6 @@ function migrateSettings(parsed, merged) {
     for (const cle of ['text', 'text2']) {
       if (typeof merged.topBanner[cle] === 'string') {
         merged.topBanner[cle] = merged.topBanner[cle].replace(/\b(18|22)\s?000\b/g, '15 000')
-      }
-    }
-  }
-
-  if ((parsed.settingsVersion || 1) < 26) {
-    // Le nom de la salle n'est plus affiché : l'adresse et l'itinéraire
-    // suffisent à s'y rendre, et le partenariat n'a pas à être public.
-    merged.inPerson = { ...merged.inPerson, venue: '' }
-    for (const champ of ['subtitle', 'title']) {
-      if (typeof merged.inPerson[champ] === 'string') {
-        merged.inPerson[champ] = merged.inPerson[champ].replace(/\s*chez Camden\b/gi, '')
-      }
-    }
-    merged.topBanner = { ...merged.topBanner }
-    for (const cle of ['text', 'text2']) {
-      if (typeof merged.topBanner[cle] === 'string') {
-        merged.topBanner[cle] = merged.topBanner[cle].replace(/\s*chez Camden\b/gi, '')
       }
     }
   }

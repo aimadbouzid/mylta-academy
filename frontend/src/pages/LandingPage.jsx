@@ -2,8 +2,8 @@ import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import {
   ArrowRight, Star, CreditCard,
-  Users, BookOpen, TrendingUp, ChevronRight, Sparkles, ChevronDown,
-  Instagram, Facebook, Download, Brain, Clapperboard, Globe
+  Users, BookOpen, TrendingUp, ChevronRight, Sparkles, ChevronDown, ExternalLink,
+  Instagram, Facebook, Download
 } from 'lucide-react'
 import { usePauseHorsEcran } from '../hooks/usePauseHorsEcran'
 import Navbar from '../components/Navbar'
@@ -15,10 +15,14 @@ import LoginModal from '../components/LoginModal'
 import PaymentModal from '../components/PaymentModal'
 import FormationsHub from '../components/FormationsHub'
 import FormationAd from '../components/FormationAd'
+import Galerie from '../components/Galerie'
 import InstagramFeed from '../components/InstagramFeed'
 import Productions from '../components/Productions'
 import Clients from '../components/Clients'
+import PresentationReel from '../components/PresentationReel'
+import CamdenPartner from '../components/CamdenPartner'
 import IntroVideoModal from '../components/IntroVideoModal'
+import UniversalVideoPlayer from '../components/UniversalVideoPlayer'
 import Logo from '../components/Logo'
 import { LoadingGrid, ErrorState } from '../components/LoadingSkeleton'
 import { useSiteSettings } from '../context/SiteSettingsContext'
@@ -74,12 +78,6 @@ export default function LandingPage() {
   const [introOpen,   setIntroOpen]   = useState(false)
   const featuredCourses = courses.slice(0, 3)
 
-  // Le catalogue en ligne est vide : le bouton principal envoyait tout le
-  // trafic publicitaire sur une page sans rien. Il mène alors au présentiel,
-  // la seule formation réellement en vente.
-  const catalogueVide = !loading && !error && featuredCourses.length === 0
-  const versPresentiel = catalogueVide && siteSettings.inPerson?.enabled
-
   const handleCloseIntro = () => {
     setIntroOpen(false)
   }
@@ -109,12 +107,15 @@ export default function LandingPage() {
           {/* Blobs de flou localisés pour l'accueil (Neutral/Blueish tones).
               En thème sombre leur opacité est fortement réduite : ces teintes
               pastel, pensées pour un fond clair, voilaient le noir de gris. */}
+          <div className="absolute top-[5%] left-[-15%] w-[60vw] h-[60vw] rounded-full text-blue-400/10 dark:text-blue-400/[0.04] pointer-events-none select-none z-0 glow-blob" />
+          <div className="absolute bottom-[0%] right-[-15%] w-[55vw] h-[55vw] rounded-full text-indigo-400/10 dark:text-indigo-400/[0.04] pointer-events-none select-none z-0 glow-blob" />
+          <div className="absolute top-[40%] right-[10%] w-[40vw] h-[40vw] rounded-full text-gray-300/20 dark:text-gray-300/[0.03] pointer-events-none select-none z-0 glow-blob" />
           
           <div className="section-container relative z-10 flex flex-col lg:flex-row items-center gap-6 lg:gap-10">
             <div className="flex-1 text-center lg:text-left">
 
               {/* Titre Principal Pro */}
-              <h1 className="font-display text-[26px] sm:text-4xl lg:text-5xl font-black leading-[1.15] mb-3 lg:mb-6 text-academy-textMain tracking-tight">
+              <h1 className="font-display text-[26px] sm:text-5xl lg:text-6xl font-black leading-[1.15] mb-3 lg:mb-6 text-academy-textMain tracking-tight">
                 {landingData.hero_title ? (
                   <>
                     {landingData.hero_title.split(' ').slice(0, -1).join(' ')}{' '}
@@ -134,10 +135,10 @@ export default function LandingPage() {
                   de halo ni de reflet animé, qui donnaient un rendu générique. */}
               <div className="flex flex-row gap-3 justify-center lg:justify-start mb-4 lg:mb-8">
                 <Link
-                  to={versPresentiel ? '/coaching-presentiel' : '/courses'}
+                  to="/courses"
                   className="group inline-flex items-center justify-center gap-1.5 py-2 px-4 rounded-md bg-academy-textMain text-academy-surface text-[13px] font-semibold hover:opacity-90 transition-opacity"
                 >
-                  {versPresentiel ? 'Voir la formation' : t('landing.discover_courses')}
+                  {t('landing.discover_courses')}
                   <ArrowRight size={14} className="opacity-60 group-hover:translate-x-0.5 transition-transform" />
                 </Link>
                 <a
@@ -170,44 +171,55 @@ export default function LandingPage() {
                 </div>
               </div>
             </div>
+            
+            <div className="flex-1 w-full mt-4 lg:mt-0">
+              {/* Lecteur de présentation intégré au hero : visible et lisible
+                  directement, à côté du texte. Le flou est un halo décoratif
+                  POSÉ DERRIÈRE (même procédé que les blobs du hero), pas un
+                  flou du fond du lecteur lui-même.
+                  Affichage conditionnel : tant que les réglages ne sont pas
+                  chargés on n'affiche rien, plutôt que l'état vide du lecteur
+                  (dont le texte s'adresse à l'admin, pas au visiteur). */}
+              <div className="relative max-w-xl mx-auto lg:mr-0">
+                <div className="absolute -inset-8 rounded-full text-academy-primary/20 dark:text-academy-primary/[0.07] pointer-events-none select-none z-0 glow-blob" />
+                {siteSettings.inPerson?.enabled ? (
+                  <div className="relative z-10"><PresentationReel /></div>
+                ) : /^\/[^/].*\.(mp4|webm)$/i.test(siteSettings.introVideoUrl || '') ? (
+                  <video
+                    src={siteSettings.introVideoUrl}
+                    poster={siteSettings.introVideoUrl.replace(/\.(mp4|webm)$/i, '-poster.jpg')}
+                    autoPlay muted loop playsInline
+                    aria-label="Vidéo de présentation Mylta Academy"
+                    className="relative z-10 w-full aspect-video rounded-2xl shadow-soft-lg bg-black object-cover"
+                  />
+                ) : siteSettings.introVideoUrl && (
+                  <div className="relative z-10">
+                    <UniversalVideoPlayer
+                      url={siteSettings.introVideoUrl}
+                      title="Vidéo de présentation Mylta Academy"
+                      facade
+                    />
+                    {/* Repli : si le lecteur tiers ne charge pas (bloqueur de pub,
+                        navigateur intégré Instagram/TikTok, réseau filtré), le
+                        cadre reste noir et la vidéo est alors inaccessible
+                        depuis la page. Ce lien donne toujours une porte de sortie. */}
+                    <a
+                      href={siteSettings.introVideoUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-academy-textMain/55 hover:text-academy-primary transition-colors"
+                    >
+                      <ExternalLink size={13} />
+                      {t('landing.watch_video')}
+                    </a>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         </section>
 
         <FormationAd inPerson={siteSettings.inPerson} />
-
-        {/* L'accueil ne montrait que de la vidéo : galeries d'étudiants,
-            productions, Instagram. Un visiteur en repartait convaincu que
-            l'académie ne fait que du montage. Voilà les trois domaines
-            réellement enseignés, dits une fois, simplement. */}
-        <section className="section-container pt-6">
-          <h2 className="font-display font-black text-2xl sm:text-3xl tracking-tight text-academy-textMain">
-            Ce qu'on enseigne
-          </h2>
-          <p className="text-academy-textMain/60 text-sm mt-1">
-            Trois domaines, la même méthode : on pratique, on repart avec quelque chose qui marche.
-          </p>
-          <div className="mt-5 grid gap-3 sm:grid-cols-3">
-            {[
-              [Brain, "Intelligence artificielle",
-               "Les outils d'IA au quotidien et au travail : écrire, chercher, organiser, produire. Du prompt qui donne un vrai résultat, pas des démos."],
-              [Clapperboard, "Vidéo & smartphone",
-               "Filmer, monter, publier — avec le téléphone qu'on a déjà. CapCut, cadrage, son, et ce qui fait qu'une vidéo est regardée jusqu'au bout."],
-              [Globe, "Web & sites avec l'IA",
-               "Créer son site et ses outils sans savoir coder, en se faisant assister par l'IA. De l'idée à la page en ligne."],
-            ].map(([Icone, titre, texte]) => (
-              <div key={titre}
-                   className="rounded-xl border border-academy-border bg-white dark:bg-academy-surfaceDark p-4 sm:p-5">
-                <Icone size={20} className="text-academy-primary" />
-                <h3 className="mt-2.5 font-display font-bold text-base sm:text-lg text-academy-textMain leading-tight">
-                  {titre}
-                </h3>
-                <p className="mt-1.5 text-[13px] leading-relaxed text-academy-textMain/65">
-                  {texte}
-                </p>
-              </div>
-            ))}
-          </div>
-        </section>
 
         <Clients />
 
@@ -253,13 +265,17 @@ export default function LandingPage() {
         {/* Le présentiel a déjà son annonce en tête : ici, seulement les autres formules. */}
         <FormationsHub coaching={siteSettings.coaching} express={siteSettings.express} />
 
+        <Galerie />
+
         <InstagramFeed instagram={siteSettings.instagram} />
 
 
+        <CamdenPartner />
 
-        {/* FORMATIONS — masquée tant qu'il n'y a rien à montrer. */}
-        {(loading || error || featuredCourses.length > 0 || (siteSettings.upcomingCourses || []).length > 0) && (
+        {/* FORMATIONS */}
         <section className="pt-2 lg:pt-4 pb-8 lg:pb-12 border-t border-academy-border relative overflow-hidden">
+          <div className="absolute top-[10%] left-[-10%] w-[45vw] h-[45vw] rounded-full text-academy-primary/15 dark:text-academy-primary/[0.06] pointer-events-none select-none z-0 glow-blob" />
+          <div className="absolute bottom-[10%] right-[-10%] w-[40vw] h-[40vw] rounded-full text-blue-300/20 dark:text-blue-300/[0.05] pointer-events-none select-none z-0 glow-blob" />
           <div className="section-container relative z-10">
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
               <div>
@@ -267,12 +283,9 @@ export default function LandingPage() {
                   {t('landing.our_courses')}
                 </h2>
               </div>
-              {/* Le catalogue n'a rien de publié : « Voir tout » menait à une page vide. */}
-              {featuredCourses.length > 0 && (
               <Link to="/courses" className="group flex items-center gap-1.5 text-sm font-bold text-academy-textMain hover:text-academy-primary transition-colors bg-white dark:bg-academy-surfaceDark hover:bg-red-50 px-5 py-2.5 rounded-full border border-academy-border shadow-sm w-fit">
                 {t('landing.view_all')} <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
               </Link>
-              )}
             </div>
 
             {loading && <LoadingGrid count={3} />}
@@ -296,10 +309,10 @@ export default function LandingPage() {
             )}
           </div>
         </section>
-        )}
 
         {/* TESTIMONIALS */}
         <section id="testimonials" className="py-8 lg:py-12 bg-academy-surfaceDark/40 border-t border-academy-border overflow-hidden relative">
+          <div className="absolute top-[10%] right-[-10%] w-[50vw] h-[50vw] rounded-full text-indigo-400/20 dark:text-indigo-400/[0.05] pointer-events-none select-none z-0 glow-blob" />
           <div className="section-container text-center mb-12 relative z-10">
             <h2 className="font-display font-black text-3xl sm:text-4xl text-academy-textMain mb-3">
               {t('landing.students_reviews')} <span className="text-academy-primary">{t('landing.students')}</span>

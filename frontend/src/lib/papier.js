@@ -8,9 +8,7 @@
 
 export const PAPIER = '#efe8da'
 export const ENCRE = '#17150f'
-// Gardé sous ce nom parce que tout le billet l'appelle ainsi, mais la couleur
-// d'appui n'est plus rouge : elle suit l'accent noir du reste du site.
-export const ROUGE = '#1a1812'
+export const ROUGE = '#c0392f'
 
 // Trame d'imprimerie : des points fins, comme l'impression d'un vrai ticket.
 export const TRAME = `radial-gradient(${ENCRE}1f 0.7px, transparent 0.8px)`

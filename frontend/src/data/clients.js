@@ -1,6 +1,7 @@
 // Entreprises pour lesquelles l'agence a tourné. Les logos viennent de leur
 // compte Instagram ; ajouter un fichier dans public/clients et une ligne ici.
 export const CLIENTS = [
+  { nom: 'Camden International Institute', logo: '/clients/camden-international-institute.jpg' },
   { nom: 'Innovia Algérie',                logo: '/clients/innovia-algerie.jpg' },
   { nom: 'Nchriha',                        logo: '/clients/nchriha.jpg' },
   { nom: 'Cap Carbon Hotels',              logo: '/clients/cap-carbon-hotels.jpg' },

@@ -30,19 +30,14 @@
    tokens `academy` dans l'application — aucun composant à modifier.
    ═══════════════════════════════════════════════════════════ */
 :root {
-  /* Accent noir, et non plus rouge : le rouge marquait tout, donc plus rien.
-     Le noir laisse la couleur aux photos et aux prix barrés. */
-  --academy-primary: 26 24 18;       /* #1a1812 — encre, presque noir */
-  --academy-light: 74 69 57;         /* #4a4539 — survol, un cran plus clair */
-  --academy-dark: 10 9 6;            /* #0a0906 — appui */
-  /* Fond papier : la teinte du billet, étendue à tout le site. Un blanc pur
-     éclaire trop un écran de téléphone en plein soleil, et donne ce fond
-     d'application qu'on voit partout. */
-  --academy-surface: 239 232 218;    /* #efe8da — papier */
-  --academy-surface-dark: 230 221 203; /* #e6ddcb — papier appuyé */
-  --academy-text: 23 21 15;          /* #17150f — encre */
-  --academy-border: 217 207 188;     /* #d9cfbc — filet chaud */
-  --academy-card: 248 244 236;       /* #f8f4ec — carte, à peine plus claire */
+  --academy-primary: 169 50 50;      /* #a93232 */
+  --academy-light: 210 91 91;        /* #d25b5b */
+  --academy-dark: 125 31 31;         /* #7d1f1f */
+  --academy-surface: 241 245 247;    /* #f1f5f7 */
+  --academy-surface-dark: 231 238 242; /* #e7eef2 */
+  --academy-text: 23 23 23;          /* #171717 */
+  --academy-border: 225 225 225;     /* #e1e1e1 */
+  --academy-card: 255 255 255;       /* #ffffff */
   --academy-on-primary: 255 255 255; /* texte posé SUR la couleur de marque */
 
   color-scheme: light;

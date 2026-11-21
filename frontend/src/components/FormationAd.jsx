@@ -22,10 +22,7 @@ export default function FormationAd({ inPerson }) {
   useEffect(() => {
     if (!inPerson?.enabled) return
     getSessions()
-      .then(list => {
-        const jour = new Date().toISOString().slice(0, 10)
-        setSession(list.find(s => s.seatsLeft > 0 && s.date >= jour) || null)
-      })
+      .then(list => setSession(list.find(s => s.seatsLeft > 0) || null))
       .catch(() => {})
   }, [inPerson?.enabled])
 
@@ -35,24 +32,16 @@ export default function FormationAd({ inPerson }) {
     return () => clearInterval(t)
   }, [session])
 
-  if (!inPerson?.enabled) return null
+  if (!inPerson?.enabled || !session) return null
 
-  const days = session
-    ? (() => {
-        const [y, m, d] = session.date.split('-').map(Number)
-        return [0, 1, 2].map(i => new Date(y, m - 1, d + i))
-      })()
-    : null
-  const month = days
-    ? cap(days[2].toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })).toUpperCase()
-    : ''
-  const price = Number(session?.price) || Number(inPerson.price) || 0
+  const [y, m, d] = session.date.split('-').map(Number)
+  const days = [0, 1, 2].map(i => new Date(y, m - 1, d + i))
+  const month = cap(days[2].toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })).toUpperCase()
+  const price = Number(session.price) || Number(inPerson.price) || 0
   const oldPrice = Number(inPerson.oldPrice) > price ? Number(inPerson.oldPrice) : 0
   const remise = oldPrice > 0 ? Math.round((1 - price / oldPrice) * 100) : 0
 
-  let left = session
-    ? Math.max(0, new Date(`${session.date}T${session.startTime || '08:30'}:00+01:00`) - now)
-    : 0
+  let left = Math.max(0, new Date(`${session.date}T${session.startTime || '08:30'}:00+01:00`) - now)
   const j = Math.floor(left / 86400000); left -= j * 86400000
   const h = Math.floor(left / 3600000);  left -= h * 3600000
   const mn = Math.floor(left / 60000)
@@ -93,11 +82,9 @@ export default function FormationAd({ inPerson }) {
 
               <p className="mt-3.5 pt-3 text-[12px] sm:text-[14px] uppercase"
                  style={{ ...TITRE, borderTop: `1.5px solid ${ENCRE}` }}>
-                {session
-                  ? `${hour(session.startTime)} – ${hour(session.endTime)}`
-                  : '3 demi-journées'}
+                {hour(session.startTime)} – {hour(session.endTime)}
                 <span className="mx-2 opacity-40">·</span>
-                {session?.place || inPerson.venue || 'Béjaïa'}
+                {session.place || 'Camden Int. Institute'}
               </p>
             </div>
 
@@ -124,7 +111,6 @@ export default function FormationAd({ inPerson }) {
 
               <div className="flex items-start justify-between gap-3 lg:block">
                 <div>
-                  {days ? (
                   <div className="flex" style={{ border: `1.5px solid ${ENCRE}` }}>
                     {days.map((dt, i) => (
                       <div key={i} className="px-2.5 sm:px-3 py-1 text-center"
@@ -138,19 +124,7 @@ export default function FormationAd({ inPerson }) {
                       </div>
                     ))}
                   </div>
-                  ) : (
-                    <div className="px-3 py-1.5 text-center" style={{ border: `1.5px solid ${ENCRE}` }}>
-                      <span className="block text-[13px] uppercase leading-none" style={TITRE}>
-                        Prochaine
-                      </span>
-                      <span className="block text-[13px] uppercase leading-none mt-0.5" style={TITRE}>
-                        session
-                      </span>
-                    </div>
-                  )}
-                  <p className="mt-2 text-[9.5px] uppercase tracking-[0.25em] opacity-65" style={MONO}>
-                    {month || 'Dates bientôt annoncées'}
-                  </p>
+                  <p className="mt-2 text-[9.5px] uppercase tracking-[0.25em] opacity-65" style={MONO}>{month}</p>
                 </div>
 
                 {/* Tampon de remise, posé de travers comme à l'encre. */}
@@ -183,7 +157,7 @@ export default function FormationAd({ inPerson }) {
               </div>
 
               <p className="mt-1.5 text-[10px] tracking-[0.08em] opacity-60" style={MONO}>
-                {session ? `Dans ${j} j ${pad(h)} h ${pad(mn)} min` : 'Places réservées à l\'avance'}
+                Dans {j} j {pad(h)} h {pad(mn)} min
               </p>
 
               {/* Bouton en rouge de marque plutôt qu'en noir : sur un papier crème,
@@ -194,7 +168,7 @@ export default function FormationAd({ inPerson }) {
                     className="billet-reserver mt-2.5 block w-full text-center uppercase
                                text-[14px] sm:text-[15px] tracking-[0.12em] py-2.5"
                     style={{ ...TITRE, background: ROUGE, color: PAPIER }}>
-                {session ? 'Réserver' : 'Je veux ma place'}
+                Réserver
               </Link>
 
               {/* Code-barres : des barres de largeurs irrégulières, dessinées en CSS.
