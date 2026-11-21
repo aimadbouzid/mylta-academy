@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useSiteSettings } from '../context/SiteSettingsContext'
+import { getSessions } from '../api/sessions'
 import { variante } from '../lib/abTest'
 import { Timer, Sparkles, Flame, Gift, Megaphone, ArrowRight, X } from 'lucide-react'
 
@@ -19,16 +20,53 @@ export default function TopBanner() {
   const [isLoaded, setIsLoaded] = useState(true) // Start true if we have initial state
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0)
 
-  // Messages array combining config text and a 2nd text message
-  const messages = config ? [
-    config.text,
-    config.text2 || "Formation IA & Montage Vidéo en présentiel — offre de lancement, places limitées"
-  ] : []
-
   // Les réglages viennent du contexte partagé : ce composant refaisait un appel
   // /config/site que SiteSettingsProvider avait déjà effectué — même donnée,
   // requête en double sur chaque page.
   const { settings } = useSiteSettings()
+
+  // La date vient de la prochaine session ouverte, jamais d'un texte saisi à
+  // la main : le bandeau a annoncé pendant une semaine une formation déjà
+  // passée, en haut de chaque page. Sans session à venir, il n'annonce aucune
+  // date plutôt qu'une date fausse.
+  const [prochaine, setProchaine] = useState(null)
+  useEffect(() => {
+    getSessions()
+      .then(liste => {
+        const jour = new Date().toISOString().slice(0, 10)
+        const ouvertes = (liste || [])
+          .filter(s => s.date >= jour)
+          .sort((a, b) => a.date.localeCompare(b.date))
+        setProchaine(ouvertes[0] || null)
+      })
+      .catch(() => setProchaine(null))
+  }, [])
+
+  // « du 30 décembre au 1er janvier », le mois des deux côtés s'ils diffèrent.
+  const periode = (iso) => {
+    const [a, m, j] = iso.split('-').map(Number)
+    const debut = new Date(Date.UTC(a, m - 1, j))
+    const fin = new Date(Date.UTC(a, m - 1, j + 2))
+    const mois = (dt) => dt.toLocaleDateString('fr-FR', { month: 'long', timeZone: 'UTC' })
+    const jourDe = (dt) => (dt.getUTCDate() === 1 ? '1er' : dt.getUTCDate())
+    return mois(debut) === mois(fin)
+      ? `du ${jourDe(debut)} au ${jourDe(fin)} ${mois(fin)}`
+      : `du ${jourDe(debut)} ${mois(debut)} au ${jourDe(fin)} ${mois(fin)}`
+  }
+
+  // On retire la date écrite à la main : elle devient fausse dès la session
+  // suivante, et personne ne pense à la corriger.
+  const sansDate = (texte) => String(texte || '')
+    .replace(/\s*—[^—]*\b(janvier|février|mars|avril|mai|juin|juillet|août|septembre|octobre|novembre|décembre)\b[^—]*/i, '')
+    .trim()
+
+  const titreFormation = settings?.inPerson?.title || 'Formation IA & Montage Vidéo'
+  const messages = config ? [
+    prochaine
+      ? `${titreFormation} à Béjaïa — ${periode(prochaine.date)}`
+      : sansDate(config.text) || titreFormation,
+    config.text2 || "Formation IA & Montage Vidéo en présentiel — offre de lancement, places limitées"
+  ] : []
 
   useEffect(() => {
     const banner = settings?.topBanner
@@ -56,7 +94,7 @@ export default function TopBanner() {
 
   return (
     <div className="w-full px-2 sm:px-4 flex justify-center pt-1.5 sm:pt-2 pb-0 bg-transparent z-50 pointer-events-none overflow-hidden">
-      <div className="w-full max-w-4xl h-[32px] sm:h-[36px] bg-black/90 backdrop-blur-[32px] saturate-[1.2] text-white rounded-full flex items-center shadow-[0_8px_20px_-4px_rgba(0,0,0,0.3)] border border-white/10 relative pointer-events-auto hover:bg-black transition-colors duration-500 group overflow-hidden">
+      <div className="w-full max-w-4xl h-[38px] sm:h-[42px] bg-black/90 backdrop-blur-[32px] saturate-[1.2] text-white rounded-full flex items-center shadow-[0_8px_20px_-4px_rgba(0,0,0,0.3)] border border-white/10 relative pointer-events-auto hover:bg-black transition-colors duration-500 group overflow-hidden">
         
         {/* Subtle inner highlight */}
         <div className="absolute inset-0 rounded-full border border-white/5 pointer-events-none mix-blend-overlay"></div>
@@ -101,7 +139,7 @@ export default function TopBanner() {
           {config.linkUrl && config.linkText && (
             <Link 
               to={config.linkUrl}
-              className="pointer-events-auto inline-flex items-center gap-1.5 bg-white dark:bg-academy-surfaceDark text-black px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[9px] font-black uppercase tracking-widest hover:scale-105 hover:bg-gray-100 transition-all duration-300 whitespace-nowrap shadow-sm"
+              className="pointer-events-auto inline-flex items-center gap-1.5 bg-white dark:bg-academy-surfaceDark text-black px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-[9px] font-black uppercase tracking-widest hover:scale-105 hover:bg-gray-100 transition-all duration-300 whitespace-nowrap shadow-sm"
             >
               <span className="hidden sm:inline">{config.linkText}</span>
               <span className="inline sm:hidden">Go</span>

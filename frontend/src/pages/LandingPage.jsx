@@ -15,7 +15,6 @@ import LoginModal from '../components/LoginModal'
 import PaymentModal from '../components/PaymentModal'
 import FormationsHub from '../components/FormationsHub'
 import FormationAd from '../components/FormationAd'
-import Galerie from '../components/Galerie'
 import InstagramFeed from '../components/InstagramFeed'
 import Productions from '../components/Productions'
 import Clients from '../components/Clients'
@@ -75,6 +74,12 @@ export default function LandingPage() {
   const [introOpen,   setIntroOpen]   = useState(false)
   const featuredCourses = courses.slice(0, 3)
 
+  // Le catalogue en ligne est vide : le bouton principal envoyait tout le
+  // trafic publicitaire sur une page sans rien. Il mène alors au présentiel,
+  // la seule formation réellement en vente.
+  const catalogueVide = !loading && !error && featuredCourses.length === 0
+  const versPresentiel = catalogueVide && siteSettings.inPerson?.enabled
+
   const handleCloseIntro = () => {
     setIntroOpen(false)
   }
@@ -129,10 +134,10 @@ export default function LandingPage() {
                   de halo ni de reflet animé, qui donnaient un rendu générique. */}
               <div className="flex flex-row gap-3 justify-center lg:justify-start mb-4 lg:mb-8">
                 <Link
-                  to="/courses"
+                  to={versPresentiel ? '/coaching-presentiel' : '/courses'}
                   className="group inline-flex items-center justify-center gap-1.5 py-2 px-4 rounded-md bg-academy-textMain text-academy-surface text-[13px] font-semibold hover:opacity-90 transition-opacity"
                 >
-                  {t('landing.discover_courses')}
+                  {versPresentiel ? 'Voir la formation' : t('landing.discover_courses')}
                   <ArrowRight size={14} className="opacity-60 group-hover:translate-x-0.5 transition-transform" />
                 </Link>
                 <a
@@ -214,13 +219,12 @@ export default function LandingPage() {
         {/* Le présentiel a déjà son annonce en tête : ici, seulement les autres formules. */}
         <FormationsHub coaching={siteSettings.coaching} express={siteSettings.express} />
 
-        <Galerie />
-
         <InstagramFeed instagram={siteSettings.instagram} />
 
 
 
-        {/* FORMATIONS */}
+        {/* FORMATIONS — masquée tant qu'il n'y a rien à montrer. */}
+        {(loading || error || featuredCourses.length > 0 || (siteSettings.upcomingCourses || []).length > 0) && (
         <section className="pt-2 lg:pt-4 pb-8 lg:pb-12 border-t border-academy-border relative overflow-hidden">
           <div className="section-container relative z-10">
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
@@ -229,9 +233,12 @@ export default function LandingPage() {
                   {t('landing.our_courses')}
                 </h2>
               </div>
+              {/* Le catalogue n'a rien de publié : « Voir tout » menait à une page vide. */}
+              {featuredCourses.length > 0 && (
               <Link to="/courses" className="group flex items-center gap-1.5 text-sm font-bold text-academy-textMain hover:text-academy-primary transition-colors bg-white dark:bg-academy-surfaceDark hover:bg-red-50 px-5 py-2.5 rounded-full border border-academy-border shadow-sm w-fit">
                 {t('landing.view_all')} <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
               </Link>
+              )}
             </div>
 
             {loading && <LoadingGrid count={3} />}
@@ -255,6 +262,7 @@ export default function LandingPage() {
             )}
           </div>
         </section>
+        )}
 
         {/* TESTIMONIALS */}
         <section id="testimonials" className="py-8 lg:py-12 bg-academy-surfaceDark/40 border-t border-academy-border overflow-hidden relative">
